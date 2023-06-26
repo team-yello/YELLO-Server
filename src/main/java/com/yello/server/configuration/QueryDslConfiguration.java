@@ -1,4 +1,4 @@
-package com.yello.server.config;
+package com.yello.server.configuration;
 
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
