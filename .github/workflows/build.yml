@@ -1,0 +1,62 @@
+name: ✨ YELL:O Build
+
+on:
+  pull_request:
+    branches: [ "main", "develop" ]
+
+permissions:
+  contents: read
+
+jobs:
+  build:
+
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v3
+      - name: 👉 JDK 17 corretto 버전을 세팅합니다.
+        uses: actions/setup-java@v3
+        with:
+          java-version: '17'
+          distribution: 'corretto'
+
+      ## gradle caching
+      - name: 🐘 빌드 속도 향상을 위해 Gradle을 캐싱합니다.
+        uses: actions/cache@v3
+        with:
+          path: |
+            ~/.gradle/caches
+            ~/.gradle/wrapper
+          key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*', '**/gradle-wrapper.properties') }}
+          restore-keys: |
+            ${{ runner.os }}-gradle-
+
+      ## 시크릿 키 설정 후 삽입 예정
+      #      - name: application.yml 등 환경 변수를 세팅합니다.
+      #        run: |
+      #          cd ./src/main
+      #          mkdir resources
+      #          cd ./resources
+      #          touch ./application.yml
+      #          echo "${{ secrets.APPLICATION }}" > ./application.yml
+      #        env:
+      #          APPLICATION: ${{ secrets.APPLICATION }}
+      #        shell: bash
+
+      - name: 🐘 Gradle에 권한을 부여합니다.
+        run: chmod +x gradlew
+
+      - name: 🐘 Gradle로 빌드를 진행합니다.
+        run: ./gradlew bootjar
+
+      - name: 💡 배포 상태를 Slack을 통해 전송합니다.
+        uses: rtCamp/action-slack-notify@v2
+        env:
+          SLACK_CHANNEL: general
+          SLACK_COLOR: ${{ job.status }}
+          SLACK_ICON: https://github.com/rtCamp.png?size=48
+          SLACK_MESSAGE: 빌드에 ${{ job.status }} 했습니다.
+          SLACK_TITLE: 📦 YELL:O 빌드 결과 📦
+          SLACK_USERNAME: Notification-Bot
+          SLACK_WEBHOOK: ${{ secrets.SLACK_URL }}
+        if: always()

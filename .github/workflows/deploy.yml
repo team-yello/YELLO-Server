@@ -1,0 +1,91 @@
+name: 🚀 YELL:O Deploy
+
+on:
+  push:
+    branches: [ "main" ]
+
+permissions:
+  contents: read
+
+jobs:
+  build:
+
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v3
+      - name: 👉 JDK 17 corretto 버전을 세팅합니다.
+        uses: actions/setup-java@v3
+        with:
+          java-version: '17'
+          distribution: 'corretto'
+
+      - name: 🐘 빌드 속도 향상을 위해 Gradle을 캐싱합니다.
+        uses: actions/cache@v3
+        with:
+          path: |
+            ~/.gradle/caches
+            ~/.gradle/wrapper
+          key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*', '**/gradle-wrapper.properties') }}
+          restore-keys: |
+            ${{ runner.os }}-gradle-
+
+      ## 시크릿 키 설정 후 삽입 예정
+      #      - name: application.yml 등 환경 변수를 세팅합니다.
+      #        run: |
+      #          cd ./src/main
+      #          mkdir resources
+      #          cd ./resources
+      #          touch ./application.yml
+      #          echo "${{ secrets.APPLICATION }}" > ./application.yml
+      #        env:
+      #          APPLICATION: ${{ secrets.APPLICATION }}
+      #        shell: bash
+
+      - name: 🐘 Gradle에 권한을 부여합니다.
+        run: chmod +x gradlew
+
+      - name: 🐘 Gradle로 빌드를 진행합니다.
+        run: ./gradlew bootjar
+
+      - name: 📦 배포를 진행하기 위한 .zip 파일을 생성합니다.
+        run: |
+          mkdir deploy
+          cp ./docker/docker-compose.blue.yml ./deploy/
+          cp ./docker/docker-compose.green.yml ./deploy/
+          cp ./appspec.yml ./deploy/
+          cp ./docker/Dockerfile ./deploy/
+          cp ./scripts/*.sh ./deploy/
+          cp ./build/libs/*.jar ./deploy/
+          zip -r -qq -j ./yello-build.zip ./deploy
+
+      - name: ⏳ AWS에 연결을 진행합니다.
+        uses: aws-actions/configure-aws-credentials@v1
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_KEY }}
+          aws-region: ${{ secrets.AWS_REGION }}
+
+      - name: 🪣 배포를 위해 S3에 프로젝트를 업로드합니다.
+        run: |
+          aws s3 cp \
+          --region ap-northeast-2 \
+          ./spring-build.zip s3://backend-rex-bucket
+
+      - name: 📡 CodeDeploy에 배포를 요청합니다.
+        run: aws deploy create-deployment --application-name backend-deploy-group
+          --deployment-config-name CodeDeployDefault.OneAtATime
+          --deployment-group-name backend-deploy-group
+          --s3-location bucket=backend-rex-bucket,bundleType=zip,key=yello-build.zip
+
+      - name: 💡 배포 상태를 Slack을 통해 전송합니다.
+        uses: rtCamp/action-slack-notify@v2
+        env:
+          SLACK_CHANNEL: general
+          SLACK_COLOR: ${{ job.status }}
+          SLACK_ICON: https://github.com/rtCamp.png?size=48
+          SLACK_MESSAGE: 배포에 ${{ job.status }} 했습니다.
+          SLACK_TITLE: 🚀 YELL:O 배포 결과 🚀
+          SLACK_USERNAME: Notification-Bot
+          SLACK_WEBHOOK: ${{ secrets.SLACK_WEBHOOK_URL }}
+        if: always()
