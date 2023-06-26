@@ -9,7 +9,7 @@ import javax.persistence.EntityManager;
 
 @Configuration
 @RequiredArgsConstructor
-public class QueryDslConfig {
+public class QueryDslConfiguration {
     private final EntityManager entityManager;
 
     @Bean
