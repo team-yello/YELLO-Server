@@ -31,17 +31,17 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-gradle-
 
-      ## 시크릿 키 설정 후 삽입 예정
-      #      - name: application.yml 등 환경 변수를 세팅합니다.
-      #        run: |
-      #          cd ./src/main
-      #          mkdir resources
-      #          cd ./resources
-      #          touch ./application.yml
-      #          echo "${{ secrets.APPLICATION }}" > ./application.yml
-      #        env:
-      #          APPLICATION: ${{ secrets.APPLICATION }}
-      #        shell: bash
+      ## 시크릿 키 설정
+      - name: 🔐 application.yml 등 환경 변수를 세팅합니다.
+        run: |
+          cd ./src/main
+          mkdir resources
+          cd ./resources
+          touch ./application.yml
+          echo "${{ secrets.APPLICATION }}" > ./application.yml
+        env:
+          APPLICATION: ${{ secrets.APPLICATION }}
+        shell: bash
 
       - name: 🐘 Gradle에 권한을 부여합니다.
         run: chmod +x gradlew
