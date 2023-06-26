@@ -1,10 +1,10 @@
-package com.yello.server.exception.model;
+package com.yello.server.exception;
 
-import com.yello.server.exception.ErrorCode;
+import com.yello.server.common.ErrorCode;
 import lombok.Getter;
 
 @Getter
-public class CustomException extends RuntimeException{
+public class CustomException extends RuntimeException {
     private final ErrorCode error;
 
     public CustomException(ErrorCode error, String message) {
