@@ -1,0 +1,8 @@
+#blue
+version: '3'
+services:
+  backend:
+    build: .
+    ports:
+      - "8081:80"
+    container_name: yello-blue
