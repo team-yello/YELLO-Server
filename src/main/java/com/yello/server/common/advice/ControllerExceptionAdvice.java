@@ -1,7 +1,7 @@
 package com.yello.server.common.advice;
 
 import com.yello.server.common.ErrorCode;
-import com.yello.server.dto.response.ApiResponse;
+import com.yello.server.dto.ApiResponse;
 import com.yello.server.exception.CustomException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
