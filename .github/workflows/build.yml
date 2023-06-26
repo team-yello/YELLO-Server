@@ -14,11 +14,12 @@ jobs:
 
     steps:
       - uses: actions/checkout@v3
-      - name: 👉 JDK 17 corretto 버전을 세팅합니다.
+      - name: 👉 JDK 17 zulu 버전을 세팅합니다.
         uses: actions/setup-java@v3
         with:
           java-version: '17'
-          distribution: 'corretto'
+          distribution: 'zulu'
+          cache: gradle
 
       ## gradle caching
       - name: 🐘 빌드 속도 향상을 위해 Gradle을 캐싱합니다.
