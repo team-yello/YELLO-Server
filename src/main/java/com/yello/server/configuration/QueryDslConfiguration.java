@@ -1,4 +1,4 @@
-package com.yello.server.config;
+package com.yello.server.configuration;
 
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
@@ -9,7 +9,7 @@ import javax.persistence.EntityManager;
 
 @Configuration
 @RequiredArgsConstructor
-public class QueryDslConfig {
+public class QueryDslConfiguration {
     private final EntityManager entityManager;
 
     @Bean

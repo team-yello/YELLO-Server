@@ -1,7 +1,7 @@
-package com.yello.server.dto.response;
+package com.yello.server.dto;
 
-import com.yello.server.exception.ErrorCode;
-import com.yello.server.exception.SuccessCode;
+import com.yello.server.common.ErrorCode;
+import com.yello.server.common.SuccessCode;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
