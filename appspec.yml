@@ -1,0 +1,24 @@
+## 기본 세팅
+version: 0.0
+os: linux
+
+## 코드 파일 전송
+files:
+  - source: /
+    destination: /home/ec2-user/app
+    overwrite: yes # overwrite 허용 여부
+
+## 권한 설정
+permissions:
+  - object: /
+    pattern: "**" # 전체 파일
+    owner: ec2-user
+    group: ec2-user
+
+# 실행될 스크립트
+hooks:
+  # 시작 시
+  ApplicationStart:
+    - location: deploy.sh
+      timeout: 60
+      runas: ec2-user
