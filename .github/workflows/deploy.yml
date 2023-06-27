@@ -76,7 +76,7 @@ jobs:
       - name: 📡 CodeDeploy에 배포를 요청합니다.
         run: aws deploy create-deployment --application-name yello-server-deploy
           --deployment-config-name CodeDeployDefault.OneAtATime
-          --deployment-group-name yello-server-deploy
+          --deployment-group-name yello-app
           --s3-location bucket=yello-server-bucket,bundleType=zip,key=yello-build.zip
 
       - name: 💡 배포 상태를 Slack을 통해 전송합니다.
