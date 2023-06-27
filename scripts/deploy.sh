@@ -42,4 +42,4 @@ fi
   echo "[배포 종료] $(date +%Y)-$(date +%m)-$(date +%d) $(date +%H):$(date +%M):$(date +%S)" >> /home/ec2-user/deploy.log
 
   echo "===================== 배포 완료 =====================" >> /home/ec2-user/deploy.log
-  echo >> home/ec2-user/deploy.log
+  echo >> /home/ec2-user/deploy.log
