@@ -71,7 +71,7 @@ jobs:
         run: |
           aws s3 cp \
           --region ap-northeast-2 \
-          ./spring-build.zip s3://backend-rex-bucket
+          ./yello-build.zip s3://backend-rex-bucket
 
       - name: 📡 CodeDeploy에 배포를 요청합니다.
         run: aws deploy create-deployment --application-name backend-deploy-group
@@ -88,5 +88,5 @@ jobs:
           SLACK_MESSAGE: 배포에 ${{ job.status }} 했습니다.
           SLACK_TITLE: 🚀 YELL:O 배포 결과 🚀
           SLACK_USERNAME: Notification-Bot
-          SLACK_WEBHOOK: ${{ secrets.SLACK_WEBHOOK_URL }}
+          SLACK_WEBHOOK: ${{ secrets.SLACK_URL }}
         if: always()
