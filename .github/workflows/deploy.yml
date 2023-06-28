@@ -32,8 +32,11 @@ jobs:
           mkdir resources
           cd ./resources
           touch ./application.yml
+          touch ./application-blue.yml
           echo "${{ secrets.APPLICATION }}" >> ./application.yml
+          echo "${{ secrets.APPLICATION }}" >> ./application-blue.yml
           cat ./application.yml
+          cat ./application-blue.yml
         shell: bash
 
       - name: 🐘 Gradle로 빌드 실행
