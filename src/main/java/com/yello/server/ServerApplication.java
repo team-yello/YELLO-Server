@@ -9,7 +9,7 @@ import org.springframework.context.ConfigurableApplicationContext;
 public class ServerApplication {
 
     @Value("${server.port}")
-    private static int port;
+    private int port;
 
     public static void main(String[] args) {
 //        SpringApplication.run(ServerApplication.class, args);
