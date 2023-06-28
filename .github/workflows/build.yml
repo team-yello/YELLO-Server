@@ -4,9 +4,6 @@ on:
   pull_request:
     branches: [ "main", "develop" ]
 
-permissions:
-  contents: read
-
 jobs:
   build:
 
@@ -20,6 +17,10 @@ jobs:
           java-version: '17'
           distribution: 'zulu'
           cache: gradle
+
+      - name: 🐘 Gradle에 권한을 부여합니다.
+        run: chmod +x gradlew
+        shell: bash
 
       ## gradle caching
       - name: 🐘 빌드 속도 향상을 위해 Gradle을 캐싱합니다.
@@ -35,20 +36,14 @@ jobs:
       ## 시크릿 키 설정
       - name: 🔐 application.yml 등 환경 변수를 세팅합니다.
         run: |
-          cd ./src/main
-          mkdir resources
-          cd ./resources
-          touch ./application.yml
-          echo "${{ secrets.APPLICATION }}" > ./application.yml
-        env:
-          APPLICATION: ${{ secrets.APPLICATION }}
-        shell: bash
-
-      - name: 🐘 Gradle에 권한을 부여합니다.
-        run: chmod +x gradlew
+          pwd
+          touch src/main/resources/application.yml
+          echo "${{ secrets.APPLICATION }}" >> src/main/resources/application.yml
+          cat src/main/resources/application.yml
 
       - name: 🐘 Gradle로 빌드를 진행합니다.
-        run: ./gradlew bootjar
+        run: ./gradlew build
+        shell: bash
 
       - name: 💡 배포 상태를 Slack을 통해 전송합니다.
         uses: rtCamp/action-slack-notify@v2

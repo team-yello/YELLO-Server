@@ -4,8 +4,6 @@ on:
   push:
     branches: [ "main" ]
 
-permissions:
-  contents: read
 
 jobs:
   build:
@@ -21,6 +19,10 @@ jobs:
           distribution: 'zulu'
           cache: gradle
 
+      - name: 🐘 Gradle에 권한을 부여합니다.
+        run: chmod +x gradlew
+        shell: bash
+
       - name: 🐘 빌드 속도 향상을 위해 Gradle을 캐싱합니다.
         uses: actions/cache@v3
         with:
@@ -34,20 +36,14 @@ jobs:
       ## 시크릿 키 설정
       - name: 🔐 application.yml 등 환경 변수를 세팅합니다.
         run: |
-          cd ./src/main
-          mkdir resources
-          cd ./resources
-          touch ./application.yml
-          echo "${{ secrets.APPLICATION }}" > ./application.yml
-        env:
-          APPLICATION: ${{ secrets.APPLICATION }}
-        shell: bash
-
-      - name: 🐘 Gradle에 권한을 부여합니다.
-        run: chmod +x gradlew
+          pwd
+          touch src/main/resources/application.yml
+          echo "${{ secrets.APPLICATION }}" >> src/main/resources/application.yml
+          cat src/main/resources/application.yml
 
       - name: 🐘 Gradle로 빌드를 진행합니다.
-        run: ./gradlew bootjar
+        run: ./gradlew build
+        shell: bash
 
       - name: 📦 배포를 진행하기 위한 .zip 파일을 생성합니다.
         run: |
@@ -59,6 +55,7 @@ jobs:
           cp ./scripts/*.sh ./deploy/
           cp ./build/libs/*.jar ./deploy/
           zip -r -qq -j ./yello-build.zip ./deploy
+        shell: bash
 
       - name: ⏳ AWS에 연결을 진행합니다.
         uses: aws-actions/configure-aws-credentials@v1
