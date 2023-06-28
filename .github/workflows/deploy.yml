@@ -13,7 +13,9 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - uses: actions/checkout@v3
+      - name: Checkout
+        uses: actions/checkout@v3
+
       - name: 👉 JDK 17 zulu 버전을 세팅합니다.
         uses: actions/setup-java@v3
         with:
@@ -21,15 +23,9 @@ jobs:
           distribution: 'zulu'
           cache: gradle
 
-      - name: 🐘 빌드 속도 향상을 위해 Gradle을 캐싱합니다.
-        uses: actions/cache@v3
-        with:
-          path: |
-            ~/.gradle/caches
-            ~/.gradle/wrapper
-          key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*', '**/gradle-wrapper.properties') }}
-          restore-keys: |
-            ${{ runner.os }}-gradle-
+      - name: 🐘 Gradle에 권한을 부여합니다.
+        run: chmod +x gradlew
+        shell: bash
 
       ## 시크릿 키 설정
       - name: 🔐 application.yml 등 환경 변수를 세팅합니다.
@@ -38,16 +34,13 @@ jobs:
           mkdir resources
           cd ./resources
           touch ./application.yml
-          echo "${{ secrets.APPLICATION }}" > ./application.yml
+          echo "$APPLICATION" > ./application.yml
         env:
           APPLICATION: ${{ secrets.APPLICATION }}
         shell: bash
 
-      - name: 🐘 Gradle에 권한을 부여합니다.
-        run: chmod +x gradlew
-
-      - name: 🐘 Gradle로 빌드를 진행합니다.
-        run: ./gradlew bootjar
+      - name: 🐘 Gradle로 빌드 실행
+        run: ./gradlew build -x test
 
       - name: 📦 배포를 진행하기 위한 .zip 파일을 생성합니다.
         run: |
@@ -59,6 +52,7 @@ jobs:
           cp ./scripts/*.sh ./deploy/
           cp ./build/libs/*.jar ./deploy/
           zip -r -qq -j ./yello-build.zip ./deploy
+        shell: bash
 
       - name: ⏳ AWS에 연결을 진행합니다.
         uses: aws-actions/configure-aws-credentials@v1
@@ -71,13 +65,13 @@ jobs:
         run: |
           aws s3 cp \
           --region ap-northeast-2 \
-          ./yello-build.zip s3://backend-rex-bucket
+          ./yello-build.zip s3://yello-server-bucket
 
       - name: 📡 CodeDeploy에 배포를 요청합니다.
-        run: aws deploy create-deployment --application-name backend-deploy-group
+        run: aws deploy create-deployment --application-name yello-server-deploy
           --deployment-config-name CodeDeployDefault.OneAtATime
-          --deployment-group-name backend-deploy-group
-          --s3-location bucket=backend-rex-bucket,bundleType=zip,key=yello-build.zip
+          --deployment-group-name yello-app
+          --s3-location bucket=yello-server-bucket,bundleType=zip,key=yello-build.zip
 
       - name: 💡 배포 상태를 Slack을 통해 전송합니다.
         uses: rtCamp/action-slack-notify@v2
