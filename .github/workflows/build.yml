@@ -37,7 +37,7 @@ jobs:
         shell: bash
 
       - name: 🐘 Gradle로 빌드 실행
-        run: ./gradlew bootjar
+        run: ./gradlew build -x test
 
       - name: 💡 배포 상태를 Slack을 통해 전송합니다.
         uses: rtCamp/action-slack-notify@v2
