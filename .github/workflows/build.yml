@@ -21,34 +21,24 @@ jobs:
           distribution: 'zulu'
           cache: gradle
 
-      ## gradle caching
-      - name: 🐘 빌드 속도 향상을 위해 Gradle을 캐싱합니다.
-        uses: actions/cache@v3
-        with:
-          path: |
-            ~/.gradle/caches
-            ~/.gradle/wrapper
-          key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*', '**/gradle-wrapper.properties') }}
-          restore-keys: |
-            ${{ runner.os }}-gradle-
+      - name: 🐘 Gradle에 권한을 부여합니다.
+        run: chmod +x gradlew
+        shell: bash
 
       ## 시크릿 키 설정
       - name: 🔐 application.yml 등 환경 변수를 세팅합니다.
         run: |
-          cd ./src/main
-          mkdir resources
-          cd ./resources
+          echo 
+          mkdir ./src/main/resources
+          cd ./src/main/resources
           touch ./application.yml
-          echo "${{ secrets.APPLICATION }}" > ./application.yml
-        env:
-          APPLICATION: ${{ secrets.APPLICATION }}
+          echo "${{ secrets.APPLICATION }}" >> ./application.yml
+          cat ./application.yml
         shell: bash
 
-      - name: 🐘 Gradle에 권한을 부여합니다.
-        run: chmod +x gradlew
-
       - name: 🐘 Gradle로 빌드를 진행합니다.
-        run: ./gradlew bootjar
+        run: ./gradlew build -x test
+        shell: bash
 
       - name: 💡 배포 상태를 Slack을 통해 전송합니다.
         uses: rtCamp/action-slack-notify@v2
