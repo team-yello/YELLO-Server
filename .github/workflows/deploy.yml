@@ -25,22 +25,15 @@ jobs:
         run: chmod +x gradlew
         shell: bash
 
-      - name: 🐘 빌드 속도 향상을 위해 Gradle을 캐싱합니다.
-        uses: actions/cache@v3
-        with:
-          path: |
-            ~/.gradle/caches
-            ~/.gradle/wrapper
-          key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*', '**/gradle-wrapper.properties') }}
-          restore-keys: |
-            ${{ runner.os }}-gradle-
-
       ## 시크릿 키 설정
       - name: 🔐 application.yml 등 환경 변수를 세팅합니다.
         run: |
-          pwd
-          mkdir -p src/main/resources
-          echo "${{ secrets.APPLICATION }}" >> src/main/resources/application.yml
+          echo 
+          mkdir ./src/main/resources
+          cd ./src/main/resources
+          touch ./application.yml
+          echo "${{ secrets.APPLICATION }}" >> ./application.yml
+          cat ./application.yml
         shell: bash
 
       - name: 🐘 Gradle로 빌드를 진행합니다.
