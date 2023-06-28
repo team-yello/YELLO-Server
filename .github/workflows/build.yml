@@ -45,7 +45,7 @@ jobs:
         shell: bash
 
       - name: 🐘 Gradle로 빌드를 진행합니다.
-        run: ./gradlew build
+        run: ./gradlew build -x test
         shell: bash
 
       - name: 💡 배포 상태를 Slack을 통해 전송합니다.

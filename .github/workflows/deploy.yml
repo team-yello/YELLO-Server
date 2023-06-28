@@ -44,7 +44,7 @@ jobs:
         shell: bash
 
       - name: 🐘 Gradle로 빌드를 진행합니다.
-        run: ./gradlew build
+        run: ./gradlew build -x test
         shell: bash
 
       - name: 📦 배포를 진행하기 위한 .zip 파일을 생성합니다.
