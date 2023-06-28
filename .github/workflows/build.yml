@@ -28,17 +28,16 @@ jobs:
       ## 시크릿 키 설정
       - name: 🔐 application.yml 등 환경 변수를 세팅합니다.
         run: |
-          echo 
-          mkdir ./src/main/resources
-          cd ./src/main/resources
+          cd ./src/main
+          mkdir resources
+          cd ./resources
           touch ./application.yml
           echo "${{ secrets.APPLICATION }}" >> ./application.yml
           cat ./application.yml
         shell: bash
 
-      - name: 🐘 Gradle로 빌드를 진행합니다.
-        run: ./gradlew build -x test
-        shell: bash
+      - name: 🐘 Gradle로 빌드 실행
+        run: ./gradlew bootjar
 
       - name: 💡 배포 상태를 Slack을 통해 전송합니다.
         uses: rtCamp/action-slack-notify@v2
