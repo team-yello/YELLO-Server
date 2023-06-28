@@ -32,7 +32,7 @@ jobs:
         run: |
           mkdir src/main/resources
           touch src/main/resources/application.yml
-          echo ${{ secrets.APPLICATION }} >> ./application.yml
+          echo "${{ secrets.APPLICATION }}" >> src/main/resources/application.yml
         shell: bash
 
       - name: 🐘 Gradle로 빌드 실행
