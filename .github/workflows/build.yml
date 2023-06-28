@@ -13,7 +13,9 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - uses: actions/checkout@v3
+      - name: Checkout
+        uses: actions/checkout@v3
+
       - name: 👉 JDK 17 zulu 버전을 세팅합니다.
         uses: actions/setup-java@v3
         with:
@@ -28,12 +30,9 @@ jobs:
       ## 시크릿 키 설정
       - name: 🔐 application.yml 등 환경 변수를 세팅합니다.
         run: |
-          cd ./src/main
-          mkdir resources
-          cd ./resources
-          touch ./application.yml
-          echo "${{ secrets.APPLICATION }}" >> ./application.yml
-          cat ./application.yml
+          mkdir src/main/resources
+          touch src/main/resources/application.yml
+          echo ${{ secrets.APPLICATION }} >> ./application.yml
         shell: bash
 
       - name: 🐘 Gradle로 빌드 실행
