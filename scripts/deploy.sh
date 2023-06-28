@@ -11,8 +11,8 @@ echo "[배포 시작] $(date +%Y)-$(date +%m)-$(date +%d) $(date +%H):$(date +%M
 if [ -z "$EXIST_BLUE" ]; then
   echo "[BLUE] 배포가 시작됩니다. $(date +%Y)-$(date +%m)-$(date +%d) $(date +%H):$(date +%M):$(date +%S)" >> /home/ec2-user/deploy.log
 	sudo docker-compose -p ${DOCKER_APP_NAME}-blue -f docker-compose.blue.yml up -d --build
-
   sleep 30
+
   BLUE_HEALTH=$(sudo docker-compose -p ${DOCKER_APP_NAME}-blue -f docker-compose.blue.yml ps | grep Up)
   if [ -z "$BLUE_HEALTH" ]; then
     sudo ./slack_blue.sh

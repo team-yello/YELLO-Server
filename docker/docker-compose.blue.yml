@@ -6,3 +6,5 @@ services:
     ports:
       - "8081:80"
     container_name: yello-blue
+    environment:
+      - SPRING_PROFILES_ACTIVE=blue
