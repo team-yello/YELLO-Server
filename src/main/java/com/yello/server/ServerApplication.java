@@ -3,8 +3,12 @@ package com.yello.server;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.data.jpa.repository.config.EnableJpaAuditing;
+
 import org.springframework.context.ConfigurableApplicationContext;
 
+
+@EnableJpaAuditing
 @SpringBootApplication
 public class ServerApplication {
 
@@ -24,5 +28,3 @@ public class ServerApplication {
     }
 
 }
-
-
