@@ -34,7 +34,7 @@ public class Vote extends AuditingTimeEntity {
 
     @ColumnDefault("false")
     @Column(nullable = false)
-    private Boolean inAnswerHint;
+    private Boolean isAnswerRevealed;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "senderId")
@@ -45,12 +45,12 @@ public class Vote extends AuditingTimeEntity {
     private User receiver;
 
     @Builder
-    public Vote(String head, String answer, String foot, Integer nameHint, Boolean inAnswerHint, User sender, User receiver) {
+    public Vote(String head, String answer, String foot, Integer nameHint, Boolean isAnswerRevealed, User sender, User receiver) {
         this.head = head;
         this.answer = answer;
         this.foot = foot;
         this.nameHint = nameHint;
-        this.inAnswerHint = inAnswerHint;
+        this.isAnswerRevealed = isAnswerRevealed;
         this.sender = sender;
         this.receiver = receiver;
     }

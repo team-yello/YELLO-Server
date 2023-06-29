@@ -35,7 +35,7 @@ public class User extends AuditingTimeEntity {
 
     @Column(nullable = false)
     @ColumnDefault("0")
-    private long point;
+    private Integer point;
 
     @Column(nullable = false)
     private String social;
@@ -44,7 +44,7 @@ public class User extends AuditingTimeEntity {
     private String profileImage;
 
     @Column(nullable = false)
-    private long uuid;
+    private String uuid;
 
     @Column(nullable = false)
     private LocalDateTime deletedAt;
@@ -55,7 +55,7 @@ public class User extends AuditingTimeEntity {
 
 
     @Builder
-    public User(Long recommendCount, String name, String yelloId, String sex, long point, String social, String profileImage, long uuid, LocalDateTime deletedAt, School group) {
+    public User(Long recommendCount, String name, String yelloId, String sex, Integer point, String social, String profileImage, String uuid, LocalDateTime deletedAt, School group) {
         this.recommendCount = recommendCount;
         this.name = name;
         this.yelloId = yelloId;
