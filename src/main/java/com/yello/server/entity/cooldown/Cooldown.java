@@ -13,7 +13,6 @@ import java.time.LocalDateTime;
 @Getter
 @Entity
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-@Table(name= "cooldowns")
 public class Cooldown{
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

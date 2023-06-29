@@ -22,10 +22,10 @@ public class School {
     private String departmentName;
 
     @Column(nullable = false)
-    private Long admissionYear;
+    private Integer admissionYear;
 
     @Builder
-    public School(String schoolName, String departmentName, Long admissionYear) {
+    public School(String schoolName, String departmentName, Integer admissionYear) {
         this.schoolName = schoolName;
         this.departmentName = departmentName;
         this.admissionYear = admissionYear;
