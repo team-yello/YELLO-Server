@@ -5,8 +5,7 @@ services:
     image: redis
     ports:
       - "6379:6379"
-    depends_on:
-      - redis
+
 
   backend:
     build: .
@@ -15,3 +14,5 @@ services:
     container_name: yello-blue
     environment:
       - SPRING_PROFILES_ACTIVE=blue
+    depends_on:
+      - redis
