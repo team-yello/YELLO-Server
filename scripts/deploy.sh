@@ -10,8 +10,16 @@ echo "[배포 시작] $(date +%Y)-$(date +%m)-$(date +%d) $(date +%H):$(date +%M
 # GREEN이 실행중이면 BLUE up
 if [ -z "$EXIST_BLUE" ]; then
   echo "[BLUE] 배포가 시작됩니다. $(date +%Y)-$(date +%m)-$(date +%d) $(date +%H):$(date +%M):$(date +%S)" >> /home/ec2-user/deploy.log
-	sudo docker-compose -p ${DOCKER_APP_NAME}-blue -f docker-compose.blue.yml up -d --build
-  sleep 30
+  # Redis 컨테이너 실행 여부 확인
+  REDIS_HEALTH=$(sudo docker-compose -p ${DOCKER_APP_NAME}-blue -f docker-compose.blue.yml ps -q redis)
+  if [ -z "$REDIS_HEALTH" ]; then
+    # Redis 컨테이너 실행
+    sudo docker-compose -p ${DOCKER_APP_NAME}-blue -f docker-compose.blue.yml up -d --build redis
+  fi
+
+  # 나머지 컨테이너 실행
+  sudo docker-compose -p ${DOCKER_APP_NAME}-blue -f docker-compose.blue.yml up -d --build
+  sleep 50
 
   BLUE_HEALTH=$(sudo docker-compose -p ${DOCKER_APP_NAME}-blue -f docker-compose.blue.yml ps | grep Up)
   if [ -z "$BLUE_HEALTH" ]; then
@@ -25,9 +33,17 @@ if [ -z "$EXIST_BLUE" ]; then
 
 # BLUE가 실행중이면 GREEN up
 else
-	echo "[GREEN] 배포가 시작됩니다. $(date +%Y)-$(date +%m)-$(date +%d) $(date +%H):$(date +%M):$(date +%S)" >> /home/ec2-user/deploy.log
-	sudo docker-compose -p ${DOCKER_APP_NAME}-green -f docker-compose.green.yml up -d --build
-  sleep 30
+  echo "[GREEN] 배포가 시작됩니다. $(date +%Y)-$(date +%m)-$(date +%d) $(date +%H):$(date +%M):$(date +%S)" >> /home/ec2-user/deploy.log
+  # Redis 컨테이너 실행 여부 확인
+  REDIS_HEALTH=$(sudo docker-compose -p ${DOCKER_APP_NAME}-green -f docker-compose.green.yml ps -q redis)
+  if [ -z "$REDIS_HEALTH" ]; then
+    # Redis 컨테이너 실행
+    sudo docker-compose -p ${DOCKER_APP_NAME}-green -f docker-compose.green.yml up -d --build redis
+  fi
+
+  # 나머지 컨테이너 실행
+  sudo docker-compose -p ${DOCKER_APP_NAME}-green -f docker-compose.green.yml up -d --build
+  sleep 50
 
   GREEN_HEALTH=$(sudo docker-compose -p ${DOCKER_APP_NAME}-green -f docker-compose.green.yml ps | grep Up)
 
@@ -40,7 +56,7 @@ else
     echo "[BLUE] 서버를 종료했습니다. $(date +%Y)-$(date +%m)-$(date +%d) $(date +%H):$(date +%M):$(date +%S)" >> /home/ec2-user/deploy.log
   fi
 fi
-  echo "[배포 종료] $(date +%Y)-$(date +%m)-$(date +%d) $(date +%H):$(date +%M):$(date +%S)" >> /home/ec2-user/deploy.log
 
-  echo "===================== 배포 완료 =====================" >> /home/ec2-user/deploy.log
-  echo >> /home/ec2-user/deploy.log
+echo "[배포 종료] $(date +%Y)-$(date +%m)-$(date +%d) $(date +%H):$(date +%M):$(date +%S)" >> /home/ec2-user/deploy.log
+echo "===================== 배포 완료 =====================" >> /home/ec2-user/deploy.log
+echo >> /home/ec2-user/deploy.log
