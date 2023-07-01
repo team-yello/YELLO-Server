@@ -11,7 +11,7 @@ services:
     ports:
       - "8082:80"
     container_name: yello-green
-    depends_on:
-      - redis
     environment:
       - SPRING_PROFILES_ACTIVE=green
+    depends_on:
+      - redis

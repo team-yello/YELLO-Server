@@ -30,9 +30,7 @@ jobs:
       ## 시크릿 키 설정
       - name: 🔐 application.yml 등 환경 변수를 세팅합니다.
         run: |
-          cd ./src/main
-          mkdir resources
-          cd ./resources
+          cd ./src/main/resources
           touch ./application.yml
           echo "$APPLICATION" > ./application.yml
         env:
