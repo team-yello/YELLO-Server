@@ -2,19 +2,28 @@ package com.yello.server.domain.user.entity;
 
 import com.yello.server.domain.group.entity.School;
 import com.yello.server.global.common.dto.AuditingTimeEntity;
+import java.time.LocalDateTime;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
+import javax.persistence.FetchType;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.ColumnDefault;
 
-import javax.persistence.*;
-import java.time.LocalDateTime;
-
 @Getter
 @Entity
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class User extends AuditingTimeEntity {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column
@@ -31,14 +40,16 @@ public class User extends AuditingTimeEntity {
     private String yelloId;
 
     @Column(nullable = false)
-    private String sex;
+    @Enumerated(EnumType.STRING)
+    private Gender gender;
 
     @Column(nullable = false)
     @ColumnDefault("0")
     private Integer point;
 
     @Column(nullable = false)
-    private String social;
+    @Enumerated(EnumType.STRING)
+    private Social social;
 
     @Column
     private String profileImage;
@@ -55,11 +66,12 @@ public class User extends AuditingTimeEntity {
 
 
     @Builder
-    public User(Long recommendCount, String name, String yelloId, String sex, Integer point, String social, String profileImage, String uuid, LocalDateTime deletedAt, School group) {
+    public User(Long recommendCount, String name, String yelloId, Gender gender, Integer point, Social social,
+        String profileImage, String uuid, LocalDateTime deletedAt, School group) {
         this.recommendCount = recommendCount;
         this.name = name;
         this.yelloId = yelloId;
-        this.sex = sex;
+        this.gender = gender;
         this.point = point;
         this.social = social;
         this.profileImage = profileImage;
