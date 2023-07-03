@@ -5,7 +5,6 @@ import com.yello.server.domain.vote.dto.response.VoteFriendResponse;
 import com.yello.server.domain.vote.dto.response.VoteResponse;
 import com.yello.server.domain.vote.entity.VoteRepository;
 import java.util.List;
-import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -23,7 +22,7 @@ public class VoteServiceImpl implements VoteService {
         return voteRepository.findAll(pageable)
             .stream()
             .map(VoteResponse::of)
-            .collect(Collectors.toList());
+            .toList();
     }
 
     @Override
