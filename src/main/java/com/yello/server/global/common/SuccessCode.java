@@ -9,6 +9,11 @@ import org.springframework.http.HttpStatus;
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
 public enum SuccessCode {
     /**
+     * 200 OK
+     */
+    READ_VOTE_SUCCESS(HttpStatus.OK, "투표 조회에 성공했습니다."),
+
+    /**
      * 201 CREATED
      */
     SIGNUP_SUCCESS(HttpStatus.CREATED, "회원가입이 완료됐습니다."),

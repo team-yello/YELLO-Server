@@ -54,7 +54,7 @@ dependencies {
 //    implementation group: 'org.springframework.cloud', name: 'spring-cloud-starter-aws', version: '2.2.6.RELEASE'
 
     // Swagger
-    implementation 'org.springdoc:springdoc-openapi-ui:1.6.9'
+    implementation 'org.springdoc:springdoc-openapi-ui:1.6.11'
 
     //
     implementation 'com.github.gavlyukovskiy:p6spy-spring-boot-starter:1.5.7'
