@@ -14,7 +14,7 @@ public record VoteFriendResponse(
     @Schema(description = "친구 프로필 이미지")
     String friendProfileImage,
 
-    @Schema(description = "투표를 작성한 유저의 성별")
+    @Schema(description = "투표를 보낸 유저의 성별", example = "MALE")
     String senderGender,
 
     @Schema(description = "투표의 전체 문장", example = "나는 너랑 한강에서 ??? 하고 싶어")
@@ -28,7 +28,7 @@ public record VoteFriendResponse(
         return VoteFriendResponse.builder()
             .friendName(vote.getReceiver().getName())
             .friendProfileImage(vote.getReceiver().getProfileImage())
-            .senderGender(vote.getSender().getGender().intial())
+            .senderGender(vote.getSender().getGender().name())
             .voteSentence(VoteContentVO.toSentence(vote))
             .createdAt(toFormattedString(vote.getCreatedAt()))
             .build();
