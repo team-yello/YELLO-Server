@@ -57,7 +57,7 @@ public class User extends AuditingTimeEntity {
     @Column(nullable = false)
     private String uuid;
 
-    @Column(nullable = false)
+    @Column
     private LocalDateTime deletedAt;
 
     @ManyToOne(fetch = FetchType.LAZY)
