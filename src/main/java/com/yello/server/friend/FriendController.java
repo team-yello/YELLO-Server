@@ -1,4 +1,4 @@
-package com.yello.server.domain.friend.controller;
+package com.yello.server.friend;
 
 import com.yello.server.domain.friend.service.FriendServiceImpl;
 import com.yello.server.domain.vote.dto.response.VoteResponse;
