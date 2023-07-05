@@ -22,4 +22,5 @@ public enum Social {
                 .findAny()
                 .orElseThrow(() -> new IllegalArgumentException(String.format("존재하지 않는 social 입니다.", dbData)));
     }
+
 }
