@@ -1,13 +1,10 @@
-package com.yello.server.friend;
+package com.yello.server.domain.friend.controller;
 
 import com.yello.server.domain.friend.service.FriendServiceImpl;
-import com.yello.server.domain.vote.dto.response.VoteResponse;
 import com.yello.server.global.common.dto.BaseResponse;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
-import io.swagger.v3.oas.annotations.media.ArraySchema;
 import io.swagger.v3.oas.annotations.media.Content;
-import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
@@ -18,7 +15,7 @@ import javax.validation.Valid;
 
 import static com.yello.server.global.common.SuccessCode.ADD_FRIEND_SUCCESS;
 
-@Tag(name = "01. Friend")
+@Tag(name = "02. Friend")
 @RestController
 @RequestMapping("/friend")
 @RequiredArgsConstructor

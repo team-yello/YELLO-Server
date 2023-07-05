@@ -20,6 +20,6 @@ public enum Social {
         return Arrays.stream(Social.values())
                 .filter(v -> v.getIntial().equals(dbData))
                 .findAny()
-                .orElseThrow(() -> new IllegalArgumentException(String.format("존재하지 않는 성별입니다.", dbData)));
+                .orElseThrow(() -> new IllegalArgumentException(String.format("존재하지 않는 social 입니다.", dbData)));
     }
 }
