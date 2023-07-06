@@ -3,6 +3,7 @@ package com.yello.server.domain.vote.controller;
 import static com.yello.server.global.common.SuccessCode.READ_VOTE_SUCCESS;
 import static com.yello.server.global.common.util.ConstantUtil.PAGE_LIMIT;
 
+import com.yello.server.domain.vote.dto.response.VoteDetailResponse;
 import com.yello.server.domain.vote.dto.response.VoteResponse;
 import com.yello.server.domain.vote.service.VoteServiceImpl;
 import com.yello.server.global.common.dto.BaseResponse;
@@ -19,13 +20,14 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 @Tag(name = "01. Vote")
 @RestController
-@RequestMapping("/api/v1/vote")
+@RequestMapping("api/v1/vote")
 @RequiredArgsConstructor
 public class VoteController {
 
@@ -42,6 +44,17 @@ public class VoteController {
         @RequestParam Integer page) {
         Pageable pageable = PageRequest.of(page, PAGE_LIMIT);
         val data = voteService.findAllVotes(pageable);
+        return ResponseEntity.ok(BaseResponse.success(READ_VOTE_SUCCESS, data));
+    }
+
+    @Operation(summary = "투표 상세 조회 API", responses = {
+        @ApiResponse(
+            responseCode = "200",
+            content = @Content(mediaType = "application/json", schema = @Schema(implementation = VoteDetailResponse.class))),
+    })
+    @GetMapping("/{voteId}")
+    public ResponseEntity<BaseResponse> findVote(@PathVariable Long voteId) {
+        val data = voteService.findVoteById(voteId);
         return ResponseEntity.ok(BaseResponse.success(READ_VOTE_SUCCESS, data));
     }
 }

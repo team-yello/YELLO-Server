@@ -1,5 +1,6 @@
 package com.yello.server.domain.vote.entity;
 
+import com.yello.server.domain.question.entity.Question;
 import com.yello.server.domain.user.entity.User;
 import com.yello.server.global.common.dto.AuditingTimeEntity;
 import javax.persistence.Column;
@@ -26,13 +27,7 @@ public class Vote extends AuditingTimeEntity {
     private Long id;
 
     @Column(nullable = false)
-    private String head;
-
-    @Column(nullable = false)
     private String answer;
-
-    @Column(nullable = false)
-    private String foot;
 
     @ColumnDefault("-1")
     @Column(nullable = false)
@@ -51,20 +46,26 @@ public class Vote extends AuditingTimeEntity {
     private User sender;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "receiver")
+    @JoinColumn(name = "receiverId")
     private User receiver;
 
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "questionId")
+    private Question question;
+
+    @ColumnDefault("false")
+    @Column(nullable = false)
+    private Integer colorIndex;
+
     @Builder
-    public Vote(String head, String answer, String foot, Integer nameHint, Boolean isAnswerRevealed, Boolean isRead,
-        User sender,
-        User receiver) {
-        this.head = head;
+    public Vote(String answer, Integer nameHint, Boolean isAnswerRevealed, Boolean isRead, User sender, User receiver, Question question, Integer colorIndex) {
         this.answer = answer;
-        this.foot = foot;
         this.nameHint = nameHint;
         this.isAnswerRevealed = isAnswerRevealed;
         this.isRead = isRead;
         this.sender = sender;
         this.receiver = receiver;
+        this.question = question;
+        this.colorIndex = colorIndex;
     }
 }

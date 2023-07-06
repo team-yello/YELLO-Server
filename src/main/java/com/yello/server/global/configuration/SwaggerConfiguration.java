@@ -19,6 +19,7 @@ import org.springframework.context.annotation.Configuration;
     ),
     tags = {
         @Tag(name = "01. Vote", description = "투표(Yello) API"),
+            @Tag(name = "02. Friend", description = "친구 API"),
     }
 )
 @RequiredArgsConstructor
