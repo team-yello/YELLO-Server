@@ -2,8 +2,10 @@ package com.yello.server.friend;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
+import com.yello.server.domain.friend.dto.response.FriendShuffleResponse;
 import com.yello.server.domain.friend.entity.Friend;
 import com.yello.server.domain.friend.entity.FriendRepository;
+import com.yello.server.domain.friend.service.FriendService;
 import com.yello.server.domain.group.entity.School;
 import com.yello.server.domain.group.entity.SchoolRepository;
 import com.yello.server.domain.user.entity.Gender;
@@ -31,6 +33,8 @@ class FriendControllerTest {
     FriendRepository friendRepository;
     @Autowired
     SchoolRepository schoolRepository;
+    @Autowired
+    FriendService friendService;
 
     @Test
     @DisplayName("친구 생성에 성공합니다.")
@@ -70,9 +74,39 @@ class FriendControllerTest {
         assertThat(friends.size()).isEqualTo(2);
     }
 
+    @Test
+    @DisplayName("셔플로 랜덤 친구를 조회합니다.")
+    void shuffleFriend(){
+        // given
+        School group = schoolRepository.save(new School("솝트", "서버", 32));
+        User user = createNewUser(1L, "현정", "hj_p", Gender.FEMALE, group);
+        User friendA = createNewUser(2L, "세훈", "훈세", Gender.MALE, group);
+        User friendB = createNewUser(3L, "의제", "제의", Gender.MALE, group);
+        User friendC = createNewUser(4L, "의제", "제의", Gender.MALE, group);
+        User friendD = createNewUser(5L, "의제", "제의", Gender.MALE, group);
+        User friendE = createNewUser(6L, "의제", "제의", Gender.MALE, group);
+        User friendF = createNewUser(6L, "의제", "제의", Gender.MALE, group);
+
+        // when
+        friendRepository.save(Friend.createFriend(user, friendA));
+        friendRepository.save(Friend.createFriend(user, friendB));
+        friendRepository.save(Friend.createFriend(user, friendC));
+        friendRepository.save(Friend.createFriend(user, friendD));
+        friendRepository.save(Friend.createFriend(user, friendE));
+        friendRepository.save(Friend.createFriend(user, friendF));
+
+        List<FriendShuffleResponse> friendShuffleResponses = friendService.shuffleFriend(user.getId());
+
+        // then
+        assertThat(friendShuffleResponses.size()).isEqualTo(4);
+
+    }
+
     private User createNewUser(Long id, String name, String yelloId, Gender gender, School group) {
         return userRepository.save(
             new User(id, name, yelloId, gender, 0, Social.KAKAO, "profileImageUrl", "uuid", LocalDateTime.now(),
                 group));
     }
+
+
 }

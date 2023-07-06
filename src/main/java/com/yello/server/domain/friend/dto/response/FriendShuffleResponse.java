@@ -3,7 +3,6 @@ package com.yello.server.domain.friend.dto.response;
 import lombok.Builder;
 import lombok.Data;
 
-@Data
 public record FriendShuffleResponse(
         Long friendId,
         String friendName
