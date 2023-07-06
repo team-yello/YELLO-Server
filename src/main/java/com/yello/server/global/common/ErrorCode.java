@@ -15,6 +15,10 @@ public enum ErrorCode {
      */
     REQUEST_VALIDATION_EXCEPTION(HttpStatus.BAD_REQUEST, "잘못된 요청입니다"),
 
+    //friend
+    FRIEND_COUNT_LACK_EXCEPTION(HttpStatus.BAD_REQUEST, "친구가 4명 이하입니다."),
+    EXIST_FRIEND_EXCEPTION(HttpStatus.BAD_REQUEST, "이미 존재하는 친구입니다."),
+
     /**
      * 404 NOT FOUND
      */
