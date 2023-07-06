@@ -15,9 +15,11 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
-import java.util.Random;
 import java.util.stream.Collectors;
+
+import static com.yello.server.global.common.util.ConstantUtil.RANDOM_COUNT;
 
 @Service
 @RequiredArgsConstructor
@@ -64,34 +66,16 @@ public class FriendServiceImpl implements FriendService {
 
         List<Friend> allFriends = friendRepository.findAllByUser(user);
 
-        if(allFriends.size() < 4) {
-            throw new FriendException(ErrorCode.FRIEND_NUM_LACK_EXCEPTION, ErrorCode.FRIEND_NUM_LACK_EXCEPTION.getMessage());
+        if (allFriends.size() < RANDOM_COUNT) {
+            throw new FriendException(ErrorCode.FRIEND_COUNT_LACK_EXCEPTION, ErrorCode.FRIEND_COUNT_LACK_EXCEPTION.getMessage());
         }
 
-        Random r = new Random();
-        int randomList[] = new int[4];
+        Collections.shuffle(allFriends);
+        List<FriendShuffleResponse> randomFriend = allFriends.stream()
+                .map(f -> new FriendShuffleResponse(f.getTarget().getId(), f.getTarget().getName()))
+                .limit(RANDOM_COUNT)
+                .collect(Collectors.toList());
 
-        // 중복 없이 random 배열 생성
-        for (int i = 0; i < 4; i++) {
-            randomList[i] = r.nextInt(allFriends.size());
-
-            for (int j = 0; j < i; j++) {
-                if (randomList[i] == randomList[j]) {
-                    i--;
-                }
-            }
-        }
-
-        List<FriendShuffleResponse> friendList = new ArrayList<>();
-
-        for (int randomNumber : randomList) {
-            Friend friend = allFriends.get(randomNumber);
-
-            friendList.add(FriendShuffleResponse.builder()
-                    .friendId(friend.getTarget().getId())
-                    .friendName(friend.getTarget().getName())
-                    .build());
-        }
-        return friendList;
+        return randomFriend;
     }
 }

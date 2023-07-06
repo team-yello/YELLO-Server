@@ -1,7 +1,5 @@
 package com.yello.server.friend;
 
-import static org.assertj.core.api.Assertions.assertThat;
-
 import com.yello.server.domain.friend.dto.response.FriendShuffleResponse;
 import com.yello.server.domain.friend.entity.Friend;
 import com.yello.server.domain.friend.entity.FriendRepository;
@@ -13,14 +11,17 @@ import com.yello.server.domain.user.entity.Social;
 import com.yello.server.domain.user.entity.User;
 import com.yello.server.domain.user.entity.UserRepository;
 import com.yello.server.global.common.util.PaginationUtil;
-import java.time.LocalDateTime;
-import java.util.List;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.time.LocalDateTime;
+import java.util.List;
+
+import static org.assertj.core.api.Assertions.assertThat;
 
 
 @SpringBootTest
@@ -67,8 +68,8 @@ class FriendControllerTest {
         friendRepository.save(Friend.createFriend(user, friendB));
 
         List<Friend> friends = friendRepository.findAllFriendsByUserId(pageable, user.getId())
-            .stream()
-            .toList();
+                .stream()
+                .toList();
 
         // then
         assertThat(friends.size()).isEqualTo(2);
@@ -76,7 +77,7 @@ class FriendControllerTest {
 
     @Test
     @DisplayName("셔플로 랜덤 친구를 조회합니다.")
-    void shuffleFriend(){
+    void shuffleFriend() {
         // given
         School group = schoolRepository.save(new School("솝트", "서버", 32));
         User user = createNewUser(1L, "현정", "hj_p", Gender.FEMALE, group);
@@ -88,12 +89,12 @@ class FriendControllerTest {
         User friendF = createNewUser(6L, "의제", "제의", Gender.MALE, group);
 
         // when
-        friendRepository.save(Friend.createFriend(user, friendA));
-        friendRepository.save(Friend.createFriend(user, friendB));
-        friendRepository.save(Friend.createFriend(user, friendC));
-        friendRepository.save(Friend.createFriend(user, friendD));
-        friendRepository.save(Friend.createFriend(user, friendE));
-        friendRepository.save(Friend.createFriend(user, friendF));
+        createNewFriend(user, friendA);
+        createNewFriend(user, friendB);
+        createNewFriend(user, friendC);
+        createNewFriend(user, friendD);
+        createNewFriend(user, friendE);
+        createNewFriend(user, friendF);
 
         List<FriendShuffleResponse> friendShuffleResponses = friendService.shuffleFriend(user.getId());
 
@@ -104,8 +105,12 @@ class FriendControllerTest {
 
     private User createNewUser(Long id, String name, String yelloId, Gender gender, School group) {
         return userRepository.save(
-            new User(id, name, yelloId, gender, 0, Social.KAKAO, "profileImageUrl", "uuid", LocalDateTime.now(),
-                group));
+                new User(id, name, yelloId, gender, 0, Social.KAKAO, "profileImageUrl", "uuid", LocalDateTime.now(),
+                        group));
+    }
+
+    private void createNewFriend(User user, User friend) {
+        friendRepository.save(Friend.createFriend(user, friend));
     }
 
 
