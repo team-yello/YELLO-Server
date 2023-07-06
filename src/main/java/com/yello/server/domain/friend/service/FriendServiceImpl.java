@@ -42,8 +42,8 @@ public class FriendServiceImpl implements FriendService {
     @Override
     public void addFriend(Long userId, Long targetId) {
 
-        User target = userRepository.findById(targetId).get(); // orElse 처리하기
-        User user = userRepository.findById(userId).get();
+        User target = userRepository.findById(targetId).orElseThrow(() -> new UserException(ErrorCode.NOT_FOUND_USER_EXCEPTION, ErrorCode.NOT_FOUND_USER_EXCEPTION.getMessage()));
+        User user = userRepository.findById(userId).orElseThrow(() -> new UserException(ErrorCode.NOT_FOUND_USER_EXCEPTION, ErrorCode.NOT_FOUND_USER_EXCEPTION.getMessage()));
 
         Friend friendData = friendRepository.findByFollowingAndFollower(userId, targetId);
 
