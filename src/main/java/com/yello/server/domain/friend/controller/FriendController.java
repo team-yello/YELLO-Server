@@ -38,4 +38,6 @@ public class FriendController {
         friendService.addFriend(userId, friendId);
         return ResponseEntity.ok(BaseResponse.success(ADD_FRIEND_SUCCESS));
     }
+
+
 }
