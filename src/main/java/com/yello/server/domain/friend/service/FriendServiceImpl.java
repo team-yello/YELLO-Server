@@ -71,11 +71,10 @@ public class FriendServiceImpl implements FriendService {
         }
 
         Collections.shuffle(allFriends);
-        List<FriendShuffleResponse> randomFriend = allFriends.stream()
+
+        return allFriends.stream()
                 .map(f -> new FriendShuffleResponse(f.getTarget().getId(), f.getTarget().getName()))
                 .limit(RANDOM_COUNT)
                 .collect(Collectors.toList());
-
-        return randomFriend;
     }
 }
