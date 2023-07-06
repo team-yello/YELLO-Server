@@ -37,12 +37,12 @@ public class FriendController {
             )
     })
     @PostMapping("/{targetId}")
-    public ResponseEntity<BaseResponse> addFriend(
+    public BaseResponse addFriend(
             @Parameter(name = "targetId", description = "친구 신청할 상대 유저의 아이디 값 입니다.")
             @Valid @PathVariable Long targetId,
             @RequestHeader("user-id") @Valid Long userId) {
         friendService.addFriend(userId, targetId);
-        return ResponseEntity.ok(BaseResponse.success(ADD_FRIEND_SUCCESS));
+        return BaseResponse.success(ADD_FRIEND_SUCCESS);
     }
 
     @Operation(summary = "내 친구 전체 조회 API", responses = {
