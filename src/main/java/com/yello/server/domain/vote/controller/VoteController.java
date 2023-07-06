@@ -5,7 +5,7 @@ import static com.yello.server.global.common.util.ConstantUtil.PAGE_LIMIT;
 
 import com.yello.server.domain.vote.dto.response.VoteDetailResponse;
 import com.yello.server.domain.vote.dto.response.VoteResponse;
-import com.yello.server.domain.vote.service.VoteServiceImpl;
+import com.yello.server.domain.vote.service.VoteService;
 import com.yello.server.global.common.dto.BaseResponse;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -31,7 +31,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RequiredArgsConstructor
 public class VoteController {
 
-    private final VoteServiceImpl voteService;
+    private final VoteService voteService;
 
     @Operation(summary = "내 투표 전체 조회 API", responses = {
         @ApiResponse(
