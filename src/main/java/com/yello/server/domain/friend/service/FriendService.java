@@ -1,7 +1,11 @@
 package com.yello.server.domain.friend.service;
 
-import org.springframework.transaction.annotation.Transactional;
+import com.yello.server.domain.friend.dto.FriendsResponse;
+import org.springframework.data.domain.Pageable;
 
 public interface FriendService {
-    void addFriend(Long userId, Long friendId);
+
+    FriendsResponse findAllFriends(Pageable pageable, Long userId);
+
+    void addFriend(Long userId, Long targetId);
 }
