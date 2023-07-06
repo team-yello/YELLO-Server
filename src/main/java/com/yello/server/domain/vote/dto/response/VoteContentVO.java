@@ -18,13 +18,13 @@ public record VoteContentVO(
 
     static VoteContentVO of(Vote vote) {
         return VoteContentVO.builder()
-            .head(vote.getHead())
+            .head(vote.getQuestion().getNameHead())
             .answer(vote.getIsAnswerRevealed() ? vote.getAnswer() : "")
-            .foot(vote.getFoot())
+            .foot(vote.getQuestion().getNameFoot())
             .build();
     }
 
     static String toSentence(Vote vote) {
-        return vote.getHead() + "???" + vote.getFoot();
+        return vote.getQuestion().getNameHead() + "???" + vote.getQuestion().getNameHead();
     }
 }

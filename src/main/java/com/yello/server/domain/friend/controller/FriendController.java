@@ -17,7 +17,7 @@ import static com.yello.server.global.common.SuccessCode.ADD_FRIEND_SUCCESS;
 
 @Tag(name = "02. Friend")
 @RestController
-@RequestMapping("/friend")
+@RequestMapping("/api/v1/friend")
 @RequiredArgsConstructor
 public class FriendController {
     private final FriendServiceImpl friendService;
