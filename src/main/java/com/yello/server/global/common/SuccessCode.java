@@ -12,6 +12,7 @@ public enum SuccessCode {
      * 200 OK
      */
     READ_VOTE_SUCCESS(HttpStatus.OK, "투표 조회에 성공했습니다."),
+    ADD_FRIEND_SUCCESS(HttpStatus.OK, "친구 추가에 성공했습니다."),
 
     /**
      * 201 CREATED

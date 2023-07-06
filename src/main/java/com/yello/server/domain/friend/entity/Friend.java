@@ -3,6 +3,7 @@ package com.yello.server.domain.friend.entity;
 import com.yello.server.domain.user.entity.User;
 import com.yello.server.global.common.dto.AuditingTimeEntity;
 import lombok.AccessLevel;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -24,4 +25,13 @@ public class Friend extends AuditingTimeEntity {
     @JoinColumn(name = "followingId")
     private User following;
 
+    @Builder
+    public Friend(User follower, User following) {
+        this.follower = follower;
+        this.following = following;
+    }
+
+    public static Friend newFriend(User follower, User following) {
+        return new Friend(follower, following);
+    }
 }
