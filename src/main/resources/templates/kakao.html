@@ -1,0 +1,108 @@
+<!doctype html>
+<html xmlns:th="http://www.thymeleaf.org" lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+    <title>카카오 로그인 데모</title>
+    <script th:inline="javascript">
+        const KAKAO_REST_KEY = [[${kakaoWebKey}]];
+        let KAKAO_REDIRECT_URL = [[${kakaoRedirectUrl}]];
+
+        const KAKAO_AUTH_CODE_URL = "https://kauth.kakao.com/oauth/authorize";
+        const KAKAO_TOKEN = "https://kauth.kakao.com/oauth/token";
+        const KAKAO_FRIENDS = "https://kapi.kakao.com/v1/api/talk/friends";
+
+        let kakaoAccessToken;
+        let kakaoRefreshToken;
+        let kakaoFriendList = [];
+
+        const renderList = () => {
+
+        };
+
+        const serviceLogin = (accessToken, social) => {
+            axios.post("http://localhost/api/v1/auth/oauth", {
+                accessToken: kakaoAccessToken,
+                social: social
+            }, {
+                headers: {
+                    "Content-type": "application/json"
+                }
+            })
+                .then((res) => {
+                    console.log(res);
+                })
+        }
+
+        const kakaoLogin = () => {
+            window.location.href = KAKAO_AUTH_CODE_URL.concat(`?client_id=${KAKAO_REST_KEY}&redirect_uri=${KAKAO_REDIRECT_URL}&response_type=code`);
+        };
+
+        const kakaoToken = (kakaoCode, kakaoRestKey, kakaoRedirectUrl) => {
+            axios.post(KAKAO_TOKEN, {
+                grant_type: "authorization_code",
+                client_id: kakaoRestKey,
+                redirect_uri: kakaoRedirectUrl,
+                code: kakaoCode
+            }, {
+                headers: {
+                    "Content-type": "application/x-www-form-urlencoded;charset=utf-8"
+                }
+            })
+                .then((res) => {
+                    console.log(res);
+                    kakaoAccessToken = res.data.access_token;
+                    kakaoRefreshToken = res.data.refresh_token;
+                })
+                .then((res) => {
+                    serviceLogin(kakaoAccessToken, "kakao");
+                });
+        }
+
+        const kakaoFriends = () => {
+            axios.get(KAKAO_FRIENDS, {
+                headers: {
+                    Authorization: `Bearer ${kakaoAccessToken}`
+                }
+            })
+                .then((res) => {
+                    console.log(res);
+
+                    kakaoFriendList.concat(res.data.elements);
+                    renderList();
+                })
+                .catch((reason) => {
+                    console.log(reason);
+
+                    // 사용자 동의 부족
+                    if(reason.response.data.code === -402) {
+                        window.location.href = KAKAO_AUTH_CODE_URL.concat(`?client_id=${KAKAO_REST_KEY}&redirect_uri=${KAKAO_REDIRECT_URL}&response_type=code&scope=friends`);
+                    }
+                })
+        }
+
+        window.addEventListener('DOMContentLoaded', () => {
+            const parsedUrl = new URL(window.location.href);
+            const kakaoCode = parsedUrl.searchParams.get("code");
+            console.log(kakaoCode);
+
+            if (kakaoCode !== undefined || kakaoCode !== null) {
+                kakaoToken(kakaoCode, KAKAO_REST_KEY, KAKAO_REDIRECT_URL);
+            }
+
+            KAKAO_REDIRECT_URL = KAKAO_REDIRECT_URL.replace("\\", "");
+            console.log(KAKAO_REDIRECT_URL);
+        });
+    </script>
+</head>
+<body>
+    <button style="background-color: yellow; width: 200px; height: 100px" onclick="kakaoLogin()">카카오 로그인 하기</button>
+    <button style="background-color: yellow; width: 200px; height: 100px" onclick="kakaoFriends()">카카오 친구 목록 불러오기</button>
+
+
+    <div id="friends"></div>
+</body>
+</html>
