@@ -6,7 +6,7 @@ import java.util.Date;
 import java.util.Map;
 
 import com.google.common.collect.ImmutableMap;
-import com.yello.server.global.exception.ConflictException;
+import com.yello.server.global.exception.CustomException;
 import com.yello.server.global.security.AccessUserService;
 import com.yello.server.global.security.AppUser;
 import lombok.AllArgsConstructor;
@@ -168,7 +168,7 @@ public class AuthTokenProvider {
             return true;
         } catch (ExpiredJwtException e) {
             log.error("The given token[{}] has been expired", token);
-            throw new ConflictException(TOKEN_TIME_EXPIRED_EXCEPTION, "토큰이 만료되었습니다");
+            throw new CustomException(TOKEN_TIME_EXPIRED_EXCEPTION, "토큰이 만료되었습니다");
         } catch (Exception e) {
             log.error("The given token[{}] is not valid - {}", token, e.getMessage());
             return false;

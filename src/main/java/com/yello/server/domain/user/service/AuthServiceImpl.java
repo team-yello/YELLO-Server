@@ -11,8 +11,7 @@ import com.yello.server.domain.user.entity.User;
 import com.yello.server.domain.user.entity.UserRepository;
 import com.yello.server.domain.user.util.AuthTokenProvider;
 import com.yello.server.global.common.ErrorCode;
-import com.yello.server.global.exception.BadRequestException;
-import com.yello.server.global.exception.NotFoundException;
+import com.yello.server.global.exception.CustomException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.redis.core.ValueOperations;
 import org.springframework.http.HttpHeaders;
@@ -25,7 +24,6 @@ import org.springframework.web.reactive.function.client.WebClient;
 
 import javax.servlet.http.HttpServletRequest;
 import java.time.LocalDateTime;
-import java.util.Date;
 import java.util.Map;
 import java.util.Optional;
 
@@ -59,7 +57,7 @@ public class AuthServiceImpl implements AuthService {
 
         // https://developers.kakao.com/docs/latest/ko/kakaologin/rest-api#get-token-info
         if(response.getStatusCode() == HttpStatus.BAD_REQUEST || response.getStatusCode() == HttpStatus.UNAUTHORIZED)
-            throw new BadRequestException(ErrorCode.KAKAO_TOKEN_EXCEPTION, ErrorCode.KAKAO_TOKEN_EXCEPTION.getMessage());
+            throw new CustomException(ErrorCode.KAKAO_TOKEN_EXCEPTION, ErrorCode.KAKAO_TOKEN_EXCEPTION.getMessage());
 
         Optional<User> user = userRepository.findByUuid(String.valueOf(response.getBody().id()));
 
@@ -94,11 +92,11 @@ public class AuthServiceImpl implements AuthService {
         String accessToken = request.getHeader(HttpHeaders.AUTHORIZATION);
 
         if(!authTokenProvider.validateToken(accessToken))
-            throw new BadRequestException(ErrorCode.TOKEN_EXPIRED_EXCEPTION, ErrorCode.TOKEN_EXPIRED_EXCEPTION.getMessage());
+            throw new CustomException(ErrorCode.TOKEN_EXPIRED_EXCEPTION, ErrorCode.TOKEN_EXPIRED_EXCEPTION.getMessage());
 
         Long userId = authTokenProvider.parseAccessToken(accessToken).id();
         User user = userRepository.findById(userId)
-                .orElseThrow(() -> new NotFoundException(ErrorCode.NOT_FOUND_USER_EXCEPTION, ErrorCode.NOT_FOUND_USER_EXCEPTION.getMessage()));
+                .orElseThrow(() -> new CustomException(ErrorCode.NOT_FOUND_USER_EXCEPTION, ErrorCode.NOT_FOUND_USER_EXCEPTION.getMessage()));
 
         return UserInfoResponse.of(user);
     }

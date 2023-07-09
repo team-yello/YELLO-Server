@@ -3,7 +3,7 @@ package com.yello.server.global.security;
 import com.yello.server.domain.user.dto.response.ServiceTokenVO;
 import com.yello.server.domain.user.entity.User;
 import com.yello.server.domain.user.entity.UserRepository;
-import com.yello.server.global.exception.NotFoundException;
+import com.yello.server.global.exception.CustomException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.redis.core.ValueOperations;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -24,7 +24,7 @@ public class AccessUserService implements UserDetailsService {
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
         User account = userRepository.findAllByName(username)
-                .orElseThrow(() -> new NotFoundException(NOT_FOUND_USER_EXCEPTION, NOT_FOUND_USER_EXCEPTION.getMessage()));
+                .orElseThrow(() -> new CustomException(NOT_FOUND_USER_EXCEPTION, NOT_FOUND_USER_EXCEPTION.getMessage()));
 
         if (null != account) {
             return new AppUser(account);
@@ -36,7 +36,7 @@ public class AccessUserService implements UserDetailsService {
 
     public UserDetails loadByAccountId(long accountId) throws UsernameNotFoundException {
         User account = userRepository.findById(accountId)
-                .orElseThrow(() -> new NotFoundException(NOT_FOUND_USER_EXCEPTION, NOT_FOUND_USER_EXCEPTION.getMessage()));
+                .orElseThrow(() -> new CustomException(NOT_FOUND_USER_EXCEPTION, NOT_FOUND_USER_EXCEPTION.getMessage()));
 
         if (null == account) {
             throw new UsernameNotFoundException(
@@ -48,7 +48,7 @@ public class AccessUserService implements UserDetailsService {
 
     public boolean updateTokens(String uuid, String oldRefreshToken, String accessToken, String refreshToken) {
         User account = userRepository.findByUuid(uuid)
-                .orElseThrow(() -> new NotFoundException(NOT_FOUND_USER_EXCEPTION, NOT_FOUND_USER_EXCEPTION.getMessage()));
+                .orElseThrow(() -> new CustomException(NOT_FOUND_USER_EXCEPTION, NOT_FOUND_USER_EXCEPTION.getMessage()));
 
         ServiceTokenVO tokens = tokenValueOperations.get(account.getId());
 
