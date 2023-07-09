@@ -9,10 +9,12 @@ public interface UserRepository extends JpaRepository<User, Long> {
     User save(User user);
 
     // READ
+    Optional<User> findById(Long id);
     Optional<User> findByUuid(String uuid);
     Optional<User> findAllByName(String name);
 
     // UPDATE
 
     // DELETE
+  
 }

@@ -17,19 +17,27 @@ public class Question {
     private Long id;
 
     @Column(nullable = false)
-    private String head;
+    private String nameHead;
 
     @Column(nullable = false)
-    private String foot;
+    private String nameFoot;
+
+    @Column(nullable = false)
+    private String keywordHead;
+
+    @Column(nullable = false)
+    private String keywordFoot;
 
     @ColumnDefault("0")
     @Column(nullable = false)
-    private Integer score;
+    private Integer point;
 
     @Builder
-    public Question(String head, String foot, Integer score) {
-        this.head = head;
-        this.foot = foot;
-        this.score = score;
+    public Question(String nameHead, String nameFoot, String keywordHead, String keywordFoot, Integer point) {
+        this.nameHead = nameHead;
+        this.nameFoot = nameFoot;
+        this.keywordHead = keywordHead;
+        this.keywordFoot = keywordFoot;
+        this.point = point;
     }
 }

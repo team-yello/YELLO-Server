@@ -21,15 +21,18 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.checkerframework.common.aliasing.qual.Unique;
 import org.hibernate.annotations.ColumnDefault;
+import org.hibernate.annotations.SQLDelete;
+import org.hibernate.annotations.Where;
 
 @Getter
 @Entity
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
+@SQLDelete(sql = "UPDATE user SET deletedAt = NOW() WHERE id = ?")
+@Where(clause = "deletedAt IS NULL")
 public class User extends AuditingTimeEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column
     private Long id;
 
     @Column(nullable = false)
@@ -44,7 +47,7 @@ public class User extends AuditingTimeEntity {
     private String yelloId;
 
     @Column(nullable = false)
-    @Enumerated(EnumType.STRING)
+    @Convert(converter = GenderConverter.class)
     private Gender gender;
 
     @Column(nullable = false)
@@ -52,7 +55,7 @@ public class User extends AuditingTimeEntity {
     private Integer point;
 
     @Column(nullable = false)
-    @Enumerated(EnumType.STRING)
+    @Convert(converter = SocialConverter.class)
     private Social social;
 
     @Column
@@ -64,8 +67,8 @@ public class User extends AuditingTimeEntity {
     @Email
     @Column(nullable = false)
     private String email;
-
-    @Column(nullable = false)
+  
+    @Column
     private LocalDateTime deletedAt;
 
     @ManyToOne(fetch = FetchType.LAZY)
