@@ -6,25 +6,25 @@ import lombok.Builder;
 
 @Builder
 public record VoteContentVO(
-    @Schema(description = "투표 내용 중 앞 부분", example = "나는 너랑 한강에서")
-    String head,
+    @Schema(description = "투표 내용 중 키워드 앞 부분", example = "한강에서")
+    String keywordHead,
 
-    @Schema(description = "투표 내용 중 키워드 부분", example = "수영")
-    String answer,
+    @Schema(description = "투표 내용 중 키워드 키워드 부분", example = "수영")
+    String keyword,
 
-    @Schema(description = "투표 내용 중 뒷 부분", example = "하고 싶어")
-    String foot
+    @Schema(description = "투표 내용 중 키워드 뒷 부분", example = "하고 싶어")
+    String keywordFoot
 ) {
 
     static VoteContentVO of(Vote vote) {
         return VoteContentVO.builder()
-            .head(vote.getHead())
-            .answer(vote.getIsAnswerRevealed() ? vote.getAnswer() : "")
-            .foot(vote.getFoot())
+            .keywordHead(vote.getQuestion().getNameHead())
+            .keyword(vote.getIsAnswerRevealed() ? vote.getAnswer() : "")
+            .keywordFoot(vote.getQuestion().getNameFoot())
             .build();
     }
 
     static String toSentence(Vote vote) {
-        return vote.getHead() + "???" + vote.getFoot();
+        return vote.getQuestion().getNameHead() + "???" + vote.getQuestion().getNameHead();
     }
 }
