@@ -13,10 +13,13 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.validation.constraints.Email;
+
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.checkerframework.common.aliasing.qual.Unique;
 import org.hibernate.annotations.ColumnDefault;
 
 @Getter
@@ -36,6 +39,7 @@ public class User extends AuditingTimeEntity {
     @Column(nullable = false)
     private String name;
 
+    @Unique
     @Column(nullable = false)
     private String yelloId;
 
@@ -56,6 +60,10 @@ public class User extends AuditingTimeEntity {
 
     @Column(nullable = false)
     private String uuid;
+
+    @Email
+    @Column(nullable = false)
+    private String email;
 
     @Column(nullable = false)
     private LocalDateTime deletedAt;
