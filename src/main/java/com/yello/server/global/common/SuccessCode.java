@@ -12,6 +12,7 @@ public enum SuccessCode {
      * 200 OK
      */
     READ_VOTE_SUCCESS(HttpStatus.OK, "투표 조회에 성공했습니다."),
+    YELLOID_VALIDATION_SUCCESS(HttpStatus.OK, "옐로 아이디 중복 여부 조회에 성공하였습니다."),
 
     /**
      * 201 CREATED
