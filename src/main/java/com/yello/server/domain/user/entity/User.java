@@ -12,6 +12,8 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.validation.constraints.Email;
+
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
@@ -66,10 +68,14 @@ public class User extends AuditingTimeEntity {
     @JoinColumn(name = "groupId")
     private School group;
 
+    @Email
+    @Column(nullable = false)
+    private String email;
+
 
     @Builder
     public User(Long recommendCount, String name, String yelloId, Gender gender, Integer point, Social social,
-        String profileImage, String uuid, LocalDateTime deletedAt, School group) {
+        String profileImage, String uuid, LocalDateTime deletedAt, School group, String email) {
         this.recommendCount = recommendCount;
         this.name = name;
         this.yelloId = yelloId;
@@ -80,5 +86,6 @@ public class User extends AuditingTimeEntity {
         this.uuid = uuid;
         this.deletedAt = deletedAt;
         this.group = group;
+        this.email = email;
     }
 }
