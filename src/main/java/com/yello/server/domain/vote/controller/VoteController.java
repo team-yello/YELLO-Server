@@ -16,9 +16,9 @@ import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import java.util.List;
 import lombok.RequiredArgsConstructor;
 import lombok.val;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
@@ -37,11 +37,11 @@ public class VoteController {
             content = @Content(mediaType = "application/json", array = @ArraySchema(schema = @Schema(implementation = VoteResponse.class)))),
     })
     @GetMapping
-    public ResponseEntity<BaseResponse> findAllMyVotes(
+    public BaseResponse<List<VoteResponse>> findAllMyVotes(
         @Parameter(name = "page", description = "페이지네이션 페이지 번호입니다.", example = "1")
         @RequestParam Integer page) {
         val data = voteService.findAllVotes(createPageable(page));
-        return ResponseEntity.ok(BaseResponse.success(READ_VOTE_SUCCESS, data));
+        return BaseResponse.success(READ_VOTE_SUCCESS, data);
     }
 
     @Operation(summary = "투표 상세 조회 API", responses = {
@@ -50,9 +50,9 @@ public class VoteController {
             content = @Content(mediaType = "application/json", schema = @Schema(implementation = VoteDetailResponse.class))),
     })
     @GetMapping("/{voteId}")
-    public ResponseEntity<BaseResponse> findVote(@PathVariable Long voteId) {
+    public BaseResponse<VoteDetailResponse> findVote(@PathVariable Long voteId) {
         val data = voteService.findVoteById(voteId);
-        return ResponseEntity.ok(BaseResponse.success(READ_VOTE_SUCCESS, data));
+        return BaseResponse.success(READ_VOTE_SUCCESS, data);
     }
 
     @PatchMapping("/{voteId}/keyword")
