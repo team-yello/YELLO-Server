@@ -8,10 +8,10 @@ import lombok.Builder;
 
 @Builder
 public record VoteContentVO(
-    @Schema(description = "투표 내용 중 키워드 앞 부분", example = "한강에서")
+    @Schema(description = "투표 내용 중 키워드 앞 부분", example = "나는")
     String nameHead,
 
-    @Schema(description = "투표 내용 중 키워드 앞 부분", example = "한강에서")
+    @Schema(description = "투표 내용 중 키워드 앞 부분", example = "랑")
     String nameFoot,
 
     @Schema(description = "투표 내용 중 키워드 앞 부분", example = "한강에서")
