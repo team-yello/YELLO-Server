@@ -22,6 +22,8 @@ public enum ErrorCode {
      */
     //auth
     TOKEN_EXPIRED_EXCEPTION(HttpStatus.FORBIDDEN, "토큰이 만료되었습니다."),
+    TOKEN_MALFORMED_EXCEPTION(HttpStatus.FORBIDDEN, "토큰이 변조되었습니다."),
+    TOKEN_SIGNATURE_EXCEPTION(HttpStatus.FORBIDDEN, "토큰이 잘못되었습니다."),
     NOT_SIGNIN_USER_EXCEPTION(HttpStatus.FORBIDDEN, "가입하지 않은 회원입니다."),
 
     //friend
@@ -29,11 +31,15 @@ public enum ErrorCode {
     EXIST_FRIEND_EXCEPTION(HttpStatus.BAD_REQUEST, "이미 존재하는 친구입니다."),
 
     /**
+     * 403 Unauthorized
+     */
+    INVALID_PASSWORD_EXCEPTION(HttpStatus.UNAUTHORIZED, "유효하지 않은 비밀번호입니다."),
+
+    /**
      * 404 NOT FOUND
      */
     NOT_FOUND_USER_EXCEPTION(HttpStatus.NOT_FOUND, "존재하지 않는 유저입니다."),
-    TOKEN_TIME_EXPIRED_EXCEPTION(HttpStatus.UNAUTHORIZED, "인증되지 않은 유저입니다."),
-    INVALID_PASSWORD_EXCEPTION(HttpStatus.UNAUTHORIZED, "유효하지 않은 비밀번호입니다."),
+
     NOT_FOUND_SAVE_IMAGE_EXCEPTION(HttpStatus.NOT_FOUND, "이미지가 저장되지 않았습니다."),
     NOT_FOUND_IMAGE_EXCEPTION(HttpStatus.NOT_FOUND, "이미지가 없습니다."),
     NOT_FOUND_VOTE_EXCEPTION(HttpStatus.NOT_FOUND, "존재하지 않는 투표입니다."),
