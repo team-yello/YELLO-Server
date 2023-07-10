@@ -57,7 +57,7 @@ public class VoteController {
 
     @PatchMapping("/{voteId}/keyword")
     public BaseResponse<KeywordCheckResponse> checkKeyword(@RequestHeader("user-id") @Valid Long userId, @PathVariable Long voteId) {
-        KeywordCheckResponse keywordCheckResponse = voteService.checkKeyword(userId, voteId);
+        val keywordCheckResponse = voteService.checkKeyword(userId, voteId);
         return BaseResponse.success(SuccessCode.CHECK_KEYWORD_SUCCESS, keywordCheckResponse);
     }
 }
