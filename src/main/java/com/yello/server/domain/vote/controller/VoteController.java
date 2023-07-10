@@ -55,6 +55,11 @@ public class VoteController {
         return BaseResponse.success(READ_VOTE_SUCCESS, data);
     }
 
+    @Operation(summary = "키워드 확인 API", responses = {
+            @ApiResponse(
+                    responseCode = "200",
+                    content = @Content(mediaType = "application/json", schema = @Schema(implementation = KeywordCheckResponse.class))),
+    })
     @PatchMapping("/{voteId}/keyword")
     public BaseResponse<KeywordCheckResponse> checkKeyword(@RequestHeader("user-id") @Valid Long userId, @PathVariable Long voteId) {
         val keywordCheckResponse = voteService.checkKeyword(userId, voteId);
