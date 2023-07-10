@@ -142,18 +142,6 @@ public class AuthTokenProvider {
         return ServiceTokenVO.of(accessToken, refreshToken);
     }
 
-    public boolean validateToken(String token) {
-        try {
-            Jwts.parser().setSigningKey(secretKey).parseClaimsJws(token);
-            return true;
-        } catch (ExpiredJwtException e) {
-            log.error("The given token[{}] has been expired", token);
-            return false;
-        } catch (Exception e) {
-            log.error("The given token[{}] is not valid - {}", token, e.getMessage());
-            return false;
-        }
-    }
 
     public TokenInfo parseAccessToken(String accessToken) {
         Claims claims = Jwts.parser().setSigningKey(secretKey).parseClaimsJws(accessToken).getBody();

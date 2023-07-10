@@ -13,16 +13,12 @@ import com.yello.server.global.common.util.RestUtil;
 import com.yello.server.global.exception.CustomException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.redis.core.ValueOperations;
-import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.reactive.function.client.WebClient;
 
 import javax.servlet.http.HttpServletRequest;
-import java.util.Map;
 import java.util.Optional;
 
 @Service
@@ -59,9 +55,6 @@ public class AuthServiceImpl implements AuthService {
     @Override
     @Transactional(readOnly = false)
     public UserInfoResponse findUserInfo(String accessToken) {
-        if(!authTokenProvider.validateToken(accessToken))
-            throw new CustomException(ErrorCode.TOKEN_EXPIRED_EXCEPTION, ErrorCode.TOKEN_EXPIRED_EXCEPTION.getMessage());
-
         Long userId = authTokenProvider.parseAccessToken(accessToken).id();
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new CustomException(ErrorCode.NOT_FOUND_USER_EXCEPTION, ErrorCode.NOT_FOUND_USER_EXCEPTION.getMessage()));
