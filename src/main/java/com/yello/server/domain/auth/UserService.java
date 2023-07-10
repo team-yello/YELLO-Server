@@ -1,4 +1,4 @@
-package com.yello.server.domain.user.service;
+package com.yello.server.domain.auth;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;

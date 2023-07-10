@@ -1,17 +1,14 @@
-package com.yello.server.domain.user.util;
+package com.yello.server.domain.auth.util;
 
 import java.io.IOException;
 import java.util.Calendar;
 import java.util.Date;
-import java.util.Map;
 
-import com.google.common.collect.ImmutableMap;
+import com.yello.server.domain.auth.dto.ServiceTokenVO;
 import com.yello.server.global.exception.CustomException;
 import com.yello.server.global.security.AccessUserService;
 import com.yello.server.global.security.AppUser;
-import lombok.AllArgsConstructor;
 import lombok.Builder;
-import lombok.NoArgsConstructor;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
@@ -38,18 +35,6 @@ import static com.yello.server.global.common.ErrorCode.TOKEN_TIME_EXPIRED_EXCEPT
 @Component
 @RequiredArgsConstructor
 public class AuthTokenProvider {
-
-//    public final static String BASIC_AUTHORIZATION_TOKEN = "authorization";
-
-    public final static String ACCESS_TOKEN = "accessToken";
-    public final static String REFRESH_TOKEN = "refreshToken";
-
-//    private final static String Bearer = "Bearer ";
-
-//    private final static String ROLES = "ROLES";
-
-//    private final static String AuthorizationHeader = "Authorization";
-
     private final static String AccessTokenHeader = "X-AUTH-ACCESS";
     private final static String RefreshTokenHeader = "X-AUTH-REFRESH";
 
@@ -59,44 +44,57 @@ public class AuthTokenProvider {
     private final AccessUserService userDetailsService;
 
     @Builder
-    public record TokenInfo(long id, String uuid) {}
+    public record TokenInfo(
+            long id,
+            String uuid
+    ) {}
 
     private Date createExpirationDate(int field, int amount) {
-        Calendar cal = Calendar.getInstance();
-        cal.add(field, amount);
+        Calendar calendar = Calendar.getInstance();
+        calendar.add(field, amount);
 
-        return cal.getTime();
+        return calendar.getTime();
     }
 
-    public Map<String, String> createToken(long userId, String uuid) {
+    public ServiceTokenVO createToken(long userId, String uuid) {
         Date today = new Date();
         Claims claims = Jwts.claims().setSubject(uuid).setId(String.valueOf(userId));
+
+        // 릴리즈 시 30분으로 수정할 것
         Date accessTokenExpiredDate = createExpirationDate(Calendar.DATE, 1);
         Date refreshTokenExpiredDate = createExpirationDate(Calendar.DATE, 30);
 
-        final String refreshToken = Jwts.builder().setClaims(claims).setIssuedAt(today)
-                .setExpiration(refreshTokenExpiredDate).signWith(SignatureAlgorithm.HS256, secretKey).compact();
+        final String accessToken = Jwts.builder()
+                .setClaims(claims)
+                .setIssuedAt(today)
+                .setExpiration(accessTokenExpiredDate)
+                .signWith(SignatureAlgorithm.HS256, secretKey)
+                .compact();
+        final String refreshToken = Jwts.builder()
+                .setClaims(claims)
+                .setIssuedAt(today)
+                .setExpiration(refreshTokenExpiredDate)
+                .signWith(SignatureAlgorithm.HS256, secretKey)
+                .compact();
 
-        final String accessToken = Jwts.builder().setClaims(claims).setIssuedAt(today)
-                .setExpiration(accessTokenExpiredDate).signWith(SignatureAlgorithm.HS256, secretKey).compact();
-
-        return new ImmutableMap.Builder<String, String>().put(ACCESS_TOKEN, accessToken)
-                .put(REFRESH_TOKEN, refreshToken).build();
+        return ServiceTokenVO.of(accessToken, refreshToken);
     }
 
-    public Authentication getAuthentication(Map<String, String> tokens, ServletResponse response) throws IOException {
-//        final String authorizationToken = tokens.get(BASIC_AUTHORIZATION_TOKEN);
-        final String accessToken = tokens.get(ACCESS_TOKEN);
-        final String refreshToken = tokens.get(REFRESH_TOKEN);
-
+    public Authentication getAuthentication(ServiceTokenVO tokens, ServletResponse response) throws IOException {
         Claims claims = null;
         boolean requireNewToken = false;
 
-        if (StringUtils.hasText(accessToken) && StringUtils.hasText(refreshToken)) {
+        if (StringUtils.hasText(tokens.accessToken()) && StringUtils.hasText(tokens.refreshToken())) {
             try {
-                claims = Jwts.parser().setSigningKey(secretKey).parseClaimsJws(accessToken).getBody();
+                claims = Jwts.parser()
+                        .setSigningKey(secretKey)
+                        .parseClaimsJws(tokens.accessToken())
+                        .getBody();
             } catch (ExpiredJwtException e) {
-                claims = Jwts.parser().setSigningKey(secretKey).parseClaimsJws(refreshToken).getBody();
+                claims = Jwts.parser()
+                        .setSigningKey(secretKey)
+                        .parseClaimsJws(tokens.refreshToken())
+                        .getBody();
                 requireNewToken = true;
             }
         }
@@ -110,17 +108,16 @@ public class AuthTokenProvider {
         if (requireNewToken) {
             log.info("The access token has been expired");
 
-            Map<String, String> newTokens = createToken(Long.parseLong(claims.getId()), claims.getSubject());
-            final String newAccessToken = newTokens.get(ACCESS_TOKEN);
-            final String newRefreshToken = newTokens.get(REFRESH_TOKEN);
+            ServiceTokenVO newTokens = createToken(Long.parseLong(claims.getId()), claims.getSubject());
 
-            boolean isUpdated = userDetailsService.updateTokens(claims.getSubject(), refreshToken, newAccessToken, newRefreshToken);
+            boolean isUpdated = userDetailsService.updateTokens(
+                    claims.getSubject(), tokens.refreshToken(), newTokens.accessToken(), newTokens.refreshToken());
 
             HttpServletResponse res = (HttpServletResponse) response;
 
             if (isUpdated) {
-                res.addHeader("x-auth-access", newAccessToken);
-                res.addHeader("x-auth-refresh", newRefreshToken);
+                res.addHeader(AccessTokenHeader, newTokens.accessToken());
+                res.addHeader(RefreshTokenHeader, newTokens.refreshToken());
             }
             else {
                 // 업데이트가 실패했을 경우에는 RefreshToken이 변경된 걸로 판단하고 에러를 반환한다.
@@ -140,26 +137,11 @@ public class AuthTokenProvider {
         }
     }
 
-    public Map<String, String> resolveToken(HttpServletRequest req) {
-//        final String authorization = req.getHeader(AuthorizationHeader);
+    public ServiceTokenVO resolveToken(HttpServletRequest req) {
         final String accessToken = req.getHeader(AccessTokenHeader);
         final String refreshToken = req.getHeader(RefreshTokenHeader);
-        ImmutableMap.Builder<String, String> tokens = new ImmutableMap.Builder<>();
 
-//        if (StringUtils.hasText(authorization) && authorization.startsWith(Bearer)) {
-//            final String token = authorization.substring(Bearer.length());
-//            if (!authorizationToken.equalsIgnoreCase(token)) {
-//                return tokens.build();
-//            }
-//            tokens.put(BASIC_AUTHORIZATION_TOKEN, token);
-//        }
-        if (StringUtils.hasText(accessToken)) {
-            tokens.put(ACCESS_TOKEN, accessToken);
-        }
-        if (StringUtils.hasText(refreshToken)) {
-            tokens.put(REFRESH_TOKEN, refreshToken);
-        }
-        return tokens.build();
+        return ServiceTokenVO.of(accessToken, refreshToken);
     }
 
     public boolean validateToken(String token) {
@@ -168,7 +150,7 @@ public class AuthTokenProvider {
             return true;
         } catch (ExpiredJwtException e) {
             log.error("The given token[{}] has been expired", token);
-            throw new CustomException(TOKEN_TIME_EXPIRED_EXCEPTION, "토큰이 만료되었습니다");
+            return false;
         } catch (Exception e) {
             log.error("The given token[{}] is not valid - {}", token, e.getMessage());
             return false;

@@ -1,4 +1,4 @@
-package com.yello.server.domain.user.dto.response;
+package com.yello.server.global.common.dto.kakao;
 
 public record KakaoTokenInfo(
         Long id,

@@ -1,4 +1,4 @@
-package com.yello.server.domain.user.dto.request;
+package com.yello.server.domain.auth.dto.request;
 
 import lombok.Builder;
 

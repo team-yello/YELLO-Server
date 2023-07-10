@@ -1,7 +1,11 @@
-package com.yello.server.domain.user.dto.response;
+package com.yello.server.domain.auth.dto.response;
 
+import com.yello.server.domain.user.entity.Gender;
+import com.yello.server.domain.user.entity.Social;
 import com.yello.server.domain.user.entity.User;
 import lombok.Builder;
+
+import java.time.LocalDateTime;
 
 @Builder
 public record UserInfoResponse(
@@ -9,15 +13,13 @@ public record UserInfoResponse(
     Long recommendCount,
     String name,
     String yelloId,
-    String gender,
+    Gender gender,
     Integer point,
-    String social,
+    Social social,
     String profileImage,
     String uuid,
     String email,
-    String deletedAt,
-    String createdAt,
-    String updatedAt
+    LocalDateTime createdAt
 ) {
 
     public static UserInfoResponse of(User user) {
@@ -26,15 +28,13 @@ public record UserInfoResponse(
                 .recommendCount(user.getRecommendCount())
                 .name(user.getName())
                 .yelloId(user.getYelloId())
-                .gender(user.getGender().toString())
+                .gender(user.getGender())
                 .point(user.getPoint())
-                .social(user.getSocial().toString())
+                .social(user.getSocial())
                 .profileImage(user.getProfileImage())
                 .uuid(user.getUuid())
                 .email(user.getEmail())
-                .deletedAt(user.getDeletedAt().toString())
-                .createdAt(user.getCreatedAt().toString())
-                .updatedAt(user.getUpdatedAt().toString())
+                .createdAt(user.getCreatedAt())
                 .build();
     }
 }
