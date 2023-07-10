@@ -28,9 +28,9 @@ public record VoteContentVO(
         return VoteContentVO.builder()
             .nameHead(vote.getQuestion().getNameHead())
             .nameFoot(vote.getQuestion().getNameFoot())
-            .keywordHead(vote.getQuestion().getNameHead())
+            .keywordHead(vote.getQuestion().getKeywordHead())
             .keyword(vote.getIsAnswerRevealed() ? vote.getAnswer() : "")
-            .keywordFoot(vote.getQuestion().getNameFoot())
+            .keywordFoot(vote.getQuestion().getKeywordFoot())
             .build();
     }
 
