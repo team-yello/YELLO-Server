@@ -1,6 +1,6 @@
 package com.yello.server.global.security;
 
-import com.yello.server.domain.user.dto.response.ServiceTokenVO;
+import com.yello.server.domain.auth.dto.ServiceTokenVO;
 import com.yello.server.domain.user.entity.User;
 import com.yello.server.domain.user.entity.UserRepository;
 import com.yello.server.global.exception.CustomException;

@@ -5,7 +5,6 @@ import java.util.Calendar;
 import java.util.Date;
 
 import com.yello.server.domain.auth.dto.ServiceTokenVO;
-import com.yello.server.global.exception.CustomException;
 import com.yello.server.global.security.AccessUserService;
 import com.yello.server.global.security.AppUser;
 import lombok.Builder;
@@ -29,7 +28,6 @@ import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import static com.yello.server.global.common.ErrorCode.TOKEN_TIME_EXPIRED_EXCEPTION;
 
 @Slf4j
 @Component
