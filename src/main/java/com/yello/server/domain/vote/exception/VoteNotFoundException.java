@@ -5,9 +5,9 @@ import com.yello.server.global.exception.CustomException;
 import lombok.Getter;
 
 @Getter
-public class VoteException extends CustomException {
+public class VoteNotFoundException extends CustomException {
 
-    public VoteException(ErrorCode error, String message) {
-        super(error, "[VoteException] " + message);
+    public VoteNotFoundException(ErrorCode error) {
+        super(error, "[VoteNotFoundException] " + error.getMessage());
     }
 }
