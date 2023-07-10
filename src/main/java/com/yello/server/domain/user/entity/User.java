@@ -3,30 +3,25 @@ package com.yello.server.domain.user.entity;
 import com.yello.server.domain.group.entity.School;
 import com.yello.server.global.common.dto.AuditingTimeEntity;
 import java.time.LocalDateTime;
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.EnumType;
-import javax.persistence.Enumerated;
-import javax.persistence.FetchType;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
+import javax.persistence.*;
+
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.ColumnDefault;
+import org.hibernate.annotations.SQLDelete;
+import org.hibernate.annotations.Where;
 
 @Getter
 @Entity
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
+@SQLDelete(sql = "UPDATE user SET deletedAt = NOW() WHERE id = ?")
+@Where(clause = "deletedAt IS NULL")
 public class User extends AuditingTimeEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column
     private Long id;
 
     @Column(nullable = false)
@@ -40,7 +35,7 @@ public class User extends AuditingTimeEntity {
     private String yelloId;
 
     @Column(nullable = false)
-    @Enumerated(EnumType.STRING)
+    @Convert(converter = GenderConverter.class)
     private Gender gender;
 
     @Column(nullable = false)
@@ -48,7 +43,7 @@ public class User extends AuditingTimeEntity {
     private Integer point;
 
     @Column(nullable = false)
-    @Enumerated(EnumType.STRING)
+    @Convert(converter = SocialConverter.class)
     private Social social;
 
     @Column
