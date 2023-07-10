@@ -1,4 +1,4 @@
-package com.yello.server.domain.auth;
+package com.yello.server.domain.user.service;
 
 import com.yello.server.domain.user.dto.UserResponse;
 
