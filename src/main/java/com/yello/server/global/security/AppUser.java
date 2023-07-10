@@ -1,26 +1,25 @@
 package com.yello.server.global.security;
 
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
 
 import com.yello.server.domain.user.entity.User;
-import lombok.AllArgsConstructor;
-import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
-import com.google.common.collect.ImmutableList;
 
 @SuppressWarnings("serial")
 public class AppUser implements UserDetails {
     private User user;
 
-    private final Collection<GrantedAuthority> authorities;
+    private final List<GrantedAuthority> authorities;
 
     public AppUser(User user) {
         this.user = user;
-        this.authorities = new ImmutableList.Builder<GrantedAuthority>().add(new SimpleGrantedAuthority("ROLE_APP"))
-                .build();
+        this.authorities = new ArrayList<>();
+        this.authorities.add(new SimpleGrantedAuthority("ROLE_APP"));
     }
 
     @Override
