@@ -7,7 +7,7 @@ import lombok.Getter;
 @Getter
 public class VoteException extends CustomException {
 
-    public VoteException(ErrorCode error, String message) {
-        super(error, "[VoteException] " + message);
+    public VoteException(ErrorCode error) {
+        super(error, "[VoteException] " + error.getMessage());
     }
 }

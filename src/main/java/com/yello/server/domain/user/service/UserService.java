@@ -1,10 +1,10 @@
 package com.yello.server.domain.user.service;
 
-import lombok.RequiredArgsConstructor;
-import org.springframework.stereotype.Service;
+import com.yello.server.domain.user.dto.UserResponse;
 
-@Service
-@RequiredArgsConstructor
-public class UserService {
+public interface UserService {
 
+    UserResponse findUser(Long userId);
 }
+
+
