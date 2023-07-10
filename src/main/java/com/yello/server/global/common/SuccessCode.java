@@ -16,7 +16,7 @@ public enum SuccessCode {
     READ_USER_SUCCESS(HttpStatus.OK, "유저 조회에 성공했습니다."),
     ADD_FRIEND_SUCCESS(HttpStatus.OK, "친구 추가에 성공했습니다."),
     SHUFFLE_FRIEND_SUCCESS(HttpStatus.OK, "친구 셔플에 성공했습니다."),
-    CHECK_KEYWORD_SUCCESS(HttpStatus.OK, "키워드 조회에 성공했습니다."),
+    CHECK_KEYWORD_SUCCESS(HttpStatus.OK, "해당 키워드 확인하는데 성공했습니다."),
 
     /**
      * 201 CREATED

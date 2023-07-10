@@ -53,8 +53,10 @@ public class VoteServiceImpl implements VoteService {
     @Transactional
     @Override
     public KeywordCheckResponse checkKeyword(Long userId, Long voteId) {
-        Vote vote = voteRepository.findById(voteId).orElseThrow(() -> new VoteNotFoundException(NOT_FOUND_VOTE_EXCEPTION));
-        userRepository.findById(userId).orElseThrow(() -> new UserNotFoundException(ErrorCode.NOT_FOUND_USER_EXCEPTION));
+        Vote vote = voteRepository.findById(voteId)
+                .orElseThrow(() -> new VoteNotFoundException(NOT_FOUND_VOTE_EXCEPTION));
+        userRepository.findById(userId)
+                .orElseThrow(() -> new UserNotFoundException(ErrorCode.NOT_FOUND_USER_EXCEPTION));
 
         vote.updateKeywordCheck();
 
