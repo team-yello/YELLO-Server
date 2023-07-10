@@ -1,6 +1,6 @@
 package com.yello.server.global.configuration;
 
-import com.yello.server.domain.user.util.AuthTokenProvider;
+import com.yello.server.domain.auth.util.AuthTokenProvider;
 import com.yello.server.global.security.AuthenticationFilter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
@@ -19,14 +19,17 @@ public class SecurityConfiguration {
 
     @Bean
     SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
+        System.out.println("http = " + http);
         return http.csrf().disable()
                     .authorizeHttpRequests()
-                    .antMatchers("/auth/oauth/**").permitAll()
-                    .antMatchers("/auth/univ/**").permitAll()
-                    .antMatchers("/auth/valid").permitAll()
-                    .antMatchers("/*.html").permitAll()
-                    .antMatchers("/").permitAll()
-                    .antMatchers("/data").permitAll()
+                    .anyRequest().permitAll()
+//                    .antMatchers("/api/v1/auth/oauth/**").permitAll()
+//                    .antMatchers("/api/v1/auth/univ/**").permitAll()
+//                    .antMatchers("/api/v1/auth/valid").permitAll()
+//                    .antMatchers("/*.html").permitAll()
+//                    .antMatchers("/data").permitAll()
+//                    .antMatchers("/swagger-ui/**").permitAll()
+//                    .antMatchers("/").permitAll()
                 .and()
                     .addFilterBefore(new AuthenticationFilter(authTokenProvider), UsernamePasswordAuthenticationFilter.class)
                 .build();
