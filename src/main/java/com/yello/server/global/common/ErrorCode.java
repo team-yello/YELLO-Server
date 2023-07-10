@@ -15,11 +15,14 @@ public enum ErrorCode {
      */
     REQUEST_VALIDATION_EXCEPTION(HttpStatus.BAD_REQUEST, "잘못된 요청입니다."),
     KAKAO_TOKEN_EXCEPTION(HttpStatus.BAD_REQUEST, "잘못된 카카오 토큰입니다."),
+    NO_REQUEST_DATA_EXCEPTION(HttpStatus.BAD_REQUEST, "필요한 값이 없습니다."),
 
     /**
      * 403 FORBIDDEN
      */
+    //auth
     TOKEN_EXPIRED_EXCEPTION(HttpStatus.FORBIDDEN, "토큰이 만료되었습니다."),
+    NOT_SIGNIN_USER_EXCEPTION(HttpStatus.FORBIDDEN, "가입하지 않은 회원입니다."),
 
     //friend
     FRIEND_COUNT_LACK_EXCEPTION(HttpStatus.BAD_REQUEST, "친구가 4명 이하입니다."),
