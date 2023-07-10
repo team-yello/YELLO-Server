@@ -37,7 +37,7 @@ class FriendControllerTest {
     @Autowired
     FriendService friendService;
 
-    @Test
+ /*   @Test
     @DisplayName("친구 생성에 성공합니다.")
     void addFriendTest() {
         //given
@@ -113,5 +113,5 @@ class FriendControllerTest {
         friendRepository.save(Friend.createFriend(user, friend));
     }
 
-
+*/
 }

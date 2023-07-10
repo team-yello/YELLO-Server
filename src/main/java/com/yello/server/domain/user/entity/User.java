@@ -4,6 +4,7 @@ import com.yello.server.domain.group.entity.School;
 import com.yello.server.global.common.dto.AuditingTimeEntity;
 import java.time.LocalDateTime;
 import javax.persistence.*;
+import javax.validation.constraints.Email;
 
 import lombok.AccessLevel;
 import lombok.Builder;
@@ -16,8 +17,8 @@ import org.hibernate.annotations.Where;
 @Getter
 @Entity
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-@SQLDelete(sql = "UPDATE user SET deletedAt = NOW() WHERE id = ?")
-@Where(clause = "deletedAt IS NULL")
+@SQLDelete(sql = "UPDATE user SET deleted_at = NOW() WHERE id = ?")
+@Where(clause = "deleted_at IS NULL")
 public class User extends AuditingTimeEntity {
 
     @Id
@@ -59,10 +60,14 @@ public class User extends AuditingTimeEntity {
     @JoinColumn(name = "groupId")
     private School group;
 
+    @Email
+    @Column(nullable = false)
+    private String email;
+
 
     @Builder
     public User(Long recommendCount, String name, String yelloId, Gender gender, Integer point, Social social,
-        String profileImage, String uuid, LocalDateTime deletedAt, School group) {
+        String profileImage, String uuid, LocalDateTime deletedAt, School group, String email) {
         this.recommendCount = recommendCount;
         this.name = name;
         this.yelloId = yelloId;
@@ -73,5 +78,6 @@ public class User extends AuditingTimeEntity {
         this.uuid = uuid;
         this.deletedAt = deletedAt;
         this.group = group;
+        this.email = email;
     }
 }

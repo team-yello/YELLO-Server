@@ -3,9 +3,11 @@ package com.yello.server.domain.vote.controller;
 import static com.yello.server.global.common.SuccessCode.READ_VOTE_SUCCESS;
 import static com.yello.server.global.common.util.PaginationUtil.createPageable;
 
+import com.yello.server.domain.vote.dto.response.KeywordCheckResponse;
 import com.yello.server.domain.vote.dto.response.VoteDetailResponse;
 import com.yello.server.domain.vote.dto.response.VoteResponse;
 import com.yello.server.domain.vote.service.VoteService;
+import com.yello.server.global.common.SuccessCode;
 import com.yello.server.global.common.dto.BaseResponse;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -17,11 +19,9 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import lombok.val;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+
+import javax.validation.Valid;
 
 @Tag(name = "01. Vote")
 @RestController
@@ -53,5 +53,11 @@ public class VoteController {
     public ResponseEntity<BaseResponse> findVote(@PathVariable Long voteId) {
         val data = voteService.findVoteById(voteId);
         return ResponseEntity.ok(BaseResponse.success(READ_VOTE_SUCCESS, data));
+    }
+
+    @PatchMapping("/{voteId}/keyword")
+    public BaseResponse<KeywordCheckResponse> checkKeyword(@RequestHeader("user-id") @Valid Long userId, @PathVariable Long voteId) {
+        KeywordCheckResponse keywordCheckResponse = voteService.checkKeyword(userId, voteId);
+        return BaseResponse.success(SuccessCode.CHECK_KEYWORD_SUCCESS, keywordCheckResponse);
     }
 }

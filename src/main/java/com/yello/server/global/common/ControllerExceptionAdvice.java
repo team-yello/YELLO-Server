@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 
 @RestControllerAdvice
 public class ControllerExceptionAdvice {
+/*
 
     //vote
     @ExceptionHandler(VoteException.class)
@@ -32,5 +33,6 @@ public class ControllerExceptionAdvice {
         return ResponseEntity.status(HttpStatus.BAD_REQUEST)
                 .body(BaseResponse.error(e.getError(), e.getMessage()));
     }
+*/
 
 }

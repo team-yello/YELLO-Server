@@ -68,4 +68,8 @@ public class Vote extends AuditingTimeEntity {
         this.question = question;
         this.colorIndex = colorIndex;
     }
+
+    public void updateKeywordCheck(){
+        this.isAnswerRevealed = true;
+    }
 }
