@@ -3,9 +3,11 @@ package com.yello.server.domain.vote.controller;
 import static com.yello.server.global.common.SuccessCode.READ_VOTE_SUCCESS;
 import static com.yello.server.global.common.util.PaginationUtil.createPageable;
 
+import com.yello.server.domain.vote.dto.response.KeywordCheckResponse;
 import com.yello.server.domain.vote.dto.response.VoteDetailResponse;
 import com.yello.server.domain.vote.dto.response.VoteResponse;
 import com.yello.server.domain.vote.service.VoteService;
+import com.yello.server.global.common.SuccessCode;
 import com.yello.server.global.common.dto.BaseResponse;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -14,14 +16,12 @@ import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import java.util.List;
 import lombok.RequiredArgsConstructor;
 import lombok.val;
-import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+
+import javax.validation.Valid;
 
 @Tag(name = "01. Vote")
 @RestController
@@ -37,11 +37,11 @@ public class VoteController {
             content = @Content(mediaType = "application/json", array = @ArraySchema(schema = @Schema(implementation = VoteResponse.class)))),
     })
     @GetMapping
-    public ResponseEntity<BaseResponse> findAllMyVotes(
+    public BaseResponse<List<VoteResponse>> findAllMyVotes(
         @Parameter(name = "page", description = "페이지네이션 페이지 번호입니다.", example = "1")
         @RequestParam Integer page) {
         val data = voteService.findAllVotes(createPageable(page));
-        return ResponseEntity.ok(BaseResponse.success(READ_VOTE_SUCCESS, data));
+        return BaseResponse.success(READ_VOTE_SUCCESS, data);
     }
 
     @Operation(summary = "투표 상세 조회 API", responses = {
@@ -50,8 +50,14 @@ public class VoteController {
             content = @Content(mediaType = "application/json", schema = @Schema(implementation = VoteDetailResponse.class))),
     })
     @GetMapping("/{voteId}")
-    public ResponseEntity<BaseResponse> findVote(@PathVariable Long voteId) {
+    public BaseResponse<VoteDetailResponse> findVote(@PathVariable Long voteId) {
         val data = voteService.findVoteById(voteId);
-        return ResponseEntity.ok(BaseResponse.success(READ_VOTE_SUCCESS, data));
+        return BaseResponse.success(READ_VOTE_SUCCESS, data);
+    }
+
+    @PatchMapping("/{voteId}/keyword")
+    public BaseResponse<KeywordCheckResponse> checkKeyword(@RequestHeader("user-id") @Valid Long userId, @PathVariable Long voteId) {
+        val keywordCheckResponse = voteService.checkKeyword(userId, voteId);
+        return BaseResponse.success(SuccessCode.CHECK_KEYWORD_SUCCESS, keywordCheckResponse);
     }
 }
