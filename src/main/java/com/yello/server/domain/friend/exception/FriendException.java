@@ -6,7 +6,8 @@ import lombok.Getter;
 
 @Getter
 public class FriendException extends CustomException {
-    public FriendException(ErrorCode error, String message) {
-        super(error, "[FriendException] " + message);
+
+    public FriendException(ErrorCode error) {
+        super(error, "[FriendException] " + error.getMessage());
     }
 }
