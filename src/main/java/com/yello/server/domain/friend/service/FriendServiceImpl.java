@@ -63,7 +63,7 @@ public class FriendServiceImpl implements FriendService {
         List<Friend> allFriends = friendRepository.findAllByUser(user);
 
         if (allFriends.size() < RANDOM_COUNT) {
-            throw new FriendException(ErrorCode.FRIEND_COUNT_LACK_EXCEPTION);
+            throw new FriendException(ErrorCode.LACK_USER_EXCEPTION);
         }
 
         Collections.shuffle(allFriends);

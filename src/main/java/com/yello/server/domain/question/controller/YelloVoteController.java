@@ -1,5 +1,6 @@
 package com.yello.server.domain.question.controller;
 
+import com.yello.server.domain.question.dto.response.YelloStartResponse;
 import com.yello.server.domain.question.dto.response.YelloVoteResponse;
 import com.yello.server.domain.question.service.YelloVoteService;
 import com.yello.server.domain.vote.dto.response.VoteResponse;
@@ -40,5 +41,13 @@ public class YelloVoteController {
     ){
         val data = yelloVoteService.findYelloVoteList(userId);
         return BaseResponse.success(SuccessCode.READ_YELLO_VOTE_SUCCESS, data);
+    }
+
+    @GetMapping
+    public BaseResponse<YelloStartResponse> checkYelloStart(
+            @RequestHeader("user-id") @Valid Long userId
+    ){
+        val data= yelloVoteService.yelloStartCheck(userId);
+        return BaseResponse.success(SuccessCode.READ_YELLO_START_SUCCESS, data);
     }
 }
