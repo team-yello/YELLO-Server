@@ -17,7 +17,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Collections;
 import java.util.List;
-import java.util.stream.Collectors;
 
 import static com.yello.server.global.common.util.ConstantUtil.RANDOM_COUNT;
 
@@ -88,6 +87,6 @@ public class FriendServiceImpl implements FriendService {
 
         return recommendFriends.stream()
                 .map(RecommendFriendResponse::of)
-                .collect(Collectors.toList());
+                .toList();
     }
 }

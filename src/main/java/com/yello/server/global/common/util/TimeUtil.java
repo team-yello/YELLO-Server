@@ -2,6 +2,7 @@ package com.yello.server.global.common.util;
 
 import java.time.Duration;
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 
 public class TimeUtil {
 
@@ -29,5 +30,10 @@ public class TimeUtil {
         LocalDateTime currentDateTime = LocalDateTime.now();
         Duration duration = Duration.between(localDateTime, currentDateTime);
         return duration.getSeconds();
+    }
+
+    public static String toDateFormattedString(LocalDateTime localDateTime) {
+        DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+        return localDateTime.format(dateTimeFormatter).toString();
     }
 }
