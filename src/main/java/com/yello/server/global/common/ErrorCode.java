@@ -14,7 +14,7 @@ public enum ErrorCode {
      * 400 BAD REQUEST
      */
     REQUEST_VALIDATION_EXCEPTION(HttpStatus.BAD_REQUEST, "잘못된 요청입니다."),
-    NON_REQUIRED_REQUEST_DATA_EXCEPTION(HttpStatus.BAD_REQUEST, "요청에 필요한 값이 없습니다."),
+    YELLOID_REQUIRED_EXCEPTION(HttpStatus.BAD_REQUEST, "yelloId를 쿼리 스트링으로 보내주세요."),
     LACK_USER_EXCEPTION(HttpStatus.BAD_REQUEST, "친구가 4명 이하입니다."),
 
     //friend
