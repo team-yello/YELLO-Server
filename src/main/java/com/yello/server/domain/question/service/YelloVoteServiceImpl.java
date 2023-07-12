@@ -5,7 +5,6 @@ import com.yello.server.domain.cooldown.entity.CooldownRepository;
 import com.yello.server.domain.friend.entity.Friend;
 import com.yello.server.domain.friend.entity.FriendRepository;
 import com.yello.server.domain.keyword.entity.Keyword;
-import com.yello.server.domain.keyword.entity.KeywordRepository;
 import com.yello.server.domain.question.dto.response.*;
 import com.yello.server.domain.question.entity.Question;
 import com.yello.server.domain.question.entity.QuestionRepository;
@@ -18,17 +17,14 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.time.Duration;
-import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 import static com.yello.server.global.common.util.ConstantUtil.*;
 import static com.yello.server.global.common.util.DataFormatUtil.toDateFormattedString;
+import static com.yello.server.global.common.util.TimeUtil.timeDiff;
 
 @Service
 @RequiredArgsConstructor
@@ -68,14 +64,14 @@ public class YelloVoteServiceImpl implements YelloVoteService {
 
         List<Friend> friends = friendRepository.findAllByUser(user);
 
-        if(friends.size() <4)
+        if (friends.size() < 4)
             throw new UserNotFoundException(ErrorCode.LACK_USER_EXCEPTION);
 
         Cooldown cooldown = cooldownRepository.findByUser(user)
-                .orElse(Cooldown.builder().user(user).createdAt(null).build());
+                .orElse(Cooldown.of(user, null));
 
         // 40분 지난 경우 투표 시작
-        if(cooldown.getCreatedAt() != null && timeDiff(cooldown.getCreatedAt()) < TIMER_TIME){
+        if (cooldown.getCreatedAt() != null && timeDiff(cooldown.getCreatedAt()) < TIMER_TIME) {
             isStart = false;
         }
 
@@ -118,9 +114,4 @@ public class YelloVoteServiceImpl implements YelloVoteService {
                 .collect(Collectors.toList());
     }
 
-    public long timeDiff(LocalDateTime localDateTime) {
-        LocalDateTime currentDateTime = LocalDateTime.now();
-        Duration duration = Duration.between(localDateTime, currentDateTime);
-        return duration.getSeconds();
-    }
 }

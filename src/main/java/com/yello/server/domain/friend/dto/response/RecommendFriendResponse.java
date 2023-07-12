@@ -7,14 +7,14 @@ import lombok.Builder;
 public record RecommendFriendResponse(
         Long id,
         String name,
-        String schoolData,
+        String group,
         String profileImage
 ) {
     public static RecommendFriendResponse of(User user) {
         return RecommendFriendResponse.builder()
                 .id(user.getId())
                 .name(user.getName())
-                .schoolData(user.getGroup().getSchoolName() + " " + user.getGroup().getDepartmentName() + " " + user.getGroup().getAdmissionYear() + "학번")
+                .group(user.getGroup().toString())
                 .profileImage(user.getProfileImage())
                 .build();
     }

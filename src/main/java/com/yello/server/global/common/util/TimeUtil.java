@@ -24,4 +24,10 @@ public class TimeUtil {
 
         return (seconds) + "일 전";
     }
+
+    public static long timeDiff(LocalDateTime localDateTime) {
+        LocalDateTime currentDateTime = LocalDateTime.now();
+        Duration duration = Duration.between(localDateTime, currentDateTime);
+        return duration.getSeconds();
+    }
 }
