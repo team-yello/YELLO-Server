@@ -1,6 +1,10 @@
 #green
 version: '3'
 services:
+  redis:
+    image: redis
+    ports:
+      - "6379:6379"
   backend:
     build: .
     ports:
@@ -8,3 +12,4 @@ services:
     container_name: yello-green
     environment:
       - SPRING_PROFILES_ACTIVE=green
+    depends_on: redis
