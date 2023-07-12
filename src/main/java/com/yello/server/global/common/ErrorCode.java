@@ -13,12 +13,26 @@ public enum ErrorCode {
     /**
      * 400 BAD REQUEST
      */
-    REQUEST_VALIDATION_EXCEPTION(HttpStatus.BAD_REQUEST, "잘못된 요청입니다"),
+    REQUEST_VALIDATION_EXCEPTION(HttpStatus.BAD_REQUEST, "잘못된 요청입니다."),
+    YELLOID_REQUIRED_EXCEPTION(HttpStatus.BAD_REQUEST, "yelloId를 쿼리 스트링으로 보내주세요."),
     LACK_USER_EXCEPTION(HttpStatus.BAD_REQUEST, "친구가 4명 이하입니다."),
 
     //friend
     EXIST_FRIEND_EXCEPTION(HttpStatus.BAD_REQUEST, "이미 존재하는 친구입니다."),
 
+    /**
+     * 401 UNAUTHORIZED
+     */
+    EXPIRED_TOKEN(HttpStatus.UNAUTHORIZED, "만료된 토큰입니다."),
+    INVALID_TOKEN(HttpStatus.UNAUTHORIZED, "유효하지 않은 토큰입니다."),
+    EMPTY_TOKEN(HttpStatus.UNAUTHORIZED, "토큰이 비어있습니다."),
+    OAUTH_TOKEN_EXCEPTION(HttpStatus.UNAUTHORIZED, "잘못된 소셜 토큰입니다."),
+    AUTHENTICATION_ERROR(HttpStatus.UNAUTHORIZED, "잘못된 인증 요청입니다."),
+
+    /**
+     * 403 FORBIDDEN
+     */
+    NOT_SIGNIN_USER_EXCEPTION(HttpStatus.FORBIDDEN, "가입하지 않은 회원입니다."),
 
     /**
      * 404 NOT FOUND
@@ -39,7 +53,7 @@ public enum ErrorCode {
      * 500 INTERNAL SERVER ERROR
      */
     INTERNAL_SERVER_ERROR(HttpStatus.INTERNAL_SERVER_ERROR, "알 수 없는 서버 에러가 발생했습니다"),
-    ;
+    REDIS_ERROR(HttpStatus.INTERNAL_SERVER_ERROR, "Redis에 에러가 발생했습니다.");
 
     private final HttpStatus httpStatus;
     private final String message;
