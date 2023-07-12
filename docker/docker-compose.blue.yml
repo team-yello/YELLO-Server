@@ -8,5 +8,3 @@ services:
     container_name: yello-blue
     environment:
       - SPRING_PROFILES_ACTIVE=blue
-    depends_on:
-      - redis
