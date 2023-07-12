@@ -2,6 +2,7 @@ package com.yello.server.domain.cooldown.entity;
 
 import com.yello.server.domain.user.entity.User;
 import lombok.AccessLevel;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.springframework.data.annotation.CreatedDate;
@@ -25,4 +26,9 @@ public class Cooldown {
     @CreatedDate
     private LocalDateTime createdAt;
 
+    @Builder
+    public Cooldown(User user, LocalDateTime createdAt) {
+        this.user = user;
+        this.createdAt = createdAt;
+    }
 }

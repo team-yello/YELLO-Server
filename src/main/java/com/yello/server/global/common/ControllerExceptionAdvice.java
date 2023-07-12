@@ -1,6 +1,7 @@
 package com.yello.server.global.common;
 
 import com.yello.server.domain.friend.exception.FriendException;
+import com.yello.server.domain.user.exception.UserBadRequestException;
 import com.yello.server.domain.user.exception.UserException;
 import com.yello.server.domain.user.exception.UserNotFoundException;
 import com.yello.server.domain.vote.exception.VoteNotFoundException;
@@ -31,6 +32,12 @@ public class ControllerExceptionAdvice {
     public ResponseEntity<BaseResponse> UserNotFoundException(UserNotFoundException exception) {
         return ResponseEntity.status(HttpStatus.NOT_FOUND)
             .body(BaseResponse.error(exception.getError(), exception.getMessage()));
+    }
+
+    @ExceptionHandler(UserBadRequestException.class)
+    public ResponseEntity<BaseResponse> UserBadRequestException(UserBadRequestException exception) {
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                .body(BaseResponse.error(exception.getError(), exception.getMessage()));
     }
 
     // friend
