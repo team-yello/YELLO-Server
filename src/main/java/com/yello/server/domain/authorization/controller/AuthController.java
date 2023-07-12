@@ -9,7 +9,6 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
-import javax.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.val;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -30,10 +29,8 @@ public class AuthController {
             content = @Content(mediaType = "application/json", schema = @Schema(implementation = OAuthResponse.class))),
     })
     @PostMapping("/oauth")
-    public BaseResponse<OAuthResponse> oauthLogin(
-        @RequestBody OAuthRequest authRequestDto,
-        HttpServletRequest request) {
-        val data = authService.oauthLogin(authRequestDto, request);
+    public BaseResponse<OAuthResponse> oauthLogin(@RequestBody OAuthRequest oAuthRequest) {
+        val data = authService.oauthLogin(oAuthRequest);
         return BaseResponse.success(SuccessCode.LOGIN_SUCCESS, data);
     }
 }

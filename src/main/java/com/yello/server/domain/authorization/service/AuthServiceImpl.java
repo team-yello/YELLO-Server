@@ -16,7 +16,6 @@ import com.yello.server.domain.user.entity.User;
 import com.yello.server.domain.user.entity.UserRepository;
 import com.yello.server.global.common.util.RestUtil;
 import java.util.Optional;
-import javax.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.redis.core.ValueOperations;
 import org.springframework.http.ResponseEntity;
@@ -31,8 +30,8 @@ public class AuthServiceImpl implements AuthService {
     private final ValueOperations<Long, ServiceTokenVO> tokenValueOperations;
 
     @Override
-    public OAuthResponse oauthLogin(OAuthRequest authRequestDto, HttpServletRequest request) {
-        ResponseEntity<KakaoTokenInfo> response = RestUtil.getKakaoTokenInfo(authRequestDto.accessToken());
+    public OAuthResponse oauthLogin(OAuthRequest oAuthRequest) {
+        ResponseEntity<KakaoTokenInfo> response = RestUtil.getKakaoTokenInfo(oAuthRequest.accessToken());
 
         if (response.getStatusCode()==BAD_REQUEST || response.getStatusCode()==UNAUTHORIZED) {
             throw new OAuthException(OAUTH_TOKEN_EXCEPTION);
