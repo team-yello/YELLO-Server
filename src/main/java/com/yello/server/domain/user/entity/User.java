@@ -1,5 +1,6 @@
 package com.yello.server.domain.user.entity;
 
+import com.yello.server.domain.authorization.dto.request.SignInRequest;
 import com.yello.server.domain.group.entity.School;
 import com.yello.server.global.common.dto.AuditingTimeEntity;
 import java.time.LocalDateTime;
@@ -87,5 +88,25 @@ public class User extends AuditingTimeEntity {
         this.deletedAt = deletedAt;
         this.group = group;
         this.email = email;
+    }
+
+    public static User of(SignInRequest signInRequest, String uuid, School group) {
+        return User.builder()
+                .recommendCount(0L)
+                .name(signInRequest.name())
+                .yelloId(signInRequest.yelloId())
+                .gender(signInRequest.gender())
+                .point(0)
+                .social(signInRequest.social())
+                .profileImage(signInRequest.profileImage())
+                .uuid(uuid)
+                .deletedAt(null)
+                .group(group)
+                .email(signInRequest.email())
+                .build();
+    }
+
+    public void addRecommendCount(int count) {
+        this.recommendCount += count;
     }
 }
