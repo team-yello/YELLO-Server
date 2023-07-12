@@ -47,6 +47,7 @@ jobs:
           mkdir deploy
           cp ./docker/docker-compose.blue.yml ./deploy/
           cp ./docker/docker-compose.green.yml ./deploy/
+          cp ./docker/docker-redis.yml ./deploy/
           cp ./appspec.yml ./deploy/
           cp ./docker/Dockerfile ./deploy/
           cp ./scripts/*.sh ./deploy/
