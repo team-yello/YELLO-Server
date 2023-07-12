@@ -1,5 +1,7 @@
 package com.yello.server.domain.vote.controller;
 
+import com.yello.server.domain.question.dto.response.YelloStartResponse;
+import com.yello.server.domain.question.dto.response.YelloVoteResponse;
 import com.yello.server.domain.vote.dto.response.KeywordCheckResponse;
 import com.yello.server.domain.vote.dto.response.VoteDetailResponse;
 import com.yello.server.domain.vote.dto.response.VoteResponse;
@@ -15,7 +17,6 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import lombok.val;
-import org.springframework.data.repository.query.Param;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
@@ -63,11 +64,33 @@ public class VoteController {
     })
     @PatchMapping("/{voteId}/keyword")
     public BaseResponse<KeywordCheckResponse> checkKeyword(
-            @Parameter(name="voteId", description="해당 투표 아이디 값 입니다.")
+            @Parameter(name = "voteId", description = "해당 투표 아이디 값 입니다.")
             @RequestHeader("user-id")
             @Valid Long userId,
             @PathVariable Long voteId) {
         val keywordCheckResponse = voteService.checkKeyword(userId, voteId);
         return BaseResponse.success(SuccessCode.CHECK_KEYWORD_SUCCESS, keywordCheckResponse);
+    }
+
+
+    @Operation(summary = "Yello 투표 10개 조회 API", responses = {
+            @ApiResponse(
+                    responseCode = "200",
+                    content = @Content(mediaType = "application/json", array = @ArraySchema(schema = @Schema(implementation = YelloVoteResponse.class)))),
+    })
+    @GetMapping("/question")
+    public BaseResponse<List<YelloVoteResponse>> getYelloVote(
+            @RequestHeader("user-id") @Valid Long userId
+    ) {
+        val data = voteService.findYelloVoteList(userId);
+        return BaseResponse.success(SuccessCode.READ_YELLO_VOTE_SUCCESS, data);
+    }
+
+    @GetMapping("/available")
+    public BaseResponse<YelloStartResponse> checkVoteAvailable(
+            @RequestHeader("user-id") @Valid Long userId
+    ) {
+        val data = voteService.checkVoteAvailable(userId);
+        return BaseResponse.success(SuccessCode.READ_YELLO_START_SUCCESS, data);
     }
 }
