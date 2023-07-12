@@ -1,10 +1,6 @@
 package com.yello.server.global.exception;
 
-import com.yello.server.domain.authorization.exception.CustomAuthenticationException;
-import com.yello.server.domain.authorization.exception.ExpiredTokenException;
-import com.yello.server.domain.authorization.exception.InvalidTokenException;
-import com.yello.server.domain.authorization.exception.NotSignedInException;
-import com.yello.server.domain.authorization.exception.OAuthException;
+import com.yello.server.domain.authorization.exception.*;
 import com.yello.server.domain.friend.exception.FriendException;
 import com.yello.server.domain.user.exception.UserException;
 import com.yello.server.domain.user.exception.UserNotFoundException;
@@ -21,7 +17,8 @@ public class ControllerExceptionAdvice {
 
     @ExceptionHandler({
         FriendException.class,
-        UserException.class
+        UserException.class,
+        AuthBadRequestException.class
     })
     public ResponseEntity<BaseResponse> BadRequestException(CustomException exception) {
         return ResponseEntity.status(HttpStatus.BAD_REQUEST)
