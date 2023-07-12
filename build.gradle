@@ -50,8 +50,6 @@ dependencies {
     implementation group: 'io.jsonwebtoken', name: 'jjwt-impl', version: '0.11.2'
     implementation group: 'io.jsonwebtoken', name: 'jjwt-jackson', version: '0.11.2'
 
-    // S3 AWS
-//    implementation group: 'org.springframework.cloud', name: 'spring-cloud-starter-aws', version: '2.2.6.RELEASE'
 
     // Swagger
     implementation 'org.springdoc:springdoc-openapi-ui:1.6.11'
@@ -59,8 +57,13 @@ dependencies {
     //
     implementation 'com.github.gavlyukovskiy:p6spy-spring-boot-starter:1.5.7'
 
+    // Http
+    implementation 'org.springframework.boot:spring-boot-starter-webflux'
+
     // Security
     implementation 'org.springframework.boot:spring-boot-starter-security'
+    implementation 'io.netty:netty-resolver-dns-native-macos:4.1.79.Final:osx-aarch_64'
+
 
     // QueryDSL
     implementation "com.querydsl:querydsl-jpa:${queryDslVersion}"
