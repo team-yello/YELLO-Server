@@ -17,6 +17,7 @@ public enum SuccessCode {
     ADD_FRIEND_SUCCESS(HttpStatus.OK, "친구 추가에 성공했습니다."),
     SHUFFLE_FRIEND_SUCCESS(HttpStatus.OK, "친구 셔플에 성공했습니다."),
     CHECK_KEYWORD_SUCCESS(HttpStatus.OK, "해당 키워드 확인하는데 성공했습니다."),
+    READ_YELLO_VOTE_SUCCESS(HttpStatus.OK, "옐로 투표 리스트 조회에 성공했습니다."),
 
     /**
      * 201 CREATED
