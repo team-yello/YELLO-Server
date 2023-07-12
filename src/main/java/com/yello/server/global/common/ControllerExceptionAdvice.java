@@ -1,18 +1,10 @@
 package com.yello.server.global.common;
 
-import com.yello.server.domain.friend.exception.FriendException;
-import com.yello.server.domain.user.exception.UserBadRequestException;
-import com.yello.server.domain.user.exception.UserException;
-import com.yello.server.domain.user.exception.UserNotFoundException;
-import com.yello.server.domain.vote.exception.VoteNotFoundException;
-import com.yello.server.global.common.dto.BaseResponse;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
 @RestControllerAdvice
 public class ControllerExceptionAdvice {
+/*
 
     //vote
     @ExceptionHandler(VoteNotFoundException.class)
@@ -46,6 +38,7 @@ public class ControllerExceptionAdvice {
         return ResponseEntity.status(HttpStatus.BAD_REQUEST)
             .body(BaseResponse.error(exception.getError(), exception.getMessage()));
     }
+*/
 
 
 }

@@ -3,22 +3,18 @@ package com.yello.server.domain.vote.entity;
 import com.yello.server.domain.question.entity.Question;
 import com.yello.server.domain.user.entity.User;
 import com.yello.server.global.common.dto.AuditingTimeEntity;
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.FetchType;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.ColumnDefault;
+import org.hibernate.annotations.DynamicInsert;
+
+import javax.persistence.*;
 
 @Entity
 @Getter
+@DynamicInsert
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Vote extends AuditingTimeEntity {
 
@@ -53,23 +49,23 @@ public class Vote extends AuditingTimeEntity {
     @JoinColumn(name = "questionId")
     private Question question;
 
-    @ColumnDefault("false")
     @Column(nullable = false)
     private Integer colorIndex;
 
     @Builder
-    public Vote(String answer, Integer nameHint, Boolean isAnswerRevealed, Boolean isRead, User sender, User receiver, Question question, Integer colorIndex) {
+    public Vote(String answer, User sender, User receiver, Question question, Integer colorIndex) {
         this.answer = answer;
-        this.nameHint = nameHint;
-        this.isAnswerRevealed = isAnswerRevealed;
-        this.isRead = isRead;
         this.sender = sender;
         this.receiver = receiver;
         this.question = question;
         this.colorIndex = colorIndex;
     }
 
-    public void updateKeywordCheck(){
+    public void updateKeywordCheck() {
         this.isAnswerRevealed = true;
+    }
+
+    public static Vote createVote(String answer, User sender, User receiver, Question question, Integer colorIndex) {
+        return new Vote(answer, sender, receiver, question, colorIndex);
     }
 }
