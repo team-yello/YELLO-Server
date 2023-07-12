@@ -24,6 +24,7 @@ if [ -z "$EXIST_BLUE" ]; then
   echo "[$(date +%Y)-$(date +%m)-$(date +%d) $(date +%H):$(date +%M):$(date +%S)] Blue 배포를 시작합니다." >> /home/ec2-user/deploy.log
 
   sudo docker-compose -p ${DOCKER_APP_NAME}-blue -f docker-compose.blue.yml up -d --build
+  sudo docker-compose -p yello-blue -f docker-compose.blue.yml up -d --build
   sleep 30
 
   BLUE_HEALTH=$(sudo docker-compose -p ${DOCKER_APP_NAME}-blue -f docker-compose.blue.yml ps | grep Up)
