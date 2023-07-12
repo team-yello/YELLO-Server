@@ -4,11 +4,10 @@
 
 | 박현정 | 이의제 | 권세훈 |
 | :---------:|:----------:|:----------:|
-|<img width="300" alt="image" src="https://user-images.githubusercontent.com/81394850/210358708-f6139bed-c2b6-43d9-8dc6-525ac8c68e9f.jpg"> | <img width="300" alt="image" src="https://github.com/team-yello/YELLO-Server/assets/81394850/3b031ac2-5688-48a6-aff1-94fcf5cbad22"> | <img width="300" alt="image" src="https://github.com/team-yello/YELLO-Server/assets/81394850/40925b5d-f0e4-437b-a3c8-b015bff90bf5"> | 
+|<img width="300" alt="image" src="https://user-images.githubusercontent.com/81394850/210358708-f6139bed-c2b6-43d9-8dc6-525ac8c68e9f.jpg"> | <img width="300" alt="image" src="https://github.com/team-yello/YELLO-Server/assets/81394850/3b031ac2-5688-48a6-aff1-94fcf5cbad22"> | <img width="300" alt="image" src="https://github.com/team-yello/YELLO-Server/assets/81394850/19f133ca-5a79-4ac7-b07e-b6bc4250c867"> | 
 | [hyeonjeongs](https://github.com/hyeonjeongs) | [euije](https://github.com/euije) | [devkwonsehoon](https://github.com/devkwonsehoon) |
 | :---------:|:----------:|:----------:|
 | 프로젝트 세팅, DB 설계, Entity 개발, 투표, 추천친구 API 구현 | DB 설계, spring security, 소셜 로그인, 온보딩  API 구현 | DB 설계, Github Action과 Code Deploy를 이용하여 배포 자동화 구성, 내 프로필 API 개발 |
-
 
 
 ## ⭐ Stack
