@@ -3,6 +3,8 @@ package com.yello.server.domain.friend.dto.response;
 import com.yello.server.domain.friend.entity.Friend;
 import lombok.Builder;
 
+
+@Builder
 public record FriendShuffleResponse(
         Long friendId,
         String friendName
@@ -15,9 +17,4 @@ public record FriendShuffleResponse(
                 .build();
     }
 
-    @Builder
-    public FriendShuffleResponse(Long friendId, String friendName) {
-        this.friendId = friendId;
-        this.friendName = friendName;
-    }
 }
