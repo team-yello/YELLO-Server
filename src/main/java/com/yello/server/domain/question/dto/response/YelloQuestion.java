@@ -20,6 +20,4 @@ public record YelloQuestion(
                 .keywordFoot(Objects.isNull(question.getKeywordFoot()) ? null : question.getKeywordFoot())
                 .build();
     }
-
-
 }

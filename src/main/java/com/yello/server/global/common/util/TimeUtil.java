@@ -26,6 +26,12 @@ public class TimeUtil {
         return (seconds) + "일 전";
     }
 
+    public static long timeDiff(LocalDateTime localDateTime) {
+        LocalDateTime currentDateTime = LocalDateTime.now();
+        Duration duration = Duration.between(localDateTime, currentDateTime);
+        return duration.getSeconds();
+    }
+
     public static String toDateFormattedString(LocalDateTime localDateTime) {
         DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
         return localDateTime.format(dateTimeFormatter).toString();

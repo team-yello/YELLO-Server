@@ -2,6 +2,7 @@ package com.yello.server.domain.friend.service;
 
 import com.yello.server.domain.friend.dto.FriendsResponse;
 import com.yello.server.domain.friend.dto.response.FriendShuffleResponse;
+import com.yello.server.domain.friend.dto.response.RecommendFriendResponse;
 import com.yello.server.domain.friend.entity.Friend;
 import com.yello.server.domain.friend.entity.FriendRepository;
 import com.yello.server.domain.friend.exception.FriendException;
@@ -72,6 +73,20 @@ public class FriendServiceImpl implements FriendService {
         return allFriends.stream()
                 .map(FriendShuffleResponse::of)
                 .limit(RANDOM_COUNT)
+                .toList();
+    }
+
+    @Override
+    public List<RecommendFriendResponse> findAllRecommendSchoolFriends(Pageable pageable, Long userId) {
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new UserException(ErrorCode.NOT_FOUND_USER_EXCEPTION));
+
+        List<User> recommendFriends = userRepository.findAllByGroupId(user.getGroup().getId(), pageable)
+                .stream()
+                .toList();
+
+        return recommendFriends.stream()
+                .map(RecommendFriendResponse::of)
                 .toList();
     }
 }

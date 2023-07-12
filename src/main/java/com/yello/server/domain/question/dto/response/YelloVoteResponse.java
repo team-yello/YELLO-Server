@@ -11,5 +11,5 @@ public record YelloVoteResponse(
         List<YelloKeyword> keywordList,
         Integer questionPoint
 ) {
-    
+
 }
