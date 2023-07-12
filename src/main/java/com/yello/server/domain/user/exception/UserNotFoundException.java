@@ -5,9 +5,9 @@ import com.yello.server.global.exception.CustomException;
 import lombok.Getter;
 
 @Getter
-public class UserException extends CustomException {
+public class UserNotFoundException extends CustomException {
 
-    public UserException(ErrorCode error) {
-        super(error, "[UserException] " + error.getMessage());
+    public UserNotFoundException(ErrorCode error) {
+        super(error, "[UserNotFoundException] " + error.getMessage());
     }
 }

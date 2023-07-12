@@ -5,9 +5,9 @@ import com.yello.server.global.exception.CustomException;
 import lombok.Getter;
 
 @Getter
-public class UserException extends CustomException {
+public class UserBadRequestException extends CustomException {
 
-    public UserException(ErrorCode error) {
-        super(error, "[UserException] " + error.getMessage());
+    public UserBadRequestException(ErrorCode error) {
+        super(error, "[UserBadRequestException] " + error.getMessage());
     }
 }

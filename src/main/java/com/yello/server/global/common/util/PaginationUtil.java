@@ -2,6 +2,7 @@ package com.yello.server.global.common.util;
 
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 
 public class PaginationUtil {
 
@@ -9,5 +10,9 @@ public class PaginationUtil {
 
     public static Pageable createPageable(Integer page) {
         return PageRequest.of(page, PAGE_LIMIT);
+    }
+
+    public static Pageable createPageableByNameSort(Integer page) {
+        return PageRequest.of(page, PAGE_LIMIT, Sort.by(Sort.Direction.ASC, "name"));
     }
 }
