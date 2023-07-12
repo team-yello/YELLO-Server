@@ -12,5 +12,4 @@ public record YelloKeyword(
                 .keywordName(keyword.getKeywordName())
                 .build();
     }
-
 }

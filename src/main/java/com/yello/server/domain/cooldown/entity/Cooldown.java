@@ -31,4 +31,11 @@ public class Cooldown {
         this.user = user;
         this.createdAt = createdAt;
     }
+
+    public static Cooldown of(User user, LocalDateTime createdAt) {
+        return Cooldown.builder()
+                .user(user)
+                .createdAt(createdAt)
+                .build();
+    }
 }

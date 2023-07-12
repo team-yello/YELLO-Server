@@ -3,9 +3,11 @@ package com.yello.server.domain.friend.controller;
 import static com.yello.server.global.common.SuccessCode.ADD_FRIEND_SUCCESS;
 import static com.yello.server.global.common.SuccessCode.READ_FRIEND_SUCCESS;
 import static com.yello.server.global.common.util.PaginationUtil.createPageable;
+import static com.yello.server.global.common.util.PaginationUtil.createPageableByNameSort;
 
 import com.yello.server.domain.friend.dto.FriendsResponse;
 import com.yello.server.domain.friend.dto.response.FriendShuffleResponse;
+import com.yello.server.domain.friend.dto.response.RecommendFriendResponse;
 import com.yello.server.domain.friend.service.FriendService;
 import com.yello.server.global.common.SuccessCode;
 import com.yello.server.global.common.dto.BaseResponse;
@@ -78,6 +80,16 @@ public class FriendController {
 
         return BaseResponse.success(SuccessCode.SHUFFLE_FRIEND_SUCCESS, friendShuffleResponse);
 
+    }
+
+    @GetMapping("/recommend/school")
+    public BaseResponse<List<RecommendFriendResponse>> RecommendSchoolFriend(
+            @Parameter(name = "page", description = "페이지네이션 페이지 번호입니다.", example = "1")
+            @Valid @RequestParam Integer page,
+            @RequestHeader("user-id") @Valid Long userId
+    ) {
+        val data = friendService.findAllRecommendSchoolFriends(createPageableByNameSort(page), userId);
+        return BaseResponse.success(SuccessCode.READ_FRIEND_SUCCESS, data);
     }
 
 }
