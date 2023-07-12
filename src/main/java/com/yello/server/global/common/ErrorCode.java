@@ -13,12 +13,12 @@ public enum ErrorCode {
     /**
      * 400 BAD REQUEST
      */
-    REQUEST_VALIDATION_EXCEPTION(HttpStatus.BAD_REQUEST, "잘못된 요청입니다"),
+    REQUEST_VALIDATION_EXCEPTION(HttpStatus.BAD_REQUEST, "잘못된 요청입니다."),
+    YELLOID_REQUIRED_EXCEPTION(HttpStatus.BAD_REQUEST, "yelloId를 쿼리 스트링으로 보내주세요."),
     LACK_USER_EXCEPTION(HttpStatus.BAD_REQUEST, "친구가 4명 이하입니다."),
 
     //friend
     EXIST_FRIEND_EXCEPTION(HttpStatus.BAD_REQUEST, "이미 존재하는 친구입니다."),
-
 
     /**
      * 401 UNAUTHORIZED
