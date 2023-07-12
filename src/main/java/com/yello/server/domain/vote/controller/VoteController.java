@@ -1,8 +1,7 @@
 package com.yello.server.domain.vote.controller;
 
-import static com.yello.server.global.common.SuccessCode.READ_VOTE_SUCCESS;
-import static com.yello.server.global.common.util.PaginationUtil.createPageable;
-
+import com.yello.server.domain.question.dto.response.YelloStartResponse;
+import com.yello.server.domain.question.dto.response.YelloVoteResponse;
 import com.yello.server.domain.vote.dto.response.KeywordCheckResponse;
 import com.yello.server.domain.vote.dto.response.VoteDetailResponse;
 import com.yello.server.domain.vote.dto.response.VoteResponse;
@@ -16,12 +15,15 @@ import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
-import java.util.List;
 import lombok.RequiredArgsConstructor;
 import lombok.val;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
+import java.util.List;
+
+import static com.yello.server.global.common.SuccessCode.READ_VOTE_SUCCESS;
+import static com.yello.server.global.common.util.PaginationUtil.createPageable;
 
 @Tag(name = "01. Vote")
 @RestController
@@ -32,22 +34,22 @@ public class VoteController {
     private final VoteService voteService;
 
     @Operation(summary = "내 투표 전체 조회 API", responses = {
-        @ApiResponse(
-            responseCode = "200",
-            content = @Content(mediaType = "application/json", array = @ArraySchema(schema = @Schema(implementation = VoteResponse.class)))),
+            @ApiResponse(
+                    responseCode = "200",
+                    content = @Content(mediaType = "application/json", array = @ArraySchema(schema = @Schema(implementation = VoteResponse.class)))),
     })
     @GetMapping
     public BaseResponse<List<VoteResponse>> findAllMyVotes(
-        @Parameter(name = "page", description = "페이지네이션 페이지 번호입니다.", example = "1")
-        @RequestParam Integer page) {
+            @Parameter(name = "page", description = "페이지네이션 페이지 번호입니다.", example = "1")
+            @RequestParam Integer page) {
         val data = voteService.findAllVotes(createPageable(page));
         return BaseResponse.success(READ_VOTE_SUCCESS, data);
     }
 
     @Operation(summary = "투표 상세 조회 API", responses = {
-        @ApiResponse(
-            responseCode = "200",
-            content = @Content(mediaType = "application/json", schema = @Schema(implementation = VoteDetailResponse.class))),
+            @ApiResponse(
+                    responseCode = "200",
+                    content = @Content(mediaType = "application/json", schema = @Schema(implementation = VoteDetailResponse.class))),
     })
     @GetMapping("/{voteId}")
     public BaseResponse<VoteDetailResponse> findVote(@PathVariable Long voteId) {
@@ -55,9 +57,40 @@ public class VoteController {
         return BaseResponse.success(READ_VOTE_SUCCESS, data);
     }
 
+    @Operation(summary = "키워드 확인 API", responses = {
+            @ApiResponse(
+                    responseCode = "200",
+                    content = @Content(mediaType = "application/json", schema = @Schema(implementation = KeywordCheckResponse.class))),
+    })
     @PatchMapping("/{voteId}/keyword")
-    public BaseResponse<KeywordCheckResponse> checkKeyword(@RequestHeader("user-id") @Valid Long userId, @PathVariable Long voteId) {
+    public BaseResponse<KeywordCheckResponse> checkKeyword(
+            @Parameter(name = "voteId", description = "해당 투표 아이디 값 입니다.")
+            @RequestHeader("user-id")
+            @Valid Long userId,
+            @PathVariable Long voteId) {
         val keywordCheckResponse = voteService.checkKeyword(userId, voteId);
         return BaseResponse.success(SuccessCode.CHECK_KEYWORD_SUCCESS, keywordCheckResponse);
+    }
+
+
+    @Operation(summary = "Yello 투표 10개 조회 API", responses = {
+            @ApiResponse(
+                    responseCode = "200",
+                    content = @Content(mediaType = "application/json", array = @ArraySchema(schema = @Schema(implementation = YelloVoteResponse.class)))),
+    })
+    @GetMapping("/question")
+    public BaseResponse<List<YelloVoteResponse>> getYelloVote(
+            @RequestHeader("user-id") @Valid Long userId
+    ) {
+        val data = voteService.findYelloVoteList(userId);
+        return BaseResponse.success(SuccessCode.READ_YELLO_VOTE_SUCCESS, data);
+    }
+
+    @GetMapping("/available")
+    public BaseResponse<YelloStartResponse> checkVoteAvailable(
+            @RequestHeader("user-id") @Valid Long userId
+    ) {
+        val data = voteService.checkVoteAvailable(userId);
+        return BaseResponse.success(SuccessCode.READ_YELLO_START_SUCCESS, data);
     }
 }
