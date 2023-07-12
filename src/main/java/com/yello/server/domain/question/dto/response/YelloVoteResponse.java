@@ -4,18 +4,12 @@ import lombok.Builder;
 
 import java.util.List;
 
+@Builder
 public record YelloVoteResponse(
         YelloQuestion question,
         List<YelloFriend> friendList,
         List<YelloKeyword> keywordList,
         Integer questionPoint
 ) {
-
-    @Builder
-    public YelloVoteResponse(YelloQuestion question, List<YelloFriend> friendList, List<YelloKeyword> keywordList, Integer questionPoint) {
-        this.question = question;
-        this.friendList = friendList;
-        this.keywordList = keywordList;
-        this.questionPoint = questionPoint;
-    }
+    
 }

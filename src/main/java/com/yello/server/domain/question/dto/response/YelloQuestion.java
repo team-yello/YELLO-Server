@@ -4,15 +4,15 @@ import com.yello.server.domain.question.entity.Question;
 import lombok.Builder;
 
 import java.util.Objects;
-import java.util.Optional;
 
+@Builder
 public record YelloQuestion(
         String nameHead,
         String nameFoot,
         String keywordHead,
         String keywordFoot
 ) {
-    public static YelloQuestion of(Question question){
+    public static YelloQuestion of(Question question) {
         return YelloQuestion.builder()
                 .nameHead(Objects.isNull(question.getNameHead()) ? null : question.getNameHead())
                 .nameFoot(Objects.isNull(question.getNameFoot()) ? null : question.getNameFoot())
@@ -21,11 +21,5 @@ public record YelloQuestion(
                 .build();
     }
 
-    @Builder
-    public YelloQuestion(String nameHead, String nameFoot, String keywordHead, String keywordFoot) {
-        this.nameHead = nameHead;
-        this.nameFoot = nameFoot;
-        this.keywordHead = keywordHead;
-        this.keywordFoot = keywordFoot;
-    }
+
 }
