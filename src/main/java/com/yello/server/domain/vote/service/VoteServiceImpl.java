@@ -32,6 +32,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import static com.yello.server.global.common.ErrorCode.*;
 import static com.yello.server.global.common.ErrorCode.NOT_FOUND_VOTE_EXCEPTION;
 import static com.yello.server.global.common.util.ConstantUtil.*;
 import static com.yello.server.global.common.util.TimeUtil.toDateFormattedString;
@@ -72,7 +73,7 @@ public class VoteServiceImpl implements VoteService {
         Vote vote = voteRepository.findById(voteId)
                 .orElseThrow(() -> new VoteNotFoundException(NOT_FOUND_VOTE_EXCEPTION));
         userRepository.findById(userId)
-                .orElseThrow(() -> new UserNotFoundException(ErrorCode.NOT_FOUND_USER_EXCEPTION));
+                .orElseThrow(() -> new UserNotFoundException(USERID_NOT_FOUND_USER_EXCEPTION));
 
         vote.updateKeywordCheck();
 
@@ -85,7 +86,7 @@ public class VoteServiceImpl implements VoteService {
         List<YelloVoteResponse> yelloVoteList = new ArrayList<>();
 
         User user = userRepository.findById(userId)
-                .orElseThrow(() -> new UserException(ErrorCode.NOT_FOUND_USER_EXCEPTION));
+                .orElseThrow(() -> new UserException(USERID_NOT_FOUND_USER_EXCEPTION));
 
         List<Question> question = questionRepository.findAll();
         Collections.shuffle(question);
@@ -104,12 +105,12 @@ public class VoteServiceImpl implements VoteService {
         boolean isStart = true;
 
         User user = userRepository.findById(userId)
-                .orElseThrow(() -> new UserException(ErrorCode.NOT_FOUND_USER_EXCEPTION));
+                .orElseThrow(() -> new UserException(USERID_NOT_FOUND_USER_EXCEPTION));
 
         List<Friend> friends = friendRepository.findAllByUser(user);
 
         if (friends.size() < RANDOM_COUNT)
-            throw new UserNotFoundException(ErrorCode.LACK_USER_EXCEPTION);
+            throw new UserNotFoundException(LACK_USER_EXCEPTION);
 
         Cooldown cooldown = cooldownRepository.findByUser(user)
                 .orElse(Cooldown.builder().user(user).createdAt(null).build());
