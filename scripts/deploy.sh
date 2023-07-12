@@ -10,7 +10,7 @@ EXIST_REDIS=$(sudo docker-compose -p ${DOCKER_APP_NAME}-redis -f docker-redis.ym
 if [ -z "$EXIST_REDIS" ]; then
   echo "[$(date +%Y)-$(date +%m)-$(date +%d) $(date +%H):$(date +%M):$(date +%S)] 작동중인 Redis가 존재하지 않습니다." >> /home/ec2-user/deploy.log
   echo "[$(date +%Y)-$(date +%m)-$(date +%d) $(date +%H):$(date +%M):$(date +%S)] Redis 이미지를 빌드합니다." >> /home/ec2-user/deploy.log
-  sudo docker-compose -p ${DOCKER_APP_NAME}-redis -f docker-redis.yml up -d
+  sudo docker-compose -p ${DOCKER_APP_NAME}-redis -f docker-redis.yml up -d --build
   sleep 10
   echo "[$(date +%Y)-$(date +%m)-$(date +%d) $(date +%H):$(date +%M):$(date +%S)] Redis가 작동됩니다." >> /home/ec2-user/deploy.log
 fi
