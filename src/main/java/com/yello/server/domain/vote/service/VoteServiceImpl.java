@@ -134,7 +134,7 @@ public class VoteServiceImpl implements VoteService {
     @Override
     public void createVote(Long userId, CreateVoteRequest request) {
         User sender = userRepository.findById(userId)
-                .orElseThrow(() -> new UserException(ErrorCode.NOT_FOUND_USER_EXCEPTION));
+                .orElseThrow(() -> new UserException(USERID_NOT_FOUND_USER_EXCEPTION));
 
         sender.updatePoint(request.totalPoint());
 

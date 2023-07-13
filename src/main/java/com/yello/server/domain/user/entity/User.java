@@ -1,6 +1,6 @@
 package com.yello.server.domain.user.entity;
 
-import com.yello.server.domain.authorization.dto.request.SignInRequest;
+import com.yello.server.domain.authorization.dto.request.SignUpRequest;
 import com.yello.server.domain.group.entity.School;
 import com.yello.server.global.common.dto.AuditingTimeEntity;
 import lombok.AccessLevel;
@@ -82,19 +82,19 @@ public class User extends AuditingTimeEntity {
         this.email = email;
     }
 
-    public static User of(SignInRequest signInRequest, String uuid, School group) {
+    public static User of(SignUpRequest signUpRequest, String uuid, School group) {
         return User.builder()
                 .recommendCount(0L)
-                .name(signInRequest.name())
-                .yelloId(signInRequest.yelloId())
-                .gender(signInRequest.gender())
+                .name(signUpRequest.name())
+                .yelloId(signUpRequest.yelloId())
+                .gender(signUpRequest.gender())
                 .point(0)
-                .social(signInRequest.social())
-                .profileImage(signInRequest.profileImage())
+                .social(signUpRequest.social())
+                .profileImage(signUpRequest.profileImage())
                 .uuid(uuid)
                 .deletedAt(null)
                 .group(group)
-                .email(signInRequest.email())
+                .email(signUpRequest.email())
                 .build();
     }
 

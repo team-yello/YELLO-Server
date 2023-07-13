@@ -10,7 +10,6 @@ import org.springframework.data.repository.query.Param;
 
 public interface FriendRepository extends JpaRepository<Friend, Long> {
     // Create
-    Friend save(Friend friend);
 
     // Read
     @Query("select f from Friend f where f.target.id = :targetId and f.user.id = :userId")
