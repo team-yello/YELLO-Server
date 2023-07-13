@@ -5,10 +5,10 @@ import com.yello.server.domain.cooldown.entity.CooldownRepository;
 import com.yello.server.domain.friend.entity.Friend;
 import com.yello.server.domain.friend.entity.FriendRepository;
 import com.yello.server.domain.keyword.entity.Keyword;
-import com.yello.server.domain.question.dto.response.YelloFriend;
-import com.yello.server.domain.question.dto.response.YelloQuestion;
-import com.yello.server.domain.question.dto.response.YelloStartResponse;
-import com.yello.server.domain.question.dto.response.YelloVoteResponse;
+import com.yello.server.domain.question.dto.response.VoteAvailableResponse;
+import com.yello.server.domain.question.dto.response.VoteContentVO;
+import com.yello.server.domain.question.dto.response.VoteQuestionResponse;
+import com.yello.server.domain.question.dto.response.VoteShuffleFriend;
 import com.yello.server.domain.question.entity.Question;
 import com.yello.server.domain.question.entity.QuestionRepository;
 import com.yello.server.domain.user.entity.User;
@@ -84,9 +84,9 @@ public class VoteServiceImpl implements VoteService {
     }
 
     @Override
-    public List<YelloVoteResponse> findYelloVoteList(Long userId) {
+    public List<VoteQuestionResponse> findYelloVoteList(Long userId) {
 
-        List<YelloVoteResponse> yelloVoteList = new ArrayList<>();
+        List<VoteQuestionResponse> yelloVoteList = new ArrayList<>();
 
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new UserException(ErrorCode.NOT_FOUND_USER_EXCEPTION));
@@ -104,7 +104,7 @@ public class VoteServiceImpl implements VoteService {
     }
 
     @Override
-    public YelloStartResponse checkVoteAvailable(Long userId) {
+    public VoteAvailableResponse checkVoteAvailable(Long userId) {
         boolean isStart = true;
 
         User user = userRepository.findById(userId)
@@ -123,31 +123,31 @@ public class VoteServiceImpl implements VoteService {
             isStart = false;
         }
 
-        return YelloStartResponse.builder()
+        return VoteAvailableResponse.builder()
                 .isStart(isStart)
                 .point(user.getPoint())
                 .createdAt(toDateFormattedString(cooldown.getCreatedAt()))
                 .build();
     }
 
-    public YelloVoteResponse getVoteData(User user, Question question) {
+    public VoteQuestionResponse getVoteData(User user, Question question) {
         List<Keyword> keywordList = question.getKeywordList();
         Collections.shuffle(keywordList);
 
-        return YelloVoteResponse.builder()
+        return VoteQuestionResponse.builder()
                 .friendList(getFriendList(user))
                 .keywordList(getKeywordList(question))
-                .question(YelloQuestion.of(question))
+                .question(VoteContentVO.of(question))
                 .questionPoint(randomPoint())
                 .build();
     }
 
-    public List<YelloFriend> getFriendList(User user) {
+    public List<VoteShuffleFriend> getFriendList(User user) {
         List<Friend> allFriend = friendRepository.findAllByUser(user);
         Collections.shuffle(allFriend);
 
         return allFriend.stream()
-                .map(YelloFriend::of)
+                .map(VoteShuffleFriend::of)
                 .limit(RANDOM_COUNT)
                 .collect(Collectors.toList());
     }
@@ -159,7 +159,7 @@ public class VoteServiceImpl implements VoteService {
         return keywordList.stream()
                 .map(Keyword::getKeywordName)
                 .limit(RANDOM_COUNT)
-                .collect(Collectors.toList());
+                .toList();
     }
 
     public long timeDiff(LocalDateTime localDateTime) {

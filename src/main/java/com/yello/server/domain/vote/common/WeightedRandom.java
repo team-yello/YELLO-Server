@@ -22,7 +22,7 @@ public class WeightedRandom {
             if (currentWeight >= pivot)
                 return i;
         }
-        return i;
+        return i - 1;
     }
 
 }

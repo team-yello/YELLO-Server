@@ -4,11 +4,11 @@ import com.yello.server.domain.keyword.entity.Keyword;
 import lombok.Builder;
 
 @Builder
-public record YelloKeyword(
+public record VoteKeyword(
         String keywordName
 ) {
-    public static YelloKeyword of(Keyword keyword) {
-        return YelloKeyword.builder()
+    public static VoteKeyword of(Keyword keyword) {
+        return VoteKeyword.builder()
                 .keywordName(keyword.getKeywordName())
                 .build();
     }
