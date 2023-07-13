@@ -8,7 +8,7 @@ import java.util.List;
 public record YelloVoteResponse(
         YelloQuestion question,
         List<YelloFriend> friendList,
-        List<YelloKeyword> keywordList,
+        List<String> keywordList,
         Integer questionPoint
 ) {
 

@@ -7,6 +7,7 @@ import java.util.Objects;
 
 @Builder
 public record YelloQuestion(
+        Long questionId,
         String nameHead,
         String nameFoot,
         String keywordHead,
@@ -14,6 +15,7 @@ public record YelloQuestion(
 ) {
     public static YelloQuestion of(Question question) {
         return YelloQuestion.builder()
+                .questionId(Objects.isNull(question.getId()) ? null : question.getId())
                 .nameHead(Objects.isNull(question.getNameHead()) ? null : question.getNameHead())
                 .nameFoot(Objects.isNull(question.getNameFoot()) ? null : question.getNameFoot())
                 .keywordHead(Objects.isNull(question.getKeywordHead()) ? null : question.getKeywordHead())

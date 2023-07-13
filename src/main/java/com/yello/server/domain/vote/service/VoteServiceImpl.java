@@ -5,7 +5,10 @@ import com.yello.server.domain.cooldown.entity.CooldownRepository;
 import com.yello.server.domain.friend.entity.Friend;
 import com.yello.server.domain.friend.entity.FriendRepository;
 import com.yello.server.domain.keyword.entity.Keyword;
-import com.yello.server.domain.question.dto.response.*;
+import com.yello.server.domain.question.dto.response.YelloFriend;
+import com.yello.server.domain.question.dto.response.YelloQuestion;
+import com.yello.server.domain.question.dto.response.YelloStartResponse;
+import com.yello.server.domain.question.dto.response.YelloVoteResponse;
 import com.yello.server.domain.question.entity.Question;
 import com.yello.server.domain.question.entity.QuestionRepository;
 import com.yello.server.domain.user.entity.User;
@@ -148,12 +151,12 @@ public class VoteServiceImpl implements VoteService {
                 .collect(Collectors.toList());
     }
 
-    public List<YelloKeyword> getKeywordList(Question question) {
+    public List<String> getKeywordList(Question question) {
         List<Keyword> keywordList = question.getKeywordList();
         Collections.shuffle(keywordList);
 
         return keywordList.stream()
-                .map(YelloKeyword::of)
+                .map(Keyword::getKeywordName)
                 .limit(RANDOM_COUNT)
                 .collect(Collectors.toList());
     }

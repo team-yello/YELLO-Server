@@ -1,0 +1,4 @@
+dev-url: http://localhost/kakao.html
+dev-kakao-web-key: 7e98da00da1be6de7f56ba917037474f
+prod-url: http://3.38.231.223/kakao.html
+prod-kakao-web-key: 7e98da00da1be6de7f56ba917037474f
