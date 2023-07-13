@@ -71,8 +71,7 @@ public class VoteController {
         val keywordCheckResponse = voteService.checkKeyword(userId, voteId);
         return BaseResponse.success(CHECK_KEYWORD_SUCCESS, keywordCheckResponse);
     }
-
-
+    
     @Operation(summary = "Yello 투표 10개 조회 API", responses = {
             @ApiResponse(
                     responseCode = "200",
