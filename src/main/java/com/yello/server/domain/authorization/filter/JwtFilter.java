@@ -1,12 +1,17 @@
 package com.yello.server.domain.authorization.filter;
 
 import static com.yello.server.global.common.ErrorCode.AUTHENTICATION_ERROR;
+import static com.yello.server.global.common.ErrorCode.AUTH_NOT_FOUND_USER_EXCEPTION;
 import static org.springframework.http.HttpHeaders.AUTHORIZATION;
 
 import com.yello.server.domain.authorization.JwtTokenProvider;
+import com.yello.server.domain.authorization.exception.AuthNotFoundException;
 import com.yello.server.domain.authorization.exception.CustomAuthenticationException;
+import com.yello.server.domain.user.entity.User;
+import com.yello.server.domain.user.entity.UserRepository;
 import io.jsonwebtoken.JwtException;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 import javax.servlet.FilterChain;
 import javax.servlet.ServletException;
@@ -28,6 +33,8 @@ public class JwtFilter extends OncePerRequestFilter {
     private final static String BEARER = "Bearer ";
     private final JwtTokenProvider jwtTokenProvider;
     private final String secretKey;
+
+    private final UserRepository userRepository;
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
@@ -64,12 +71,14 @@ public class JwtFilter extends OncePerRequestFilter {
             throw new JwtException("");
         }
 
+        User tokenUser = userRepository.findById(userId)
+                .orElseThrow(() -> new AuthNotFoundException(AUTH_NOT_FOUND_USER_EXCEPTION));
         // 권한 부여
-        UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(userId, null,
+        UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(tokenUser.getYelloId(), null,
             List.of(new SimpleGrantedAuthority("USER")));
 
         // Detail을 넣어줌
-        authenticationToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
+        authenticationToken.setDetails(tokenUser);
         SecurityContextHolder.getContext().setAuthentication(authenticationToken);
         log.info("[+] Token in SecurityContextHolder");
         filterChain.doFilter(request, response);

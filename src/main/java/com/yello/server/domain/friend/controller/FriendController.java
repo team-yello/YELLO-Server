@@ -5,7 +5,9 @@ import com.yello.server.domain.friend.dto.response.FriendShuffleResponse;
 import com.yello.server.domain.friend.dto.response.KakaoFriendResponse;
 import com.yello.server.domain.friend.dto.response.RecommendFriendResponse;
 import com.yello.server.domain.friend.service.FriendService;
+import com.yello.server.domain.user.entity.User;
 import com.yello.server.global.common.SuccessCode;
+import com.yello.server.global.common.annotation.AccessTokenUser;
 import com.yello.server.global.common.dto.BaseResponse;
 import com.yello.server.global.common.util.RestUtil;
 import io.swagger.v3.oas.annotations.Operation;
@@ -84,9 +86,9 @@ public class FriendController {
     public BaseResponse<List<RecommendFriendResponse>> recommendSchoolFriend(
             @Parameter(name = "page", description = "페이지네이션 페이지 번호입니다.", example = "1")
             @Valid @RequestParam Integer page,
-            @RequestHeader("user-id") @Valid Long userId
+            @AccessTokenUser User user
     ) {
-        val data = friendService.findAllRecommendSchoolFriends(createPageableByNameSort(page), userId);
+        val data = friendService.findAllRecommendSchoolFriends(createPageableByNameSort(page), user.getId());
         return BaseResponse.success(SuccessCode.READ_FRIEND_SUCCESS, data);
     }
 
