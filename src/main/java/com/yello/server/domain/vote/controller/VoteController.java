@@ -96,7 +96,7 @@ public class VoteController {
 
     @Operation(summary = "Yello 투표 생성 API", responses = {
             @ApiResponse(
-                    responseCode = "200",
+                    responseCode = "201",
                     content = @Content(mediaType = "application/json")),
     })
     @PostMapping
@@ -104,7 +104,7 @@ public class VoteController {
             @RequestHeader("user-id") @Valid Long userId,
             @RequestBody CreateVoteRequest request
     ) {
-        voteService.CreateVote(userId, request);
+        voteService.createVote(userId, request);
         return BaseResponse.success(CREATE_VOTE_SUCCESS);
     }
 }

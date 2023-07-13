@@ -131,7 +131,7 @@ public class VoteServiceImpl implements VoteService {
 
     @Transactional
     @Override
-    public void CreateVote(Long userId, CreateVoteRequest request) {
+    public void createVote(Long userId, CreateVoteRequest request) {
         User sender = userRepository.findById(userId)
                 .orElseThrow(() -> new UserException(ErrorCode.NOT_FOUND_USER_EXCEPTION));
 

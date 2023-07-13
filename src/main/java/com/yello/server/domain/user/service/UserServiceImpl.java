@@ -7,7 +7,6 @@ import com.yello.server.domain.user.entity.UserRepository;
 import com.yello.server.domain.user.exception.UserException;
 import com.yello.server.domain.user.exception.UserNotFoundException;
 import com.yello.server.domain.vote.entity.VoteRepository;
-import com.yello.server.global.common.ErrorCode;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -37,7 +36,7 @@ public class UserServiceImpl implements UserService {
 
     public User findByUserId(Long userId) {
         return userRepository.findById(userId)
-                .orElseThrow(() -> new UserException(ErrorCode.NOT_FOUND_USER_EXCEPTION));
+                .orElseThrow(() -> new UserException(NOT_FOUND_USER_EXCEPTION));
     }
 
 }

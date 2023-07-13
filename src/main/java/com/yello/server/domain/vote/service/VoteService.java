@@ -25,6 +25,6 @@ public interface VoteService {
 
     YelloStartResponse checkVoteAvailable(Long userId);
 
-    void CreateVote(Long userId, CreateVoteRequest request);
+    void createVote(Long userId, CreateVoteRequest request);
 
 }
