@@ -4,13 +4,13 @@ import com.yello.server.domain.friend.entity.Friend;
 import lombok.Builder;
 
 @Builder
-public record YelloFriend(
+public record VoteShuffleFriend(
         Long id,
         String yelloId,
         String name
 ) {
-    public static YelloFriend of(Friend friend) {
-        return YelloFriend.builder()
+    public static VoteShuffleFriend of(Friend friend) {
+        return VoteShuffleFriend.builder()
                 .id(friend.getTarget().getId())
                 .yelloId(friend.getTarget().getYelloId())
                 .name(friend.getTarget().getName())
