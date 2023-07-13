@@ -10,9 +10,9 @@ import com.yello.server.domain.authorization.JwtTokenProvider;
 import com.yello.server.domain.authorization.dto.KakaoTokenInfo;
 import com.yello.server.domain.authorization.dto.ServiceTokenVO;
 import com.yello.server.domain.authorization.dto.request.OAuthRequest;
-import com.yello.server.domain.authorization.dto.request.SignInRequest;
+import com.yello.server.domain.authorization.dto.request.SignUpRequest;
 import com.yello.server.domain.authorization.dto.response.OAuthResponse;
-import com.yello.server.domain.authorization.dto.response.SignInResponse;
+import com.yello.server.domain.authorization.dto.response.SignUpResponse;
 import com.yello.server.domain.authorization.exception.NotSignedInException;
 import com.yello.server.domain.authorization.exception.OAuthException;
 import com.yello.server.domain.authorization.exception.AuthBadRequestException;
@@ -24,7 +24,6 @@ import com.yello.server.domain.group.exception.GroupNotFoundException;
 import com.yello.server.domain.user.entity.Social;
 import com.yello.server.domain.user.entity.User;
 import com.yello.server.domain.user.entity.UserRepository;
-import com.yello.server.domain.user.exception.UserBadRequestException;
 import com.yello.server.domain.user.exception.UserConflictException;
 import com.yello.server.domain.user.exception.UserNotFoundException;
 import com.yello.server.global.common.util.RestUtil;
@@ -79,14 +78,14 @@ public class AuthServiceImpl implements AuthService {
         }
 
         User user = userRepository.findByYelloId(yelloId)
-                .orElseThrow(() -> { throw new UserNotFoundException(YELLOID_NOT_FOUND_USER_EXCEPTION); });
+                .orElseThrow(() -> new UserNotFoundException(YELLOID_NOT_FOUND_USER_EXCEPTION));
 
         return true;
     }
 
     @Override
-    @Transactional(readOnly = false)
-    public SignInResponse signIn(String oAuthAccessToken, SignInRequest signInRequest) {
+    @Transactional
+    public SignUpResponse signUp(String oAuthAccessToken, SignUpRequest signUpRequest) {
         String socialUUID = "";
 
         // exception
@@ -94,7 +93,7 @@ public class AuthServiceImpl implements AuthService {
             throw new AuthBadRequestException(OAUTH_ACCESS_TOKEN_REQUIRED_EXCEPTION);
         }
 
-        if(Social.KAKAO == signInRequest.social()) {
+        if(Social.KAKAO == signUpRequest.social()) {
             ResponseEntity<KakaoTokenInfo> response = RestUtil.getKakaoTokenInfo(oAuthAccessToken);
 
             if (response.getStatusCode()==BAD_REQUEST || response.getStatusCode()==UNAUTHORIZED) {
@@ -109,35 +108,34 @@ public class AuthServiceImpl implements AuthService {
             throw new UserConflictException(UUID_CONFLICT_USER_EXCEPTION);
         }
 
-        Optional<User> userByYelloId = userRepository.findByYelloId(signInRequest.yelloId());
+        Optional<User> userByYelloId = userRepository.findByYelloId(signUpRequest.yelloId());
         if(userByYelloId.isPresent()){
             throw new UserConflictException(YELLOID_CONFLICT_USER_EXCEPTION);
         }
 
-        School group = schoolRepository.findById(signInRequest.groupId())
-                .orElseThrow(() -> { throw new GroupNotFoundException(GROUPID_NOT_FOUND_GROUP_EXCEPTION); });
+        School group = schoolRepository.findById(signUpRequest.groupId())
+                .orElseThrow(() -> new GroupNotFoundException(GROUPID_NOT_FOUND_GROUP_EXCEPTION));
 
         // logic
-        User newSignInUser = userRepository.save(User.of(signInRequest, socialUUID, group));
+        User newSignInUser = userRepository.save(User.of(signUpRequest, socialUUID, group));
         ServiceTokenVO newUserTokens = jwtTokenProvider.createServiceToken(newSignInUser.getId(), newSignInUser.getUuid());
 
-        if(!Objects.isNull(signInRequest.recommendId())){
-            User recommendedUser = userRepository.findByYelloId(signInRequest.recommendId())
-                    .orElseThrow(() -> { throw new UserNotFoundException(YELLOID_NOT_FOUND_USER_EXCEPTION); });
+        if(signUpRequest.recommendId() != null){
+            User recommendedUser = userRepository.findByYelloId(signUpRequest.recommendId())
+                    .orElseThrow(() -> new UserNotFoundException(YELLOID_NOT_FOUND_USER_EXCEPTION));
 
             recommendedUser.addRecommendCount(1);
         }
 
-        for(Long friendId : signInRequest.friends()){
-            User friend = userRepository.findById(friendId)
-                    .orElseThrow(() -> { throw new UserNotFoundException(USERID_NOT_FOUND_USER_EXCEPTION); });
-
-            friendRepository.save(Friend.createFriend(newSignInUser, friend));
-        }
+        signUpRequest.friends()
+                .stream()
+                .map(userRepository::findById)
+                .filter(Optional::isPresent)
+                .forEach(friend -> friendRepository.save(Friend.createFriend(newSignInUser, friend.get())));
 
         // redis
         tokenValueOperations.set(newSignInUser.getId(), newUserTokens);
 
-        return SignInResponse.of(newSignInUser.getUuid(), newUserTokens);
+        return SignUpResponse.of(newSignInUser.getYelloId(), newUserTokens);
     }
 }

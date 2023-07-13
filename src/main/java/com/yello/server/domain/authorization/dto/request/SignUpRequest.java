@@ -7,10 +7,9 @@ import lombok.Builder;
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotNull;
 import java.util.List;
-import java.util.Objects;
 
 @Builder
-public record SignInRequest(
+public record SignUpRequest(
         @NotNull Social social,
         @NotNull @Email String email,
         @NotNull String profileImage,
