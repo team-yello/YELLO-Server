@@ -27,6 +27,7 @@ public enum SuccessCode {
     SIGNUP_SUCCESS(HttpStatus.CREATED, "회원가입이 완료됐습니다."),
     CREATE_BOARD_SUCCESS(HttpStatus.CREATED, "게시물 생성이 완료됐습니다."),
     LOGIN_SUCCESS(HttpStatus.CREATED, " 로그인이 성공했습니다."),
+    CREATE_VOTE_SUCCESS(HttpStatus.CREATED, "투표를 성공했습니다."),
     ;
 
     private final HttpStatus httpStatus;
