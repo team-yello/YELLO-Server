@@ -5,10 +5,10 @@ import lombok.Builder;
 import java.util.List;
 
 @Builder
-public record YelloVoteResponse(
-        YelloQuestion question,
-        List<YelloFriend> friendList,
-        List<YelloKeyword> keywordList,
+public record VoteQuestionResponse(
+        VoteContentVO question,
+        List<VoteShuffleFriend> friendList,
+        List<String> keywordList,
         Integer questionPoint
 ) {
 

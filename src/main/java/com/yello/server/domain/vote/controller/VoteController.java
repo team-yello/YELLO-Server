@@ -1,7 +1,7 @@
 package com.yello.server.domain.vote.controller;
 
-import com.yello.server.domain.question.dto.response.YelloStartResponse;
-import com.yello.server.domain.question.dto.response.YelloVoteResponse;
+import com.yello.server.domain.question.dto.response.VoteAvailableResponse;
+import com.yello.server.domain.question.dto.response.VoteQuestionResponse;
 import com.yello.server.domain.vote.dto.request.CreateVoteRequest;
 import com.yello.server.domain.vote.dto.response.KeywordCheckResponse;
 import com.yello.server.domain.vote.dto.response.VoteDetailResponse;
@@ -71,14 +71,14 @@ public class VoteController {
         val keywordCheckResponse = voteService.checkKeyword(userId, voteId);
         return BaseResponse.success(CHECK_KEYWORD_SUCCESS, keywordCheckResponse);
     }
-    
+
     @Operation(summary = "Yello 투표 10개 조회 API", responses = {
             @ApiResponse(
                     responseCode = "200",
-                    content = @Content(mediaType = "application/json", array = @ArraySchema(schema = @Schema(implementation = YelloVoteResponse.class)))),
+                    content = @Content(mediaType = "application/json", array = @ArraySchema(schema = @Schema(implementation = VoteQuestionResponse.class)))),
     })
     @GetMapping("/question")
-    public BaseResponse<List<YelloVoteResponse>> getYelloVote(
+    public BaseResponse<List<VoteQuestionResponse>> getYelloVote(
             @RequestHeader("user-id") @Valid Long userId
     ) {
         val data = voteService.findYelloVoteList(userId);
@@ -86,7 +86,7 @@ public class VoteController {
     }
 
     @GetMapping("/available")
-    public BaseResponse<YelloStartResponse> checkVoteAvailable(
+    public BaseResponse<VoteAvailableResponse> checkVoteAvailable(
             @RequestHeader("user-id") @Valid Long userId
     ) {
         val data = voteService.checkVoteAvailable(userId);

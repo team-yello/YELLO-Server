@@ -5,7 +5,10 @@ import com.yello.server.domain.cooldown.entity.CooldownRepository;
 import com.yello.server.domain.friend.entity.Friend;
 import com.yello.server.domain.friend.entity.FriendRepository;
 import com.yello.server.domain.keyword.entity.Keyword;
-import com.yello.server.domain.question.dto.response.*;
+import com.yello.server.domain.question.dto.response.VoteAvailableResponse;
+import com.yello.server.domain.question.dto.response.VoteContentVO;
+import com.yello.server.domain.question.dto.response.VoteQuestionResponse;
+import com.yello.server.domain.question.dto.response.VoteShuffleFriend;
 import com.yello.server.domain.question.entity.Question;
 import com.yello.server.domain.question.entity.QuestionRepository;
 import com.yello.server.domain.question.service.QuestionService;
@@ -33,6 +36,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import static com.yello.server.domain.vote.common.WeightedRandom.randomPoint;
 import static com.yello.server.global.common.ErrorCode.NOT_FOUND_VOTE_EXCEPTION;
 import static com.yello.server.global.common.util.ConstantUtil.*;
 import static com.yello.server.global.common.util.TimeUtil.timeDiff;
@@ -84,9 +88,9 @@ public class VoteServiceImpl implements VoteService {
     }
 
     @Override
-    public List<YelloVoteResponse> findYelloVoteList(Long userId) {
+    public List<VoteQuestionResponse> findYelloVoteList(Long userId) {
 
-        List<YelloVoteResponse> yelloVoteList = new ArrayList<>();
+        List<VoteQuestionResponse> yelloVoteList = new ArrayList<>();
 
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new UserException(ErrorCode.NOT_FOUND_USER_EXCEPTION));
@@ -103,7 +107,7 @@ public class VoteServiceImpl implements VoteService {
     }
 
     @Override
-    public YelloStartResponse checkVoteAvailable(Long userId) {
+    public VoteAvailableResponse checkVoteAvailable(Long userId) {
         boolean isStart = true;
 
         User user = userRepository.findById(userId)
@@ -122,7 +126,7 @@ public class VoteServiceImpl implements VoteService {
             isStart = false;
         }
 
-        return YelloStartResponse.builder()
+        return VoteAvailableResponse.builder()
                 .isStart(isStart)
                 .point(user.getPoint())
                 .createdAt(toDateFormattedString(cooldown.getCreatedAt()))
@@ -140,37 +144,37 @@ public class VoteServiceImpl implements VoteService {
         request.voteAnswerList().forEach(vote ->
                 voteRepository.save(Vote.createVote(vote.keywordName(), sender, userService.findByUserId(vote.friendId()), questionService.findByQuestionId(vote.questionId()), vote.colorIndex())));
     }
-
-    public YelloVoteResponse getVoteData(User user, Question question) {
+    
+    public VoteQuestionResponse getVoteData(User user, Question question) {
         List<Keyword> keywordList = question.getKeywordList();
         Collections.shuffle(keywordList);
 
-        return YelloVoteResponse.builder()
+        return VoteQuestionResponse.builder()
                 .friendList(getFriendList(user))
                 .keywordList(getKeywordList(question))
-                .question(YelloQuestion.of(question))
-                .questionPoint(question.getPoint())
+                .question(VoteContentVO.of(question))
+                .questionPoint(randomPoint())
                 .build();
     }
 
-    public List<YelloFriend> getFriendList(User user) {
+    public List<VoteShuffleFriend> getFriendList(User user) {
         List<Friend> allFriend = friendRepository.findAllByUser(user);
         Collections.shuffle(allFriend);
 
         return allFriend.stream()
-                .map(YelloFriend::of)
+                .map(VoteShuffleFriend::of)
                 .limit(RANDOM_COUNT)
                 .collect(Collectors.toList());
     }
 
-    public List<YelloKeyword> getKeywordList(Question question) {
+    public List<String> getKeywordList(Question question) {
         List<Keyword> keywordList = question.getKeywordList();
         Collections.shuffle(keywordList);
 
         return keywordList.stream()
-                .map(YelloKeyword::of)
+                .map(Keyword::getKeywordName)
                 .limit(RANDOM_COUNT)
-                .collect(Collectors.toList());
+                .toList();
     }
 
     private Vote findVote(Long id) {

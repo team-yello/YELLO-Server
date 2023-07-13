@@ -6,14 +6,16 @@ import lombok.Builder;
 import java.util.Objects;
 
 @Builder
-public record YelloQuestion(
+public record VoteContentVO(
+        Long questionId,
         String nameHead,
         String nameFoot,
         String keywordHead,
         String keywordFoot
 ) {
-    public static YelloQuestion of(Question question) {
-        return YelloQuestion.builder()
+    public static VoteContentVO of(Question question) {
+        return VoteContentVO.builder()
+                .questionId(Objects.isNull(question.getId()) ? null : question.getId())
                 .nameHead(Objects.isNull(question.getNameHead()) ? null : question.getNameHead())
                 .nameFoot(Objects.isNull(question.getNameFoot()) ? null : question.getNameFoot())
                 .keywordHead(Objects.isNull(question.getKeywordHead()) ? null : question.getKeywordHead())
