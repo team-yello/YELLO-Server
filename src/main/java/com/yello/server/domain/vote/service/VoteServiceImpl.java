@@ -35,6 +35,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import static com.yello.server.domain.vote.common.WeightedRandom.randomPoint;
 import static com.yello.server.global.common.ErrorCode.NOT_FOUND_VOTE_EXCEPTION;
 import static com.yello.server.global.common.util.ConstantUtil.*;
 import static com.yello.server.global.common.util.TimeUtil.toDateFormattedString;
@@ -137,7 +138,7 @@ public class VoteServiceImpl implements VoteService {
                 .friendList(getFriendList(user))
                 .keywordList(getKeywordList(question))
                 .question(YelloQuestion.of(question))
-                .questionPoint(question.getPoint())
+                .questionPoint(randomPoint())
                 .build();
     }
 
