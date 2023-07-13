@@ -30,6 +30,7 @@ public class JwtExceptionFilter extends OncePerRequestFilter {
             throw new InvalidTokenException(INVALID_TOKEN);
         } catch (AuthenticationException exception) {
             log.error(exception.getMessage());
+            exception.printStackTrace();
         }
     }
 }

@@ -9,12 +9,16 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
 public interface FriendRepository extends JpaRepository<Friend, Long> {
+    // Create
 
+    // Read
     @Query("select f from Friend f where f.target.id = :targetId and f.user.id = :userId")
     Friend findByFollowingAndFollower(@Param("userId") Long userId, @Param("targetId") Long targetId);
-
     @Query("select f from Friend f where f.user.id = :userId")
     Page<Friend> findAllFriendsByUserId(Pageable pageable, @Param("userId") Long userId);
-
     List<Friend> findAllByUser(User user);
+
+    // Update
+
+    // Delete
 }

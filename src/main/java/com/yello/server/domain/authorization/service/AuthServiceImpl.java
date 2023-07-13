@@ -10,12 +10,21 @@ import com.yello.server.domain.authorization.JwtTokenProvider;
 import com.yello.server.domain.authorization.dto.KakaoTokenInfo;
 import com.yello.server.domain.authorization.dto.ServiceTokenVO;
 import com.yello.server.domain.authorization.dto.request.OAuthRequest;
+import com.yello.server.domain.authorization.dto.request.SignUpRequest;
 import com.yello.server.domain.authorization.dto.response.OAuthResponse;
+import com.yello.server.domain.authorization.dto.response.SignUpResponse;
 import com.yello.server.domain.authorization.exception.NotSignedInException;
 import com.yello.server.domain.authorization.exception.OAuthException;
 import com.yello.server.domain.authorization.exception.AuthBadRequestException;
+import com.yello.server.domain.friend.entity.Friend;
+import com.yello.server.domain.friend.entity.FriendRepository;
+import com.yello.server.domain.group.entity.School;
+import com.yello.server.domain.group.entity.SchoolRepository;
+import com.yello.server.domain.group.exception.GroupNotFoundException;
+import com.yello.server.domain.user.entity.Social;
 import com.yello.server.domain.user.entity.User;
 import com.yello.server.domain.user.entity.UserRepository;
+import com.yello.server.domain.user.exception.UserConflictException;
 import com.yello.server.domain.user.exception.UserNotFoundException;
 import com.yello.server.global.common.util.RestUtil;
 
@@ -26,12 +35,15 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.redis.core.ValueOperations;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @RequiredArgsConstructor
 public class AuthServiceImpl implements AuthService {
 
     private final UserRepository userRepository;
+    private final SchoolRepository schoolRepository;
+    private final FriendRepository friendRepository;
     private final JwtTokenProvider jwtTokenProvider;
     private final ValueOperations<Long, ServiceTokenVO> tokenValueOperations;
 
@@ -65,12 +77,65 @@ public class AuthServiceImpl implements AuthService {
             throw new AuthBadRequestException(YELLOID_REQUIRED_EXCEPTION);
         }
 
-        Optional<User> user = userRepository.findByYelloId(yelloId);
-
-        if(user.isEmpty()){
-            throw new UserNotFoundException(NOT_FOUND_USER_EXCEPTION);
-        }
+        User user = userRepository.findByYelloId(yelloId)
+                .orElseThrow(() -> new UserNotFoundException(YELLOID_NOT_FOUND_USER_EXCEPTION));
 
         return true;
+    }
+
+    @Override
+    @Transactional
+    public SignUpResponse signUp(String oAuthAccessToken, SignUpRequest signUpRequest) {
+        String socialUUID = "";
+
+        // exception
+        if(Objects.isNull(oAuthAccessToken)) {
+            throw new AuthBadRequestException(OAUTH_ACCESS_TOKEN_REQUIRED_EXCEPTION);
+        }
+
+        if(Social.KAKAO == signUpRequest.social()) {
+            ResponseEntity<KakaoTokenInfo> response = RestUtil.getKakaoTokenInfo(oAuthAccessToken);
+
+            if (response.getStatusCode()==BAD_REQUEST || response.getStatusCode()==UNAUTHORIZED) {
+                throw new OAuthException(OAUTH_TOKEN_EXCEPTION);
+            }
+
+            socialUUID = String.valueOf(response.getBody().id());
+        }
+
+        Optional<User> userByUUID = userRepository.findByUuid(socialUUID);
+        if(userByUUID.isPresent()){
+            throw new UserConflictException(UUID_CONFLICT_USER_EXCEPTION);
+        }
+
+        Optional<User> userByYelloId = userRepository.findByYelloId(signUpRequest.yelloId());
+        if(userByYelloId.isPresent()){
+            throw new UserConflictException(YELLOID_CONFLICT_USER_EXCEPTION);
+        }
+
+        School group = schoolRepository.findById(signUpRequest.groupId())
+                .orElseThrow(() -> new GroupNotFoundException(GROUPID_NOT_FOUND_GROUP_EXCEPTION));
+
+        // logic
+        User newSignInUser = userRepository.save(User.of(signUpRequest, socialUUID, group));
+        ServiceTokenVO newUserTokens = jwtTokenProvider.createServiceToken(newSignInUser.getId(), newSignInUser.getUuid());
+
+        if(signUpRequest.recommendId() != null){
+            User recommendedUser = userRepository.findByYelloId(signUpRequest.recommendId())
+                    .orElseThrow(() -> new UserNotFoundException(YELLOID_NOT_FOUND_USER_EXCEPTION));
+
+            recommendedUser.addRecommendCount(1);
+        }
+
+        signUpRequest.friends()
+                .stream()
+                .map(userRepository::findById)
+                .filter(Optional::isPresent)
+                .forEach(friend -> friendRepository.save(Friend.createFriend(newSignInUser, friend.get())));
+
+        // redis
+        tokenValueOperations.set(newSignInUser.getId(), newUserTokens);
+
+        return SignUpResponse.of(newSignInUser.getYelloId(), newUserTokens);
     }
 }
