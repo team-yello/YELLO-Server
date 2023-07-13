@@ -11,10 +11,13 @@ import com.yello.server.domain.question.dto.response.VoteQuestionResponse;
 import com.yello.server.domain.question.dto.response.VoteShuffleFriend;
 import com.yello.server.domain.question.entity.Question;
 import com.yello.server.domain.question.entity.QuestionRepository;
+import com.yello.server.domain.question.service.QuestionService;
 import com.yello.server.domain.user.entity.User;
 import com.yello.server.domain.user.entity.UserRepository;
 import com.yello.server.domain.user.exception.UserException;
 import com.yello.server.domain.user.exception.UserNotFoundException;
+import com.yello.server.domain.user.service.UserService;
+import com.yello.server.domain.vote.dto.request.CreateVoteRequest;
 import com.yello.server.domain.vote.dto.response.KeywordCheckResponse;
 import com.yello.server.domain.vote.dto.response.VoteDetailResponse;
 import com.yello.server.domain.vote.dto.response.VoteFriendResponse;
@@ -28,8 +31,6 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.time.Duration;
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -38,6 +39,7 @@ import java.util.stream.Collectors;
 import static com.yello.server.domain.vote.common.WeightedRandom.randomPoint;
 import static com.yello.server.global.common.ErrorCode.NOT_FOUND_VOTE_EXCEPTION;
 import static com.yello.server.global.common.util.ConstantUtil.*;
+import static com.yello.server.global.common.util.TimeUtil.timeDiff;
 import static com.yello.server.global.common.util.TimeUtil.toDateFormattedString;
 
 @Service
@@ -49,6 +51,8 @@ public class VoteServiceImpl implements VoteService {
     private final QuestionRepository questionRepository;
     private final CooldownRepository cooldownRepository;
     private final VoteRepository voteRepository;
+    private final UserService userService;
+    private final QuestionService questionService;
 
     @Override
     public List<VoteResponse> findAllVotes(Pageable pageable) {
@@ -99,7 +103,6 @@ public class VoteServiceImpl implements VoteService {
 
         yelloQuestionList.forEach(yello -> yelloVoteList.add(getVoteData(user, yello)));
 
-
         return yelloVoteList;
     }
 
@@ -128,6 +131,18 @@ public class VoteServiceImpl implements VoteService {
                 .point(user.getPoint())
                 .createdAt(toDateFormattedString(cooldown.getCreatedAt()))
                 .build();
+    }
+
+    @Transactional
+    @Override
+    public void createVote(Long userId, CreateVoteRequest request) {
+        User sender = userRepository.findById(userId)
+                .orElseThrow(() -> new UserException(ErrorCode.NOT_FOUND_USER_EXCEPTION));
+
+        sender.updatePoint(request.totalPoint());
+
+        request.voteAnswerList().forEach(vote ->
+                voteRepository.save(Vote.createVote(vote.keywordName(), sender, userService.findByUserId(vote.friendId()), questionService.findByQuestionId(vote.questionId()), vote.colorIndex())));
     }
 
     public VoteQuestionResponse getVoteData(User user, Question question) {
@@ -160,12 +175,6 @@ public class VoteServiceImpl implements VoteService {
                 .map(Keyword::getKeywordName)
                 .limit(RANDOM_COUNT)
                 .toList();
-    }
-
-    public long timeDiff(LocalDateTime localDateTime) {
-        LocalDateTime currentDateTime = LocalDateTime.now();
-        Duration duration = Duration.between(localDateTime, currentDateTime);
-        return duration.getSeconds();
     }
 
     private Vote findVote(Long id) {
