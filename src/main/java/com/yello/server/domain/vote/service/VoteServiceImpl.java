@@ -144,7 +144,7 @@ public class VoteServiceImpl implements VoteService {
         request.voteAnswerList().forEach(vote ->
                 voteRepository.save(Vote.createVote(vote.keywordName(), sender, userService.findByUserId(vote.friendId()), questionService.findByQuestionId(vote.questionId()), vote.colorIndex())));
     }
-
+    
     public VoteQuestionResponse getVoteData(User user, Question question) {
         List<Keyword> keywordList = question.getKeywordList();
         Collections.shuffle(keywordList);
