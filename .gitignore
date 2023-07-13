@@ -39,3 +39,4 @@ out/
 
 ### config ###
 application.yml
+application-dev.yml
