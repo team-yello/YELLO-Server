@@ -3,21 +3,23 @@ package com.yello.server.domain.vote.common;
 import java.util.HashMap;
 import java.util.Map;
 
+import static com.yello.server.global.common.util.ConstantUtil.*;
+
 public class WeightedRandom {
 
     private static final Map<Integer, Double> weight = new HashMap<>();
 
     public static Integer randomPoint() {
-        weight.put(7, 6.4);
-        weight.put(8, 2.2);
-        weight.put(9, 1.0);
-        weight.put(10, 0.4);
+        weight.put(MIN_POINT, FIRST_POINT_WEIGHT);
+        weight.put(MIN_POINT + 1, SECOND_POINT_WEIGHT);
+        weight.put(MIN_POINT + 2, THIRD_POINT_WEIGHT);
+        weight.put(MIN_POINT + 3, FOURTH_POINT_WEIGHT);
 
-        final double pivot = Math.random() % 10;
+        final double pivot = Math.random() % REMINDER_NUMBER;
 
         int currentWeight = 0;
-        int i = 7;
-        for (; i <= 10; i++) {
+        int i = MIN_POINT;
+        for (; i <= REMINDER_NUMBER; i++) {
             currentWeight += weight.get(i);
             if (currentWeight >= pivot)
                 return i;
