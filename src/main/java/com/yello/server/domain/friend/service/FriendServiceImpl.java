@@ -9,7 +9,6 @@ import com.yello.server.domain.friend.exception.FriendException;
 import com.yello.server.domain.user.entity.User;
 import com.yello.server.domain.user.entity.UserRepository;
 import com.yello.server.domain.user.exception.UserException;
-import com.yello.server.global.common.ErrorCode;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -90,4 +89,16 @@ public class FriendServiceImpl implements FriendService {
                 .map(RecommendFriendResponse::of)
                 .toList();
     }
+
+    @Override
+    public List<RecommendFriendResponse> findAllRecommendKakaoFriends(Pageable pageable, Long userId) {
+        return null;
+    }
+
+    /*@Override
+    public List<RecommendFriendResponse> findAllRecommendKakaoFriends(Pageable pageable, Long userId) {
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new UserException(USERID_NOT_FOUND_USER_EXCEPTION));
+        RestUtil.getKakaoFriendList()
+    }*/
 }

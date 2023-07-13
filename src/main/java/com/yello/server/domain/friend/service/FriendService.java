@@ -16,4 +16,6 @@ public interface FriendService {
     List<FriendShuffleResponse> shuffleFriend(Long userId);
 
     List<RecommendFriendResponse> findAllRecommendSchoolFriends(Pageable pageable, Long userId);
+
+    List<RecommendFriendResponse> findAllRecommendKakaoFriends(Pageable pageable, Long userId);
 }
