@@ -2,11 +2,11 @@ package com.yello.server.domain.vote.controller;
 
 import com.yello.server.domain.question.dto.response.YelloStartResponse;
 import com.yello.server.domain.question.dto.response.YelloVoteResponse;
+import com.yello.server.domain.vote.dto.request.CreateVoteRequest;
 import com.yello.server.domain.vote.dto.response.KeywordCheckResponse;
 import com.yello.server.domain.vote.dto.response.VoteDetailResponse;
 import com.yello.server.domain.vote.dto.response.VoteResponse;
 import com.yello.server.domain.vote.service.VoteService;
-import com.yello.server.global.common.SuccessCode;
 import com.yello.server.global.common.dto.BaseResponse;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -22,7 +22,7 @@ import org.springframework.web.bind.annotation.*;
 import javax.validation.Valid;
 import java.util.List;
 
-import static com.yello.server.global.common.SuccessCode.READ_VOTE_SUCCESS;
+import static com.yello.server.global.common.SuccessCode.*;
 import static com.yello.server.global.common.util.PaginationUtil.createPageable;
 
 @Tag(name = "01. Vote")
@@ -69,10 +69,9 @@ public class VoteController {
             @Valid Long userId,
             @PathVariable Long voteId) {
         val keywordCheckResponse = voteService.checkKeyword(userId, voteId);
-        return BaseResponse.success(SuccessCode.CHECK_KEYWORD_SUCCESS, keywordCheckResponse);
+        return BaseResponse.success(CHECK_KEYWORD_SUCCESS, keywordCheckResponse);
     }
-
-
+    
     @Operation(summary = "Yello 투표 10개 조회 API", responses = {
             @ApiResponse(
                     responseCode = "200",
@@ -83,7 +82,7 @@ public class VoteController {
             @RequestHeader("user-id") @Valid Long userId
     ) {
         val data = voteService.findYelloVoteList(userId);
-        return BaseResponse.success(SuccessCode.READ_YELLO_VOTE_SUCCESS, data);
+        return BaseResponse.success(READ_YELLO_VOTE_SUCCESS, data);
     }
 
     @GetMapping("/available")
@@ -91,6 +90,20 @@ public class VoteController {
             @RequestHeader("user-id") @Valid Long userId
     ) {
         val data = voteService.checkVoteAvailable(userId);
-        return BaseResponse.success(SuccessCode.READ_YELLO_START_SUCCESS, data);
+        return BaseResponse.success(READ_YELLO_START_SUCCESS, data);
+    }
+
+    @Operation(summary = "Yello 투표 생성 API", responses = {
+            @ApiResponse(
+                    responseCode = "201",
+                    content = @Content(mediaType = "application/json")),
+    })
+    @PostMapping
+    public BaseResponse createVote(
+            @RequestHeader("user-id") @Valid Long userId,
+            @RequestBody CreateVoteRequest request
+    ) {
+        voteService.createVote(userId, request);
+        return BaseResponse.success(CREATE_VOTE_SUCCESS);
     }
 }

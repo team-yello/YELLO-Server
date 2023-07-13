@@ -6,11 +6,14 @@ import com.yello.server.domain.friend.entity.FriendRepository;
 import com.yello.server.domain.user.dto.UserResponse;
 import com.yello.server.domain.user.entity.User;
 import com.yello.server.domain.user.entity.UserRepository;
+import com.yello.server.domain.user.exception.UserException;
 import com.yello.server.domain.user.exception.UserNotFoundException;
 import com.yello.server.domain.vote.entity.VoteRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import static com.yello.server.global.common.ErrorCode.NOT_FOUND_USER_EXCEPTION;
 
 @Service
 @RequiredArgsConstructor
@@ -24,12 +27,19 @@ public class UserServiceImpl implements UserService {
     @Override
     public UserResponse findUser(Long userId) {
         User user = userRepository.findById(userId)
-            .orElseThrow(() -> new UserNotFoundException(USERID_NOT_FOUND_USER_EXCEPTION));
+                .orElseThrow(() -> new UserNotFoundException(NOT_FOUND_USER_EXCEPTION));
+
         Integer friendCount = friendRepository.findAllByUser(user)
-            .size();
+                .size();
         Integer yelloCount = voteRepository.findAllByReceiverUserId(user.getId())
-            .size();
+                .size();
 
         return UserResponse.of(user, friendCount, yelloCount);
     }
+
+    public User findByUserId(Long userId) {
+        return userRepository.findById(userId)
+                .orElseThrow(() -> new UserException(NOT_FOUND_USER_EXCEPTION));
+    }
+
 }
