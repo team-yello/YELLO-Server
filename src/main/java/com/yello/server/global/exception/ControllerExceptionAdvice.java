@@ -29,7 +29,7 @@ public class ControllerExceptionAdvice {
     })
     public ResponseEntity<BaseResponse> BadRequestException(CustomException exception) {
         return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-            .body(BaseResponse.error(exception.getError(), exception.getMessage()));
+                .body(BaseResponse.error(exception.getError(), exception.getMessage()));
     }
 
 //    @Valid 오류 Catch
@@ -42,24 +42,24 @@ public class ControllerExceptionAdvice {
     }
 
     @ExceptionHandler({
-        UserNotFoundException.class,
-        VoteNotFoundException.class
+            UserNotFoundException.class,
+            VoteNotFoundException.class
     })
     public ResponseEntity<BaseResponse> NotFoundException(CustomException exception) {
         return ResponseEntity.status(HttpStatus.NOT_FOUND)
-            .body(BaseResponse.error(exception.getError(), exception.getMessage()));
+                .body(BaseResponse.error(exception.getError(), exception.getMessage()));
     }
 
     @ExceptionHandler({
-        CustomAuthenticationException.class,
-        ExpiredTokenException.class,
-        InvalidTokenException.class,
-        NotSignedInException.class,
-        OAuthException.class
+            CustomAuthenticationException.class,
+            ExpiredTokenException.class,
+            InvalidTokenException.class,
+            NotSignedInException.class,
+            OAuthException.class
     })
     public ResponseEntity<BaseResponse> UnauthorizedException(CustomException exception) {
         return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
-            .body(BaseResponse.error(exception.getError(), exception.getMessage()));
+                .body(BaseResponse.error(exception.getError(), exception.getMessage()));
     }
 
     @ExceptionHandler({
@@ -71,10 +71,10 @@ public class ControllerExceptionAdvice {
     }
 
     @ExceptionHandler({
-        RedisException.class,
+            RedisException.class,
     })
     public ResponseEntity<BaseResponse> InternalServerException(CustomException exception) {
         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-            .body(BaseResponse.error(exception.getError(), exception.getMessage()));
+                .body(BaseResponse.error(exception.getError(), exception.getMessage()));
     }
 }

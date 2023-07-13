@@ -1,5 +1,6 @@
 package com.yello.server.domain.user.entity;
 
+import com.yello.server.domain.authorization.dto.request.SignInRequest;
 import com.yello.server.domain.authorization.dto.request.SignUpRequest;
 import com.yello.server.domain.group.entity.School;
 import com.yello.server.global.common.dto.AuditingTimeEntity;
@@ -68,7 +69,7 @@ public class User extends AuditingTimeEntity {
 
     @Builder
     public User(Long recommendCount, String name, String yelloId, Gender gender, Integer point, Social social,
-        String profileImage, String uuid, LocalDateTime deletedAt, School group, String email) {
+                String profileImage, String uuid, LocalDateTime deletedAt, School group, String email) {
         this.recommendCount = recommendCount;
         this.name = name;
         this.yelloId = yelloId;
