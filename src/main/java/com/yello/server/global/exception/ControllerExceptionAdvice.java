@@ -2,11 +2,11 @@ package com.yello.server.global.exception;
 
 import com.yello.server.domain.authorization.exception.*;
 import com.yello.server.domain.friend.exception.FriendException;
+import com.yello.server.domain.user.exception.UserBadRequestException;
 import com.yello.server.domain.user.exception.UserConflictException;
 import com.yello.server.domain.user.exception.UserException;
 import com.yello.server.domain.user.exception.UserNotFoundException;
 import com.yello.server.domain.vote.exception.VoteNotFoundException;
-import com.yello.server.global.common.ErrorCode;
 import com.yello.server.global.common.dto.BaseResponse;
 import com.yello.server.infrastructure.redis.exception.RedisException;
 import org.springframework.http.HttpStatus;
@@ -22,9 +22,10 @@ import static com.yello.server.global.common.ErrorCode.FIELD_REQUIRED_EXCEPTION;
 public class ControllerExceptionAdvice {
 
     @ExceptionHandler({
-        FriendException.class,
-        UserException.class,
-        AuthBadRequestException.class
+            FriendException.class,
+            UserException.class,
+            AuthBadRequestException.class,
+            UserBadRequestException.class
     })
     public ResponseEntity<BaseResponse> BadRequestException(CustomException exception) {
         return ResponseEntity.status(HttpStatus.BAD_REQUEST)

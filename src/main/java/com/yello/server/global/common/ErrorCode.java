@@ -48,7 +48,7 @@ public enum ErrorCode {
     NOT_FOUND_SAVE_IMAGE_EXCEPTION(HttpStatus.NOT_FOUND, "이미지가 저장되지 않았습니다."),
     NOT_FOUND_IMAGE_EXCEPTION(HttpStatus.NOT_FOUND, "이미지가 없습니다."),
     NOT_FOUND_VOTE_EXCEPTION(HttpStatus.NOT_FOUND, "존재하지 않는 투표입니다."),
-
+    NOT_FOUND_QUESTION_EXCEPTION(HttpStatus.NOT_FOUND, "존재하지 않는 질문입니다."),
     /**
      * 409 CONFLICT
      */
