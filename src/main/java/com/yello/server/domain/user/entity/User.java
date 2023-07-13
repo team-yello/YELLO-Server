@@ -1,6 +1,5 @@
 package com.yello.server.domain.user.entity;
 
-import com.yello.server.domain.authorization.dto.request.SignInRequest;
 import com.yello.server.domain.authorization.dto.request.SignUpRequest;
 import com.yello.server.domain.group.entity.School;
 import com.yello.server.global.common.dto.AuditingTimeEntity;
