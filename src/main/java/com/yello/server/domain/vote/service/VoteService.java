@@ -1,7 +1,7 @@
 package com.yello.server.domain.vote.service;
 
-import com.yello.server.domain.question.dto.response.YelloStartResponse;
-import com.yello.server.domain.question.dto.response.YelloVoteResponse;
+import com.yello.server.domain.question.dto.response.VoteAvailableResponse;
+import com.yello.server.domain.question.dto.response.VoteQuestionResponse;
 import com.yello.server.domain.vote.dto.request.CreateVoteRequest;
 import com.yello.server.domain.vote.dto.response.KeywordCheckResponse;
 import com.yello.server.domain.vote.dto.response.VoteDetailResponse;
@@ -21,9 +21,9 @@ public interface VoteService {
 
     KeywordCheckResponse checkKeyword(Long userId, Long voteId);
 
-    List<YelloVoteResponse> findYelloVoteList(Long userId);
+    List<VoteQuestionResponse> findYelloVoteList(Long userId);
 
-    YelloStartResponse checkVoteAvailable(Long userId);
+    VoteAvailableResponse checkVoteAvailable(Long userId);
 
     void createVote(Long userId, CreateVoteRequest request);
 
