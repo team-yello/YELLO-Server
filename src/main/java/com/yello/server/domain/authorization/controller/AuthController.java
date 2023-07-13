@@ -1,7 +1,9 @@
 package com.yello.server.domain.authorization.controller;
 
 import com.yello.server.domain.authorization.dto.request.OAuthRequest;
+import com.yello.server.domain.authorization.dto.request.SignUpRequest;
 import com.yello.server.domain.authorization.dto.response.OAuthResponse;
+import com.yello.server.domain.authorization.dto.response.SignUpResponse;
 import com.yello.server.domain.authorization.service.AuthService;
 import com.yello.server.global.common.dto.BaseResponse;
 import io.swagger.v3.oas.annotations.Operation;
@@ -12,7 +14,10 @@ import lombok.RequiredArgsConstructor;
 import lombok.val;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.Valid;
+
 import static com.yello.server.global.common.SuccessCode.*;
+import static org.springframework.http.HttpHeaders.*;
 
 @RestController
 @RequiredArgsConstructor
@@ -41,5 +46,13 @@ public class AuthController {
     public BaseResponse<Boolean> getYelloIdValidation(@RequestParam("yelloId") String yelloId) {
         val data = authService.isYelloIdDuplicated(yelloId);
         return BaseResponse.success(YELLOID_VALIDATION_SUCCESS, data);
+    }
+    
+    @PostMapping("/signup")
+    public BaseResponse<SignUpResponse> postSignUp(
+            @RequestHeader(AUTHORIZATION) String oAuthAccessToken,
+            @Valid @RequestBody SignUpRequest signUpRequest) {
+        val data = authService.signUp(oAuthAccessToken, signUpRequest);
+        return BaseResponse.success(SIGN_UP_SUCCESS, data);
     }
 }

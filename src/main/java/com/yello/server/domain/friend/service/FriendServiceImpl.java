@@ -18,6 +18,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.Collections;
 import java.util.List;
 
+import static com.yello.server.global.common.ErrorCode.*;
 import static com.yello.server.global.common.util.ConstantUtil.RANDOM_COUNT;
 
 @Service
@@ -42,14 +43,14 @@ public class FriendServiceImpl implements FriendService {
     public void addFriend(Long userId, Long targetId) {
 
         User target = userRepository.findById(targetId)
-                .orElseThrow(() -> new UserException(ErrorCode.NOT_FOUND_USER_EXCEPTION));
+                .orElseThrow(() -> new UserException(USERID_NOT_FOUND_USER_EXCEPTION));
         User user = userRepository.findById(userId)
-                .orElseThrow(() -> new UserException(ErrorCode.NOT_FOUND_USER_EXCEPTION));
+                .orElseThrow(() -> new UserException(USERID_NOT_FOUND_USER_EXCEPTION));
 
         Friend friendData = friendRepository.findByFollowingAndFollower(userId, targetId);
 
         if (friendData != null) {
-            throw new FriendException(ErrorCode.EXIST_FRIEND_EXCEPTION);
+            throw new FriendException(EXIST_FRIEND_EXCEPTION);
         }
 
         friendRepository.save(Friend.createFriend(user, target));
@@ -60,12 +61,12 @@ public class FriendServiceImpl implements FriendService {
     public List<FriendShuffleResponse> shuffleFriend(Long userId) {
 
         User user = userRepository.findById(userId)
-                .orElseThrow(() -> new UserException(ErrorCode.NOT_FOUND_USER_EXCEPTION));
+                .orElseThrow(() -> new UserException(USERID_NOT_FOUND_USER_EXCEPTION));
 
         List<Friend> allFriends = friendRepository.findAllByUser(user);
 
         if (allFriends.size() < RANDOM_COUNT) {
-            throw new FriendException(ErrorCode.LACK_USER_EXCEPTION);
+            throw new FriendException(LACK_USER_EXCEPTION);
         }
 
         Collections.shuffle(allFriends);
@@ -79,7 +80,7 @@ public class FriendServiceImpl implements FriendService {
     @Override
     public List<RecommendFriendResponse> findAllRecommendSchoolFriends(Pageable pageable, Long userId) {
         User user = userRepository.findById(userId)
-                .orElseThrow(() -> new UserException(ErrorCode.NOT_FOUND_USER_EXCEPTION));
+                .orElseThrow(() -> new UserException(USERID_NOT_FOUND_USER_EXCEPTION));
 
         List<User> recommendFriends = userRepository.findAllByGroupId(user.getGroup().getId(), pageable)
                 .stream()
