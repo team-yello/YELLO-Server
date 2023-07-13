@@ -8,7 +8,6 @@ public class WeightedRandom {
     private static final Map<Integer, Double> weight = new HashMap<>();
 
     public static Integer randomPoint() {
-
         weight.put(7, 6.4);
         weight.put(8, 2.2);
         weight.put(9, 1.0);
