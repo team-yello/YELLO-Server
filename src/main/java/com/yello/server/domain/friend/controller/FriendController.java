@@ -22,10 +22,10 @@ import org.springframework.web.bind.annotation.*;
 import javax.validation.Valid;
 import java.util.List;
 
-import static com.yello.server.global.common.SuccessCode.ADD_FRIEND_SUCCESS;
-import static com.yello.server.global.common.SuccessCode.READ_FRIEND_SUCCESS;
+import static com.yello.server.global.common.SuccessCode.*;
 import static com.yello.server.global.common.util.PaginationUtil.createPageable;
 import static com.yello.server.global.common.util.PaginationUtil.createPageableByNameSort;
+
 
 @Tag(name = "02. Friend")
 @RestController
@@ -110,5 +110,20 @@ public class FriendController {
     ) {
         val data = friendService.findAllRecommendKakaoFriends(createPageableByNameSort(page), user.getId(), request);
         return BaseResponse.success(READ_FRIEND_SUCCESS, data);
+    }
+
+    @Operation(summary = "친구 삭제하기 API", responses = {
+            @ApiResponse(
+                    responseCode = "200",
+                    content = @Content(mediaType = "application/json")
+            )
+    })
+    @DeleteMapping("/{targetId}")
+    public BaseResponse deleteFriend(
+            @Parameter(name = "targetId", description = "삭제할 친구 유저의 아이디 값 입니다.")
+            @Valid @PathVariable Long targetId,
+            @AccessTokenUser User user) {
+        friendService.deleteFriend(user.getId(), targetId);
+        return BaseResponse.success(DELETE_USER_SUCCESS);
     }
 }

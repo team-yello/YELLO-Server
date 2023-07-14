@@ -8,6 +8,9 @@ public interface UserService {
     UserResponse findUser(Long userId);
 
     User findByUserId(Long userId);
+
+    void delete(User user);
+
 }
 
 

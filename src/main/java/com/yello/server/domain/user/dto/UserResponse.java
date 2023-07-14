@@ -5,6 +5,7 @@ import lombok.Builder;
 
 @Builder
 public record UserResponse(
+    Long userId,
     String name,
     String group,
     String yelloId,
@@ -15,6 +16,7 @@ public record UserResponse(
 
     public static UserResponse of(User user, Integer yelloCount, Integer friendCount) {
         return UserResponse.builder()
+            .userId(user.getId())
             .name(user.getName())
             .group(user.getGroup().toString())
             .yelloId(user.getYelloId())

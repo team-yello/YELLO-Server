@@ -8,6 +8,7 @@ import java.util.List;
 import java.util.Optional;
 
 public interface UserRepository extends JpaRepository<User, Long> {
+
     // Create
     Optional<User> findById(Long id);
 
@@ -21,9 +22,5 @@ public interface UserRepository extends JpaRepository<User, Long> {
 
     Slice<User> findAllByUuidIn(List<String> uuidList, Pageable pageable);
 
-    // Read
 
-    // Update
-
-    // Delete
 }

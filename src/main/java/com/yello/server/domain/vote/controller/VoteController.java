@@ -42,8 +42,10 @@ public class VoteController {
     @GetMapping
     public BaseResponse<List<VoteResponse>> findAllMyVotes(
             @Parameter(name = "page", description = "페이지네이션 페이지 번호입니다.", example = "1")
-            @RequestParam Integer page) {
-        val data = voteService.findAllVotes(createPageable(page));
+            @RequestParam Integer page,
+            @AccessTokenUser User user
+    ) {
+        val data = voteService.findAllVotes(user.getId(), createPageable(page));
         return BaseResponse.success(READ_VOTE_SUCCESS, data);
     }
 

@@ -8,6 +8,6 @@ import lombok.Getter;
 public class GroupNotFoundException extends CustomException {
 
     public GroupNotFoundException(ErrorCode error) {
-        super(error, "[UserNotFoundException] " + error.getMessage());
+        super(error, "[GroupNotFoundException] " + error.getMessage());
     }
 }
