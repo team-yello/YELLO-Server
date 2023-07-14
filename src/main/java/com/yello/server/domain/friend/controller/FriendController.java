@@ -1,6 +1,7 @@
 package com.yello.server.domain.friend.controller;
 
 import static com.yello.server.global.common.SuccessCode.ADD_FRIEND_SUCCESS;
+import static com.yello.server.global.common.SuccessCode.DELETE_USER_SUCCESS;
 import static com.yello.server.global.common.SuccessCode.READ_FRIEND_SUCCESS;
 import static com.yello.server.global.common.util.PaginationUtil.createPageable;
 import static com.yello.server.global.common.util.PaginationUtil.createPageableByNameSort;
@@ -23,6 +24,7 @@ import java.util.List;
 import javax.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.val;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -94,4 +96,18 @@ public class FriendController {
         return BaseResponse.success(SuccessCode.READ_FRIEND_SUCCESS, data);
     }
 
+    @Operation(summary = "친구 삭제하기 API", responses = {
+        @ApiResponse(
+            responseCode = "200",
+            content = @Content(mediaType = "application/json")
+        )
+    })
+    @DeleteMapping("/{targetId}")
+    public BaseResponse deleteFriend(
+        @Parameter(name = "targetId", description = "삭제할 친구 유저의 아이디 값 입니다.")
+        @Valid @PathVariable Long targetId,
+        @AccessTokenUser User user) {
+        friendService.deleteFriend(user.getId(), targetId);
+        return BaseResponse.success(DELETE_USER_SUCCESS);
+    }
 }

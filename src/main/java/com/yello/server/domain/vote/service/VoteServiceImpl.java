@@ -57,7 +57,6 @@ public class VoteServiceImpl implements VoteService {
     private final UserService userService;
     private final QuestionService questionService;
 
-    @Override
     public List<VoteResponse> findAllVotes(Long userId, Pageable pageable) {
         return voteRepository.findAllByReceiverUserId(userId, pageable)
             .stream()
@@ -82,9 +81,8 @@ public class VoteServiceImpl implements VoteService {
     public KeywordCheckResponse checkKeyword(Long userId, Long voteId) {
         Vote vote = voteRepository.findById(voteId)
             .orElseThrow(() -> new VoteNotFoundException(NOT_FOUND_VOTE_EXCEPTION));
-        userRepository.findById(userId)
-            .orElseThrow(() -> new UserNotFoundException(USERID_NOT_FOUND_USER_EXCEPTION));
 
+      findUser(userId);
         vote.updateKeywordCheck();
 
         return KeywordCheckResponse.of(vote);
@@ -94,9 +92,7 @@ public class VoteServiceImpl implements VoteService {
     public List<VoteQuestionResponse> findYelloVoteList(Long userId) {
 
         List<VoteQuestionResponse> yelloVoteList = new ArrayList<>();
-
-        User user = userRepository.findById(userId)
-            .orElseThrow(() -> new UserException(USERID_NOT_FOUND_USER_EXCEPTION));
+        User user = findUser(userId);
 
         List<Question> question = questionRepository.findAll();
         Collections.shuffle(question);
@@ -112,10 +108,7 @@ public class VoteServiceImpl implements VoteService {
     @Override
     public VoteAvailableResponse checkVoteAvailable(Long userId) {
         boolean isStart = true;
-
-        User user = userRepository.findById(userId)
-            .orElseThrow(() -> new UserException(USERID_NOT_FOUND_USER_EXCEPTION));
-
+        User user = findUser(userId);
         List<Friend> friends = friendRepository.findAllByUser(user);
 
         if (friends.size() < RANDOM_COUNT) {
@@ -140,13 +133,11 @@ public class VoteServiceImpl implements VoteService {
     @Transactional
     @Override
     public void createVote(Long userId, CreateVoteRequest request) {
-        User sender = userRepository.findById(userId)
-            .orElseThrow(() -> new UserException(USERID_NOT_FOUND_USER_EXCEPTION));
-
+        User sender = findUser(userId);
         sender.updatePoint(request.totalPoint());
 
         request.voteAnswerList().forEach(vote ->
-            voteRepository.save(Vote.createVote(vote.keywordName(), sender, userService.findByUserId(vote.friendId()),
+            voteRepository.save(Vote.createVote(vote.keywordName(), sender, findUser(vote.friendId()),
                 questionService.findByQuestionId(vote.questionId()), vote.colorIndex())));
     }
 
@@ -185,5 +176,10 @@ public class VoteServiceImpl implements VoteService {
     private Vote findVote(Long id) {
         return voteRepository.findById(id)
             .orElseThrow(() -> new VoteNotFoundException(NOT_FOUND_VOTE_EXCEPTION));
+    }
+
+    private User findUser(Long userId) {
+        return userRepository.findById(userId)
+            .orElseThrow(() -> new UserException(USERID_NOT_FOUND_USER_EXCEPTION));
     }
 }
