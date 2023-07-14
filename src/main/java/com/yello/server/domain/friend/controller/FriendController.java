@@ -1,10 +1,5 @@
 package com.yello.server.domain.friend.controller;
 
-import static com.yello.server.global.common.SuccessCode.ADD_FRIEND_SUCCESS;
-import static com.yello.server.global.common.SuccessCode.DELETE_USER_SUCCESS;
-import static com.yello.server.global.common.SuccessCode.READ_FRIEND_SUCCESS;
-import static com.yello.server.global.common.util.PaginationUtil.createPageable;
-import static com.yello.server.global.common.util.PaginationUtil.createPageableByNameSort;
 import com.yello.server.domain.friend.dto.FriendsResponse;
 import com.yello.server.domain.friend.dto.request.KakaoRecommendRequest;
 import com.yello.server.domain.friend.dto.response.FriendShuffleResponse;
@@ -26,14 +21,10 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 import java.util.List;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestHeader;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+
+import static com.yello.server.global.common.SuccessCode.*;
+import static com.yello.server.global.common.util.PaginationUtil.createPageable;
+import static com.yello.server.global.common.util.PaginationUtil.createPageableByNameSort;
 
 
 @Tag(name = "02. Friend")
@@ -54,8 +45,8 @@ public class FriendController {
     public BaseResponse addFriend(
             @Parameter(name = "targetId", description = "친구 신청할 상대 유저의 아이디 값 입니다.")
             @Valid @PathVariable Long targetId,
-            @RequestHeader("user-id") @Valid Long userId) {
-        friendService.addFriend(userId, targetId);
+            @AccessTokenUser User user) {
+        friendService.addFriend(user.getId(), targetId);
         return BaseResponse.success(ADD_FRIEND_SUCCESS);
     }
 
@@ -67,9 +58,9 @@ public class FriendController {
     })
     @GetMapping
     public BaseResponse<FriendsResponse> findAllFriend(
-        @Parameter(name = "page", description = "페이지네이션 페이지 번호입니다.", example = "1")
-        @Valid @RequestParam Integer page,
-        @AccessTokenUser User user) {
+            @Parameter(name = "page", description = "페이지네이션 페이지 번호입니다.", example = "1")
+            @Valid @RequestParam Integer page,
+            @AccessTokenUser User user) {
         val data = friendService.findAllFriends(createPageable(page), user.getId());
         return BaseResponse.success(READ_FRIEND_SUCCESS, data);
     }
@@ -82,8 +73,8 @@ public class FriendController {
     })
     @GetMapping("/shuffle")
     public BaseResponse<List<FriendShuffleResponse>> shuffleFriend(
-            @RequestHeader("user-id") @Valid Long userId) {
-        List<FriendShuffleResponse> friendShuffleResponse = friendService.shuffleFriend(userId);
+            @AccessTokenUser User user) {
+        List<FriendShuffleResponse> friendShuffleResponse = friendService.shuffleFriend(user.getId());
 
         return BaseResponse.success(SuccessCode.SHUFFLE_FRIEND_SUCCESS, friendShuffleResponse);
 
@@ -122,16 +113,16 @@ public class FriendController {
     }
 
     @Operation(summary = "친구 삭제하기 API", responses = {
-        @ApiResponse(
-            responseCode = "200",
-            content = @Content(mediaType = "application/json")
-        )
+            @ApiResponse(
+                    responseCode = "200",
+                    content = @Content(mediaType = "application/json")
+            )
     })
     @DeleteMapping("/{targetId}")
     public BaseResponse deleteFriend(
-        @Parameter(name = "targetId", description = "삭제할 친구 유저의 아이디 값 입니다.")
-        @Valid @PathVariable Long targetId,
-        @AccessTokenUser User user) {
+            @Parameter(name = "targetId", description = "삭제할 친구 유저의 아이디 값 입니다.")
+            @Valid @PathVariable Long targetId,
+            @AccessTokenUser User user) {
         friendService.deleteFriend(user.getId(), targetId);
         return BaseResponse.success(DELETE_USER_SUCCESS);
     }
