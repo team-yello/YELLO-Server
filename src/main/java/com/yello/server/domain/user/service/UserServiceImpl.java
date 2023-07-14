@@ -26,17 +26,16 @@ public class UserServiceImpl implements UserService {
     public UserResponse findUser(Long userId) {
         User user = userRepository.findById(userId)
             .orElseThrow(() -> new UserNotFoundException(USERID_NOT_FOUND_USER_EXCEPTION));
-        Integer friendCount = friendRepository.findAllByUser(user)
-                .size();
-        Integer yelloCount = voteRepository.findAllByReceiverUserId(user.getId())
-                .size();
+
+        Integer friendCount = friendRepository.findAllByUser(user).size();
+        Integer yelloCount = voteRepository.getCountAllByReceiverUserId(user.getId());
 
         return UserResponse.of(user, friendCount, yelloCount);
     }
 
     public User findByUserId(Long userId) {
         return userRepository.findById(userId)
-                .orElseThrow(() -> new UserException(USERID_NOT_FOUND_USER_EXCEPTION));
+            .orElseThrow(() -> new UserException(USERID_NOT_FOUND_USER_EXCEPTION));
     }
 
 }
