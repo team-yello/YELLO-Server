@@ -65,6 +65,10 @@ public class Vote extends AuditingTimeEntity {
         this.isAnswerRevealed = true;
     }
 
+    public void updateNameHintReveal(int nameHint) {
+        this.nameHint = nameHint;
+    }
+
     public static Vote createVote(String answer, User sender, User receiver, Question question, Integer colorIndex) {
         return new Vote(answer, sender, receiver, question, colorIndex);
     }

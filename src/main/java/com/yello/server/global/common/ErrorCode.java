@@ -19,7 +19,7 @@ public enum ErrorCode {
     LACK_USER_EXCEPTION(HttpStatus.BAD_REQUEST, "친구가 4명 이하입니다."),
     SIGNIN_FIELD_REQUIRED_EXCEPTION(HttpStatus.BAD_REQUEST, "회원가입에 필요한 값이 없습니다. 명세서를 자세히 확인해주세요. >_*"),
     FIELD_REQUIRED_EXCEPTION(HttpStatus.BAD_REQUEST, "필요한 값이 없습니다."),
-
+    INVALID_VOTE_EXCEPTION(HttpStatus.BAD_REQUEST, "이미 공개한 투표입니다"),
     //friend
     EXIST_FRIEND_EXCEPTION(HttpStatus.BAD_REQUEST, "이미 존재하는 친구입니다."),
 
@@ -36,7 +36,7 @@ public enum ErrorCode {
      * 403 FORBIDDEN
      */
     NOT_SIGNIN_USER_EXCEPTION(HttpStatus.FORBIDDEN, "가입하지 않은 회원입니다."),
-
+    LACK_POINT_EXCEPTION(HttpStatus.FORBIDDEN, "힌트를 보기 위한 해당 유저의 포인트가 부족합니다"),
     /**
      * 404 NOT FOUND
      */
