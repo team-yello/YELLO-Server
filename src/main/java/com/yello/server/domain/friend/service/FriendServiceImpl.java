@@ -11,12 +11,15 @@ import com.yello.server.domain.friend.dto.response.RecommendFriendResponse;
 import com.yello.server.domain.friend.entity.Friend;
 import com.yello.server.domain.friend.entity.FriendRepository;
 import com.yello.server.domain.friend.exception.FriendException;
+import com.yello.server.domain.user.dto.UserResponse;
 import com.yello.server.domain.user.entity.User;
 import com.yello.server.domain.user.entity.UserRepository;
 import com.yello.server.domain.user.exception.UserException;
+import com.yello.server.domain.vote.entity.VoteRepository;
 import java.util.Collections;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -28,14 +31,21 @@ public class FriendServiceImpl implements FriendService {
 
     private final FriendRepository friendRepository;
     private final UserRepository userRepository;
+    private final VoteRepository voteRepository;
 
     @Override
     public FriendsResponse findAllFriends(Pageable pageable, Long userId) {
-        List<Friend> friends = friendRepository.findAllFriendsByUserId(pageable, userId)
-            .stream()
+        Page<Friend> friendsData = friendRepository.findAllFriendsByUserId(pageable, userId);
+        List<UserResponse> friends = friendsData.stream()
+            .map(friend -> {
+                User user = friend.getUser();
+                Integer friendCount = friendRepository.findAllByUser(user).size();
+                Integer yelloCount = voteRepository.findAllByReceiverUserId(user.getId()).size();
+                return UserResponse.of(user, friendCount, yelloCount);
+            })
             .toList();
 
-        return FriendsResponse.of(friends);
+        return FriendsResponse.of(friendsData.getTotalElements(), friends);
     }
 
     @Transactional
