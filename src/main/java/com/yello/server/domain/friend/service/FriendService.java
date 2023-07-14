@@ -3,9 +3,8 @@ package com.yello.server.domain.friend.service;
 import com.yello.server.domain.friend.dto.FriendsResponse;
 import com.yello.server.domain.friend.dto.response.FriendShuffleResponse;
 import com.yello.server.domain.friend.dto.response.RecommendFriendResponse;
-import org.springframework.data.domain.Pageable;
-
 import java.util.List;
+import org.springframework.data.domain.Pageable;
 
 public interface FriendService {
 
@@ -16,4 +15,6 @@ public interface FriendService {
     List<FriendShuffleResponse> shuffleFriend(Long userId);
 
     List<RecommendFriendResponse> findAllRecommendSchoolFriends(Pageable pageable, Long userId);
+
+    void deleteFriend(Long userId, Long targetId);
 }
