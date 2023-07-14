@@ -41,6 +41,7 @@ public enum ErrorCode {
      * 404 NOT FOUND
      */
     YELLOID_NOT_FOUND_USER_EXCEPTION(HttpStatus.NOT_FOUND, "해당 YELLOID의 유저가 존재하지 않습니다."),
+    AUTH_NOT_FOUND_USER_EXCEPTION(HttpStatus.NOT_FOUND, "토큰 정보에 해당하는 유저가 존재하지 않습니다."),
     GROUPID_NOT_FOUND_GROUP_EXCEPTION(HttpStatus.NOT_FOUND, "해당 그룹 id의 그룹이 존재하지 않습니다."),
     USERID_NOT_FOUND_USER_EXCEPTION(HttpStatus.NOT_FOUND, "해당 유저 id의 유저가 존재하지 않습니다."),
     TOKEN_TIME_EXPIRED_EXCEPTION(HttpStatus.UNAUTHORIZED, "인증되지 않은 유저입니다."),
