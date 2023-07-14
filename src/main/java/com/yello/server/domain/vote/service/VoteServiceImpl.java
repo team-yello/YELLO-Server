@@ -57,10 +57,8 @@ public class VoteServiceImpl implements VoteService {
     private final UserService userService;
     private final QuestionService questionService;
 
-    @Override
-    public List<VoteResponse> findAllVotes(Pageable pageable) {
-        //todo User
-        return voteRepository.findAll(pageable)
+    public List<VoteResponse> findAllVotes(Long userId, Pageable pageable) {
+        return voteRepository.findAllByReceiverUserId(userId, pageable)
             .stream()
             .map(VoteResponse::of)
             .toList();
@@ -73,7 +71,8 @@ public class VoteServiceImpl implements VoteService {
     }
 
     @Override
-    public List<VoteFriendResponse> findAllFriendVotes(Pageable pageable) {
+    public List<VoteFriendResponse> findAllFriendVotes(Long userId, Pageable pageable) {
+        //todo 후순위
         return null;
     }
 
@@ -82,8 +81,8 @@ public class VoteServiceImpl implements VoteService {
     public KeywordCheckResponse checkKeyword(Long userId, Long voteId) {
         Vote vote = voteRepository.findById(voteId)
             .orElseThrow(() -> new VoteNotFoundException(NOT_FOUND_VOTE_EXCEPTION));
-        findUser(userId);
 
+      findUser(userId);
         vote.updateKeywordCheck();
 
         return KeywordCheckResponse.of(vote);
@@ -93,7 +92,6 @@ public class VoteServiceImpl implements VoteService {
     public List<VoteQuestionResponse> findYelloVoteList(Long userId) {
 
         List<VoteQuestionResponse> yelloVoteList = new ArrayList<>();
-
         User user = findUser(userId);
 
         List<Question> question = questionRepository.findAll();
