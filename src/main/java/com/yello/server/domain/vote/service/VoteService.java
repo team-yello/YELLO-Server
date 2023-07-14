@@ -7,17 +7,16 @@ import com.yello.server.domain.vote.dto.response.KeywordCheckResponse;
 import com.yello.server.domain.vote.dto.response.VoteDetailResponse;
 import com.yello.server.domain.vote.dto.response.VoteFriendResponse;
 import com.yello.server.domain.vote.dto.response.VoteResponse;
-import org.springframework.data.domain.Pageable;
-
 import java.util.List;
+import org.springframework.data.domain.Pageable;
 
 public interface VoteService {
 
-    List<VoteResponse> findAllVotes(Pageable pageable);
+    List<VoteResponse> findAllVotes(Long userId, Pageable pageable);
 
     VoteDetailResponse findVoteById(Long id);
 
-    List<VoteFriendResponse> findAllFriendVotes(Pageable pageable);
+    List<VoteFriendResponse> findAllFriendVotes(Long userId, Pageable pageable);
 
     KeywordCheckResponse checkKeyword(Long userId, Long voteId);
 
