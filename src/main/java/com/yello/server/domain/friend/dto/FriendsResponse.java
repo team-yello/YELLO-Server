@@ -1,21 +1,19 @@
 package com.yello.server.domain.friend.dto;
 
-import com.yello.server.domain.friend.entity.Friend;
+import com.yello.server.domain.user.dto.UserResponse;
 import java.util.List;
 import lombok.Builder;
 
 @Builder
 public record FriendsResponse(
-    Integer totalCount,
-    List<FriendResponse> friends
+    Long totalCount,
+    List<UserResponse> friends
 ) {
 
-    public static FriendsResponse of(List<Friend> friends) {
+    public static FriendsResponse of(Long totalCount, List<UserResponse> friends) {
         return FriendsResponse.builder()
-            .totalCount(friends.size())
-            .friends(friends.stream()
-                .map(FriendResponse::of)
-                .toList())
+            .totalCount(totalCount)
+            .friends(friends)
             .build();
     }
 }
