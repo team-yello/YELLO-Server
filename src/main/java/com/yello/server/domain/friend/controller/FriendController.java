@@ -45,8 +45,8 @@ public class FriendController {
     public BaseResponse addFriend(
             @Parameter(name = "targetId", description = "친구 신청할 상대 유저의 아이디 값 입니다.")
             @Valid @PathVariable Long targetId,
-            @RequestHeader("user-id") @Valid Long userId) {
-        friendService.addFriend(userId, targetId);
+            @AccessTokenUser User user) {
+        friendService.addFriend(user.getId(), targetId);
         return BaseResponse.success(ADD_FRIEND_SUCCESS);
     }
 
@@ -60,8 +60,8 @@ public class FriendController {
     public BaseResponse<FriendsResponse> findAllFriend(
             @Parameter(name = "page", description = "페이지네이션 페이지 번호입니다.", example = "1")
             @Valid @RequestParam Integer page,
-            @RequestHeader("user-id") @Valid Long userId) {
-        val data = friendService.findAllFriends(createPageable(page), userId);
+            @AccessTokenUser User user) {
+        val data = friendService.findAllFriends(createPageable(page), user.getId());
         return BaseResponse.success(READ_FRIEND_SUCCESS, data);
     }
 
@@ -73,8 +73,8 @@ public class FriendController {
     })
     @GetMapping("/shuffle")
     public BaseResponse<List<FriendShuffleResponse>> shuffleFriend(
-            @RequestHeader("user-id") @Valid Long userId) {
-        List<FriendShuffleResponse> friendShuffleResponse = friendService.shuffleFriend(userId);
+            @AccessTokenUser User user) {
+        List<FriendShuffleResponse> friendShuffleResponse = friendService.shuffleFriend(user.getId());
 
         return BaseResponse.success(SuccessCode.SHUFFLE_FRIEND_SUCCESS, friendShuffleResponse);
 
