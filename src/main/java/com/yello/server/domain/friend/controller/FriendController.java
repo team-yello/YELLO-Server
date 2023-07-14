@@ -1,15 +1,14 @@
 package com.yello.server.domain.friend.controller;
 
 import com.yello.server.domain.friend.dto.FriendsResponse;
+import com.yello.server.domain.friend.dto.request.KakaoRecommendRequest;
 import com.yello.server.domain.friend.dto.response.FriendShuffleResponse;
-import com.yello.server.domain.friend.dto.response.KakaoFriendResponse;
 import com.yello.server.domain.friend.dto.response.RecommendFriendResponse;
 import com.yello.server.domain.friend.service.FriendService;
 import com.yello.server.domain.user.entity.User;
 import com.yello.server.global.common.SuccessCode;
 import com.yello.server.global.common.annotation.AccessTokenUser;
 import com.yello.server.global.common.dto.BaseResponse;
-import com.yello.server.global.common.util.RestUtil;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -18,7 +17,6 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import lombok.val;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
@@ -82,6 +80,12 @@ public class FriendController {
 
     }
 
+    @Operation(summary = "그룹 추천친구 조회 API", responses = {
+            @ApiResponse(
+                    responseCode = "200",
+                    content = @Content(mediaType = "application/json", schema = @Schema(implementation = RecommendFriendResponse.class))
+            )
+    })
     @GetMapping("/recommend/school")
     public BaseResponse<List<RecommendFriendResponse>> recommendSchoolFriend(
             @Parameter(name = "page", description = "페이지네이션 페이지 번호입니다.", example = "1")
@@ -92,12 +96,19 @@ public class FriendController {
         return BaseResponse.success(SuccessCode.READ_FRIEND_SUCCESS, data);
     }
 
-    @GetMapping("/recommend/kakao")
-    public ResponseEntity<KakaoFriendResponse> recommendKakaoFriend(
-            @RequestBody
+    @Operation(summary = "카카오 추천 친구 API", responses = {
+            @ApiResponse(
+                    responseCode = "200",
+                    content = @Content(mediaType = "application/json", schema = @Schema(implementation = RecommendFriendResponse.class))
+            )
+    })
+    @PostMapping("/recommend/kakao")
+    public BaseResponse<List<RecommendFriendResponse>> recommendKakaoFriend(
+            @RequestBody KakaoRecommendRequest request,
+            @Valid @RequestParam Integer page,
+            @AccessTokenUser User user
     ) {
-
-        return RestUtil.getKakaoFriendList(accessToken);
-
+        val data = friendService.findAllRecommendKakaoFriends(createPageableByNameSort(page), user.getId(), request);
+        return BaseResponse.success(READ_FRIEND_SUCCESS, data);
     }
 }

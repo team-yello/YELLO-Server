@@ -1,6 +1,7 @@
 package com.yello.server.domain.friend.service;
 
 import com.yello.server.domain.friend.dto.FriendsResponse;
+import com.yello.server.domain.friend.dto.request.KakaoRecommendRequest;
 import com.yello.server.domain.friend.dto.response.FriendShuffleResponse;
 import com.yello.server.domain.friend.dto.response.RecommendFriendResponse;
 import org.springframework.data.domain.Pageable;
@@ -17,5 +18,5 @@ public interface FriendService {
 
     List<RecommendFriendResponse> findAllRecommendSchoolFriends(Pageable pageable, Long userId);
 
-    List<RecommendFriendResponse> findAllRecommendKakaoFriends(Pageable pageable, Long userId);
+    List<RecommendFriendResponse> findAllRecommendKakaoFriends(Pageable pageable, Long userId, KakaoRecommendRequest request);
 }
