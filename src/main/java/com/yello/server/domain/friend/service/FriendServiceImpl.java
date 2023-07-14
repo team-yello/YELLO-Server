@@ -6,6 +6,7 @@ import static com.yello.server.global.common.ErrorCode.USERID_NOT_FOUND_USER_EXC
 import static com.yello.server.global.common.util.ConstantUtil.RANDOM_COUNT;
 
 import com.yello.server.domain.friend.dto.FriendsResponse;
+import com.yello.server.domain.friend.dto.request.KakaoRecommendRequest;
 import com.yello.server.domain.friend.dto.response.FriendShuffleResponse;
 import com.yello.server.domain.friend.dto.response.RecommendFriendResponse;
 import com.yello.server.domain.friend.entity.Friend;
@@ -23,6 +24,13 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
+import java.util.Optional;
+
+import static com.yello.server.global.common.ErrorCode.*;
+import static com.yello.server.global.common.util.ConstantUtil.RANDOM_COUNT;
 
 @Service
 @RequiredArgsConstructor
@@ -108,5 +116,22 @@ public class FriendServiceImpl implements FriendService {
     private User findUser(Long userId) {
         return userRepository.findById(userId)
             .orElseThrow(() -> new UserException(USERID_NOT_FOUND_USER_EXCEPTION));
+    }
+
+    @Override
+    public List<RecommendFriendResponse> findAllRecommendKakaoFriends(Pageable pageable, Long userId, KakaoRecommendRequest request) {
+        userRepository.findById(userId)
+                .orElseThrow(() -> new UserException(USERID_NOT_FOUND_USER_EXCEPTION));
+
+        List<String> uuidList = Arrays.stream(request.friendKakaoId())
+                .filter(friend -> {
+                    Optional<User> userByUuid = userRepository.findByUuid(friend);
+                    return friendRepository.findByFollowingAndFollower(userId, userByUuid.orElseThrow(() -> new UserException(USERID_NOT_FOUND_USER_EXCEPTION)).getId()) == null;
+                })
+                .toList();
+
+        return userRepository.findAllByUuidIn(uuidList, pageable).stream()
+                .map(RecommendFriendResponse::of)
+                .toList();
     }
 }
