@@ -25,18 +25,14 @@ public class School {
     @Column(nullable = false)
     private String departmentName;
 
-    @Column(nullable = false)
-    private Integer admissionYear;
-
     @Builder
-    public School(String schoolName, String departmentName, Integer admissionYear) {
+    public School(String schoolName, String departmentName) {
         this.schoolName = schoolName;
         this.departmentName = departmentName;
-        this.admissionYear = admissionYear;
     }
 
     @Override
     public String toString() {
-        return String.format("%s %s %d학번", schoolName, departmentName, admissionYear);
+        return String.format("%s %s", schoolName, departmentName);
     }
 }
