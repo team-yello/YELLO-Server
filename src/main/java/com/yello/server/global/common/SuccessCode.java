@@ -28,6 +28,7 @@ public enum SuccessCode {
     ONBOARDING_FRIENDS_SUCCESS(OK, "서비스에 가입한 친구 및 같은 그룹 친구 조회에 성공하였습니다."),
     SCHOOL_NAME_SEARCH_SCHOOL_SUCCESS(OK, "학교 검색에 성공하였습니다."),
     DEPARTMENT_NAME_SEARCH_BY_SCHOOL_NAME_SCHOOL_SUCCESS(OK, "학교 이름으로 학과 검색에 성공하였습니다."),
+    REVEAL_NAME_HINT_SUCCESS(OK, "이름 초성 확인하는데 성공했습니다."),
 
     /**
      * 201 CREATED

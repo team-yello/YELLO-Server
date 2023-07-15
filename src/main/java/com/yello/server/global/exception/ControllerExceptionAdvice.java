@@ -19,6 +19,7 @@ import com.yello.server.domain.user.exception.UserBadRequestException;
 import com.yello.server.domain.user.exception.UserConflictException;
 import com.yello.server.domain.user.exception.UserException;
 import com.yello.server.domain.user.exception.UserNotFoundException;
+import com.yello.server.domain.vote.exception.VoteForbiddenException;
 import com.yello.server.domain.vote.exception.VoteNotFoundException;
 import com.yello.server.global.common.dto.BaseResponse;
 import com.yello.server.infrastructure.redis.exception.RedisException;
@@ -30,6 +31,9 @@ import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.MissingServletRequestParameterException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
+
+import static com.yello.server.global.common.ErrorCode.FIELD_REQUIRED_EXCEPTION;
+import static org.springframework.http.HttpStatus.*;
 
 @RestControllerAdvice
 public class ControllerExceptionAdvice {
@@ -107,6 +111,14 @@ public class ControllerExceptionAdvice {
     })
     public ResponseEntity<BaseResponse> InternalServerException(CustomException exception) {
         return ResponseEntity.status(INTERNAL_SERVER_ERROR)
-            .body(BaseResponse.error(exception.getError(), exception.getMessage()));
+                .body(BaseResponse.error(exception.getError(), exception.getMessage()));
+    }
+
+    @ExceptionHandler({
+            VoteForbiddenException.class
+    })
+    public ResponseEntity<BaseResponse> ForbiddenException(CustomException exception) {
+        return ResponseEntity.status(FORBIDDEN)
+                .body(BaseResponse.error(exception.getError(), exception.getMessage()));
     }
 }
