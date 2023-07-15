@@ -7,6 +7,7 @@ import lombok.Builder;
 public record UserResponse(
     Long userId,
     String name,
+    String profileImageUrl,
     String group,
     String yelloId,
     Integer yelloCount,
@@ -19,6 +20,7 @@ public record UserResponse(
             .userId(user.getId())
             .name(user.getName())
             .group(user.getGroup().toString())
+            .profileImageUrl(user.getProfileImage())
             .yelloId(user.getYelloId())
             .yelloCount(yelloCount)
             .friendCount(friendCount)

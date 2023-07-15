@@ -18,6 +18,9 @@ public record VoteDetailResponse(
     @Schema(description = "투표를 작성한 유저의 이름")
     String senderName,
 
+    @Schema(description = "투표를 보낸 유저의 성별", example = "MALE")
+    String senderGender,
+
     @Schema(description = "투표 내용")
     VoteContentVO vote
 ) {
@@ -27,6 +30,7 @@ public record VoteDetailResponse(
             .nameHint(vote.getNameHint())
             .isAnswerRevealed(vote.getIsAnswerRevealed())
             .senderName(vote.getSender().getName())
+            .senderGender(vote.getSender().getGender().name())
             .vote(VoteContentVO.of(vote))
             .build();
     }

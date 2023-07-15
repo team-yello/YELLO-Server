@@ -1,5 +1,10 @@
 package com.yello.server.domain.authorization.controller;
 
+import static com.yello.server.global.common.SuccessCode.LOGIN_SUCCESS;
+import static com.yello.server.global.common.SuccessCode.SIGN_UP_SUCCESS;
+import static com.yello.server.global.common.SuccessCode.YELLOID_VALIDATION_SUCCESS;
+import static org.springframework.http.HttpHeaders.AUTHORIZATION;
+
 import com.yello.server.domain.authorization.dto.request.OAuthRequest;
 import com.yello.server.domain.authorization.dto.request.SignUpRequest;
 import com.yello.server.domain.authorization.dto.response.OAuthResponse;
@@ -10,15 +15,19 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.tags.Tag;
+import javax.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.val;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestHeader;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
 
-import javax.validation.Valid;
-
-import static com.yello.server.global.common.SuccessCode.*;
-import static org.springframework.http.HttpHeaders.*;
-
+@Tag(name = "03. Authentication")
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api/v1/auth")
@@ -38,20 +47,20 @@ public class AuthController {
     }
 
     @Operation(summary = "옐로 아이디 중복 확인", responses = {
-            @ApiResponse(
-                    responseCode = "200",
-                    content = @Content(mediaType = "application/json", schema = @Schema(implementation = Boolean.class))),
+        @ApiResponse(
+            responseCode = "200",
+            content = @Content(mediaType = "application/json", schema = @Schema(implementation = Boolean.class))),
     })
     @GetMapping("/valid")
     public BaseResponse<Boolean> getYelloIdValidation(@RequestParam("yelloId") String yelloId) {
         val data = authService.isYelloIdDuplicated(yelloId);
         return BaseResponse.success(YELLOID_VALIDATION_SUCCESS, data);
     }
-    
+
     @PostMapping("/signup")
     public BaseResponse<SignUpResponse> postSignUp(
-            @RequestHeader(AUTHORIZATION) String oAuthAccessToken,
-            @Valid @RequestBody SignUpRequest signUpRequest) {
+        @RequestHeader(AUTHORIZATION) String oAuthAccessToken,
+        @Valid @RequestBody SignUpRequest signUpRequest) {
         val data = authService.signUp(oAuthAccessToken, signUpRequest);
         return BaseResponse.success(SIGN_UP_SUCCESS, data);
     }

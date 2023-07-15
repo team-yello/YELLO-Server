@@ -11,7 +11,6 @@ import com.yello.server.domain.vote.exception.VoteForbiddenException;
 import com.yello.server.domain.vote.exception.VoteNotFoundException;
 import com.yello.server.global.common.dto.BaseResponse;
 import com.yello.server.infrastructure.redis.exception.RedisException;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
@@ -19,6 +18,7 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
 import static com.yello.server.global.common.ErrorCode.FIELD_REQUIRED_EXCEPTION;
+import static org.springframework.http.HttpStatus.*;
 
 @RestControllerAdvice
 public class ControllerExceptionAdvice {
@@ -30,7 +30,7 @@ public class ControllerExceptionAdvice {
             UserBadRequestException.class
     })
     public ResponseEntity<BaseResponse> BadRequestException(CustomException exception) {
-        return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+        return ResponseEntity.status(BAD_REQUEST)
                 .body(BaseResponse.error(exception.getError(), exception.getMessage()));
     }
 
@@ -39,7 +39,7 @@ public class ControllerExceptionAdvice {
             MethodArgumentNotValidException.class
     })
     public ResponseEntity<BaseResponse> BadRequestException(BindException exception) {
-        return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+        return ResponseEntity.status(BAD_REQUEST)
                 .body(BaseResponse.error(FIELD_REQUIRED_EXCEPTION, FIELD_REQUIRED_EXCEPTION.getMessage()));
     }
 
@@ -49,7 +49,7 @@ public class ControllerExceptionAdvice {
             GroupNotFoundException.class
     })
     public ResponseEntity<BaseResponse> NotFoundException(CustomException exception) {
-        return ResponseEntity.status(HttpStatus.NOT_FOUND)
+        return ResponseEntity.status(NOT_FOUND)
                 .body(BaseResponse.error(exception.getError(), exception.getMessage()));
     }
 
@@ -61,7 +61,7 @@ public class ControllerExceptionAdvice {
             OAuthException.class
     })
     public ResponseEntity<BaseResponse> UnauthorizedException(CustomException exception) {
-        return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+        return ResponseEntity.status(UNAUTHORIZED)
                 .body(BaseResponse.error(exception.getError(), exception.getMessage()));
     }
 
@@ -69,7 +69,7 @@ public class ControllerExceptionAdvice {
             UserConflictException.class
     })
     public ResponseEntity<BaseResponse> ConflictException(CustomException exception) {
-        return ResponseEntity.status(HttpStatus.CONFLICT)
+        return ResponseEntity.status(CONFLICT)
                 .body(BaseResponse.error(exception.getError(), exception.getMessage()));
     }
 
@@ -77,7 +77,7 @@ public class ControllerExceptionAdvice {
             RedisException.class,
     })
     public ResponseEntity<BaseResponse> InternalServerException(CustomException exception) {
-        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+        return ResponseEntity.status(INTERNAL_SERVER_ERROR)
                 .body(BaseResponse.error(exception.getError(), exception.getMessage()));
     }
 
@@ -85,7 +85,7 @@ public class ControllerExceptionAdvice {
             VoteForbiddenException.class
     })
     public ResponseEntity<BaseResponse> ForbiddenException(CustomException exception) {
-        return ResponseEntity.status(HttpStatus.FORBIDDEN)
+        return ResponseEntity.status(FORBIDDEN)
                 .body(BaseResponse.error(exception.getError(), exception.getMessage()));
     }
 }
