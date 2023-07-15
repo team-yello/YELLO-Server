@@ -40,7 +40,9 @@ public class JwtFilter extends OncePerRequestFilter {
         String requestPath = request.getServletPath();
         if (requestPath.startsWith("/api/v1/auth/oauth")
                 || requestPath.startsWith("/api/v1/auth/signup")
-                || requestPath.startsWith("/api/v1/auth/friend")) {
+                || requestPath.startsWith("/api/v1/auth/friend")
+                || requestPath.startsWith("/api/v1/auth/school/school")
+                || requestPath.startsWith("/api/v1/auth/school/department")) {
             filterChain.doFilter(request, response);
             return;
         }
