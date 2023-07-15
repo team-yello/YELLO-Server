@@ -67,10 +67,9 @@ public class AuthController {
     @PostMapping("/friend")
     public BaseResponse<List<OnBoardingFriendResponse>> postFriendList(
             @Valid @RequestBody OnBoardingFriendRequest friendRequest,
-            @NotNull @RequestParam("page") Integer page,
-            @AccessTokenUser User user
+            @NotNull @RequestParam("page") Integer page
     ) {
-        val data = authService.findOnBoardingFriends(friendRequest, createPageable(page), user);
+        val data = authService.findOnBoardingFriends(friendRequest, createPageable(page));
         return BaseResponse.success(ONBOARDING_FRIENDS_SUCCESS, data);
     }
 }

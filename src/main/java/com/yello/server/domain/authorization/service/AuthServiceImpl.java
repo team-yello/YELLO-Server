@@ -147,7 +147,7 @@ public class AuthServiceImpl implements AuthService {
     }
 
     @Override
-    public List<OnBoardingFriendResponse> findOnBoardingFriends(OnBoardingFriendRequest friendRequest, Pageable pageable, User loginUser) {
+    public List<OnBoardingFriendResponse> findOnBoardingFriends(OnBoardingFriendRequest friendRequest, Pageable pageable) {
         List<User> totalList = new ArrayList<>();
 
         // exception
@@ -166,7 +166,6 @@ public class AuthServiceImpl implements AuthService {
         totalList.addAll(ListUtil.toList(kakaoFriends));
 
         totalList = totalList.stream().distinct().toList();
-        totalList = totalList.stream().filter(user -> !Objects.equals(user.getId(), loginUser.getId())).toList();
         totalList = totalList.stream().sorted(Comparator.comparing(User::getName)).toList();
 
         val responseList = OnBoardingFriendResponse.listOf(totalList);
