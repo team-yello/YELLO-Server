@@ -8,6 +8,6 @@ import lombok.Getter;
 public class VoteForbiddenException extends CustomException {
 
     public VoteForbiddenException(ErrorCode error) {
-        super(error, "[VoteNotFoundException] " + error.getMessage());
+        super(error, "[VoteForbiddenException] " + error.getMessage());
     }
 }
