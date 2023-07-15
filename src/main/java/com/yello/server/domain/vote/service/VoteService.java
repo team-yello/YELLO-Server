@@ -3,11 +3,7 @@ package com.yello.server.domain.vote.service;
 import com.yello.server.domain.question.dto.response.VoteAvailableResponse;
 import com.yello.server.domain.question.dto.response.VoteQuestionResponse;
 import com.yello.server.domain.vote.dto.request.CreateVoteRequest;
-import com.yello.server.domain.vote.dto.request.RevealNameRequest;
-import com.yello.server.domain.vote.dto.response.KeywordCheckResponse;
-import com.yello.server.domain.vote.dto.response.VoteDetailResponse;
-import com.yello.server.domain.vote.dto.response.VoteFriendResponse;
-import com.yello.server.domain.vote.dto.response.VoteResponse;
+import com.yello.server.domain.vote.dto.response.*;
 import org.springframework.data.domain.Pageable;
 
 import java.util.List;
@@ -28,6 +24,6 @@ public interface VoteService {
 
     void createVote(Long userId, CreateVoteRequest request);
 
-    RevealNameRequest revealNameHint(Long userId, Long voteId);
+    RevealNameResponse revealNameHint(Long userId, Long voteId);
 
 }

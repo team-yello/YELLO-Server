@@ -4,8 +4,8 @@ import com.yello.server.domain.question.dto.response.VoteAvailableResponse;
 import com.yello.server.domain.question.dto.response.VoteQuestionResponse;
 import com.yello.server.domain.user.entity.User;
 import com.yello.server.domain.vote.dto.request.CreateVoteRequest;
-import com.yello.server.domain.vote.dto.request.RevealNameRequest;
 import com.yello.server.domain.vote.dto.response.KeywordCheckResponse;
+import com.yello.server.domain.vote.dto.response.RevealNameResponse;
 import com.yello.server.domain.vote.dto.response.VoteDetailResponse;
 import com.yello.server.domain.vote.dto.response.VoteResponse;
 import com.yello.server.domain.vote.service.VoteService;
@@ -112,7 +112,7 @@ public class VoteController {
     }
 
     @PatchMapping("/{voteId}/name")
-    public BaseResponse<RevealNameRequest> revealNameHint(
+    public BaseResponse<RevealNameResponse> revealNameHint(
             @AccessTokenUser User user,
             @PathVariable Long voteId
     ) {

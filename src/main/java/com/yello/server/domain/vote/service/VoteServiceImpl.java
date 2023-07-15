@@ -18,11 +18,7 @@ import com.yello.server.domain.user.exception.UserException;
 import com.yello.server.domain.user.exception.UserNotFoundException;
 import com.yello.server.domain.user.service.UserService;
 import com.yello.server.domain.vote.dto.request.CreateVoteRequest;
-import com.yello.server.domain.vote.dto.request.RevealNameRequest;
-import com.yello.server.domain.vote.dto.response.KeywordCheckResponse;
-import com.yello.server.domain.vote.dto.response.VoteDetailResponse;
-import com.yello.server.domain.vote.dto.response.VoteFriendResponse;
-import com.yello.server.domain.vote.dto.response.VoteResponse;
+import com.yello.server.domain.vote.dto.response.*;
 import com.yello.server.domain.vote.entity.Vote;
 import com.yello.server.domain.vote.entity.VoteRepository;
 import com.yello.server.domain.vote.exception.VoteForbiddenException;
@@ -143,7 +139,7 @@ public class VoteServiceImpl implements VoteService {
 
     @Transactional
     @Override
-    public RevealNameRequest revealNameHint(Long userId, Long voteId) {
+    public RevealNameResponse revealNameHint(Long userId, Long voteId) {
         User sender = findUser(userId);
         Vote vote = findVote(voteId);
         String name = vote.getSender().getName();
@@ -159,7 +155,7 @@ public class VoteServiceImpl implements VoteService {
         vote.updateNameHintReveal(randomIndex);
         sender.minusPoint(NAME_HINT_POINT);
 
-        return RevealNameRequest.builder()
+        return RevealNameResponse.builder()
                 .name(name.charAt(randomIndex))
                 .build();
     }
