@@ -1,8 +1,8 @@
 package com.yello.server.global.exception;
 
-import static com.fasterxml.jackson.core.JsonGenerator.Feature.ESCAPE_NON_ASCII;
 import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 
+import com.fasterxml.jackson.core.json.JsonWriteFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.yello.server.global.common.ErrorCode;
 import com.yello.server.global.common.dto.BaseResponse;
@@ -38,10 +38,10 @@ public class ExceptionHandlerFilter extends OncePerRequestFilter {
         BaseResponse baseResponse = BaseResponse.error(errorCode);
         try {
             response.getWriter()
-                .write(objectMapper.configure(ESCAPE_NON_ASCII, true)
+                .write(objectMapper.configure(JsonWriteFeature.ESCAPE_NON_ASCII.mappedFeature(), true)
                     .writeValueAsString(baseResponse));
-        } catch (IOException e) {
-            e.printStackTrace();
+        } catch (IOException exception) {
+            exception.printStackTrace();
         }
     }
 }

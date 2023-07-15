@@ -1,5 +1,11 @@
 package com.yello.server.domain.vote.service;
 
+import static com.yello.server.domain.vote.common.WeightedRandom.randomPoint;
+import static com.yello.server.global.common.ErrorCode.LACK_USER_EXCEPTION;
+import static com.yello.server.global.common.ErrorCode.NOT_FOUND_VOTE_EXCEPTION;
+import static com.yello.server.global.common.ErrorCode.USERID_NOT_FOUND_USER_EXCEPTION;
+import static com.yello.server.global.common.util.ConstantUtil.RANDOM_COUNT;
+import static com.yello.server.global.common.util.ConstantUtil.VOTE_COUNT;
 import com.yello.server.domain.cooldown.entity.Cooldown;
 import com.yello.server.domain.cooldown.entity.CooldownRepository;
 import com.yello.server.domain.friend.entity.Friend;
@@ -16,7 +22,6 @@ import com.yello.server.domain.user.entity.User;
 import com.yello.server.domain.user.entity.UserRepository;
 import com.yello.server.domain.user.exception.UserException;
 import com.yello.server.domain.user.exception.UserNotFoundException;
-import com.yello.server.domain.user.service.UserService;
 import com.yello.server.domain.vote.dto.request.CreateVoteRequest;
 import com.yello.server.domain.vote.dto.response.*;
 import com.yello.server.domain.vote.entity.Vote;
@@ -50,7 +55,6 @@ public class VoteServiceImpl implements VoteService {
     private final QuestionRepository questionRepository;
     private final CooldownRepository cooldownRepository;
     private final VoteRepository voteRepository;
-    private final UserService userService;
     private final QuestionService questionService;
 
     public List<VoteResponse> findAllVotes(Long userId, Pageable pageable) {
@@ -103,7 +107,6 @@ public class VoteServiceImpl implements VoteService {
 
     @Override
     public VoteAvailableResponse checkVoteAvailable(Long userId) {
-        boolean isStart = true;
         User user = findUser(userId);
         List<Friend> friends = friendRepository.findAllByUser(user);
 
@@ -112,18 +115,9 @@ public class VoteServiceImpl implements VoteService {
         }
 
         Cooldown cooldown = cooldownRepository.findByUser(user)
-                .orElse(Cooldown.builder().user(user).createdAt(null).build());
+            .orElse(Cooldown.of(user, null));
 
-        // 40분 지난 경우 투표 시작
-        if (cooldown.getCreatedAt() != null && timeDiff(cooldown.getCreatedAt()) < TIMER_TIME) {
-            isStart = false;
-        }
-
-        return VoteAvailableResponse.builder()
-                .isStart(isStart)
-                .point(user.getPoint())
-                .createdAt(toDateFormattedString(cooldown.getCreatedAt()))
-                .build();
+        return VoteAvailableResponse.of(user, cooldown);
     }
 
     @Transactional
