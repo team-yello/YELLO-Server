@@ -16,5 +16,5 @@ public interface AuthService {
     OAuthResponse oauthLogin(OAuthRequest oAuthRequest);
     Boolean isYelloIdDuplicated(String yelloId);
     SignUpResponse signUp(String oAuthAccessToken, SignUpRequest signUpRequest);
-    List<OnBoardingFriendResponse> findOnBoardingFriends(OnBoardingFriendRequest friendRequest, Pageable pageable);
+    OnBoardingFriendResponse findOnBoardingFriends(OnBoardingFriendRequest friendRequest, Pageable pageable);
 }

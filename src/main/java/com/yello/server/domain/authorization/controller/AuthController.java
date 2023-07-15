@@ -76,7 +76,7 @@ public class AuthController {
     }
 
     @PostMapping("/friend")
-    public BaseResponse<List<OnBoardingFriendResponse>> postFriendList(
+    public BaseResponse<OnBoardingFriendResponse> postFriendList(
             @Valid @RequestBody OnBoardingFriendRequest friendRequest,
             @NotNull @RequestParam("page") Integer page
     ) {
