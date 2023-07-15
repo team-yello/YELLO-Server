@@ -114,13 +114,14 @@ public class VoteServiceImpl implements VoteService {
 
     @Transactional
     @Override
-    public void createVote(Long userId, CreateVoteRequest request) {
+    public VoteCreateResponse createVote(Long userId, CreateVoteRequest request) {
         User sender = findUser(userId);
         sender.plusPoint(request.totalPoint());
 
         request.voteAnswerList().forEach(vote ->
                 voteRepository.save(Vote.createVote(vote.keywordName(), sender, findUser(vote.friendId()),
                         questionService.findByQuestionId(vote.questionId()), vote.colorIndex())));
+        return VoteCreateResponse.builder().point(sender.getPoint()).build();
     }
 
     @Transactional

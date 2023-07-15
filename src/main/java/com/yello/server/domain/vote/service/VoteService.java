@@ -22,7 +22,7 @@ public interface VoteService {
 
     VoteAvailableResponse checkVoteAvailable(Long userId);
 
-    void createVote(Long userId, CreateVoteRequest request);
+    VoteCreateResponse createVote(Long userId, CreateVoteRequest request);
 
     RevealNameResponse revealNameHint(Long userId, Long voteId);
 
