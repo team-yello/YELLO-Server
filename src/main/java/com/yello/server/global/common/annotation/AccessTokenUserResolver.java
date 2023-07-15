@@ -21,8 +21,8 @@ public class AccessTokenUserResolver implements HandlerMethodArgumentResolver {
     }
 
     @Override
-    public Object resolveArgument(MethodParameter parameter, ModelAndViewContainer mavContainer, NativeWebRequest webRequest, WebDataBinderFactory binderFactory) throws Exception {
-        User user = (User) SecurityContextHolder.getContext().getAuthentication().getDetails();
-        return user;
+    public Object resolveArgument(MethodParameter parameter, ModelAndViewContainer mavContainer,
+        NativeWebRequest webRequest, WebDataBinderFactory binderFactory) throws Exception {
+        return SecurityContextHolder.getContext().getAuthentication().getDetails();
     }
 }
