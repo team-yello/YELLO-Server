@@ -2,6 +2,7 @@ package com.yello.server.global.common.util;
 
 import org.springframework.data.domain.*;
 
+import java.util.Collections;
 import java.util.List;
 
 public class PaginationUtil {
@@ -20,6 +21,7 @@ public class PaginationUtil {
         int start = (int)pageable.getOffset();
         int end = Math.min((start + pageable.getPageSize()), list.size());
 
-        return new PageImpl<>(list.subList(start, end), pageable, list.size());
+        List<T> pageList = (start <= end) ? list.subList(start, end) : Collections.emptyList();
+        return new PageImpl<>(pageList, pageable, pageList.size());
     }
 }
