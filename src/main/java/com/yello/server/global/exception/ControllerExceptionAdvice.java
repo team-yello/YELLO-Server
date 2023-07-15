@@ -1,6 +1,6 @@
 package com.yello.server.global.exception;
 
-import static com.yello.server.global.common.ErrorCode.FIELD_REQUIRED_EXCEPTION;
+import static com.yello.server.global.common.ErrorCode.*;
 import static org.springframework.http.HttpStatus.BAD_REQUEST;
 import static org.springframework.http.HttpStatus.CONFLICT;
 import static org.springframework.http.HttpStatus.INTERNAL_SERVER_ERROR;
@@ -27,10 +27,9 @@ import org.springframework.http.converter.HttpMessageConversionException;
 import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.validation.BindException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
+import org.springframework.web.bind.MissingServletRequestParameterException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
-
-import static com.yello.server.global.common.ErrorCode.FIELD_REQUIRED_EXCEPTION;
 
 @RestControllerAdvice
 public class ControllerExceptionAdvice {
@@ -62,6 +61,15 @@ public class ControllerExceptionAdvice {
     public ResponseEntity<BaseResponse> BadRequestException(HttpMessageConversionException exception) {
         return ResponseEntity.status(BAD_REQUEST)
                 .body(BaseResponse.error(FIELD_REQUIRED_EXCEPTION, FIELD_REQUIRED_EXCEPTION.getMessage()));
+    }
+
+    @ExceptionHandler({
+            // @RequestParam 이 없을 때
+            MissingServletRequestParameterException.class
+    })
+    public ResponseEntity<BaseResponse> BadRequestException(MissingServletRequestParameterException exception) {
+        return ResponseEntity.status(BAD_REQUEST)
+                .body(BaseResponse.error(QUERY_STRING_REQUIRED_EXCEPTION, QUERY_STRING_REQUIRED_EXCEPTION.getMessage()));
     }
 
     @ExceptionHandler({
