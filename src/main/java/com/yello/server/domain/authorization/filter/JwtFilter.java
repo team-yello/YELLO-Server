@@ -11,7 +11,6 @@ import com.yello.server.domain.user.entity.User;
 import com.yello.server.domain.user.entity.UserRepository;
 import io.jsonwebtoken.JwtException;
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.List;
 import javax.servlet.FilterChain;
 import javax.servlet.ServletException;
@@ -23,7 +22,6 @@ import lombok.val;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 @Log4j2
