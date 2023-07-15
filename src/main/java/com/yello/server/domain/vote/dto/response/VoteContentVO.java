@@ -27,9 +27,9 @@ public record VoteContentVO(
     static VoteContentVO of(Vote vote) {
         return VoteContentVO.builder()
             .nameHead(vote.getQuestion().getNameHead())
-            .nameFoot(vote.getQuestion().getNameFoot())
+            .nameFoot(deleteBracket(vote.getQuestion().getNameFoot()))
             .keywordHead(vote.getQuestion().getKeywordHead())
-            .keyword(vote.getIsAnswerRevealed() ? vote.getAnswer() : "")
+            .keyword(vote.getAnswer())
             .keywordFoot(vote.getQuestion().getKeywordFoot())
             .build();
     }
@@ -41,5 +41,9 @@ public record VoteContentVO(
         return MessageFormat.format("{0} 너{1} {2} {3} {4}", vote.getQuestion().getNameHead(),
             vote.getQuestion().getNameFoot(),
             vote.getQuestion().getKeywordHead(), keyword, vote.getQuestion().getKeywordFoot());
+    }
+
+    private static String deleteBracket(String target) {
+        return target.split("[)]")[1];
     }
 }
