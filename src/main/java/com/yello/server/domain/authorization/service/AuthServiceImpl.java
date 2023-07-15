@@ -12,6 +12,7 @@ import com.yello.server.domain.authorization.dto.ServiceTokenVO;
 import com.yello.server.domain.authorization.dto.request.OAuthRequest;
 import com.yello.server.domain.authorization.dto.request.OnBoardingFriendRequest;
 import com.yello.server.domain.authorization.dto.request.SignUpRequest;
+import com.yello.server.domain.authorization.dto.response.DepartmentSearchResponse;
 import com.yello.server.domain.authorization.dto.response.OAuthResponse;
 import com.yello.server.domain.authorization.dto.response.OnBoardingFriendResponse;
 import com.yello.server.domain.authorization.dto.response.SignUpResponse;
@@ -36,8 +37,6 @@ import java.util.*;
 
 import lombok.RequiredArgsConstructor;
 import lombok.val;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.redis.core.ValueOperations;
 import org.springframework.http.ResponseEntity;
@@ -171,5 +170,16 @@ public class AuthServiceImpl implements AuthService {
         val responseList = OnBoardingFriendResponse.listOf(totalList);
 
         return PaginationUtil.getPage(responseList, pageable).stream().toList();
+    }
+
+    @Override
+    public List<String> findSchoolsBySearch(String keyword, Pageable pageable) {
+        return schoolRepository.findDistinctSchoolNameContaining(keyword, pageable);
+    }
+
+    @Override
+    public DepartmentSearchResponse findDepartmentsBySearch(String schoolName, String keyword, Pageable pageable) {
+        List<School> schoolResult = schoolRepository.findAllBySchoolNameContaining(schoolName, keyword, pageable);
+        return DepartmentSearchResponse.of(schoolResult);
     }
 }
