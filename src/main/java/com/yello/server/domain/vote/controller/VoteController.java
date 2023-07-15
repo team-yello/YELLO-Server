@@ -4,10 +4,9 @@ import com.yello.server.domain.question.dto.response.VoteAvailableResponse;
 import com.yello.server.domain.question.dto.response.VoteQuestionResponse;
 import com.yello.server.domain.user.entity.User;
 import com.yello.server.domain.vote.dto.request.CreateVoteRequest;
-import com.yello.server.domain.vote.dto.response.KeywordCheckResponse;
-import com.yello.server.domain.vote.dto.response.VoteDetailResponse;
-import com.yello.server.domain.vote.dto.response.VoteResponse;
+import com.yello.server.domain.vote.dto.response.*;
 import com.yello.server.domain.vote.service.VoteService;
+import com.yello.server.global.common.SuccessCode;
 import com.yello.server.global.common.annotation.AccessTokenUser;
 import com.yello.server.global.common.dto.BaseResponse;
 import io.swagger.v3.oas.annotations.Operation;
@@ -101,11 +100,20 @@ public class VoteController {
                     content = @Content(mediaType = "application/json")),
     })
     @PostMapping
-    public BaseResponse createVote(
+    public BaseResponse<VoteCreateResponse> createVote(
             @AccessTokenUser User user,
             @RequestBody CreateVoteRequest request
     ) {
-        voteService.createVote(user.getId(), request);
-        return BaseResponse.success(CREATE_VOTE_SUCCESS);
+        val data = voteService.createVote(user.getId(), request);
+        return BaseResponse.success(CREATE_VOTE_SUCCESS, data);
+    }
+
+    @PatchMapping("/{voteId}/name")
+    public BaseResponse<RevealNameResponse> revealNameHint(
+            @AccessTokenUser User user,
+            @PathVariable Long voteId
+    ) {
+        val data = voteService.revealNameHint(user.getId(), voteId);
+        return BaseResponse.success(SuccessCode.REVEAL_NAME_HINT_SUCCESS, data);
     }
 }
