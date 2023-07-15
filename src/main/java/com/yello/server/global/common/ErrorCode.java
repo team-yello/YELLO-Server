@@ -22,7 +22,7 @@ public enum ErrorCode {
     SIGNIN_FIELD_REQUIRED_EXCEPTION(BAD_REQUEST, "회원가입에 필요한 값이 없습니다."),
     FIELD_REQUIRED_EXCEPTION(BAD_REQUEST, "필요한 값이 없습니다."),
     INVALID_VOTE_EXCEPTION(BAD_REQUEST, "이미 공개한 투표입니다"),
-    
+
     //friend
     EXIST_FRIEND_EXCEPTION(BAD_REQUEST, "이미 존재하는 친구입니다."),
 
