@@ -13,4 +13,7 @@ public class ConstantUtil {
     public static final double FOURTH_POINT_WEIGHT = 0.4;
     public static final int REMINDER_NUMBER = 10;
 
+    public static final int NAME_HINT_POINT = 300;
+    public static final int NAME_HINT_DEFAULT = -1;
+
 }

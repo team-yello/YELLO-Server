@@ -20,4 +20,5 @@ public record SignUpRequest(
         @NotNull Gender gender,
         @NotNull List<Long> friends,
         String recommendId
-) { }
+) {
+}

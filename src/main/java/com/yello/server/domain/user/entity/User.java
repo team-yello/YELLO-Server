@@ -107,7 +107,12 @@ public class User extends AuditingTimeEntity {
         this.recommendCount += count;
     }
 
-    public void updatePoint(Integer point) {
+    public void plusPoint(Integer point) {
         this.point += point;
     }
+
+    public void minusPoint(Integer point) {
+        this.point -= point;
+    }
+
 }
