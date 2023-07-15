@@ -1,15 +1,15 @@
 package com.yello.server.domain.group.entity;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
+import javax.persistence.*;
+
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
+@Table(indexes = {
+        @Index(name = "idx__school_name", columnList = "schoolName")
+})
 @Getter
 @Entity
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
