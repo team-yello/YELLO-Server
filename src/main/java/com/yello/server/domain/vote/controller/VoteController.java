@@ -2,11 +2,13 @@ package com.yello.server.domain.vote.controller;
 
 import com.yello.server.domain.question.dto.response.VoteAvailableResponse;
 import com.yello.server.domain.question.dto.response.VoteQuestionResponse;
+import com.yello.server.domain.user.entity.User;
 import com.yello.server.domain.vote.dto.request.CreateVoteRequest;
 import com.yello.server.domain.vote.dto.response.KeywordCheckResponse;
 import com.yello.server.domain.vote.dto.response.VoteDetailResponse;
 import com.yello.server.domain.vote.dto.response.VoteResponse;
 import com.yello.server.domain.vote.service.VoteService;
+import com.yello.server.global.common.annotation.AccessTokenUser;
 import com.yello.server.global.common.dto.BaseResponse;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -19,7 +21,6 @@ import lombok.RequiredArgsConstructor;
 import lombok.val;
 import org.springframework.web.bind.annotation.*;
 
-import javax.validation.Valid;
 import java.util.List;
 
 import static com.yello.server.global.common.SuccessCode.*;
@@ -41,8 +42,10 @@ public class VoteController {
     @GetMapping
     public BaseResponse<List<VoteResponse>> findAllMyVotes(
             @Parameter(name = "page", description = "페이지네이션 페이지 번호입니다.", example = "1")
-            @RequestParam Integer page) {
-        val data = voteService.findAllVotes(createPageable(page));
+            @RequestParam Integer page,
+            @AccessTokenUser User user
+    ) {
+        val data = voteService.findAllVotes(user.getId(), createPageable(page));
         return BaseResponse.success(READ_VOTE_SUCCESS, data);
     }
 
@@ -65,10 +68,9 @@ public class VoteController {
     @PatchMapping("/{voteId}/keyword")
     public BaseResponse<KeywordCheckResponse> checkKeyword(
             @Parameter(name = "voteId", description = "해당 투표 아이디 값 입니다.")
-            @RequestHeader("user-id")
-            @Valid Long userId,
+            @AccessTokenUser User user,
             @PathVariable Long voteId) {
-        val keywordCheckResponse = voteService.checkKeyword(userId, voteId);
+        val keywordCheckResponse = voteService.checkKeyword(user.getId(), voteId);
         return BaseResponse.success(CHECK_KEYWORD_SUCCESS, keywordCheckResponse);
     }
 
@@ -79,17 +81,17 @@ public class VoteController {
     })
     @GetMapping("/question")
     public BaseResponse<List<VoteQuestionResponse>> getYelloVote(
-            @RequestHeader("user-id") @Valid Long userId
+            @AccessTokenUser User user
     ) {
-        val data = voteService.findYelloVoteList(userId);
+        val data = voteService.findYelloVoteList(user.getId());
         return BaseResponse.success(READ_YELLO_VOTE_SUCCESS, data);
     }
 
     @GetMapping("/available")
     public BaseResponse<VoteAvailableResponse> checkVoteAvailable(
-            @RequestHeader("user-id") @Valid Long userId
+            @AccessTokenUser User user
     ) {
-        val data = voteService.checkVoteAvailable(userId);
+        val data = voteService.checkVoteAvailable(user.getId());
         return BaseResponse.success(READ_YELLO_START_SUCCESS, data);
     }
 
@@ -100,10 +102,10 @@ public class VoteController {
     })
     @PostMapping
     public BaseResponse createVote(
-            @RequestHeader("user-id") @Valid Long userId,
+            @AccessTokenUser User user,
             @RequestBody CreateVoteRequest request
     ) {
-        voteService.createVote(userId, request);
+        voteService.createVote(user.getId(), request);
         return BaseResponse.success(CREATE_VOTE_SUCCESS);
     }
 }
