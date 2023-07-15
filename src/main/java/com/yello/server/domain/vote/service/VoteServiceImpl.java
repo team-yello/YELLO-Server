@@ -144,10 +144,10 @@ public class VoteServiceImpl implements VoteService {
         Vote vote = findVote(voteId);
         String name = vote.getSender().getName();
 
-        if (vote.getNameHint() != -1) {
+        if (vote.getNameHint() != NAME_HINT_DEFAULT) {
             throw new VoteNotFoundException(ErrorCode.INVALID_VOTE_EXCEPTION);
         }
-        if (sender.getPoint() < 300) {
+        if (sender.getPoint() < NAME_HINT_POINT) {
             throw new VoteForbiddenException(ErrorCode.LACK_POINT_EXCEPTION);
         }
         int randomIndex = (int) (Math.random() * 2);
