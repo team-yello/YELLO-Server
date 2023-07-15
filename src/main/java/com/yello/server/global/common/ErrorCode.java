@@ -25,6 +25,7 @@ public enum ErrorCode {
     LACK_USER_EXCEPTION(BAD_REQUEST, "친구가 4명 이하입니다."),
     SIGNIN_FIELD_REQUIRED_EXCEPTION(BAD_REQUEST, "회원가입에 필요한 값이 없습니다."),
     FIELD_REQUIRED_EXCEPTION(BAD_REQUEST, "필요한 값이 없습니다."),
+    QUERY_STRING_REQUIRED_EXCEPTION(BAD_REQUEST, "Query String이 없습니다."),
 
     //friend
     EXIST_FRIEND_EXCEPTION(BAD_REQUEST, "이미 존재하는 친구입니다."),
