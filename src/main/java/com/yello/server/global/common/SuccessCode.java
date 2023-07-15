@@ -22,6 +22,7 @@ public enum SuccessCode {
     READ_YELLO_START_SUCCESS(HttpStatus.OK, "옐로 시작하기에 성공했습니다."),
     DELETE_USER_SUCCESS(HttpStatus.OK, "유저 탈퇴에 성공했습니다."),
     DELETE_FRIEND_SUCCESS(HttpStatus.OK, "친구 삭제에 성공했습니다."),
+    ONBOARDING_FRIENDS_SUCCESS(HttpStatus.OK, "서비스에 가입한 친구 및 같은 그룹 친구 조회에 성공하였습니다."),
 
     /**
      * 201 CREATED
