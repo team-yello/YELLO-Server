@@ -1,10 +1,14 @@
 package com.yello.server.domain.authorization.controller;
 
 import com.yello.server.domain.authorization.dto.request.OAuthRequest;
+import com.yello.server.domain.authorization.dto.request.OnBoardingFriendRequest;
 import com.yello.server.domain.authorization.dto.request.SignUpRequest;
 import com.yello.server.domain.authorization.dto.response.OAuthResponse;
+import com.yello.server.domain.authorization.dto.response.OnBoardingFriendResponse;
 import com.yello.server.domain.authorization.dto.response.SignUpResponse;
 import com.yello.server.domain.authorization.service.AuthService;
+import com.yello.server.domain.user.entity.User;
+import com.yello.server.global.common.annotation.AccessTokenUser;
 import com.yello.server.global.common.dto.BaseResponse;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -15,8 +19,12 @@ import lombok.val;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
+import javax.validation.constraints.NotNull;
+
+import java.util.List;
 
 import static com.yello.server.global.common.SuccessCode.*;
+import static com.yello.server.global.common.util.PaginationUtil.createPageable;
 import static org.springframework.http.HttpHeaders.*;
 
 @RestController
@@ -54,5 +62,15 @@ public class AuthController {
             @Valid @RequestBody SignUpRequest signUpRequest) {
         val data = authService.signUp(oAuthAccessToken, signUpRequest);
         return BaseResponse.success(SIGN_UP_SUCCESS, data);
+    }
+
+    @PostMapping("/friend")
+    public BaseResponse<List<OnBoardingFriendResponse>> postFriendList(
+            @Valid @RequestBody OnBoardingFriendRequest friendRequest,
+            @NotNull @RequestParam("page") Integer page,
+            @AccessTokenUser User user
+    ) {
+        val data = authService.findOnBoardingFriends(friendRequest, createPageable(page), user);
+        return BaseResponse.success(ONBOARDING_FRIENDS_SUCCESS, data);
     }
 }
