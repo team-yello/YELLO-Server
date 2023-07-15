@@ -1,6 +1,11 @@
 package com.yello.server.global.exception;
 
 import static com.yello.server.global.common.ErrorCode.FIELD_REQUIRED_EXCEPTION;
+import static org.springframework.http.HttpStatus.BAD_REQUEST;
+import static org.springframework.http.HttpStatus.CONFLICT;
+import static org.springframework.http.HttpStatus.INTERNAL_SERVER_ERROR;
+import static org.springframework.http.HttpStatus.NOT_FOUND;
+import static org.springframework.http.HttpStatus.UNAUTHORIZED;
 
 import com.yello.server.domain.authorization.exception.AuthBadRequestException;
 import com.yello.server.domain.authorization.exception.CustomAuthenticationException;
@@ -17,7 +22,6 @@ import com.yello.server.domain.user.exception.UserNotFoundException;
 import com.yello.server.domain.vote.exception.VoteNotFoundException;
 import com.yello.server.global.common.dto.BaseResponse;
 import com.yello.server.infrastructure.redis.exception.RedisException;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
@@ -34,7 +38,7 @@ public class ControllerExceptionAdvice {
         UserBadRequestException.class
     })
     public ResponseEntity<BaseResponse> BadRequestException(CustomException exception) {
-        return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+        return ResponseEntity.status(BAD_REQUEST)
             .body(BaseResponse.error(exception.getError(), exception.getMessage()));
     }
 
@@ -43,7 +47,7 @@ public class ControllerExceptionAdvice {
         MethodArgumentNotValidException.class
     })
     public ResponseEntity<BaseResponse> BadRequestException(BindException exception) {
-        return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+        return ResponseEntity.status(BAD_REQUEST)
             .body(BaseResponse.error(FIELD_REQUIRED_EXCEPTION, FIELD_REQUIRED_EXCEPTION.getMessage()));
     }
 
@@ -53,7 +57,7 @@ public class ControllerExceptionAdvice {
         GroupNotFoundException.class
     })
     public ResponseEntity<BaseResponse> NotFoundException(CustomException exception) {
-        return ResponseEntity.status(HttpStatus.NOT_FOUND)
+        return ResponseEntity.status(NOT_FOUND)
             .body(BaseResponse.error(exception.getError(), exception.getMessage()));
     }
 
@@ -65,7 +69,7 @@ public class ControllerExceptionAdvice {
         OAuthException.class
     })
     public ResponseEntity<BaseResponse> UnauthorizedException(CustomException exception) {
-        return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+        return ResponseEntity.status(UNAUTHORIZED)
             .body(BaseResponse.error(exception.getError(), exception.getMessage()));
     }
 
@@ -73,7 +77,7 @@ public class ControllerExceptionAdvice {
         UserConflictException.class
     })
     public ResponseEntity<BaseResponse> ConflictException(CustomException exception) {
-        return ResponseEntity.status(HttpStatus.CONFLICT)
+        return ResponseEntity.status(CONFLICT)
             .body(BaseResponse.error(exception.getError(), exception.getMessage()));
     }
 
@@ -81,7 +85,7 @@ public class ControllerExceptionAdvice {
         RedisException.class,
     })
     public ResponseEntity<BaseResponse> InternalServerException(CustomException exception) {
-        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+        return ResponseEntity.status(INTERNAL_SERVER_ERROR)
             .body(BaseResponse.error(exception.getError(), exception.getMessage()));
     }
 }
