@@ -12,6 +12,8 @@ import com.yello.server.domain.vote.exception.VoteNotFoundException;
 import com.yello.server.global.common.dto.BaseResponse;
 import com.yello.server.infrastructure.redis.exception.RedisException;
 import org.springframework.http.ResponseEntity;
+import org.springframework.http.converter.HttpMessageConversionException;
+import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.validation.BindException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -34,11 +36,20 @@ public class ControllerExceptionAdvice {
                 .body(BaseResponse.error(exception.getError(), exception.getMessage()));
     }
 
-    //    @Valid 오류 Catch
     @ExceptionHandler({
+            // @Valid 오류 Catch
             MethodArgumentNotValidException.class
     })
     public ResponseEntity<BaseResponse> BadRequestException(BindException exception) {
+        return ResponseEntity.status(BAD_REQUEST)
+                .body(BaseResponse.error(FIELD_REQUIRED_EXCEPTION, FIELD_REQUIRED_EXCEPTION.getMessage()));
+    }
+
+    @ExceptionHandler({
+            // Post인데 @RequestBody 없을 때
+            HttpMessageNotReadableException.class
+    })
+    public ResponseEntity<BaseResponse> BadRequestException(HttpMessageConversionException exception) {
         return ResponseEntity.status(BAD_REQUEST)
                 .body(BaseResponse.error(FIELD_REQUIRED_EXCEPTION, FIELD_REQUIRED_EXCEPTION.getMessage()));
     }
