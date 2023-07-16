@@ -8,10 +8,7 @@ import static org.springframework.http.HttpHeaders.AUTHORIZATION;
 import com.yello.server.domain.authorization.dto.request.OAuthRequest;
 import com.yello.server.domain.authorization.dto.request.OnBoardingFriendRequest;
 import com.yello.server.domain.authorization.dto.request.SignUpRequest;
-import com.yello.server.domain.authorization.dto.response.DepartmentSearchResponse;
-import com.yello.server.domain.authorization.dto.response.OAuthResponse;
-import com.yello.server.domain.authorization.dto.response.OnBoardingFriendResponse;
-import com.yello.server.domain.authorization.dto.response.SignUpResponse;
+import com.yello.server.domain.authorization.dto.response.*;
 import com.yello.server.domain.authorization.service.AuthService;
 import com.yello.server.global.common.dto.BaseResponse;
 import io.swagger.v3.oas.annotations.Operation;
@@ -86,7 +83,7 @@ public class AuthController {
     }
 
     @GetMapping("/school/school")
-    public BaseResponse<List<String>> getSchoolList(
+    public BaseResponse<GroupNameSearchResponse> getSchoolList(
             @NotNull @RequestParam("search") String keyword,
             @NotNull @RequestParam("page") Integer page
     ){

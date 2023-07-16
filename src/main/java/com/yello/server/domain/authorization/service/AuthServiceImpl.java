@@ -12,10 +12,7 @@ import com.yello.server.domain.authorization.dto.ServiceTokenVO;
 import com.yello.server.domain.authorization.dto.request.OAuthRequest;
 import com.yello.server.domain.authorization.dto.request.OnBoardingFriendRequest;
 import com.yello.server.domain.authorization.dto.request.SignUpRequest;
-import com.yello.server.domain.authorization.dto.response.DepartmentSearchResponse;
-import com.yello.server.domain.authorization.dto.response.OAuthResponse;
-import com.yello.server.domain.authorization.dto.response.OnBoardingFriendResponse;
-import com.yello.server.domain.authorization.dto.response.SignUpResponse;
+import com.yello.server.domain.authorization.dto.response.*;
 import com.yello.server.domain.authorization.exception.NotSignedInException;
 import com.yello.server.domain.authorization.exception.OAuthException;
 import com.yello.server.domain.authorization.exception.AuthBadRequestException;
@@ -173,8 +170,9 @@ public class AuthServiceImpl implements AuthService {
     }
 
     @Override
-    public List<String> findSchoolsBySearch(String keyword, Pageable pageable) {
-        return schoolRepository.findDistinctSchoolNameContaining(keyword, pageable);
+    public GroupNameSearchResponse findSchoolsBySearch(String keyword, Pageable pageable) {
+        List<String> nameList = schoolRepository.findDistinctSchoolNameContaining(keyword, pageable);
+        return GroupNameSearchResponse.of(nameList);
     }
 
     @Override
