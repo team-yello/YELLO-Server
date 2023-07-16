@@ -1,6 +1,18 @@
 package com.yello.server.global.exception;
 
-import com.yello.server.domain.authorization.exception.*;
+import static com.yello.server.global.common.ErrorCode.*;
+import static org.springframework.http.HttpStatus.BAD_REQUEST;
+import static org.springframework.http.HttpStatus.CONFLICT;
+import static org.springframework.http.HttpStatus.INTERNAL_SERVER_ERROR;
+import static org.springframework.http.HttpStatus.NOT_FOUND;
+import static org.springframework.http.HttpStatus.UNAUTHORIZED;
+
+import com.yello.server.domain.authorization.exception.AuthBadRequestException;
+import com.yello.server.domain.authorization.exception.CustomAuthenticationException;
+import com.yello.server.domain.authorization.exception.ExpiredTokenException;
+import com.yello.server.domain.authorization.exception.InvalidTokenException;
+import com.yello.server.domain.authorization.exception.NotSignedInException;
+import com.yello.server.domain.authorization.exception.OAuthException;
 import com.yello.server.domain.friend.exception.FriendException;
 import com.yello.server.domain.group.exception.GroupNotFoundException;
 import com.yello.server.domain.user.exception.UserBadRequestException;
@@ -16,6 +28,7 @@ import org.springframework.http.converter.HttpMessageConversionException;
 import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.validation.BindException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
+import org.springframework.web.bind.MissingServletRequestParameterException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
@@ -26,14 +39,14 @@ import static org.springframework.http.HttpStatus.*;
 public class ControllerExceptionAdvice {
 
     @ExceptionHandler({
-            FriendException.class,
-            UserException.class,
-            AuthBadRequestException.class,
-            UserBadRequestException.class
+        FriendException.class,
+        UserException.class,
+        AuthBadRequestException.class,
+        UserBadRequestException.class
     })
     public ResponseEntity<BaseResponse> BadRequestException(CustomException exception) {
         return ResponseEntity.status(BAD_REQUEST)
-                .body(BaseResponse.error(exception.getError(), exception.getMessage()));
+            .body(BaseResponse.error(exception.getError(), exception.getMessage()));
     }
 
     @ExceptionHandler({
@@ -42,7 +55,7 @@ public class ControllerExceptionAdvice {
     })
     public ResponseEntity<BaseResponse> BadRequestException(BindException exception) {
         return ResponseEntity.status(BAD_REQUEST)
-                .body(BaseResponse.error(FIELD_REQUIRED_EXCEPTION, FIELD_REQUIRED_EXCEPTION.getMessage()));
+            .body(BaseResponse.error(FIELD_REQUIRED_EXCEPTION, FIELD_REQUIRED_EXCEPTION.getMessage()));
     }
 
     @ExceptionHandler({
@@ -55,37 +68,46 @@ public class ControllerExceptionAdvice {
     }
 
     @ExceptionHandler({
+            // @RequestParam 이 없을 때
+            MissingServletRequestParameterException.class
+    })
+    public ResponseEntity<BaseResponse> BadRequestException(MissingServletRequestParameterException exception) {
+        return ResponseEntity.status(BAD_REQUEST)
+                .body(BaseResponse.error(QUERY_STRING_REQUIRED_EXCEPTION, QUERY_STRING_REQUIRED_EXCEPTION.getMessage()));
+    }
+
+    @ExceptionHandler({
             UserNotFoundException.class,
             VoteNotFoundException.class,
             GroupNotFoundException.class
     })
     public ResponseEntity<BaseResponse> NotFoundException(CustomException exception) {
         return ResponseEntity.status(NOT_FOUND)
-                .body(BaseResponse.error(exception.getError(), exception.getMessage()));
+            .body(BaseResponse.error(exception.getError(), exception.getMessage()));
     }
 
     @ExceptionHandler({
-            CustomAuthenticationException.class,
-            ExpiredTokenException.class,
-            InvalidTokenException.class,
-            NotSignedInException.class,
-            OAuthException.class
+        CustomAuthenticationException.class,
+        ExpiredTokenException.class,
+        InvalidTokenException.class,
+        NotSignedInException.class,
+        OAuthException.class
     })
     public ResponseEntity<BaseResponse> UnauthorizedException(CustomException exception) {
         return ResponseEntity.status(UNAUTHORIZED)
-                .body(BaseResponse.error(exception.getError(), exception.getMessage()));
+            .body(BaseResponse.error(exception.getError(), exception.getMessage()));
     }
 
     @ExceptionHandler({
-            UserConflictException.class
+        UserConflictException.class
     })
     public ResponseEntity<BaseResponse> ConflictException(CustomException exception) {
         return ResponseEntity.status(CONFLICT)
-                .body(BaseResponse.error(exception.getError(), exception.getMessage()));
+            .body(BaseResponse.error(exception.getError(), exception.getMessage()));
     }
 
     @ExceptionHandler({
-            RedisException.class,
+        RedisException.class,
     })
     public ResponseEntity<BaseResponse> InternalServerException(CustomException exception) {
         return ResponseEntity.status(INTERNAL_SERVER_ERROR)
