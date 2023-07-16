@@ -6,9 +6,9 @@ import com.fasterxml.jackson.databind.annotation.JsonNaming;
 @JsonNaming(value = PropertyNamingStrategies.SnakeCaseStrategy.class)
 public record KakaoFriend(
         Long id,
-        String profileNickname,
-        String profileThumbnailImage,
+        String profile_nickname,
+        String profile_thumbnail_image,
         String uuid,
         Boolean favorite,
-        Boolean allowedMsg
+        Boolean allowed_msg
 ) { }
