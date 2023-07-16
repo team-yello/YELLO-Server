@@ -90,25 +90,9 @@ public class AuthServiceImpl implements AuthService {
 
     @Override
     @Transactional
-    public SignUpResponse signUp(String oAuthAccessToken, SignUpRequest signUpRequest) {
-        String socialUUID = "";
-
+    public SignUpResponse signUp(SignUpRequest signUpRequest) {
         // exception
-        if(Objects.isNull(oAuthAccessToken)) {
-            throw new AuthBadRequestException(OAUTH_ACCESS_TOKEN_REQUIRED_EXCEPTION);
-        }
-
-        if(Social.KAKAO == signUpRequest.social()) {
-            ResponseEntity<KakaoTokenInfo> response = RestUtil.getKakaoTokenInfo(oAuthAccessToken);
-
-            if (response.getStatusCode()==BAD_REQUEST || response.getStatusCode()==UNAUTHORIZED) {
-                throw new OAuthException(OAUTH_TOKEN_EXCEPTION);
-            }
-
-            socialUUID = String.valueOf(response.getBody().id());
-        }
-
-        Optional<User> userByUUID = userRepository.findByUuid(socialUUID);
+        Optional<User> userByUUID = userRepository.findByUuid(signUpRequest.uuid());
         if(userByUUID.isPresent()){
             throw new UserConflictException(UUID_CONFLICT_USER_EXCEPTION);
         }
@@ -122,7 +106,7 @@ public class AuthServiceImpl implements AuthService {
                 .orElseThrow(() -> new GroupNotFoundException(GROUPID_NOT_FOUND_GROUP_EXCEPTION));
 
         // logic
-        User newSignInUser = userRepository.save(User.of(signUpRequest, socialUUID, group));
+        User newSignInUser = userRepository.save(User.of(signUpRequest, signUpRequest.uuid(), group));
         ServiceTokenVO newUserTokens = jwtTokenProvider.createServiceToken(newSignInUser.getId(), newSignInUser.getUuid());
 
         if(signUpRequest.recommendId() != null){

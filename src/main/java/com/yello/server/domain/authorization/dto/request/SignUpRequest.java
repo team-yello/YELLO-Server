@@ -11,6 +11,7 @@ import java.util.List;
 @Builder
 public record SignUpRequest(
         @NotNull Social social,
+        @NotNull String uuid,
         @NotNull @Email String email,
         @NotNull String profileImage,
         @NotNull Long groupId,
