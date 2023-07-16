@@ -12,7 +12,7 @@ import java.util.List;
 public interface AuthService {
     OAuthResponse oauthLogin(OAuthRequest oAuthRequest);
     Boolean isYelloIdDuplicated(String yelloId);
-    SignUpResponse signUp(String oAuthAccessToken, SignUpRequest signUpRequest);
+    SignUpResponse signUp(SignUpRequest signUpRequest);
     GroupNameSearchResponse findSchoolsBySearch(String keyword, Pageable pageable);
     DepartmentSearchResponse findDepartmentsBySearch(String schoolName, String keyword, Pageable pageable);
     OnBoardingFriendResponse findOnBoardingFriends(OnBoardingFriendRequest friendRequest, Pageable pageable);
