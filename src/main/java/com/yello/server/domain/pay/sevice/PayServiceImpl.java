@@ -9,7 +9,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.Optional;
+import java.util.List;
 
 import static com.yello.server.global.common.ErrorCode.USERID_NOT_FOUND_USER_EXCEPTION;
 
@@ -23,19 +23,16 @@ public class PayServiceImpl implements PayService {
 
     @Transactional
     @Override
-    public void postPayCount(Long userId, Integer index) {
+    public void postPayCount(Long userId, Integer optionIndex) {
         User user = findUser(userId);
-        System.out.println("121231");
-        Optional<Pay> byId = Optional.ofNullable(payRepository.findById(userId).orElseThrow(() -> new UserException(USERID_NOT_FOUND_USER_EXCEPTION)));
-        System.out.println("ddddddddddsssssssssssssssaaaaadd");
-        Pay payByUserAndIndex = payRepository.findByUserAndIndex(user, index).orElse(payRepository.save(Pay.createPay(index, user)));
-        System.out.println("dddddddddddddddd");
+        List<Pay> allByUserAndIndex = payRepository.findAllByUserAndOptionIndex(user, optionIndex);
+        if (allByUserAndIndex.isEmpty()) {
+            payRepository.save(Pay.createPay(optionIndex, user));
+        }
     }
 
     private User findUser(Long userId) {
         return userRepository.findById(userId)
                 .orElseThrow(() -> new UserException(USERID_NOT_FOUND_USER_EXCEPTION));
     }
-
-
 }

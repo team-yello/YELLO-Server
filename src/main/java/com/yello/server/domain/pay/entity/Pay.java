@@ -16,19 +16,19 @@ public class Pay {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    private Integer index;
+    private Integer optionIndex;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "userId")
     private User user;
 
     @Builder
-    public Pay(Integer index, User user) {
-        this.index = index;
+    public Pay(Integer optionIndex, User user) {
+        this.optionIndex = optionIndex;
         this.user = user;
     }
 
-    public static Pay createPay(Integer index, User user) {
-        return new Pay(index, user);
+    public static Pay createPay(Integer optionIndex, User user) {
+        return new Pay(optionIndex, user);
     }
 }
