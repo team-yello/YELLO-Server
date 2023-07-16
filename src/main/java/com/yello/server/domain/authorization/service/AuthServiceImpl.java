@@ -34,6 +34,8 @@ import java.util.*;
 
 import lombok.RequiredArgsConstructor;
 import lombok.val;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.redis.core.ValueOperations;
 import org.springframework.http.ResponseEntity;
@@ -143,7 +145,7 @@ public class AuthServiceImpl implements AuthService {
     }
 
     @Override
-    public List<OnBoardingFriendResponse> findOnBoardingFriends(OnBoardingFriendRequest friendRequest, Pageable pageable) {
+    public OnBoardingFriendResponse findOnBoardingFriends(OnBoardingFriendRequest friendRequest, Pageable pageable) {
         List<User> totalList = new ArrayList<>();
 
         // exception
@@ -161,12 +163,14 @@ public class AuthServiceImpl implements AuthService {
         totalList.addAll(groupFriends);
         totalList.addAll(ListUtil.toList(kakaoFriends));
 
-        totalList = totalList.stream().distinct().toList();
-        totalList = totalList.stream().sorted(Comparator.comparing(User::getName)).toList();
+        totalList = totalList.stream()
+                .distinct()
+                .sorted(Comparator.comparing(User::getName))
+                .toList();
 
-        val responseList = OnBoardingFriendResponse.listOf(totalList);
+        val pageList = PaginationUtil.getPage(totalList, pageable).stream().toList();
 
-        return PaginationUtil.getPage(responseList, pageable).stream().toList();
+        return OnBoardingFriendResponse.of(pageList);
     }
 
     @Override

@@ -9,25 +9,31 @@ import java.util.List;
 
 @Builder
 public record OnBoardingFriendResponse(
-    String group,
-    Long id,
-    String name,
-    String profileImage,
-    String groupName
+        Integer totalCount,
+        List<OnBoardingFriend> friendList
 ) {
-    public static List<OnBoardingFriendResponse> listOf(List<User> users) {
-        List<OnBoardingFriendResponse> result = new ArrayList<>();
+    @Builder
+    private record OnBoardingFriend(
+            String group,
+            Long id,
+            String name,
+            String profileImage,
+            String groupName
+    ) {}
 
-        users.forEach(user -> {
-                    result.add(OnBoardingFriendResponse.builder()
-                            .group(user.getSocial() == Social.KAKAO ? "KAKAO" : "SCHOOL")
-                                    .id(user.getId())
-                                    .name(user.getName())
-                                    .profileImage(user.getProfileImage())
-                                    .groupName(user.getGroup().toString())
-                            .build());
-                });
+    public static OnBoardingFriendResponse of(List<User> users) {
+        List<OnBoardingFriend> result = users.stream().map(user -> OnBoardingFriend.builder()
+                        .group(user.getSocial() == Social.KAKAO ? "KAKAO" : "SCHOOL")
+                        .id(user.getId())
+                        .name(user.getName())
+                        .profileImage(user.getProfileImage())
+                        .groupName(user.getGroup().toString())
+                        .build())
+                .toList();
 
-        return result;
+        return OnBoardingFriendResponse.builder()
+                .totalCount(result.size())
+                .friendList(result)
+                .build();
     }
 }

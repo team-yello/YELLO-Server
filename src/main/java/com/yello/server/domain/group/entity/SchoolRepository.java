@@ -7,6 +7,8 @@ import org.springframework.data.repository.query.Param;
 
 import java.util.List;
 
+import java.util.List;
+
 public interface SchoolRepository extends JpaRepository<School, Long> {
     // Create
 
@@ -15,6 +17,7 @@ public interface SchoolRepository extends JpaRepository<School, Long> {
     List<String> findDistinctSchoolNameContaining(@Param("schoolName") String schoolName, Pageable pageable);
     @Query("select s from School s where s.schoolName = :schoolName and s.departmentName like CONCAT('%',:departmentName,'%')")
     List<School> findAllBySchoolNameContaining(@Param("schoolName") String schoolName, @Param("departmentName") String departmentName, Pageable pageable);
+    List<School> findAllBySchoolNameAndDepartmentName(String schoolName, String departmentName);
 
     // Update
 

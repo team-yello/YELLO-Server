@@ -77,9 +77,18 @@ public class ControllerExceptionAdvice {
     }
 
     @ExceptionHandler({
-        UserNotFoundException.class,
-        VoteNotFoundException.class,
-        GroupNotFoundException.class
+            // Post인데 @RequestBody 없을 때
+            HttpMessageNotReadableException.class
+    })
+    public ResponseEntity<BaseResponse> BadRequestException(HttpMessageConversionException exception) {
+        return ResponseEntity.status(BAD_REQUEST)
+                .body(BaseResponse.error(FIELD_REQUIRED_EXCEPTION, FIELD_REQUIRED_EXCEPTION.getMessage()));
+    }
+
+    @ExceptionHandler({
+            UserNotFoundException.class,
+            VoteNotFoundException.class,
+            GroupNotFoundException.class
     })
     public ResponseEntity<BaseResponse> NotFoundException(CustomException exception) {
         return ResponseEntity.status(NOT_FOUND)
