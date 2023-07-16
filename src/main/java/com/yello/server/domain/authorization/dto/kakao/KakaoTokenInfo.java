@@ -6,7 +6,7 @@ import com.fasterxml.jackson.databind.annotation.JsonNaming;
 @JsonNaming(value = PropertyNamingStrategies.SnakeCaseStrategy.class)
 public record KakaoTokenInfo(
     Long id,
-    Integer expiresIn
+    Integer expires_in
 ) {
 
 }
