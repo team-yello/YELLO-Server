@@ -41,6 +41,7 @@ public class JwtFilter extends OncePerRequestFilter {
 
         if (requestPath.equals("/")
                 || requestPath.startsWith("/swagger-ui")
+                || requestPath.startsWith("/v3/api-docs")
                 || requestPath.startsWith("/api/v1/auth/oauth")
                 || requestPath.startsWith("/api/v1/auth/signup")
                 || requestPath.startsWith("/api/v1/auth/friend")
