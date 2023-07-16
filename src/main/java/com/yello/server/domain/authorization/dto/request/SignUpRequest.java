@@ -14,9 +14,11 @@ public record SignUpRequest(
         @NotNull @Email String email,
         @NotNull String profileImage,
         @NotNull Long groupId,
+        @NotNull Integer groupAdmissionYear,
         @NotNull String name,
         @NotNull String yelloId,
         @NotNull Gender gender,
         @NotNull List<Long> friends,
         String recommendId
-) { }
+) {
+}

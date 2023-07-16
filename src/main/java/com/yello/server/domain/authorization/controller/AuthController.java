@@ -6,9 +6,9 @@ import static com.yello.server.global.common.SuccessCode.YELLOID_VALIDATION_SUCC
 import static org.springframework.http.HttpHeaders.AUTHORIZATION;
 
 import com.yello.server.domain.authorization.dto.request.OAuthRequest;
+import com.yello.server.domain.authorization.dto.request.OnBoardingFriendRequest;
 import com.yello.server.domain.authorization.dto.request.SignUpRequest;
-import com.yello.server.domain.authorization.dto.response.OAuthResponse;
-import com.yello.server.domain.authorization.dto.response.SignUpResponse;
+import com.yello.server.domain.authorization.dto.response.*;
 import com.yello.server.domain.authorization.service.AuthService;
 import com.yello.server.global.common.dto.BaseResponse;
 import io.swagger.v3.oas.annotations.Operation;
@@ -19,6 +19,10 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import javax.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.val;
+
+import javax.validation.constraints.NotNull;
+
+import java.util.List;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -26,6 +30,10 @@ import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+
+import static com.yello.server.global.common.SuccessCode.*;
+import static com.yello.server.global.common.util.PaginationUtil.createPageable;
+import static org.springframework.http.HttpHeaders.*;
 
 @Tag(name = "03. Authentication")
 @RestController
@@ -63,5 +71,33 @@ public class AuthController {
         @Valid @RequestBody SignUpRequest signUpRequest) {
         val data = authService.signUp(oAuthAccessToken, signUpRequest);
         return BaseResponse.success(SIGN_UP_SUCCESS, data);
+    }
+
+    @PostMapping("/friend")
+    public BaseResponse<OnBoardingFriendResponse> postFriendList(
+            @Valid @RequestBody OnBoardingFriendRequest friendRequest,
+            @NotNull @RequestParam("page") Integer page
+    ) {
+        val data = authService.findOnBoardingFriends(friendRequest, createPageable(page));
+        return BaseResponse.success(ONBOARDING_FRIENDS_SUCCESS, data);
+    }
+
+    @GetMapping("/school/school")
+    public BaseResponse<GroupNameSearchResponse> getSchoolList(
+            @NotNull @RequestParam("search") String keyword,
+            @NotNull @RequestParam("page") Integer page
+    ){
+        val data = authService.findSchoolsBySearch(keyword, createPageable(page));
+        return BaseResponse.success(SCHOOL_NAME_SEARCH_SCHOOL_SUCCESS, data);
+    }
+
+    @GetMapping("/school/department")
+    public BaseResponse<DepartmentSearchResponse> getDepartmentList(
+            @NotNull @RequestParam("school") String schoolName,
+            @NotNull @RequestParam("search") String keyword,
+            @NotNull @RequestParam("page") Integer page
+    ){
+        val data = authService.findDepartmentsBySearch(schoolName, keyword, createPageable(page));
+        return BaseResponse.success(DEPARTMENT_NAME_SEARCH_BY_SCHOOL_NAME_SCHOOL_SUCCESS, data);
     }
 }
