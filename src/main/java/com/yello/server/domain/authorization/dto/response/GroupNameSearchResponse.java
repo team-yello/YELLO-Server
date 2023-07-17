@@ -9,9 +9,9 @@ public record GroupNameSearchResponse(
         Integer totalCount,
         List<String> groupNameList
 ) {
-    public static GroupNameSearchResponse of(List<String> list) {
+    public static GroupNameSearchResponse of(int totalCount, List<String> list) {
         return GroupNameSearchResponse.builder()
-                .totalCount(list.size())
+                .totalCount(totalCount)
                 .groupNameList(list)
                 .build();
     }
