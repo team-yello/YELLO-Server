@@ -26,10 +26,10 @@ public class UserServiceImpl implements UserService {
     public UserResponse findUser(Long userId) {
         User user = userRepository.findById(userId)
             .orElseThrow(() -> new UserNotFoundException(USERID_NOT_FOUND_USER_EXCEPTION));
-        Integer friendCount = friendRepository.findAllByUser(user).size();
         Integer yelloCount = voteRepository.getCountAllByReceiverUserId(user.getId());
+        Integer friendCount = friendRepository.findAllByUser(user).size();
 
-        return UserResponse.of(user, friendCount, yelloCount);
+        return UserResponse.of(user, yelloCount, friendCount);
     }
 
     @Override
