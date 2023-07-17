@@ -12,13 +12,13 @@ public record VoteResponse(
     Long id,
 
     @Schema(description = "투표를 보낸 유저의 성별", example = "MALE")
-    String gender,
-
-    @Schema(description = "이름 힌트 인덱스", example = "-1")
-    Integer nameHint,
+    String senderGender,
 
     @Schema(description = "투표를 보낸 유저의 이름", example = "권세훈")
     String senderName,
+
+    @Schema(description = "이름 힌트 인덱스", example = "-1")
+    Integer nameHint,
 
     @Schema(description = "투표 내용")
     VoteContentVO vote,
@@ -36,9 +36,9 @@ public record VoteResponse(
     public static VoteResponse of(Vote vote) {
         return VoteResponse.builder()
             .id(vote.getId())
-            .gender(vote.getSender().getGender().name())
-            .nameHint(vote.getNameHint())
+            .senderGender(vote.getSender().getGender().name())
             .senderName(vote.getSender().getName())
+            .nameHint(vote.getNameHint())
             .vote(VoteContentVO.of(vote))
             .isHintUsed(vote.getIsAnswerRevealed())
             .isRead(vote.getIsRead())
