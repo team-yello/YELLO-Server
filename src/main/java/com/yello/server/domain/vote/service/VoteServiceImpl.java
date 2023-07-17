@@ -37,7 +37,6 @@ import java.util.stream.Collectors;
 import static com.yello.server.domain.vote.common.WeightedRandom.randomPoint;
 import static com.yello.server.global.common.ErrorCode.*;
 import static com.yello.server.global.common.util.ConstantUtil.*;
-import static com.yello.server.global.common.util.TimeUtil.plusTime;
 
 @Service
 @RequiredArgsConstructor
@@ -51,11 +50,13 @@ public class VoteServiceImpl implements VoteService {
     private final VoteRepository voteRepository;
     private final QuestionService questionService;
 
-    public List<VoteResponse> findAllVotes(Long userId, Pageable pageable) {
-        return voteRepository.findAllByReceiverUserId(userId, pageable)
+    public VoteListResponse findAllVotes(Long userId, Pageable pageable) {
+        Integer count = voteRepository.getCountAllByReceiverUserId(userId);
+        List<VoteResponse> votes = voteRepository.findAllByReceiverUserId(userId, pageable)
                 .stream()
                 .map(VoteResponse::of)
                 .toList();
+        return VoteListResponse.of(count, votes);
     }
 
     @Override
@@ -114,7 +115,7 @@ public class VoteServiceImpl implements VoteService {
         }
 
         Cooldown cooldown = cooldownRepository.findByUser(user)
-                .orElse(Cooldown.of(user, plusTime(LocalDateTime.now())));
+                .orElse(Cooldown.of(user, LocalDateTime.now()));
 
         return VoteAvailableResponse.of(user, cooldown.isPossible(), cooldown.getCreatedAt());
     }
@@ -130,6 +131,7 @@ public class VoteServiceImpl implements VoteService {
                         questionService.findByQuestionId(vote.questionId()), vote.colorIndex())));
 
         cooldownRepository.save(Cooldown.of(sender, LocalDateTime.now()));
+
         return VoteCreateResponse.builder().point(sender.getPoint()).build();
     }
 

@@ -43,7 +43,7 @@ public class FriendServiceImpl implements FriendService {
         Page<Friend> friendsData = friendRepository.findAllFriendsByUserId(pageable, userId);
         List<UserResponse> friends = friendsData.stream()
                 .map(friend -> {
-                    User user = friend.getUser();
+                    User user = friend.getTarget();
                     Integer friendCount = friendRepository.findAllByUser(user).size();
                     Integer yelloCount = voteRepository.getCountAllByReceiverUserId(user.getId());
                     return UserResponse.of(user, friendCount, yelloCount);
@@ -118,7 +118,8 @@ public class FriendServiceImpl implements FriendService {
     }
 
     @Override
-    public List<RecommendFriendResponse> findAllRecommendKakaoFriends(Pageable pageable, Long userId, KakaoRecommendRequest request) {
+    public List<RecommendFriendResponse> findAllRecommendKakaoFriends(Pageable pageable, Long userId,
+                                                                      KakaoRecommendRequest request) {
         userRepository.findById(userId)
                 .orElseThrow(() -> new UserException(USERID_NOT_FOUND_USER_EXCEPTION));
 
