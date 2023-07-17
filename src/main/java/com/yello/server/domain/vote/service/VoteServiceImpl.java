@@ -28,6 +28,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -107,7 +108,7 @@ public class VoteServiceImpl implements VoteService {
         }
 
         Cooldown cooldown = cooldownRepository.findByUser(user)
-                .orElse(Cooldown.of(user, null));
+                .orElse(Cooldown.of(user, LocalDateTime.now()));
 
         return VoteAvailableResponse.of(user, cooldown);
     }

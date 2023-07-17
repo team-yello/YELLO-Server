@@ -4,6 +4,8 @@ import java.time.Duration;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 
+import static com.yello.server.global.common.util.ConstantUtil.TIMER_MAX_TIME;
+
 public class TimeUtil {
 
     private static final int SECOND = 60;
@@ -34,5 +36,9 @@ public class TimeUtil {
     public static String toDateFormattedString(LocalDateTime localDateTime) {
         DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
         return localDateTime.format(dateTimeFormatter).toString();
+    }
+
+    public static LocalDateTime plusTime(LocalDateTime localDateTime) {
+        return localDateTime.plusMinutes(TIMER_MAX_TIME);
     }
 }
