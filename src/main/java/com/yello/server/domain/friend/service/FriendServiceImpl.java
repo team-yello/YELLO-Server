@@ -12,7 +12,10 @@ import com.yello.server.domain.user.entity.User;
 import com.yello.server.domain.user.entity.UserRepository;
 import com.yello.server.domain.user.exception.UserException;
 import com.yello.server.domain.vote.entity.VoteRepository;
+import com.yello.server.global.common.util.ListUtil;
+import com.yello.server.global.common.util.PaginationUtil;
 import lombok.RequiredArgsConstructor;
+import lombok.val;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -88,7 +91,7 @@ public class FriendServiceImpl implements FriendService {
     public List<RecommendFriendResponse> findAllRecommendSchoolFriends(Pageable pageable, Long userId) {
         User user = findUser(userId);
 
-        List<User> recommendFriends = userRepository.findAllByGroupId(user.getGroup().getId(), pageable)
+        List<User> recommendFriends = userRepository.findAllByGroupId(user.getGroup().getId())
                 .stream()
                 .filter(recommend -> !user.getId().equals(recommend.getId()))
                 .filter(friend -> {
@@ -96,7 +99,10 @@ public class FriendServiceImpl implements FriendService {
                 })
                 .toList();
 
-        return recommendFriends.stream()
+        val pageList = PaginationUtil.getPage(recommendFriends, pageable).stream().toList();
+
+
+        return pageList.stream()
                 .map(RecommendFriendResponse::of)
                 .toList();
     }
@@ -116,14 +122,17 @@ public class FriendServiceImpl implements FriendService {
         userRepository.findById(userId)
                 .orElseThrow(() -> new UserException(USERID_NOT_FOUND_USER_EXCEPTION));
 
-        List<String> uuidList = Arrays.stream(request.friendKakaoId())
+        val kakaoFriends = Arrays.stream(request.friendKakaoId())
                 .filter(friend -> {
                     Optional<User> userByUuid = userRepository.findByUuid(friend);
                     return friendRepository.findByFollowingAndFollower(userId, userByUuid.orElseThrow(() -> new UserException(USERID_NOT_FOUND_USER_EXCEPTION)).getId()) == null;
                 })
+                .map(userRepository::findByUuid)
                 .toList();
 
-        return userRepository.findAllByUuidIn(uuidList, pageable).stream()
+        val pageList = PaginationUtil.getPage(ListUtil.toList(kakaoFriends), pageable).stream().toList();
+
+        return pageList.stream()
                 .map(RecommendFriendResponse::of)
                 .toList();
     }
