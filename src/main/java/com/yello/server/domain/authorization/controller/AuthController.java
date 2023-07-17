@@ -67,9 +67,8 @@ public class AuthController {
 
     @PostMapping("/signup")
     public BaseResponse<SignUpResponse> postSignUp(
-        @RequestHeader(AUTHORIZATION) String oAuthAccessToken,
         @Valid @RequestBody SignUpRequest signUpRequest) {
-        val data = authService.signUp(oAuthAccessToken, signUpRequest);
+        val data = authService.signUp(signUpRequest);
         return BaseResponse.success(SIGN_UP_SUCCESS, data);
     }
 

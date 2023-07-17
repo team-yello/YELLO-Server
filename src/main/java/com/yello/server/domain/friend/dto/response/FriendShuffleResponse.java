@@ -7,13 +7,15 @@ import lombok.Builder;
 @Builder
 public record FriendShuffleResponse(
         Long friendId,
-        String friendName
+        String friendName,
+        String friendYelloId
 ) {
 
     public static FriendShuffleResponse of(Friend friend) {
         return FriendShuffleResponse.builder()
                 .friendId(friend.getTarget().getId())
                 .friendName(friend.getTarget().getName())
+                .friendYelloId(friend.getTarget().getYelloId())
                 .build();
     }
 

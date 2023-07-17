@@ -44,6 +44,7 @@ public class JwtFilter extends OncePerRequestFilter {
                 || requestPath.startsWith("/v3/api-docs")
                 || requestPath.startsWith("/api/v1/auth/oauth")
                 || requestPath.startsWith("/api/v1/auth/signup")
+                || requestPath.startsWith("/api/v1/auth/valid")
                 || requestPath.startsWith("/api/v1/auth/friend")
                 || requestPath.startsWith("/api/v1/auth/school/school")
                 || requestPath.startsWith("/api/v1/auth/school/department")) {
