@@ -18,7 +18,7 @@ public class PaginationUtil {
     }
 
     public static <T> Page<T> getPage(List<T> list, Pageable pageable) {
-        int start = (int)pageable.getOffset();
+        int start = (int) pageable.getOffset();
         int end = Math.min((start + pageable.getPageSize()), list.size());
 
         List<T> pageList = (start <= end) ? list.subList(start, end) : Collections.emptyList();
