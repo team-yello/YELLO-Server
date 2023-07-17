@@ -6,6 +6,7 @@ import lombok.Builder;
 
 import java.time.LocalDateTime;
 
+import static com.yello.server.global.common.util.ConstantUtil.TIMER_MAX_TIME;
 import static com.yello.server.global.common.util.TimeUtil.plusTime;
 import static com.yello.server.global.common.util.TimeUtil.toDateFormattedString;
 
@@ -28,7 +29,7 @@ public record VoteAvailableResponse(
         return VoteAvailableResponse.builder()
                 .isPossible(isPossible)
                 .point(user.getPoint())
-                .createdAt(toDateFormattedString(plusTime(localDateTime)))
+                .createdAt(toDateFormattedString(plusTime(localDateTime, TIMER_MAX_TIME)))
                 .build();
     }
 }

@@ -37,6 +37,7 @@ import java.util.stream.Collectors;
 import static com.yello.server.domain.vote.common.WeightedRandom.randomPoint;
 import static com.yello.server.global.common.ErrorCode.*;
 import static com.yello.server.global.common.util.ConstantUtil.*;
+import static com.yello.server.global.common.util.TimeUtil.minusTime;
 
 @Service
 @RequiredArgsConstructor
@@ -114,10 +115,9 @@ public class VoteServiceImpl implements VoteService {
             throw new UserNotFoundException(LACK_USER_EXCEPTION);
         }
 
-        Cooldown cooldown = cooldownRepository.findByUser(user)
-                .orElse(Cooldown.of(user, LocalDateTime.now()));
+        Cooldown cooldown = cooldownRepository.findByUser(user).orElse(Cooldown.of(user, minusTime(LocalDateTime.now(), TIMER_FIFTY_TIME)));
 
-        return VoteAvailableResponse.of(user, cooldown.isPossible(), cooldown.getCreatedAt());
+        return VoteAvailableResponse.of(user, cooldown);
     }
 
     @Transactional
