@@ -159,13 +159,15 @@ public class AuthServiceImpl implements AuthService {
 
     @Override
     public GroupNameSearchResponse findSchoolsBySearch(String keyword, Pageable pageable) {
+        int totalCount = schoolRepository.countDistinctSchoolNameContaining(keyword);
         List<String> nameList = schoolRepository.findDistinctSchoolNameContaining(keyword, pageable);
-        return GroupNameSearchResponse.of(nameList);
+        return GroupNameSearchResponse.of(totalCount, nameList);
     }
 
     @Override
     public DepartmentSearchResponse findDepartmentsBySearch(String schoolName, String keyword, Pageable pageable) {
+        int totalCount = schoolRepository.countAllBySchoolNameContaining(schoolName, keyword);
         List<School> schoolResult = schoolRepository.findAllBySchoolNameContaining(schoolName, keyword, pageable);
-        return DepartmentSearchResponse.of(schoolResult);
+        return DepartmentSearchResponse.of(totalCount, schoolResult);
     }
 }
