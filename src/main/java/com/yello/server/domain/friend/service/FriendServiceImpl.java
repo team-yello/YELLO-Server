@@ -1,10 +1,5 @@
 package com.yello.server.domain.friend.service;
 
-import static com.yello.server.global.common.ErrorCode.EXIST_FRIEND_EXCEPTION;
-import static com.yello.server.global.common.ErrorCode.LACK_USER_EXCEPTION;
-import static com.yello.server.global.common.ErrorCode.USERID_NOT_FOUND_USER_EXCEPTION;
-import static com.yello.server.global.common.util.ConstantUtil.RANDOM_COUNT;
-
 import com.yello.server.domain.friend.dto.FriendsResponse;
 import com.yello.server.domain.friend.dto.request.KakaoRecommendRequest;
 import com.yello.server.domain.friend.dto.response.FriendShuffleResponse;
@@ -17,13 +12,12 @@ import com.yello.server.domain.user.entity.User;
 import com.yello.server.domain.user.entity.UserRepository;
 import com.yello.server.domain.user.exception.UserException;
 import com.yello.server.domain.vote.entity.VoteRepository;
-import java.util.Collections;
-import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
@@ -45,13 +39,13 @@ public class FriendServiceImpl implements FriendService {
     public FriendsResponse findAllFriends(Pageable pageable, Long userId) {
         Page<Friend> friendsData = friendRepository.findAllFriendsByUserId(pageable, userId);
         List<UserResponse> friends = friendsData.stream()
-            .map(friend -> {
-                User user = friend.getUser();
-                Integer friendCount = friendRepository.findAllByUser(user).size();
-                Integer yelloCount = voteRepository.getCountAllByReceiverUserId(user.getId());
-                return UserResponse.of(user, friendCount, yelloCount);
-            })
-            .toList();
+                .map(friend -> {
+                    User user = friend.getUser();
+                    Integer friendCount = friendRepository.findAllByUser(user).size();
+                    Integer yelloCount = voteRepository.getCountAllByReceiverUserId(user.getId());
+                    return UserResponse.of(user, friendCount, yelloCount);
+                })
+                .toList();
 
         return FriendsResponse.of(friendsData.getTotalElements(), friends);
     }
@@ -64,7 +58,7 @@ public class FriendServiceImpl implements FriendService {
 
         Friend friendData = friendRepository.findByFollowingAndFollower(userId, targetId);
 
-        if (friendData!=null) {
+        if (friendData != null) {
             throw new FriendException(EXIST_FRIEND_EXCEPTION);
         }
 
@@ -85,9 +79,9 @@ public class FriendServiceImpl implements FriendService {
         Collections.shuffle(allFriends);
 
         return allFriends.stream()
-            .map(FriendShuffleResponse::of)
-            .limit(RANDOM_COUNT)
-            .toList();
+                .map(FriendShuffleResponse::of)
+                .limit(RANDOM_COUNT)
+                .toList();
     }
 
     @Override
@@ -95,12 +89,16 @@ public class FriendServiceImpl implements FriendService {
         User user = findUser(userId);
 
         List<User> recommendFriends = userRepository.findAllByGroupId(user.getGroup().getId(), pageable)
-            .stream()
-            .toList();
+                .stream()
+                .filter(recommend -> !user.getId().equals(recommend.getId()))
+                .filter(friend -> {
+                    return findFriend(userId, friend.getId()) == null;
+                })
+                .toList();
 
         return recommendFriends.stream()
-            .map(RecommendFriendResponse::of)
-            .toList();
+                .map(RecommendFriendResponse::of)
+                .toList();
     }
 
     @Transactional
@@ -111,11 +109,6 @@ public class FriendServiceImpl implements FriendService {
 
         friendRepository.deleteByFollowingAndFollower(user.getId(), target.getId());
         friendRepository.deleteByFollowingAndFollower(target.getId(), user.getId());
-    }
-
-    private User findUser(Long userId) {
-        return userRepository.findById(userId)
-            .orElseThrow(() -> new UserException(USERID_NOT_FOUND_USER_EXCEPTION));
     }
 
     @Override
@@ -133,5 +126,15 @@ public class FriendServiceImpl implements FriendService {
         return userRepository.findAllByUuidIn(uuidList, pageable).stream()
                 .map(RecommendFriendResponse::of)
                 .toList();
+    }
+
+
+    private User findUser(Long userId) {
+        return userRepository.findById(userId)
+                .orElseThrow(() -> new UserException(USERID_NOT_FOUND_USER_EXCEPTION));
+    }
+
+    private Friend findFriend(Long userId, Long friendId) {
+        return friendRepository.findByFollowingAndFollower(userId, friendId);
     }
 }
