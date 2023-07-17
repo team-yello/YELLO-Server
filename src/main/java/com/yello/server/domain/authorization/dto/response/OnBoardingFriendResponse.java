@@ -21,7 +21,7 @@ public record OnBoardingFriendResponse(
             String groupName
     ) {}
 
-    public static OnBoardingFriendResponse of(List<User> users) {
+    public static OnBoardingFriendResponse of(int totalCount, List<User> users) {
         List<OnBoardingFriend> result = users.stream().map(user -> OnBoardingFriend.builder()
                         .group(user.getSocial() == Social.KAKAO ? "KAKAO" : "SCHOOL")
                         .id(user.getId())
@@ -32,7 +32,7 @@ public record OnBoardingFriendResponse(
                 .toList();
 
         return OnBoardingFriendResponse.builder()
-                .totalCount(result.size())
+                .totalCount(totalCount)
                 .friendList(result)
                 .build();
     }
