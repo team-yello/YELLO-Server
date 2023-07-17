@@ -37,7 +37,6 @@ public class Cooldown {
     }
 
     public Boolean isPossible() {
-        System.out.println(getSecondsBetween(LocalDateTime.now(), createdAt) + "gsdsdf");
         return getSecondsBetween(LocalDateTime.now(), createdAt) >= TIMER_TIME;
     }
 }

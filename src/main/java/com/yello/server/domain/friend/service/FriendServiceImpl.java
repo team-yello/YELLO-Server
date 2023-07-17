@@ -2,6 +2,7 @@ package com.yello.server.domain.friend.service;
 
 import com.yello.server.domain.friend.dto.FriendsResponse;
 import com.yello.server.domain.friend.dto.request.KakaoRecommendRequest;
+import com.yello.server.domain.friend.dto.response.FriendResponse;
 import com.yello.server.domain.friend.dto.response.FriendShuffleResponse;
 import com.yello.server.domain.friend.dto.response.RecommendFriendResponse;
 import com.yello.server.domain.friend.entity.Friend;
@@ -88,7 +89,7 @@ public class FriendServiceImpl implements FriendService {
     }
 
     @Override
-    public List<RecommendFriendResponse> findAllRecommendSchoolFriends(Pageable pageable, Long userId) {
+    public RecommendFriendResponse findAllRecommendSchoolFriends(Pageable pageable, Long userId) {
         User user = findUser(userId);
 
         List<User> recommendFriends = userRepository.findAllByGroupId(user.getGroup().getId())
@@ -99,12 +100,12 @@ public class FriendServiceImpl implements FriendService {
                 })
                 .toList();
 
-        val pageList = PaginationUtil.getPage(recommendFriends, pageable).stream().toList();
-
-
-        return pageList.stream()
-                .map(RecommendFriendResponse::of)
+        val pageList = PaginationUtil.getPage(recommendFriends, pageable).stream()
+                .map(FriendResponse::of)
                 .toList();
+
+
+        return RecommendFriendResponse.of(recommendFriends.size(), pageList);
     }
 
     @Transactional
@@ -118,8 +119,8 @@ public class FriendServiceImpl implements FriendService {
     }
 
     @Override
-    public List<RecommendFriendResponse> findAllRecommendKakaoFriends(Pageable pageable, Long userId,
-                                                                      KakaoRecommendRequest request) {
+    public RecommendFriendResponse findAllRecommendKakaoFriends(Pageable pageable, Long userId,
+                                                                KakaoRecommendRequest request) {
         userRepository.findById(userId)
                 .orElseThrow(() -> new UserException(USERID_NOT_FOUND_USER_EXCEPTION));
 
@@ -131,11 +132,11 @@ public class FriendServiceImpl implements FriendService {
                 .map(userRepository::findByUuid)
                 .toList();
 
-        val pageList = PaginationUtil.getPage(ListUtil.toList(kakaoFriends), pageable).stream().toList();
-
-        return pageList.stream()
-                .map(RecommendFriendResponse::of)
+        val pageList = PaginationUtil.getPage(ListUtil.toList(kakaoFriends), pageable).stream()
+                .map(FriendResponse::of)
                 .toList();
+
+        return RecommendFriendResponse.of(kakaoFriends.size(), pageList);
     }
 
 
