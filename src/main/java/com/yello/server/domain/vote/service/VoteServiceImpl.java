@@ -32,6 +32,7 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 import static com.yello.server.domain.vote.common.WeightedRandom.randomPoint;
@@ -130,7 +131,10 @@ public class VoteServiceImpl implements VoteService {
                 voteRepository.save(Vote.createVote(vote.keywordName(), sender, findUser(vote.friendId()),
                         questionService.findByQuestionId(vote.questionId()), vote.colorIndex())));
 
-        cooldownRepository.save(Cooldown.of(sender, LocalDateTime.now()));
+        Optional<Cooldown> cooldown = cooldownRepository.findByUser(sender);
+        if (cooldown.isEmpty()) {
+            cooldownRepository.save(Cooldown.of(sender, LocalDateTime.now()));
+        }
 
         return VoteCreateResponse.builder().point(sender.getPoint()).build();
     }
