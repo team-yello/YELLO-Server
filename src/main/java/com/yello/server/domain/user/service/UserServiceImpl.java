@@ -6,7 +6,6 @@ import com.yello.server.domain.friend.entity.FriendRepository;
 import com.yello.server.domain.user.dto.UserResponse;
 import com.yello.server.domain.user.entity.User;
 import com.yello.server.domain.user.entity.UserRepository;
-import com.yello.server.domain.user.exception.UserException;
 import com.yello.server.domain.user.exception.UserNotFoundException;
 import com.yello.server.domain.vote.entity.VoteRepository;
 import lombok.RequiredArgsConstructor;
@@ -24,8 +23,7 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public UserResponse findUser(Long userId) {
-        User user = userRepository.findById(userId)
-            .orElseThrow(() -> new UserNotFoundException(USERID_NOT_FOUND_USER_EXCEPTION));
+        User user = findByUserId(userId);
         Integer friendCount = friendRepository.findAllByUser(user).size();
         Integer yelloCount = voteRepository.getCountAllByReceiverUserId(user.getId());
 
@@ -40,7 +38,6 @@ public class UserServiceImpl implements UserService {
 
     public User findByUserId(Long userId) {
         return userRepository.findById(userId)
-            .orElseThrow(() -> new UserException(USERID_NOT_FOUND_USER_EXCEPTION));
+            .orElseThrow(() -> new UserNotFoundException(USERID_NOT_FOUND_USER_EXCEPTION));
     }
-
 }
