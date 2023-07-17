@@ -134,6 +134,8 @@ public class VoteServiceImpl implements VoteService {
         Optional<Cooldown> cooldown = cooldownRepository.findByUser(sender);
         if (cooldown.isEmpty()) {
             cooldownRepository.save(Cooldown.of(sender, LocalDateTime.now()));
+        } else {
+            cooldown.get().updateDate(LocalDateTime.now());
         }
 
         return VoteCreateResponse.builder().point(sender.getPoint()).build();
@@ -203,4 +205,5 @@ public class VoteServiceImpl implements VoteService {
         return userRepository.findById(userId)
                 .orElseThrow(() -> new UserException(USERID_NOT_FOUND_USER_EXCEPTION));
     }
+
 }
