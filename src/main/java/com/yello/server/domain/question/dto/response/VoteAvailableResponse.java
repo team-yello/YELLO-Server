@@ -4,6 +4,8 @@ import com.yello.server.domain.cooldown.entity.Cooldown;
 import com.yello.server.domain.user.entity.User;
 import lombok.Builder;
 
+import java.time.LocalDateTime;
+
 import static com.yello.server.global.common.util.TimeUtil.plusTime;
 import static com.yello.server.global.common.util.TimeUtil.toDateFormattedString;
 
@@ -18,7 +20,15 @@ public record VoteAvailableResponse(
         return VoteAvailableResponse.builder()
                 .isPossible(cooldown.isPossible())
                 .point(user.getPoint())
-                .createdAt(toDateFormattedString(plusTime(cooldown.getCreatedAt())))
+                .createdAt(toDateFormattedString(cooldown.getCreatedAt()))
+                .build();
+    }
+
+    public static VoteAvailableResponse of(User user, Boolean isPossible, LocalDateTime localDateTime) {
+        return VoteAvailableResponse.builder()
+                .isPossible(isPossible)
+                .point(user.getPoint())
+                .createdAt(toDateFormattedString(plusTime(localDateTime)))
                 .build();
     }
 }
