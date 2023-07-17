@@ -16,7 +16,6 @@ import com.yello.server.domain.vote.dto.response.RevealNameResponse;
 import com.yello.server.domain.vote.dto.response.VoteCreateResponse;
 import com.yello.server.domain.vote.dto.response.VoteDetailResponse;
 import com.yello.server.domain.vote.dto.response.VoteListResponse;
-import com.yello.server.domain.vote.dto.response.VoteResponse;
 import com.yello.server.domain.vote.service.VoteService;
 import com.yello.server.global.common.SuccessCode;
 import com.yello.server.global.common.annotation.AccessTokenUser;
@@ -51,7 +50,7 @@ public class VoteController {
     @Operation(summary = "내 투표 전체 조회 API", responses = {
         @ApiResponse(
             responseCode = "200",
-            content = @Content(mediaType = "application/json", array = @ArraySchema(schema = @Schema(implementation = VoteResponse.class)))),
+            content = @Content(mediaType = "application/json", schema = @Schema(implementation = VoteListResponse.class))),
     })
     @GetMapping
     public BaseResponse<VoteListResponse> findAllMyVotes(
