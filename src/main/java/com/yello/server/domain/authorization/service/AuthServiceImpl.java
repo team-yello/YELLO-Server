@@ -154,7 +154,7 @@ public class AuthServiceImpl implements AuthService {
 
         val pageList = PaginationUtil.getPage(totalList, pageable).stream().toList();
 
-        return OnBoardingFriendResponse.of(pageList);
+        return OnBoardingFriendResponse.of(totalList.size(), pageList);
     }
 
     @Override
