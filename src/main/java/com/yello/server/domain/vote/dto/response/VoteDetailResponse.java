@@ -6,6 +6,9 @@ import lombok.Builder;
 
 @Builder
 public record VoteDetailResponse(
+    @Schema(description = "투표 컬러 인덱스")
+    Integer colorIndex,
+
     @Schema(description = "현재 보유중인 포인트")
     Integer currentPoint,
 
@@ -30,6 +33,7 @@ public record VoteDetailResponse(
 
     public static VoteDetailResponse of(Vote vote) {
         return VoteDetailResponse.builder()
+            .colorIndex(vote.getColorIndex())
             .currentPoint(vote.getReceiver().getPoint())
             .nameHint(vote.getNameHint())
             .isAnswerRevealed(vote.getIsAnswerRevealed())
