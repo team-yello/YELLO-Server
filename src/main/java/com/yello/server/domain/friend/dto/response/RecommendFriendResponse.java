@@ -1,21 +1,19 @@
 package com.yello.server.domain.friend.dto.response;
 
-import com.yello.server.domain.user.entity.User;
 import lombok.Builder;
+
+import java.util.List;
 
 @Builder
 public record RecommendFriendResponse(
-        Long id,
-        String name,
-        String group,
-        String profileImage
+        int totalCount,
+        List<FriendResponse> friends
+
 ) {
-    public static RecommendFriendResponse of(User user) {
+    public static RecommendFriendResponse of(int totalCount, List<FriendResponse> friends) {
         return RecommendFriendResponse.builder()
-                .id(user.getId())
-                .name(user.getName())
-                .group(user.getGroup().toString())
-                .profileImage(user.getProfileImage())
+                .totalCount(totalCount)
+                .friends(friends)
                 .build();
     }
 
