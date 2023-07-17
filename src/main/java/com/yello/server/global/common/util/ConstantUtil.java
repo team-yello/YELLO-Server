@@ -18,5 +18,6 @@ public class ConstantUtil {
 
     public static final int NAME_HINT_POINT = 300;
     public static final int NAME_HINT_DEFAULT = -1;
+    public static final int TIMER_MAX_TIME = 40;
 
 }

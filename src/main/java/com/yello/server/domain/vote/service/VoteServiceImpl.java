@@ -28,6 +28,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -82,9 +83,14 @@ public class VoteServiceImpl implements VoteService {
 
     @Override
     public List<VoteQuestionResponse> findYelloVoteList(Long userId) {
+        User user = findUser(userId);
+
+        List<Friend> friends = friendRepository.findAllByUser(user);
+        if (friends.size() < RANDOM_COUNT) {
+            throw new UserNotFoundException(LACK_USER_EXCEPTION);
+        }
 
         List<VoteQuestionResponse> yelloVoteList = new ArrayList<>();
-        User user = findUser(userId);
 
         List<Question> question = questionRepository.findAll();
         Collections.shuffle(question);
@@ -107,7 +113,7 @@ public class VoteServiceImpl implements VoteService {
         }
 
         Cooldown cooldown = cooldownRepository.findByUser(user)
-                .orElse(Cooldown.of(user, null));
+                .orElse(Cooldown.of(user, LocalDateTime.now()));
 
         return VoteAvailableResponse.of(user, cooldown);
     }
