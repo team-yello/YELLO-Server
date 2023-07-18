@@ -1,4 +1,4 @@
-package com.yello.server.domain.vote.dto.response;
+package com.yello.server.domain.cooldown.response;
 
 import com.yello.server.domain.vote.entity.Vote;
 import io.swagger.v3.oas.annotations.media.Schema;
