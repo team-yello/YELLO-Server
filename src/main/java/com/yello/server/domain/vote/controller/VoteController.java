@@ -87,7 +87,7 @@ public class VoteController {
         return BaseResponse.success(CHECK_KEYWORD_SUCCESS, keywordCheckResponse);
     }
 
-    @Operation(summary = "Yello 투표 10개 조회 API", responses = {
+    @Operation(summary = "투표 10개 조회 API", responses = {
         @ApiResponse(
             responseCode = "200",
             content = @Content(mediaType = "application/json", array = @ArraySchema(schema = @Schema(implementation = VoteQuestionResponse.class)))),
@@ -100,6 +100,11 @@ public class VoteController {
         return BaseResponse.success(READ_YELLO_VOTE_SUCCESS, data);
     }
 
+    @Operation(summary = "투표 가능 여부 조회 API", responses = {
+        @ApiResponse(
+            responseCode = "200",
+            content = @Content(mediaType = "application/json", schema = @Schema(implementation = VoteAvailableResponse.class))),
+    })
     @GetMapping("/available")
     public BaseResponse<VoteAvailableResponse> checkVoteAvailable(
         @AccessTokenUser User user
@@ -108,10 +113,10 @@ public class VoteController {
         return BaseResponse.success(READ_YELLO_START_SUCCESS, data);
     }
 
-    @Operation(summary = "Yello 투표 생성 API", responses = {
+    @Operation(summary = "투표 생성 API", responses = {
         @ApiResponse(
             responseCode = "201",
-            content = @Content(mediaType = "application/json")),
+            content = @Content(mediaType = "application/json", schema = @Schema(implementation = VoteAvailableResponse.class))),
     })
     @PostMapping
     public BaseResponse<VoteCreateResponse> createVote(
@@ -122,6 +127,11 @@ public class VoteController {
         return BaseResponse.success(CREATE_VOTE_SUCCESS, data);
     }
 
+    @Operation(summary = "투표 이름 부분 조회 API", responses = {
+        @ApiResponse(
+            responseCode = "200",
+            content = @Content(mediaType = "application/json", schema = @Schema(implementation = RevealNameResponse.class))),
+    })
     @PatchMapping("/{voteId}/name")
     public BaseResponse<RevealNameResponse> revealNameHint(
         @AccessTokenUser User user,
