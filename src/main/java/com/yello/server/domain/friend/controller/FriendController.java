@@ -87,7 +87,7 @@ public class FriendController {
             )
     })
     @GetMapping("/recommend/school")
-    public BaseResponse<List<RecommendFriendResponse>> recommendSchoolFriend(
+    public BaseResponse<RecommendFriendResponse> recommendSchoolFriend(
             @Parameter(name = "page", description = "페이지네이션 페이지 번호입니다.", example = "1")
             @Valid @RequestParam Integer page,
             @AccessTokenUser User user
@@ -103,7 +103,7 @@ public class FriendController {
             )
     })
     @PostMapping("/recommend/kakao")
-    public BaseResponse<List<RecommendFriendResponse>> recommendKakaoFriend(
+    public BaseResponse<RecommendFriendResponse> recommendKakaoFriend(
             @RequestBody KakaoRecommendRequest request,
             @Valid @RequestParam Integer page,
             @AccessTokenUser User user
@@ -124,6 +124,6 @@ public class FriendController {
             @Valid @PathVariable Long targetId,
             @AccessTokenUser User user) {
         friendService.deleteFriend(user.getId(), targetId);
-        return BaseResponse.success(DELETE_USER_SUCCESS);
+        return BaseResponse.success(DELETE_FRIEND_SUCCESS);
     }
 }

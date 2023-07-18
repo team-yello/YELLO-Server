@@ -14,7 +14,10 @@ public class WeightedRandom {
         weight.put(MIN_POINT + 1, SECOND_POINT_WEIGHT);
         weight.put(MIN_POINT + 2, THIRD_POINT_WEIGHT);
         weight.put(MIN_POINT + 3, FOURTH_POINT_WEIGHT);
-
+        weight.put(MIN_POINT + 4, FIFTH_POINT_WEIGHT);
+        weight.put(MIN_POINT + 5, SIXTH_POINT_WEIGHT);
+        weight.put(MIN_POINT + 6, SEVENTH_POINT_WEIGHT);
+        
         final double pivot = Math.random() % REMINDER_NUMBER;
 
         int currentWeight = 0;

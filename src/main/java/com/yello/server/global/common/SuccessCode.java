@@ -25,6 +25,10 @@ public enum SuccessCode {
     READ_YELLO_START_SUCCESS(OK, "옐로 시작하기에 성공했습니다."),
     DELETE_USER_SUCCESS(OK, "유저 탈퇴에 성공했습니다."),
     DELETE_FRIEND_SUCCESS(OK, "친구 삭제에 성공했습니다."),
+    ONBOARDING_FRIENDS_SUCCESS(OK, "서비스에 가입한 친구 및 같은 그룹 친구 조회에 성공하였습니다."),
+    SCHOOL_NAME_SEARCH_SCHOOL_SUCCESS(OK, "학교 검색에 성공하였습니다."),
+    DEPARTMENT_NAME_SEARCH_BY_SCHOOL_NAME_SCHOOL_SUCCESS(OK, "학교 이름으로 학과 검색에 성공하였습니다."),
+    REVEAL_NAME_HINT_SUCCESS(OK, "이름 초성 확인하는데 성공했습니다."),
 
     /**
      * 201 CREATED
@@ -34,7 +38,7 @@ public enum SuccessCode {
     LOGIN_SUCCESS(CREATED, "로그인이 성공했습니다."),
     SIGN_UP_SUCCESS(CREATED, "회원 가입에 성공했습니다. 환영합니다."),
     CREATE_VOTE_SUCCESS(CREATED, "투표를 성공했습니다."),
-    ;
+    CREATE_PAY_COUNT(CREATED, "이용권 버튼 클릭 횟수가 저장되었습니다.");
 
     private final HttpStatus httpStatus;
     private final String message;

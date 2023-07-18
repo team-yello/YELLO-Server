@@ -7,12 +7,12 @@ import static org.springframework.http.HttpStatus.BAD_REQUEST;
 import static org.springframework.http.HttpStatus.UNAUTHORIZED;
 
 import com.yello.server.domain.authorization.JwtTokenProvider;
-import com.yello.server.domain.authorization.dto.KakaoTokenInfo;
+import com.yello.server.domain.authorization.dto.kakao.KakaoTokenInfo;
 import com.yello.server.domain.authorization.dto.ServiceTokenVO;
 import com.yello.server.domain.authorization.dto.request.OAuthRequest;
+import com.yello.server.domain.authorization.dto.request.OnBoardingFriendRequest;
 import com.yello.server.domain.authorization.dto.request.SignUpRequest;
-import com.yello.server.domain.authorization.dto.response.OAuthResponse;
-import com.yello.server.domain.authorization.dto.response.SignUpResponse;
+import com.yello.server.domain.authorization.dto.response.*;
 import com.yello.server.domain.authorization.exception.NotSignedInException;
 import com.yello.server.domain.authorization.exception.OAuthException;
 import com.yello.server.domain.authorization.exception.AuthBadRequestException;
@@ -26,12 +26,17 @@ import com.yello.server.domain.user.entity.User;
 import com.yello.server.domain.user.entity.UserRepository;
 import com.yello.server.domain.user.exception.UserConflictException;
 import com.yello.server.domain.user.exception.UserNotFoundException;
+import com.yello.server.global.common.util.ListUtil;
+import com.yello.server.global.common.util.PaginationUtil;
 import com.yello.server.global.common.util.RestUtil;
 
-import java.util.Objects;
-import java.util.Optional;
+import java.util.*;
 
 import lombok.RequiredArgsConstructor;
+import lombok.val;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.redis.core.ValueOperations;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
@@ -85,25 +90,9 @@ public class AuthServiceImpl implements AuthService {
 
     @Override
     @Transactional
-    public SignUpResponse signUp(String oAuthAccessToken, SignUpRequest signUpRequest) {
-        String socialUUID = "";
-
+    public SignUpResponse signUp(SignUpRequest signUpRequest) {
         // exception
-        if(Objects.isNull(oAuthAccessToken)) {
-            throw new AuthBadRequestException(OAUTH_ACCESS_TOKEN_REQUIRED_EXCEPTION);
-        }
-
-        if(Social.KAKAO == signUpRequest.social()) {
-            ResponseEntity<KakaoTokenInfo> response = RestUtil.getKakaoTokenInfo(oAuthAccessToken);
-
-            if (response.getStatusCode()==BAD_REQUEST || response.getStatusCode()==UNAUTHORIZED) {
-                throw new OAuthException(OAUTH_TOKEN_EXCEPTION);
-            }
-
-            socialUUID = String.valueOf(response.getBody().id());
-        }
-
-        Optional<User> userByUUID = userRepository.findByUuid(socialUUID);
+        Optional<User> userByUUID = userRepository.findByUuid(signUpRequest.uuid());
         if(userByUUID.isPresent()){
             throw new UserConflictException(UUID_CONFLICT_USER_EXCEPTION);
         }
@@ -117,7 +106,7 @@ public class AuthServiceImpl implements AuthService {
                 .orElseThrow(() -> new GroupNotFoundException(GROUPID_NOT_FOUND_GROUP_EXCEPTION));
 
         // logic
-        User newSignInUser = userRepository.save(User.of(signUpRequest, socialUUID, group));
+        User newSignInUser = userRepository.save(User.of(signUpRequest, signUpRequest.uuid(), group));
         ServiceTokenVO newUserTokens = jwtTokenProvider.createServiceToken(newSignInUser.getId(), newSignInUser.getUuid());
 
         if(signUpRequest.recommendId() != null){
@@ -137,5 +126,46 @@ public class AuthServiceImpl implements AuthService {
         tokenValueOperations.set(newSignInUser.getId(), newUserTokens);
 
         return SignUpResponse.of(newSignInUser.getYelloId(), newUserTokens);
+    }
+
+    @Override
+    public OnBoardingFriendResponse findOnBoardingFriends(OnBoardingFriendRequest friendRequest, Pageable pageable) {
+        List<User> totalList = new ArrayList<>();
+
+        // exception
+        schoolRepository.findById(friendRequest.groupId())
+                .orElseThrow(() -> new GroupNotFoundException(GROUPID_NOT_FOUND_GROUP_EXCEPTION));
+
+        // logic
+        val groupFriends = userRepository.findAllByGroupId(friendRequest.groupId());
+        val kakaoFriends = friendRequest.friendKakaoId()
+                .stream()
+                .map(String::valueOf)
+                .map(userRepository::findByUuid)
+                .toList();
+
+        totalList.addAll(groupFriends);
+        totalList.addAll(ListUtil.toList(kakaoFriends));
+
+        totalList = totalList.stream()
+                .distinct()
+                .sorted(Comparator.comparing(User::getName))
+                .toList();
+
+        val pageList = PaginationUtil.getPage(totalList, pageable).stream().toList();
+
+        return OnBoardingFriendResponse.of(pageList);
+    }
+
+    @Override
+    public GroupNameSearchResponse findSchoolsBySearch(String keyword, Pageable pageable) {
+        List<String> nameList = schoolRepository.findDistinctSchoolNameContaining(keyword, pageable);
+        return GroupNameSearchResponse.of(nameList);
+    }
+
+    @Override
+    public DepartmentSearchResponse findDepartmentsBySearch(String schoolName, String keyword, Pageable pageable) {
+        List<School> schoolResult = schoolRepository.findAllBySchoolNameContaining(schoolName, keyword, pageable);
+        return DepartmentSearchResponse.of(schoolResult);
     }
 }

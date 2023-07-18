@@ -11,12 +11,15 @@ import java.util.List;
 @Builder
 public record SignUpRequest(
         @NotNull Social social,
+        @NotNull String uuid,
         @NotNull @Email String email,
         @NotNull String profileImage,
         @NotNull Long groupId,
+        @NotNull Integer groupAdmissionYear,
         @NotNull String name,
         @NotNull String yelloId,
         @NotNull Gender gender,
         @NotNull List<Long> friends,
         String recommendId
-) { }
+) {
+}

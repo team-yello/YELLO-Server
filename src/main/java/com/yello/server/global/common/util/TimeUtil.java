@@ -35,4 +35,12 @@ public class TimeUtil {
         DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
         return localDateTime.format(dateTimeFormatter).toString();
     }
+
+    public static LocalDateTime plusTime(LocalDateTime localDateTime, int time) {
+        return localDateTime.plusMinutes(time);
+    }
+
+    public static LocalDateTime minusTime(LocalDateTime localDateTime, int time) {
+        return localDateTime.minusMinutes(time);
+    }
 }

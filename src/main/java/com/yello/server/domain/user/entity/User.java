@@ -25,7 +25,7 @@ import org.hibernate.annotations.Where;
 @Getter
 @Entity
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-@SQLDelete(sql = "UPDATE user SET deleted_at = current_timestamp WHERE id = ?")
+@SQLDelete(sql = "UPDATE user SET deleted_at = NOW() WHERE id = ?")
 @Where(clause = "deleted_at IS NULL")
 public class User extends AuditingTimeEntity {
 
@@ -68,6 +68,9 @@ public class User extends AuditingTimeEntity {
     @JoinColumn(name = "groupId")
     private School group;
 
+    @Column(nullable = false)
+    private Integer groupAdmissionYear;
+
     @Email
     @Column(nullable = false)
     private String email;
@@ -75,7 +78,8 @@ public class User extends AuditingTimeEntity {
 
     @Builder
     public User(Long recommendCount, String name, String yelloId, Gender gender, Integer point, Social social,
-        String profileImage, String uuid, LocalDateTime deletedAt, School group, String email) {
+        String profileImage, String uuid, LocalDateTime deletedAt, School group, Integer groupAdmissionYear,
+        String email) {
         this.recommendCount = recommendCount;
         this.name = name;
         this.yelloId = yelloId;
@@ -86,6 +90,7 @@ public class User extends AuditingTimeEntity {
         this.uuid = uuid;
         this.deletedAt = deletedAt;
         this.group = group;
+        this.groupAdmissionYear = groupAdmissionYear;
         this.email = email;
     }
 
@@ -101,15 +106,25 @@ public class User extends AuditingTimeEntity {
             .uuid(uuid)
             .deletedAt(null)
             .group(group)
+            .groupAdmissionYear(signUpRequest.groupAdmissionYear())
             .email(signUpRequest.email())
             .build();
+    }
+
+    public String getGroupString() {
+        return this.group.toString() + " " + this.getGroupAdmissionYear() + "학번";
     }
 
     public void addRecommendCount(int count) {
         this.recommendCount += count;
     }
 
-    public void updatePoint(Integer point) {
+    public void plusPoint(Integer point) {
         this.point += point;
     }
+
+    public void minusPoint(Integer point) {
+        this.point -= point;
+    }
+
 }
