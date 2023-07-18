@@ -7,15 +7,15 @@ import static com.yello.server.global.common.SuccessCode.READ_YELLO_START_SUCCES
 import static com.yello.server.global.common.SuccessCode.READ_YELLO_VOTE_SUCCESS;
 import static com.yello.server.global.common.util.PaginationUtil.createPageable;
 
+import com.yello.server.domain.cooldown.response.KeywordCheckResponse;
+import com.yello.server.domain.cooldown.response.RevealNameResponse;
+import com.yello.server.domain.cooldown.response.VoteCreateResponse;
+import com.yello.server.domain.cooldown.response.VoteDetailResponse;
+import com.yello.server.domain.cooldown.response.VoteListResponse;
 import com.yello.server.domain.question.dto.response.VoteAvailableResponse;
 import com.yello.server.domain.question.dto.response.VoteQuestionResponse;
 import com.yello.server.domain.user.entity.User;
 import com.yello.server.domain.vote.dto.request.CreateVoteRequest;
-import com.yello.server.domain.vote.dto.response.KeywordCheckResponse;
-import com.yello.server.domain.vote.dto.response.RevealNameResponse;
-import com.yello.server.domain.vote.dto.response.VoteCreateResponse;
-import com.yello.server.domain.vote.dto.response.VoteDetailResponse;
-import com.yello.server.domain.vote.dto.response.VoteListResponse;
 import com.yello.server.domain.vote.service.VoteService;
 import com.yello.server.global.common.SuccessCode;
 import com.yello.server.global.common.annotation.AccessTokenUser;
