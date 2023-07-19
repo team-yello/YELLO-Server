@@ -121,7 +121,10 @@ public class AuthServiceImpl implements AuthService {
                 .stream()
                 .map(userRepository::findById)
                 .filter(Optional::isPresent)
-                .forEach(friend -> friendRepository.save(Friend.createFriend(newSignInUser, friend.get())));
+                .forEach(friend -> {
+                    friendRepository.save(Friend.createFriend(newSignInUser, friend.get()));
+                    friendRepository.save(Friend.createFriend(friend.get(), newSignInUser));
+                });
 
         // redis
         tokenValueOperations.set(newSignInUser.getId(), newUserTokens);
