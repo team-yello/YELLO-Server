@@ -28,7 +28,7 @@ import org.springframework.web.filter.OncePerRequestFilter;
 @RequiredArgsConstructor
 public class JwtFilter extends OncePerRequestFilter {
 
-    private final static String BEARER = "Bearer ";
+    public final static String BEARER = "Bearer ";
     private final JwtTokenProvider jwtTokenProvider;
     private final String secretKey;
 
