@@ -3,14 +3,20 @@ package com.yello.server.domain.vote.entity;
 import com.yello.server.domain.question.entity.Question;
 import com.yello.server.domain.user.entity.User;
 import com.yello.server.global.common.dto.AuditingTimeEntity;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.FetchType;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.ColumnDefault;
 import org.hibernate.annotations.DynamicInsert;
-
-import javax.persistence.*;
 
 @Entity
 @Getter
@@ -61,6 +67,10 @@ public class Vote extends AuditingTimeEntity {
         this.colorIndex = colorIndex;
     }
 
+    public static Vote createVote(String answer, User sender, User receiver, Question question, Integer colorIndex) {
+        return new Vote(answer, sender, receiver, question, colorIndex);
+    }
+
     public void updateKeywordCheck() {
         this.isAnswerRevealed = true;
     }
@@ -69,7 +79,7 @@ public class Vote extends AuditingTimeEntity {
         this.nameHint = nameHint;
     }
 
-    public static Vote createVote(String answer, User sender, User receiver, Question question, Integer colorIndex) {
-        return new Vote(answer, sender, receiver, question, colorIndex);
+    public void read() {
+        this.isRead = true;
     }
 }
