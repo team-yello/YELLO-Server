@@ -110,9 +110,9 @@ public class AuthServiceImpl implements AuthService {
         User newSignInUser = userRepository.save(User.of(signUpRequest, signUpRequest.uuid(), group));
         ServiceTokenVO newUserTokens = jwtTokenProvider.createServiceToken(newSignInUser.getId(), newSignInUser.getUuid());
 
-        if(signUpRequest.recommendId() != null){
+        if(signUpRequest.recommendId() != null && !signUpRequest.recommendId().equals("")){
             User recommendedUser = userRepository.findByYelloId(signUpRequest.recommendId())
-                    .orElseThrow(() -> new UserNotFoundException(YELLOID_NOT_FOUND_USER_EXCEPTION));
+                .orElseThrow(() -> new UserNotFoundException(YELLOID_NOT_FOUND_USER_EXCEPTION));
 
             recommendedUser.addRecommendCount(1);
         }
