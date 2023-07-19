@@ -20,18 +20,21 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import lombok.val;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Service;
 import org.springframework.web.filter.OncePerRequestFilter;
 
+@Component
 @Log4j2
 @RequiredArgsConstructor
 public class JwtFilter extends OncePerRequestFilter {
 
     public final static String BEARER = "Bearer ";
-    private final JwtTokenProvider jwtTokenProvider;
-    private final String secretKey;
-
+    public final static String X_ACCESS_AUTH = "X-ACCESS-AUTH";
+    public final static String X_REFRESH_AUTH = "X-REFRESH-AUTH";
     private final UserRepository userRepository;
 
     @Override
@@ -40,54 +43,45 @@ public class JwtFilter extends OncePerRequestFilter {
         String requestPath = request.getServletPath();
 
         if (requestPath.equals("/")
-                || requestPath.startsWith("/swagger-ui")
-                || requestPath.startsWith("/v3/api-docs")
-                || requestPath.startsWith("/api/v1/auth/oauth")
-                || requestPath.startsWith("/api/v1/auth/signup")
-                || requestPath.startsWith("/api/v1/auth/valid")
-                || requestPath.startsWith("/api/v1/auth/friend")
-                || requestPath.startsWith("/api/v1/auth/school/school")
-                || requestPath.startsWith("/api/v1/auth/school/department")) {
+            || requestPath.startsWith("/swagger-ui")
+            || requestPath.startsWith("/v3/api-docs")
+            || requestPath.startsWith("/api/v1/auth/oauth")
+            || requestPath.startsWith("/api/v1/auth/signup")
+            || requestPath.startsWith("/api/v1/auth/valid")
+            || requestPath.startsWith("/api/v1/auth/friend")
+            || requestPath.startsWith("/api/v1/auth/school/school")
+            || requestPath.startsWith("/api/v1/auth/school/department")) {
             filterChain.doFilter(request, response);
             return;
         }
 
-        val authorization = request.getHeader(AUTHORIZATION);
-        log.info("Authorization : {}", authorization);
-
-        if (authorization==null || !authorization.startsWith(BEARER)) {
-            throw new CustomAuthenticationException(AUTHENTICATION_ERROR);
-        }
-
-        String token = authorization.substring(BEARER.length());
-
-        if (jwtTokenProvider.isExpired(token, secretKey)) {
+        if(requestPath.startsWith("/api/v1/auth/token/issue")) {
             filterChain.doFilter(request, response);
             return;
         }
 
-        Long userId = jwtTokenProvider.getUserId(token, secretKey);
+        Long userId = (Long) request.getAttribute("userId");
         log.info("Current user's id: {}", userId);
 
-        // 토큰 재발급일 경우 리프레쉬 토큰 확인
-        // 위에서 만료됐는지 확인했기 때문에 따로 만료확인 필요 없음
-        // 리프레쉬 토큰이 유효한지와 path 정보를 통해 확인이 끝났기 때문에 컨트롤러에서는 바로 토큰 재발행해주고 보내주면 됨
-        if (!((requestPath.startsWith("/api/v1/auth/token") && jwtTokenProvider.isRefreshToken(token, secretKey))
-            || jwtTokenProvider.isAccessToken(token, secretKey))
-        ) {
-            throw new JwtException("");
+        User tokenUser = userRepository.findById(userId)
+            .orElseThrow(() -> new AuthNotFoundException(AUTH_NOT_FOUND_USER_EXCEPTION));
+
+        try {
+            // 권한 부여
+            UsernamePasswordAuthenticationToken authenticationToken =
+                new UsernamePasswordAuthenticationToken(tokenUser.getYelloId(), null,
+                    List.of(new SimpleGrantedAuthority("USER")));
+
+            // Detail을 넣어줌
+            authenticationToken.setDetails(tokenUser);
+            SecurityContextHolder.getContext().setAuthentication(authenticationToken);
+
+            log.info("[+] Token in SecurityContextHolder");
+        } catch (AuthenticationException exception) {
+            log.error(exception.getMessage());
+            exception.printStackTrace();
         }
 
-        User tokenUser = userRepository.findById(userId)
-                .orElseThrow(() -> new AuthNotFoundException(AUTH_NOT_FOUND_USER_EXCEPTION));
-        // 권한 부여
-        UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(tokenUser.getYelloId(), null,
-            List.of(new SimpleGrantedAuthority("USER")));
-
-        // Detail을 넣어줌
-        authenticationToken.setDetails(tokenUser);
-        SecurityContextHolder.getContext().setAuthentication(authenticationToken);
-        log.info("[+] Token in SecurityContextHolder");
         filterChain.doFilter(request, response);
     }
 }

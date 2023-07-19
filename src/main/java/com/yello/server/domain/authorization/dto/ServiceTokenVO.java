@@ -1,6 +1,7 @@
 package com.yello.server.domain.authorization.dto;
 
 import lombok.Builder;
+import lombok.Setter;
 
 @Builder
 public record ServiceTokenVO(
