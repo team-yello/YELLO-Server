@@ -1,4 +1,4 @@
-package com.yello.server.domain.user.dto;
+package com.yello.server.domain.user.dto.response;
 
 import com.yello.server.domain.user.entity.User;
 import lombok.Builder;
@@ -11,8 +11,7 @@ public record UserResponse(
     String group,
     String yelloId,
     Integer yelloCount,
-    Integer friendCount,
-    Integer point
+    Integer friendCount
 ) {
 
     public static UserResponse of(User user, Integer yelloCount, Integer friendCount) {
@@ -24,7 +23,6 @@ public record UserResponse(
             .yelloId(user.getYelloId())
             .yelloCount(yelloCount)
             .friendCount(friendCount)
-            .point(user.getPoint())
             .build();
     }
 }
