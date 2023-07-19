@@ -46,10 +46,9 @@ public class SecurityConfiguration {
             .exceptionHandling()
             .authenticationEntryPoint(customAuthenticationEntryPoint)
             .and()
-            .addFilterBefore(new ExceptionHandlerFilter(), UsernamePasswordAuthenticationFilter.class)
-            .addFilterBefore(new JwtExceptionFilter(jwtTokenProvider), ExceptionHandlerFilter.class)
-            .addFilterBefore(new JwtFilter(userRepository),
-                JwtExceptionFilter.class)
+            .addFilterBefore(new JwtFilter(userRepository), UsernamePasswordAuthenticationFilter.class)
+            .addFilterBefore(new JwtExceptionFilter(jwtTokenProvider), JwtFilter.class)
+            .addFilterBefore(new ExceptionHandlerFilter(), JwtExceptionFilter.class)
             .build();
     }
 }
