@@ -39,4 +39,8 @@ public class Cooldown {
     public Boolean isPossible() {
         return getSecondsBetween(LocalDateTime.now(), createdAt) >= TIMER_TIME;
     }
+
+    public void updateDate(LocalDateTime createdAt) {
+        this.createdAt = createdAt;
+    }
 }
