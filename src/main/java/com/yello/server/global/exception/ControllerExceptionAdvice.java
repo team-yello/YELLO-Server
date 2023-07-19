@@ -87,7 +87,9 @@ public class ControllerExceptionAdvice {
      */
     @ExceptionHandler({
             VoteForbiddenException.class,
-            NotSignedInException.class
+            NotSignedInException.class,
+            NotExpiredTokenForbiddenException.class,
+            NotValidTokenForbiddenException.class
     })
     public ResponseEntity<BaseResponse> ForbiddenException(CustomException exception) {
         return ResponseEntity.status(FORBIDDEN)
