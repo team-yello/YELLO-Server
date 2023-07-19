@@ -13,7 +13,10 @@ import com.yello.server.domain.authorization.dto.request.OAuthRequest;
 import com.yello.server.domain.authorization.dto.request.OnBoardingFriendRequest;
 import com.yello.server.domain.authorization.dto.request.SignUpRequest;
 import com.yello.server.domain.authorization.dto.response.*;
+import com.yello.server.domain.authorization.exception.AuthNotFoundException;
+import com.yello.server.domain.authorization.exception.NotExpiredTokenForbiddenException;
 import com.yello.server.domain.authorization.exception.NotSignedInException;
+import com.yello.server.domain.authorization.exception.NotValidTokenForbiddenException;
 import com.yello.server.domain.authorization.exception.OAuthException;
 import com.yello.server.domain.authorization.exception.AuthBadRequestException;
 import com.yello.server.domain.friend.entity.Friend;
@@ -21,7 +24,6 @@ import com.yello.server.domain.friend.entity.FriendRepository;
 import com.yello.server.domain.group.entity.School;
 import com.yello.server.domain.group.entity.SchoolRepository;
 import com.yello.server.domain.group.exception.GroupNotFoundException;
-import com.yello.server.domain.user.entity.Social;
 import com.yello.server.domain.user.entity.User;
 import com.yello.server.domain.user.entity.UserRepository;
 import com.yello.server.domain.user.exception.UserConflictException;
@@ -32,10 +34,9 @@ import com.yello.server.global.common.util.RestUtil;
 
 import java.util.*;
 
+import javax.validation.constraints.NotNull;
 import lombok.RequiredArgsConstructor;
 import lombok.val;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.redis.core.ValueOperations;
 import org.springframework.http.ResponseEntity;
@@ -169,5 +170,51 @@ public class AuthServiceImpl implements AuthService {
         int totalCount = schoolRepository.countAllBySchoolNameContaining(schoolName, keyword);
         List<School> schoolResult = schoolRepository.findAllBySchoolNameContaining(schoolName, keyword, pageable);
         return DepartmentSearchResponse.of(totalCount, schoolResult);
+    }
+
+    @Override
+    public ServiceTokenVO reIssueToken(@NotNull ServiceTokenVO tokens) {
+        ServiceTokenVO newTokens = null;
+
+        boolean isAccessTokenExpired = jwtTokenProvider.isExpired(tokens.accessToken());
+        boolean isRefreshTokenExpired = jwtTokenProvider.isExpired(tokens.refreshToken());
+
+        // exception
+        if(!isAccessTokenExpired && !isRefreshTokenExpired) {
+            throw new NotExpiredTokenForbiddenException(TOKEN_NOT_EXPIRED_AUTH_EXCEPTION);
+        } else if(isAccessTokenExpired && isRefreshTokenExpired) {
+            throw new NotExpiredTokenForbiddenException(TOKEN_ALL_EXPIRED_AUTH_EXCEPTION);
+        }
+
+        // logic
+        if(isAccessTokenExpired && !isRefreshTokenExpired) {
+            long refreshTokenUserId = jwtTokenProvider.getUserId(tokens.refreshToken());
+            String refreshUuid = jwtTokenProvider.getUserUuid(tokens.refreshToken());
+
+            userRepository.findById(refreshTokenUserId)
+                .orElseThrow(() -> new AuthNotFoundException(AUTH_NOT_FOUND_USER_EXCEPTION));
+            userRepository.findByUuid(refreshUuid)
+                .orElseThrow(() -> new AuthNotFoundException(AUTH_UUID_NOT_FOUND_USER_EXCEPTION));
+            String newAccessToken = jwtTokenProvider.createAccessToken(refreshTokenUserId, refreshUuid);
+
+            newTokens = ServiceTokenVO.of(newAccessToken, tokens.refreshToken());
+        }
+        else if(!isAccessTokenExpired && isRefreshTokenExpired) {
+            long accessTokenUserId = jwtTokenProvider.getUserId(tokens.accessToken());
+            String accessUuid = jwtTokenProvider.getUserUuid(tokens.accessToken());
+
+            userRepository.findById(accessTokenUserId)
+                .orElseThrow(() -> new AuthNotFoundException(AUTH_NOT_FOUND_USER_EXCEPTION));
+            userRepository.findByUuid(accessUuid)
+                .orElseThrow(() -> new AuthNotFoundException(AUTH_UUID_NOT_FOUND_USER_EXCEPTION));
+
+            String newRefreshToken = jwtTokenProvider.createRefreshToken(accessTokenUserId, accessUuid);
+
+            newTokens = ServiceTokenVO.of(tokens.accessToken(), newRefreshToken);
+        }
+
+        tokenValueOperations.set(jwtTokenProvider.getUserId(newTokens.accessToken()), newTokens);
+
+        return newTokens;
     }
 }

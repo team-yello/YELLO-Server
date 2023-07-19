@@ -27,8 +27,7 @@ public class SecurityConfiguration {
 
     private final CustomAuthenticationEntryPoint customAuthenticationEntryPoint;
     private final UserRepository userRepository;
-    @Value("${spring.jwt.secret}")
-    private String secretKey;
+    private final JwtTokenProvider jwtTokenProvider;
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity httpSecurity) throws Exception {
@@ -48,9 +47,9 @@ public class SecurityConfiguration {
             .authenticationEntryPoint(customAuthenticationEntryPoint)
             .and()
             .addFilterBefore(new ExceptionHandlerFilter(), UsernamePasswordAuthenticationFilter.class)
-            .addFilterBefore(new JwtFilter(new JwtTokenProvider(), secretKey, userRepository),
-                UsernamePasswordAuthenticationFilter.class)
-            .addFilterBefore(new JwtExceptionFilter(), JwtFilter.class)
+            .addFilterBefore(new JwtExceptionFilter(jwtTokenProvider), ExceptionHandlerFilter.class)
+            .addFilterBefore(new JwtFilter(userRepository),
+                JwtExceptionFilter.class)
             .build();
     }
 }
