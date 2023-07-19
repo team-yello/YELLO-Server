@@ -1,13 +1,15 @@
 package com.yello.server.domain.user.service;
 
-import com.yello.server.domain.user.dto.UserResponse;
+import com.yello.server.domain.user.dto.response.UserDetailResponse;
+import com.yello.server.domain.user.dto.response.UserResponse;
 import com.yello.server.domain.user.entity.User;
 
 public interface UserService {
 
-    UserResponse findUser(Long userId);
 
-    User findByUserId(Long userId);
+    UserDetailResponse findUser(Long userId);
+
+    UserResponse findUserById(Long userId);
 
     void delete(User user);
 
