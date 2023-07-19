@@ -1,4 +1,4 @@
-package com.yello.server.domain.vote.dto.response;
+package com.yello.server.domain.cooldown.response;
 
 import lombok.Builder;
 
@@ -7,4 +7,5 @@ public record RevealNameResponse(
     char name,
     Integer nameIndex
 ) {
+
 }

@@ -14,8 +14,16 @@ import static com.yello.server.global.common.util.TimeUtil.minusTime;
 
 import com.yello.server.domain.cooldown.entity.Cooldown;
 import com.yello.server.domain.cooldown.entity.CooldownRepository;
+import com.yello.server.domain.cooldown.response.KeywordCheckResponse;
+import com.yello.server.domain.cooldown.response.RevealNameResponse;
+import com.yello.server.domain.cooldown.response.VoteCreateResponse;
+import com.yello.server.domain.cooldown.response.VoteDetailResponse;
+import com.yello.server.domain.cooldown.response.VoteFriendResponse;
+import com.yello.server.domain.cooldown.response.VoteListResponse;
+import com.yello.server.domain.cooldown.response.VoteResponse;
 import com.yello.server.domain.friend.entity.Friend;
 import com.yello.server.domain.friend.entity.FriendRepository;
+import com.yello.server.domain.friend.exception.FriendException;
 import com.yello.server.domain.keyword.entity.Keyword;
 import com.yello.server.domain.question.dto.response.VoteAvailableResponse;
 import com.yello.server.domain.question.dto.response.VoteContentVO;
@@ -27,15 +35,7 @@ import com.yello.server.domain.question.service.QuestionService;
 import com.yello.server.domain.user.entity.User;
 import com.yello.server.domain.user.entity.UserRepository;
 import com.yello.server.domain.user.exception.UserException;
-import com.yello.server.domain.user.exception.UserNotFoundException;
 import com.yello.server.domain.vote.dto.request.CreateVoteRequest;
-import com.yello.server.domain.vote.dto.response.KeywordCheckResponse;
-import com.yello.server.domain.vote.dto.response.RevealNameResponse;
-import com.yello.server.domain.vote.dto.response.VoteCreateResponse;
-import com.yello.server.domain.vote.dto.response.VoteDetailResponse;
-import com.yello.server.domain.vote.dto.response.VoteFriendResponse;
-import com.yello.server.domain.vote.dto.response.VoteListResponse;
-import com.yello.server.domain.vote.dto.response.VoteResponse;
 import com.yello.server.domain.vote.entity.Vote;
 import com.yello.server.domain.vote.entity.VoteRepository;
 import com.yello.server.domain.vote.exception.VoteForbiddenException;
@@ -103,7 +103,7 @@ public class VoteServiceImpl implements VoteService {
 
     List<Friend> friends = friendRepository.findAllByUser(user);
     if (friends.size() < RANDOM_COUNT) {
-      throw new UserNotFoundException(LACK_USER_EXCEPTION);
+      throw new FriendException(LACK_USER_EXCEPTION);
     }
 
     List<VoteQuestionResponse> yelloVoteList = new ArrayList<>();
@@ -125,7 +125,7 @@ public class VoteServiceImpl implements VoteService {
     List<Friend> friends = friendRepository.findAllByUser(user);
 
     if (friends.size() < RANDOM_COUNT) {
-      throw new UserNotFoundException(LACK_USER_EXCEPTION);
+      throw new FriendException(LACK_USER_EXCEPTION);
     }
 
     Cooldown cooldown = cooldownRepository.findByUser(user)

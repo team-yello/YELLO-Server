@@ -11,6 +11,7 @@ services:
       - "8081:80"
     container_name: yello-blue
     environment:
+      - TZ=Asia/Seoul
       - SPRING_PROFILES_ACTIVE=blue
     depends_on:
       - redis

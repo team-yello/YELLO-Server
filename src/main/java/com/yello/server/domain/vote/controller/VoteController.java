@@ -7,15 +7,15 @@ import static com.yello.server.global.common.SuccessCode.READ_YELLO_START_SUCCES
 import static com.yello.server.global.common.SuccessCode.READ_YELLO_VOTE_SUCCESS;
 import static com.yello.server.global.common.util.PaginationUtil.createPageable;
 
+import com.yello.server.domain.cooldown.response.KeywordCheckResponse;
+import com.yello.server.domain.cooldown.response.RevealNameResponse;
+import com.yello.server.domain.cooldown.response.VoteCreateResponse;
+import com.yello.server.domain.cooldown.response.VoteDetailResponse;
+import com.yello.server.domain.cooldown.response.VoteListResponse;
 import com.yello.server.domain.question.dto.response.VoteAvailableResponse;
 import com.yello.server.domain.question.dto.response.VoteQuestionResponse;
 import com.yello.server.domain.user.entity.User;
 import com.yello.server.domain.vote.dto.request.CreateVoteRequest;
-import com.yello.server.domain.vote.dto.response.KeywordCheckResponse;
-import com.yello.server.domain.vote.dto.response.RevealNameResponse;
-import com.yello.server.domain.vote.dto.response.VoteCreateResponse;
-import com.yello.server.domain.vote.dto.response.VoteDetailResponse;
-import com.yello.server.domain.vote.dto.response.VoteListResponse;
 import com.yello.server.domain.vote.service.VoteService;
 import com.yello.server.global.common.SuccessCode;
 import com.yello.server.global.common.annotation.AccessTokenUser;
@@ -87,7 +87,7 @@ public class VoteController {
         return BaseResponse.success(CHECK_KEYWORD_SUCCESS, keywordCheckResponse);
     }
 
-    @Operation(summary = "Yello 투표 10개 조회 API", responses = {
+    @Operation(summary = "투표 10개 조회 API", responses = {
         @ApiResponse(
             responseCode = "200",
             content = @Content(mediaType = "application/json", array = @ArraySchema(schema = @Schema(implementation = VoteQuestionResponse.class)))),
@@ -100,6 +100,11 @@ public class VoteController {
         return BaseResponse.success(READ_YELLO_VOTE_SUCCESS, data);
     }
 
+    @Operation(summary = "투표 가능 여부 조회 API", responses = {
+        @ApiResponse(
+            responseCode = "200",
+            content = @Content(mediaType = "application/json", schema = @Schema(implementation = VoteAvailableResponse.class))),
+    })
     @GetMapping("/available")
     public BaseResponse<VoteAvailableResponse> checkVoteAvailable(
         @AccessTokenUser User user
@@ -108,10 +113,10 @@ public class VoteController {
         return BaseResponse.success(READ_YELLO_START_SUCCESS, data);
     }
 
-    @Operation(summary = "Yello 투표 생성 API", responses = {
+    @Operation(summary = "투표 생성 API", responses = {
         @ApiResponse(
             responseCode = "201",
-            content = @Content(mediaType = "application/json")),
+            content = @Content(mediaType = "application/json", schema = @Schema(implementation = VoteAvailableResponse.class))),
     })
     @PostMapping
     public BaseResponse<VoteCreateResponse> createVote(
@@ -122,6 +127,11 @@ public class VoteController {
         return BaseResponse.success(CREATE_VOTE_SUCCESS, data);
     }
 
+    @Operation(summary = "투표 이름 부분 조회 API", responses = {
+        @ApiResponse(
+            responseCode = "200",
+            content = @Content(mediaType = "application/json", schema = @Schema(implementation = RevealNameResponse.class))),
+    })
     @PatchMapping("/{voteId}/name")
     public BaseResponse<RevealNameResponse> revealNameHint(
         @AccessTokenUser User user,

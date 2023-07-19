@@ -19,6 +19,7 @@ public interface FriendRepository extends JpaRepository<Friend, Long> {
     Page<Friend> findAllFriendsByUserId(Pageable pageable, @Param("userId") Long userId);
 
     List<Friend> findAllByUser(User user);
+    
 
     @Transactional
     @Modifying(clearAutomatically = true)
