@@ -36,117 +36,118 @@ import org.springframework.transaction.annotation.Transactional;
 @Transactional(readOnly = true)
 public class FriendServiceImpl implements FriendService {
 
-    private final FriendRepository friendRepository;
-    private final UserRepository userRepository;
-    private final VoteRepository voteRepository;
+  private final FriendRepository friendRepository;
+  private final UserRepository userRepository;
+  private final VoteRepository voteRepository;
 
-    @Override
-    public FriendsResponse findAllFriends(Pageable pageable, Long userId) {
-        Page<Friend> friendsData = friendRepository.findAllFriendsByUserId(pageable, userId);
-        List<UserResponse> friends = friendsData.stream()
-            .map(friend -> {
-                User user = friend.getTarget();
-                Integer friendCount = friendRepository.findAllByUser(user).size();
-                Integer yelloCount = voteRepository.getCountAllByReceiverUserId(user.getId());
-                return UserResponse.of(user, friendCount, yelloCount);
-            })
-            .toList();
+  @Override
+  public FriendsResponse findAllFriends(Pageable pageable, Long userId) {
+    Page<Friend> friendsData = friendRepository.findAllFriendsByUserId(pageable, userId);
+    List<UserResponse> friends = friendsData.stream()
+        .map(friend -> {
+          User user = friend.getTarget();
+          Integer friendCount = friendRepository.findAllByUser(user).size();
+          Integer yelloCount = voteRepository.getCountAllByReceiverUserId(user.getId());
+          return UserResponse.of(user, friendCount, yelloCount);
+        })
+        .toList();
 
-        return FriendsResponse.of(friendsData.getTotalElements(), friends);
+    return FriendsResponse.of(friendsData.getTotalElements(), friends);
+  }
+
+  @Transactional
+  @Override
+  public void addFriend(Long userId, Long targetId) {
+    User target = findUser(targetId);
+    User user = findUser(userId);
+
+    Friend friendData = friendRepository.findByFollowingAndFollower(userId, targetId);
+
+    if (friendData != null) {
+      throw new FriendException(EXIST_FRIEND_EXCEPTION);
     }
 
-    @Transactional
-    @Override
-    public void addFriend(Long userId, Long targetId) {
-        User target = findUser(targetId);
-        User user = findUser(userId);
+    friendRepository.save(Friend.createFriend(user, target));
+    friendRepository.save(Friend.createFriend(target, user));
+  }
 
-        Friend friendData = friendRepository.findByFollowingAndFollower(userId, targetId);
+  @Override
+  public List<FriendShuffleResponse> shuffleFriend(Long userId) {
+    User user = findUser(userId);
 
-        if (friendData!=null) {
-            throw new FriendException(EXIST_FRIEND_EXCEPTION);
-        }
+    List<Friend> allFriends = friendRepository.findAllByUser(user);
 
-        friendRepository.save(Friend.createFriend(user, target));
-        friendRepository.save(Friend.createFriend(target, user));
+    if (allFriends.size() < RANDOM_COUNT) {
+      throw new FriendException(LACK_USER_EXCEPTION);
     }
 
-    @Override
-    public List<FriendShuffleResponse> shuffleFriend(Long userId) {
-        User user = findUser(userId);
+    Collections.shuffle(allFriends);
 
-        List<Friend> allFriends = friendRepository.findAllByUser(user);
+    return allFriends.stream()
+        .map(FriendShuffleResponse::of)
+        .limit(RANDOM_COUNT)
+        .toList();
+  }
 
-        if (allFriends.size() < RANDOM_COUNT) {
-            throw new FriendException(LACK_USER_EXCEPTION);
-        }
+  @Override
+  public RecommendFriendResponse findAllRecommendSchoolFriends(Pageable pageable, Long userId) {
+    User user = findUser(userId);
 
-        Collections.shuffle(allFriends);
+    List<User> recommendFriends = userRepository.findAllByGroupId(user.getGroup().getId())
+        .stream()
+        .filter(recommend -> !user.getId().equals(recommend.getId()))
+        .filter(friend -> {
+          return findFriend(userId, friend.getId()) == null;
+        })
+        .toList();
 
-        return allFriends.stream()
-            .map(FriendShuffleResponse::of)
-            .limit(RANDOM_COUNT)
-            .toList();
-    }
-
-    @Override
-    public RecommendFriendResponse findAllRecommendSchoolFriends(Pageable pageable, Long userId) {
-        User user = findUser(userId);
-
-        List<User> recommendFriends = userRepository.findAllByGroupId(user.getGroup().getId())
-            .stream()
-            .filter(recommend -> !user.getId().equals(recommend.getId()))
-            .filter(friend -> {
-                return findFriend(userId, friend.getId())==null;
-            })
-            .toList();
-
-        val pageList = PaginationUtil.getPage(recommendFriends, pageable).stream()
-            .map(FriendResponse::of)
-            .toList();
-
-        return RecommendFriendResponse.of(recommendFriends.size(), pageList);
-    }
-
-    @Transactional
-    @Override
-    public void deleteFriend(Long userId, Long targetId) {
-        User target = findUser(targetId);
-        User user = findUser(userId);
-
-        friendRepository.deleteByFollowingAndFollower(user.getId(), target.getId());
-        friendRepository.deleteByFollowingAndFollower(target.getId(), user.getId());
-    }
-
-    @Override
-    public RecommendFriendResponse findAllRecommendKakaoFriends(Pageable pageable, Long userId,
-        KakaoRecommendRequest request) {
-        userRepository.findById(userId)
-            .orElseThrow(() -> new UserException(USERID_NOT_FOUND_USER_EXCEPTION));
-
-        val kakaoFriends = Arrays.stream(request.friendKakaoId())
-            .filter(friend -> {
-                Optional<User> userByUuid = userRepository.findByUuid(friend);
-                return friendRepository.findByFollowingAndFollower(userId,
-                    userByUuid.orElseThrow(() -> new UserException(USERID_NOT_FOUND_USER_EXCEPTION)).getId())==null;
-            })
-            .map(userRepository::findByUuid)
-            .toList();
-
-        val pageList = PaginationUtil.getPage(ListUtil.toList(kakaoFriends), pageable).stream()
-            .map(FriendResponse::of)
-            .toList();
-
-        return RecommendFriendResponse.of(kakaoFriends.size(), pageList);
-    }
+    val pageList = PaginationUtil.getPage(recommendFriends, pageable).stream()
+        .map(FriendResponse::of)
+        .toList();
 
 
-    private User findUser(Long userId) {
-        return userRepository.findById(userId)
-            .orElseThrow(() -> new UserException(USERID_NOT_FOUND_USER_EXCEPTION));
-    }
+    return RecommendFriendResponse.of(recommendFriends.size(), pageList);
+  }
 
-    private Friend findFriend(Long userId, Long friendId) {
-        return friendRepository.findByFollowingAndFollower(userId, friendId);
-    }
+  @Transactional
+  @Override
+  public void deleteFriend(Long userId, Long targetId) {
+    User target = findUser(targetId);
+    User user = findUser(userId);
+
+    friendRepository.deleteByFollowingAndFollower(user.getId(), target.getId());
+    friendRepository.deleteByFollowingAndFollower(target.getId(), user.getId());
+  }
+
+  @Override
+  public RecommendFriendResponse findAllRecommendKakaoFriends(Pageable pageable, Long userId,
+                                                              KakaoRecommendRequest request) {
+    User user = userRepository.findById(userId)
+        .orElseThrow(() -> new UserException(USERID_NOT_FOUND_USER_EXCEPTION));
+
+    val kakaoFriends = Arrays.stream(request.friendKakaoId())
+        .filter(friend -> {
+          Optional<User> userByUuid = userRepository.findByUuid(friend);
+          return friendRepository.findByFollowingAndFollower(userId,
+              userByUuid.orElse(user).getId()) == null;
+        })
+        .map(userRepository::findByUuid)
+        .toList();
+
+    val pageList = PaginationUtil.getPage(ListUtil.toList(kakaoFriends), pageable).stream()
+        .map(FriendResponse::of)
+        .toList();
+
+    return RecommendFriendResponse.of(kakaoFriends.size(), pageList);
+  }
+
+
+  private User findUser(Long userId) {
+    return userRepository.findById(userId)
+        .orElseThrow(() -> new UserException(USERID_NOT_FOUND_USER_EXCEPTION));
+  }
+
+  private Friend findFriend(Long userId, Long friendId) {
+    return friendRepository.findByFollowingAndFollower(userId, friendId);
+  }
 }
