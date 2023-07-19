@@ -3,11 +3,13 @@ package com.yello.server.domain.authorization.controller;
 import static com.yello.server.global.common.SuccessCode.DEPARTMENT_NAME_SEARCH_BY_SCHOOL_NAME_SCHOOL_SUCCESS;
 import static com.yello.server.global.common.SuccessCode.LOGIN_SUCCESS;
 import static com.yello.server.global.common.SuccessCode.ONBOARDING_FRIENDS_SUCCESS;
+import static com.yello.server.global.common.SuccessCode.RE_ISSUE_TOKEN_AUTH_SUCCESS;
 import static com.yello.server.global.common.SuccessCode.SCHOOL_NAME_SEARCH_SCHOOL_SUCCESS;
 import static com.yello.server.global.common.SuccessCode.SIGN_UP_SUCCESS;
 import static com.yello.server.global.common.SuccessCode.YELLOID_VALIDATION_SUCCESS;
 import static com.yello.server.global.common.util.PaginationUtil.createPageable;
 
+import com.yello.server.domain.authorization.dto.ServiceTokenVO;
 import com.yello.server.domain.authorization.dto.request.OAuthRequest;
 import com.yello.server.domain.authorization.dto.request.OnBoardingFriendRequest;
 import com.yello.server.domain.authorization.dto.request.SignUpRequest;
@@ -17,6 +19,7 @@ import com.yello.server.domain.authorization.dto.response.OAuthResponse;
 import com.yello.server.domain.authorization.dto.response.OnBoardingFriendResponse;
 import com.yello.server.domain.authorization.dto.response.SignUpResponse;
 import com.yello.server.domain.authorization.service.AuthService;
+import com.yello.server.global.common.annotation.ServiceToken;
 import com.yello.server.global.common.dto.BaseResponse;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -30,6 +33,7 @@ import lombok.val;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
@@ -117,5 +121,13 @@ public class AuthController {
     ) {
         val data = authService.findDepartmentsBySearch(schoolName, keyword, createPageable(page));
         return BaseResponse.success(DEPARTMENT_NAME_SEARCH_BY_SCHOOL_NAME_SCHOOL_SUCCESS, data);
+    }
+
+    @PostMapping("/token/issue")
+    public BaseResponse<ServiceTokenVO> postReIssueToken( @ServiceToken ServiceTokenVO tokens ) {
+        System.out.println("tokens.accessToken() = " + tokens.accessToken());
+        System.out.println("tokens.refreshToken() = " + tokens.refreshToken());
+        val data = authService.reIssueToken(tokens);
+        return BaseResponse.success(RE_ISSUE_TOKEN_AUTH_SUCCESS, data);
     }
 }

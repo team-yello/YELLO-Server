@@ -3,7 +3,8 @@ package com.yello.server.domain.user.controller;
 import static com.yello.server.global.common.SuccessCode.DELETE_USER_SUCCESS;
 import static com.yello.server.global.common.SuccessCode.READ_USER_SUCCESS;
 
-import com.yello.server.domain.user.dto.UserResponse;
+import com.yello.server.domain.user.dto.response.UserDetailResponse;
+import com.yello.server.domain.user.dto.response.UserResponse;
 import com.yello.server.domain.user.entity.User;
 import com.yello.server.domain.user.service.UserService;
 import com.yello.server.global.common.annotation.AccessTokenUser;
@@ -29,14 +30,25 @@ public class UserController {
 
     private final UserService userService;
 
+    @Operation(summary = "내 정보 조회 API", responses = {
+        @ApiResponse(
+            responseCode = "200",
+            content = @Content(mediaType = "application/json", schema = @Schema(implementation = UserDetailResponse.class))),
+    })
+    @GetMapping
+    public BaseResponse<UserDetailResponse> findUser(@AccessTokenUser User user) {
+        val data = userService.findUser(user.getId());
+        return BaseResponse.success(READ_USER_SUCCESS, data);
+    }
+
     @Operation(summary = "유저 정보 조회 API", responses = {
         @ApiResponse(
             responseCode = "200",
             content = @Content(mediaType = "application/json", schema = @Schema(implementation = UserResponse.class))),
     })
     @GetMapping("/{userId}")
-    public BaseResponse<UserResponse> findUser(@PathVariable Long userId) {
-        val data = userService.findUser(userId);
+    public BaseResponse<UserResponse> findUserById(@PathVariable Long userId) {
+        val data = userService.findUserById(userId);
         return BaseResponse.success(READ_USER_SUCCESS, data);
     }
 

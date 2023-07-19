@@ -13,7 +13,7 @@ import com.yello.server.domain.friend.dto.response.RecommendFriendResponse;
 import com.yello.server.domain.friend.entity.Friend;
 import com.yello.server.domain.friend.entity.FriendRepository;
 import com.yello.server.domain.friend.exception.FriendException;
-import com.yello.server.domain.user.dto.UserResponse;
+import com.yello.server.domain.user.dto.response.UserResponse;
 import com.yello.server.domain.user.entity.User;
 import com.yello.server.domain.user.entity.UserRepository;
 import com.yello.server.domain.user.exception.UserException;

@@ -13,8 +13,12 @@ public interface SchoolRepository extends JpaRepository<School, Long> {
     // Create
 
     // Read
+    @Query("select count (DISTINCT s.schoolName)from School s where s.schoolName like CONCAT('%',:schoolName,'%')")
+    Integer countDistinctSchoolNameContaining(@Param("schoolName") String schoolName);
     @Query("select distinct(s.schoolName) from School s where s.schoolName like CONCAT('%',:schoolName,'%')")
     List<String> findDistinctSchoolNameContaining(@Param("schoolName") String schoolName, Pageable pageable);
+    @Query("select count(s) from School s where s.schoolName = :schoolName and s.departmentName like CONCAT('%',:departmentName,'%')")
+    Integer countAllBySchoolNameContaining(@Param("schoolName") String schoolName, @Param("departmentName") String departmentName);
     @Query("select s from School s where s.schoolName = :schoolName and s.departmentName like CONCAT('%',:departmentName,'%')")
     List<School> findAllBySchoolNameContaining(@Param("schoolName") String schoolName, @Param("departmentName") String departmentName, Pageable pageable);
     List<School> findAllBySchoolNameAndDepartmentName(String schoolName, String departmentName);

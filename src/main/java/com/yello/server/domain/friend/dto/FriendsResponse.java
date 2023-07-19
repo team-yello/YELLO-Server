@@ -1,6 +1,6 @@
 package com.yello.server.domain.friend.dto;
 
-import com.yello.server.domain.user.dto.UserResponse;
+import com.yello.server.domain.user.dto.response.UserResponse;
 import java.util.List;
 import lombok.Builder;
 

@@ -58,168 +58,170 @@ import org.springframework.transaction.annotation.Transactional;
 @Transactional(readOnly = true)
 public class VoteServiceImpl implements VoteService {
 
-  private final UserRepository userRepository;
-  private final FriendRepository friendRepository;
-  private final QuestionRepository questionRepository;
-  private final CooldownRepository cooldownRepository;
-  private final VoteRepository voteRepository;
-  private final QuestionService questionService;
+    private final UserRepository userRepository;
+    private final FriendRepository friendRepository;
+    private final QuestionRepository questionRepository;
+    private final CooldownRepository cooldownRepository;
+    private final VoteRepository voteRepository;
+    private final QuestionService questionService;
 
-  public VoteListResponse findAllVotes(Long userId, Pageable pageable) {
-    Integer count = voteRepository.getCountAllByReceiverUserId(userId);
-    List<VoteResponse> votes = voteRepository.findAllByReceiverUserId(userId, pageable)
-        .stream()
-        .map(VoteResponse::of)
-        .toList();
-    return VoteListResponse.of(count, votes);
-  }
+    public VoteListResponse findAllVotes(Long userId, Pageable pageable) {
+        Integer count = voteRepository.getCountAllByReceiverUserId(userId);
+        List<VoteResponse> votes = voteRepository.findAllByReceiverUserId(userId, pageable)
+            .stream()
+            .map(VoteResponse::of)
+            .toList();
+        return VoteListResponse.of(count, votes);
+    }
 
-  @Override
-  public VoteDetailResponse findVoteById(Long id) {
-    Vote vote = findVote(id);
-    return VoteDetailResponse.of(vote);
-  }
+    @Transactional
+    @Override
+    public VoteDetailResponse findVoteById(Long id) {
+        Vote vote = findVote(id);
+        vote.read();
+        return VoteDetailResponse.of(vote);
+    }
 
-  @Override
-  public List<VoteFriendResponse> findAllFriendVotes(Long userId, Pageable pageable) {
-    //todo 후순위
-    return null;
-  }
+    @Override
+    public List<VoteFriendResponse> findAllFriendVotes(Long userId, Pageable pageable) {
+        //todo 후순위
+        return null;
+    }
 
-  @Transactional
-  @Override
-  public KeywordCheckResponse checkKeyword(Long userId, Long voteId) {
-    Vote vote = voteRepository.findById(voteId)
-        .orElseThrow(() -> new VoteNotFoundException(NOT_FOUND_VOTE_EXCEPTION));
+    @Transactional
+    @Override
+    public KeywordCheckResponse checkKeyword(Long userId, Long voteId) {
+        Vote vote = voteRepository.findById(voteId)
+            .orElseThrow(() -> new VoteNotFoundException(NOT_FOUND_VOTE_EXCEPTION));
 
     User user = findUser(userId);
     vote.updateKeywordCheck();
     user.minusPoint(KEYWORD_HINT_POINT);
 
-    return KeywordCheckResponse.of(vote);
-  }
-
-  @Override
-  public List<VoteQuestionResponse> findYelloVoteList(Long userId) {
-    User user = findUser(userId);
-
-    List<Friend> friends = friendRepository.findAllByUser(user);
-    if (friends.size() < RANDOM_COUNT) {
-      throw new FriendException(LACK_USER_EXCEPTION);
+        return KeywordCheckResponse.of(vote);
     }
 
-    List<VoteQuestionResponse> yelloVoteList = new ArrayList<>();
+    @Override
+    public List<VoteQuestionResponse> findYelloVoteList(Long userId) {
+        User user = findUser(userId);
 
-    List<Question> question = questionRepository.findAll();
-    Collections.shuffle(question);
+        List<Friend> friends = friendRepository.findAllByUser(user);
+        if (friends.size() < RANDOM_COUNT) {
+            throw new FriendException(LACK_USER_EXCEPTION);
+        }
 
-    List<Question> yelloQuestionList = question.stream()
-        .limit(VOTE_COUNT).toList();
+        List<VoteQuestionResponse> yelloVoteList = new ArrayList<>();
 
-    yelloQuestionList.forEach(yello -> yelloVoteList.add(getVoteData(user, yello)));
+        List<Question> question = questionRepository.findAll();
+        Collections.shuffle(question);
 
-    return yelloVoteList;
-  }
+        List<Question> yelloQuestionList = question.stream()
+            .limit(VOTE_COUNT).toList();
 
-  @Override
-  public VoteAvailableResponse checkVoteAvailable(Long userId) {
-    User user = findUser(userId);
-    List<Friend> friends = friendRepository.findAllByUser(user);
+        yelloQuestionList.forEach(yello -> yelloVoteList.add(getVoteData(user, yello)));
 
-    if (friends.size() < RANDOM_COUNT) {
-      throw new FriendException(LACK_USER_EXCEPTION);
+        return yelloVoteList;
     }
 
-    Cooldown cooldown = cooldownRepository.findByUser(user)
-        .orElse(Cooldown.of(user, minusTime(LocalDateTime.now(), TIMER_FIFTY_TIME)));
+    @Override
+    public VoteAvailableResponse checkVoteAvailable(Long userId) {
+        User user = findUser(userId);
+        List<Friend> friends = friendRepository.findAllByUser(user);
 
-    return VoteAvailableResponse.of(user, cooldown);
-  }
+        if (friends.size() < RANDOM_COUNT) {
+            throw new FriendException(LACK_USER_EXCEPTION);
+        }
 
-  @Transactional
-  @Override
-  public VoteCreateResponse createVote(Long userId, CreateVoteRequest request) {
-    User sender = findUser(userId);
-    sender.plusPoint(request.totalPoint());
+        Cooldown cooldown = cooldownRepository.findByUser(user)
+            .orElse(Cooldown.of(user, minusTime(LocalDateTime.now(), TIMER_FIFTY_TIME)));
 
-    request.voteAnswerList().forEach(vote ->
-        voteRepository.save(Vote.createVote(vote.keywordName(), sender, findUser(vote.friendId()),
-            questionService.findByQuestionId(vote.questionId()), vote.colorIndex())));
-
-    Optional<Cooldown> cooldown = cooldownRepository.findByUser(sender);
-    if (cooldown.isEmpty()) {
-      cooldownRepository.save(Cooldown.of(sender, LocalDateTime.now()));
-    } else {
-      cooldown.get().updateDate(LocalDateTime.now());
+        return VoteAvailableResponse.of(user, cooldown);
     }
 
-    return VoteCreateResponse.builder().point(sender.getPoint()).build();
-  }
+    @Transactional
+    @Override
+    public VoteCreateResponse createVote(Long userId, CreateVoteRequest request) {
+        User sender = findUser(userId);
+        sender.plusPoint(request.totalPoint());
 
-  @Transactional
-  @Override
-  public RevealNameResponse revealNameHint(Long userId, Long voteId) {
-    User sender = findUser(userId);
-    Vote vote = findVote(voteId);
-    String name = vote.getSender().getName();
+        request.voteAnswerList().forEach(vote ->
+            voteRepository.save(Vote.createVote(vote.keywordName(), sender, findUser(vote.friendId()),
+                questionService.findByQuestionId(vote.questionId()), vote.colorIndex())));
 
-    if (vote.getNameHint() != NAME_HINT_DEFAULT) {
-      throw new VoteNotFoundException(INVALID_VOTE_EXCEPTION);
+        Optional<Cooldown> cooldown = cooldownRepository.findByUser(sender);
+        if (cooldown.isEmpty()) {
+            cooldownRepository.save(Cooldown.of(sender, LocalDateTime.now()));
+        } else {
+            cooldown.get().updateDate(LocalDateTime.now());
+        }
+
+        return VoteCreateResponse.builder().point(sender.getPoint()).build();
     }
-    if (sender.getPoint() < NAME_HINT_POINT) {
-      throw new VoteForbiddenException(ErrorCode.LACK_POINT_EXCEPTION);
+
+    @Transactional
+    @Override
+    public RevealNameResponse revealNameHint(Long userId, Long voteId) {
+        User sender = findUser(userId);
+        Vote vote = findVote(voteId);
+        String name = vote.getSender().getName();
+
+        if (vote.getNameHint()!=NAME_HINT_DEFAULT) {
+            throw new VoteNotFoundException(INVALID_VOTE_EXCEPTION);
+        }
+        if (sender.getPoint() < NAME_HINT_POINT) {
+            throw new VoteForbiddenException(ErrorCode.LACK_POINT_EXCEPTION);
+        }
+        int randomIndex = (int) (Math.random() * 2);
+
+        vote.updateNameHintReveal(randomIndex);
+        sender.minusPoint(NAME_HINT_POINT);
+
+        return RevealNameResponse.builder()
+            .name(name.charAt(randomIndex))
+            .nameIndex(randomIndex)
+            .build();
     }
-    int randomIndex = (int) (Math.random() * 2);
 
-    vote.updateNameHintReveal(randomIndex);
-    sender.minusPoint(NAME_HINT_POINT);
+    public VoteQuestionResponse getVoteData(User user, Question question) {
+        List<Keyword> keywordList = question.getKeywordList();
+        Collections.shuffle(keywordList);
 
-    return RevealNameResponse.builder()
-        .name(name.charAt(randomIndex))
-        .nameIndex(randomIndex)
-        .build();
-  }
+        return VoteQuestionResponse.builder()
+            .friendList(getFriendList(user))
+            .keywordList(getKeywordList(question))
+            .question(VoteContentVO.of(question))
+            .questionPoint(randomPoint())
+            .build();
+    }
 
-  public VoteQuestionResponse getVoteData(User user, Question question) {
-    List<Keyword> keywordList = question.getKeywordList();
-    Collections.shuffle(keywordList);
+    public List<VoteShuffleFriend> getFriendList(User user) {
+        List<Friend> allFriend = friendRepository.findAllByUser(user);
+        Collections.shuffle(allFriend);
 
-    return VoteQuestionResponse.builder()
-        .friendList(getFriendList(user))
-        .keywordList(getKeywordList(question))
-        .question(VoteContentVO.of(question))
-        .questionPoint(randomPoint())
-        .build();
-  }
+        return allFriend.stream()
+            .map(VoteShuffleFriend::of)
+            .limit(RANDOM_COUNT)
+            .collect(Collectors.toList());
+    }
 
-  public List<VoteShuffleFriend> getFriendList(User user) {
-    List<Friend> allFriend = friendRepository.findAllByUser(user);
-    Collections.shuffle(allFriend);
+    public List<String> getKeywordList(Question question) {
+        List<Keyword> keywordList = question.getKeywordList();
+        Collections.shuffle(keywordList);
 
-    return allFriend.stream()
-        .map(VoteShuffleFriend::of)
-        .limit(RANDOM_COUNT)
-        .collect(Collectors.toList());
-  }
+        return keywordList.stream()
+            .map(Keyword::getKeywordName)
+            .limit(RANDOM_COUNT)
+            .toList();
+    }
 
-  public List<String> getKeywordList(Question question) {
-    List<Keyword> keywordList = question.getKeywordList();
-    Collections.shuffle(keywordList);
+    private Vote findVote(Long id) {
+        return voteRepository.findById(id)
+            .orElseThrow(() -> new VoteNotFoundException(NOT_FOUND_VOTE_EXCEPTION));
+    }
 
-    return keywordList.stream()
-        .map(Keyword::getKeywordName)
-        .limit(RANDOM_COUNT)
-        .toList();
-  }
-
-  private Vote findVote(Long id) {
-    return voteRepository.findById(id)
-        .orElseThrow(() -> new VoteNotFoundException(NOT_FOUND_VOTE_EXCEPTION));
-  }
-
-  private User findUser(Long userId) {
-    return userRepository.findById(userId)
-        .orElseThrow(() -> new UserException(USERID_NOT_FOUND_USER_EXCEPTION));
-  }
+    private User findUser(Long userId) {
+        return userRepository.findById(userId)
+            .orElseThrow(() -> new UserException(USERID_NOT_FOUND_USER_EXCEPTION));
+    }
 
 }
