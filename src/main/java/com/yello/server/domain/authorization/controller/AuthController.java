@@ -123,10 +123,13 @@ public class AuthController {
         return BaseResponse.success(DEPARTMENT_NAME_SEARCH_BY_SCHOOL_NAME_SCHOOL_SUCCESS, data);
     }
 
+    @Operation(summary = "토큰 재발급 API", responses = {
+        @ApiResponse(
+            responseCode = "201",
+            content = @Content(mediaType = "application/json", schema = @Schema(implementation = ServiceTokenVO.class))),
+    })
     @PostMapping("/token/issue")
     public BaseResponse<ServiceTokenVO> postReIssueToken( @ServiceToken ServiceTokenVO tokens ) {
-        System.out.println("tokens.accessToken() = " + tokens.accessToken());
-        System.out.println("tokens.refreshToken() = " + tokens.refreshToken());
         val data = authService.reIssueToken(tokens);
         return BaseResponse.success(RE_ISSUE_TOKEN_AUTH_SUCCESS, data);
     }
