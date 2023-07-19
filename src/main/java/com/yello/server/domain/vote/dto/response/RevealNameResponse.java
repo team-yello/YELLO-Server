@@ -4,6 +4,7 @@ import lombok.Builder;
 
 @Builder
 public record RevealNameResponse(
-        char name
+    char name,
+    Integer nameIndex
 ) {
 }
