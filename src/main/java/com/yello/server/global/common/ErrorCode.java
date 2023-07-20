@@ -1,12 +1,16 @@
 package com.yello.server.global.common;
 
 
+import static org.springframework.http.HttpStatus.BAD_REQUEST;
+import static org.springframework.http.HttpStatus.CONFLICT;
+import static org.springframework.http.HttpStatus.FORBIDDEN;
+import static org.springframework.http.HttpStatus.NOT_FOUND;
+import static org.springframework.http.HttpStatus.UNAUTHORIZED;
+
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import org.springframework.http.HttpStatus;
-
-import static org.springframework.http.HttpStatus.*;
 
 @Getter
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
@@ -23,8 +27,6 @@ public enum ErrorCode {
     FIELD_REQUIRED_EXCEPTION(BAD_REQUEST, "필요한 값이 없습니다."),
     INVALID_VOTE_EXCEPTION(BAD_REQUEST, "이미 공개한 투표입니다"),
     QUERY_STRING_REQUIRED_EXCEPTION(BAD_REQUEST, "Query String이 없습니다."),
-
-    //friend
     EXIST_FRIEND_EXCEPTION(BAD_REQUEST, "이미 존재하는 친구입니다."),
 
     /**

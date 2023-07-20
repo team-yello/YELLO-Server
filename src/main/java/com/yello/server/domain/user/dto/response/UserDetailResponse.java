@@ -14,7 +14,7 @@ public record UserDetailResponse(
     Integer friendCount,
     Integer point
 ) {
-
+ 
     public static UserDetailResponse of(User user, Integer yelloCount, Integer friendCount) {
         return UserDetailResponse.builder()
             .userId(user.getId())

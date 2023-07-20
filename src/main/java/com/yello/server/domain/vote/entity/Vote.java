@@ -12,6 +12,7 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import lombok.AccessLevel;
+import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -20,7 +21,9 @@ import org.hibernate.annotations.DynamicInsert;
 
 @Entity
 @Getter
+@Builder
 @DynamicInsert
+@AllArgsConstructor
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Vote extends AuditingTimeEntity {
 
@@ -58,17 +61,19 @@ public class Vote extends AuditingTimeEntity {
     @Column(nullable = false)
     private Integer colorIndex;
 
-    @Builder
-    public Vote(String answer, User sender, User receiver, Question question, Integer colorIndex) {
-        this.answer = answer;
-        this.sender = sender;
-        this.receiver = receiver;
-        this.question = question;
-        this.colorIndex = colorIndex;
+    public static Vote of(String answer, User sender, User receiver, Question question, Integer colorIndex) {
+        return Vote.builder()
+            .answer(answer)
+            .sender(sender)
+            .receiver(receiver)
+            .sender(sender)
+            .question(question)
+            .colorIndex(colorIndex)
+            .build();
     }
 
     public static Vote createVote(String answer, User sender, User receiver, Question question, Integer colorIndex) {
-        return new Vote(answer, sender, receiver, question, colorIndex);
+        return Vote.of(answer, sender, receiver, question, colorIndex);
     }
 
     public void updateKeywordCheck() {

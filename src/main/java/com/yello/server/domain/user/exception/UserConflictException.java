@@ -6,6 +6,7 @@ import lombok.Getter;
 
 @Getter
 public class UserConflictException extends CustomException {
+
     public UserConflictException(ErrorCode error) {
         super(error, "[UserConflictException] " + error.getMessage());
     }

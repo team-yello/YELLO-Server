@@ -9,7 +9,7 @@ public record FriendsResponse(
     Long totalCount,
     List<UserResponse> friends
 ) {
-
+ 
     public static FriendsResponse of(Long totalCount, List<UserResponse> friends) {
         return FriendsResponse.builder()
             .totalCount(totalCount)

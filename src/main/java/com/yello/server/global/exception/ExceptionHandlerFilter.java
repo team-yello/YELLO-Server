@@ -27,7 +27,7 @@ public class ExceptionHandlerFilter extends OncePerRequestFilter {
             setErrorResponse(response, exception.getError());
         }
     }
-
+ 
     private void setErrorResponse(
         HttpServletResponse response,
         ErrorCode errorCode
