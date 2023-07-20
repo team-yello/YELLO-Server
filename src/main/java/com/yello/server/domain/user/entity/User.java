@@ -102,7 +102,7 @@ public class User extends AuditingTimeEntity {
         .name(signUpRequest.name())
         .yelloId(signUpRequest.yelloId())
         .gender(signUpRequest.gender())
-        .point(0)
+        .point(200)
         .social(signUpRequest.social())
         .profileImage(signUpRequest.profileImage())
         .uuid(uuid)
