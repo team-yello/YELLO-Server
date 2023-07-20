@@ -63,7 +63,7 @@ public class FriendServiceImpl implements FriendService {
 
     Optional<Friend> friendData = friendRepository.findByUserAndTarget(userId, targetId);
 
-    if (friendData.isEmpty()) {
+    if (friendData.isPresent()) {
       throw new FriendException(EXIST_FRIEND_EXCEPTION);
     }
 
