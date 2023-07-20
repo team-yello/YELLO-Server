@@ -30,7 +30,7 @@ public class UserServiceImpl implements UserService {
     public UserDetailResponse findUser(Long userId) {
         User user = getUser(userId);
         Integer yelloCount = voteRepository.countAllByReceiverUserId(user.getId());
-        Integer friendCount = friendRepository.findAllByUser(user).size();
+        Integer friendCount = friendRepository.findAllByUserId(user.getId()).size();
 
         return UserDetailResponse.of(user, yelloCount, friendCount);
     }
@@ -39,7 +39,7 @@ public class UserServiceImpl implements UserService {
     public UserResponse findUserById(Long userId) {
         User user = getUser(userId);
         Integer yelloCount = voteRepository.countAllByReceiverUserId(user.getId());
-        Integer friendCount = friendRepository.findAllByUser(user).size();
+        Integer friendCount = friendRepository.findAllByUserId(user.getId()).size();
 
         return UserResponse.of(user, yelloCount, friendCount);
     }
@@ -50,11 +50,11 @@ public class UserServiceImpl implements UserService {
         User target = getUser(user.getId());
         target.delete();
 
-        friendRepository.findAllByUser(target)
+        friendRepository.findAllByUserId(target.getId())
             .forEach(Friend::delete);
 
-        friendRepository.findAllByTarget(target)
-            .forEach(Friend::renew);
+        friendRepository.findAllByTargetId(target.getId())
+            .forEach(Friend::delete);
 
         cooldownRepository.findByUser(target)
             .ifPresent(Cooldown::delete);

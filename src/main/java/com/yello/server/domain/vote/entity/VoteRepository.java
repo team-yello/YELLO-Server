@@ -8,10 +8,10 @@ import org.springframework.data.repository.query.Param;
 
 public interface VoteRepository extends JpaRepository<Vote, Long> {
 
-    @Query("select count(v) from Vote v where v.receiver.id = :userId")
+    @Query("select count(v) from Vote v where v.receiver.id = :userId and v.receiver.deletedAt is null and v.sender.deletedAt is null")
     Integer countAllByReceiverUserId(@Param("userId") Long userId);
 
-    @Query("select v from Vote v where v.receiver.id = :userId")
+    @Query("select v from Vote v where v.receiver.id = :userId and v.receiver.deletedAt is null and v.sender.deletedAt is null")
     List<Vote> findAllByReceiverUserId(@Param("userId") Long userId, Pageable pageable);
 }
  
