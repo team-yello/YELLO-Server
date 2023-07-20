@@ -61,9 +61,9 @@ public class FriendServiceImpl implements FriendService {
     User target = findUser(targetId);
     User user = findUser(userId);
 
-    Friend friendData = friendRepository.findByFollowingAndFollower(userId, targetId);
+    Optional<Friend> friendData = friendRepository.findByUserAndTarget(userId, targetId);
 
-    if (friendData != null) {
+    if (friendData.isEmpty()) {
       throw new FriendException(EXIST_FRIEND_EXCEPTION);
     }
 
@@ -96,15 +96,12 @@ public class FriendServiceImpl implements FriendService {
     List<User> recommendFriends = userRepository.findAllByGroupId(user.getGroup().getId())
         .stream()
         .filter(recommend -> !user.getId().equals(recommend.getId()))
-        .filter(friend -> {
-          return findFriend(userId, friend.getId()) == null;
-        })
+        .filter(friend -> findFriend(userId, friend.getId()).isEmpty())
         .toList();
 
     val pageList = PaginationUtil.getPage(recommendFriends, pageable).stream()
         .map(FriendResponse::of)
         .toList();
-
 
     return RecommendFriendResponse.of(recommendFriends.size(), pageList);
   }
@@ -126,12 +123,12 @@ public class FriendServiceImpl implements FriendService {
         .orElseThrow(() -> new UserException(USERID_NOT_FOUND_USER_EXCEPTION));
 
     val kakaoFriends = Arrays.stream(request.friendKakaoId())
-        .filter(friend -> {
-          Optional<User> userByUuid = userRepository.findByUuid(friend);
-          return friendRepository.findByFollowingAndFollower(userId,
-              userByUuid.orElse(user).getId()) == null;
-        })
         .map(userRepository::findByUuid)
+        .filter(Optional::isPresent)
+        .filter(friend -> {
+          Optional<Friend> target = friendRepository.findByUserAndTarget(user.getId(), friend.get().getId());
+          return target.isEmpty();
+        })
         .toList();
 
     val pageList = PaginationUtil.getPage(ListUtil.toList(kakaoFriends), pageable).stream()
@@ -147,7 +144,7 @@ public class FriendServiceImpl implements FriendService {
         .orElseThrow(() -> new UserException(USERID_NOT_FOUND_USER_EXCEPTION));
   }
 
-  private Friend findFriend(Long userId, Long friendId) {
-    return friendRepository.findByFollowingAndFollower(userId, friendId);
+  private Optional<Friend> findFriend(Long userId, Long friendId) {
+    return friendRepository.findByUserAndTarget(userId, friendId);
   }
 }
