@@ -53,6 +53,9 @@ public class UserServiceImpl implements UserService {
         friendRepository.findAllByUser(target)
             .forEach(Friend::delete);
 
+        friendRepository.findAllByTarget(target)
+            .forEach(Friend::renew);
+
         cooldownRepository.findByUser(target)
             .ifPresent(Cooldown::delete);
     }
