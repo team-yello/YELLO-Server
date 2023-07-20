@@ -27,7 +27,7 @@ public record OnBoardingFriendResponse(
                         .id(user.getId())
                         .name(user.getName())
                         .profileImage(user.getProfileImage())
-                        .groupName(user.getGroup().toString())
+                        .groupName(user.getGroupString())
                         .build())
                 .toList();
 
