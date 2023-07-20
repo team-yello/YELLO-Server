@@ -16,7 +16,7 @@ public record DepartmentSearchResponse(
             String departmentName
     ){}
 
-    public static DepartmentSearchResponse of(List<School> schoolList) {
+    public static DepartmentSearchResponse of(int totalCount, List<School> schoolList) {
         List<DepartmentInfo> departmentInfoList = schoolList.stream()
                 .map(school ->
                         DepartmentInfo.builder()
@@ -25,7 +25,7 @@ public record DepartmentSearchResponse(
                                 .build())
                 .toList();
         return DepartmentSearchResponse.builder()
-                .totalCount(departmentInfoList.size())
+                .totalCount(totalCount)
                 .groupList(departmentInfoList)
                 .build();
     }

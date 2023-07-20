@@ -3,11 +3,11 @@ package com.yello.server.domain.user.service;
 import static com.yello.server.global.common.ErrorCode.USERID_NOT_FOUND_USER_EXCEPTION;
 
 import com.yello.server.domain.friend.entity.FriendRepository;
-import com.yello.server.domain.user.dto.UserResponse;
+import com.yello.server.domain.user.dto.response.UserDetailResponse;
+import com.yello.server.domain.user.dto.response.UserResponse;
 import com.yello.server.domain.user.entity.User;
 import com.yello.server.domain.user.entity.UserRepository;
 import com.yello.server.domain.user.exception.UserException;
-import com.yello.server.domain.user.exception.UserNotFoundException;
 import com.yello.server.domain.vote.entity.VoteRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -23,9 +23,17 @@ public class UserServiceImpl implements UserService {
     private final VoteRepository voteRepository;
 
     @Override
-    public UserResponse findUser(Long userId) {
-        User user = userRepository.findById(userId)
-            .orElseThrow(() -> new UserNotFoundException(USERID_NOT_FOUND_USER_EXCEPTION));
+    public UserDetailResponse findUser(Long userId) {
+        User user = getUser(userId);
+        Integer yelloCount = voteRepository.getCountAllByReceiverUserId(user.getId());
+        Integer friendCount = friendRepository.findAllByUser(user).size();
+
+        return UserDetailResponse.of(user, yelloCount, friendCount);
+    }
+
+    @Override
+    public UserResponse findUserById(Long userId) {
+        User user = getUser(userId);
         Integer yelloCount = voteRepository.getCountAllByReceiverUserId(user.getId());
         Integer friendCount = friendRepository.findAllByUser(user).size();
 
@@ -38,9 +46,9 @@ public class UserServiceImpl implements UserService {
         userRepository.delete(user);
     }
 
-    public User findByUserId(Long userId) {
+    public User getUser(Long userId) {
         return userRepository.findById(userId)
             .orElseThrow(() -> new UserException(USERID_NOT_FOUND_USER_EXCEPTION));
-    }
 
+    }
 }

@@ -38,7 +38,8 @@ public enum SuccessCode {
     LOGIN_SUCCESS(CREATED, "로그인이 성공했습니다."),
     SIGN_UP_SUCCESS(CREATED, "회원 가입에 성공했습니다. 환영합니다."),
     CREATE_VOTE_SUCCESS(CREATED, "투표를 성공했습니다."),
-    CREATE_PAY_COUNT(CREATED, "이용권 버튼 클릭 횟수가 저장되었습니다.");
+    CREATE_PAY_COUNT(CREATED, "이용권 버튼 클릭 횟수가 저장되었습니다."),
+    RE_ISSUE_TOKEN_AUTH_SUCCESS(CREATED, "토큰 재발급에 성공하였습니다.");
 
     private final HttpStatus httpStatus;
     private final String message;

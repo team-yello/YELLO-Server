@@ -5,6 +5,7 @@ import static com.yello.server.global.common.ErrorCode.INVALID_VOTE_EXCEPTION;
 import static com.yello.server.global.common.ErrorCode.LACK_USER_EXCEPTION;
 import static com.yello.server.global.common.ErrorCode.NOT_FOUND_VOTE_EXCEPTION;
 import static com.yello.server.global.common.ErrorCode.USERID_NOT_FOUND_USER_EXCEPTION;
+import static com.yello.server.global.common.util.ConstantUtil.KEYWORD_HINT_POINT;
 import static com.yello.server.global.common.util.ConstantUtil.NAME_HINT_DEFAULT;
 import static com.yello.server.global.common.util.ConstantUtil.NAME_HINT_POINT;
 import static com.yello.server.global.common.util.ConstantUtil.RANDOM_COUNT;
@@ -73,9 +74,11 @@ public class VoteServiceImpl implements VoteService {
         return VoteListResponse.of(count, votes);
     }
 
+    @Transactional
     @Override
     public VoteDetailResponse findVoteById(Long id) {
         Vote vote = findVote(id);
+        vote.read();
         return VoteDetailResponse.of(vote);
     }
 
@@ -91,8 +94,9 @@ public class VoteServiceImpl implements VoteService {
         Vote vote = voteRepository.findById(voteId)
             .orElseThrow(() -> new VoteNotFoundException(NOT_FOUND_VOTE_EXCEPTION));
 
-        findUser(userId);
-        vote.updateKeywordCheck();
+    User user = findUser(userId);
+    vote.updateKeywordCheck();
+    user.minusPoint(KEYWORD_HINT_POINT);
 
         return KeywordCheckResponse.of(vote);
     }
@@ -147,6 +151,8 @@ public class VoteServiceImpl implements VoteService {
         Optional<Cooldown> cooldown = cooldownRepository.findByUser(sender);
         if (cooldown.isEmpty()) {
             cooldownRepository.save(Cooldown.of(sender, LocalDateTime.now()));
+        } else {
+            cooldown.get().updateDate(LocalDateTime.now());
         }
 
         return VoteCreateResponse.builder().point(sender.getPoint()).build();
@@ -172,6 +178,7 @@ public class VoteServiceImpl implements VoteService {
 
         return RevealNameResponse.builder()
             .name(name.charAt(randomIndex))
+            .nameIndex(randomIndex)
             .build();
     }
 
@@ -216,4 +223,5 @@ public class VoteServiceImpl implements VoteService {
         return userRepository.findById(userId)
             .orElseThrow(() -> new UserException(USERID_NOT_FOUND_USER_EXCEPTION));
     }
+
 }

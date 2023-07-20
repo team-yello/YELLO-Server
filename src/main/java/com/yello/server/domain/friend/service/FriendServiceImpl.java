@@ -1,5 +1,10 @@
 package com.yello.server.domain.friend.service;
 
+import static com.yello.server.global.common.ErrorCode.EXIST_FRIEND_EXCEPTION;
+import static com.yello.server.global.common.ErrorCode.LACK_USER_EXCEPTION;
+import static com.yello.server.global.common.ErrorCode.USERID_NOT_FOUND_USER_EXCEPTION;
+import static com.yello.server.global.common.util.ConstantUtil.RANDOM_COUNT;
+
 import com.yello.server.domain.friend.dto.FriendsResponse;
 import com.yello.server.domain.friend.dto.request.KakaoRecommendRequest;
 import com.yello.server.domain.friend.dto.response.FriendResponse;
@@ -8,27 +13,23 @@ import com.yello.server.domain.friend.dto.response.RecommendFriendResponse;
 import com.yello.server.domain.friend.entity.Friend;
 import com.yello.server.domain.friend.entity.FriendRepository;
 import com.yello.server.domain.friend.exception.FriendException;
-import com.yello.server.domain.user.dto.UserResponse;
+import com.yello.server.domain.user.dto.response.UserResponse;
 import com.yello.server.domain.user.entity.User;
 import com.yello.server.domain.user.entity.UserRepository;
 import com.yello.server.domain.user.exception.UserException;
 import com.yello.server.domain.vote.entity.VoteRepository;
 import com.yello.server.global.common.util.ListUtil;
 import com.yello.server.global.common.util.PaginationUtil;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
+import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import lombok.val;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
-import java.util.Optional;
-
-import static com.yello.server.global.common.ErrorCode.*;
-import static com.yello.server.global.common.util.ConstantUtil.RANDOM_COUNT;
 
 @Service
 @RequiredArgsConstructor
@@ -43,13 +44,13 @@ public class FriendServiceImpl implements FriendService {
     public FriendsResponse findAllFriends(Pageable pageable, Long userId) {
         Page<Friend> friendsData = friendRepository.findAllFriendsByUserId(pageable, userId);
         List<UserResponse> friends = friendsData.stream()
-                .map(friend -> {
-                    User user = friend.getTarget();
-                    Integer friendCount = friendRepository.findAllByUser(user).size();
-                    Integer yelloCount = voteRepository.getCountAllByReceiverUserId(user.getId());
-                    return UserResponse.of(user, friendCount, yelloCount);
-                })
-                .toList();
+            .map(friend -> {
+                User user = friend.getTarget();
+                Integer friendCount = friendRepository.findAllByUser(user).size();
+                Integer yelloCount = voteRepository.getCountAllByReceiverUserId(user.getId());
+                return UserResponse.of(user, friendCount, yelloCount);
+            })
+            .toList();
 
         return FriendsResponse.of(friendsData.getTotalElements(), friends);
     }
@@ -62,7 +63,7 @@ public class FriendServiceImpl implements FriendService {
 
         Friend friendData = friendRepository.findByFollowingAndFollower(userId, targetId);
 
-        if (friendData != null) {
+        if (friendData!=null) {
             throw new FriendException(EXIST_FRIEND_EXCEPTION);
         }
 
@@ -83,9 +84,9 @@ public class FriendServiceImpl implements FriendService {
         Collections.shuffle(allFriends);
 
         return allFriends.stream()
-                .map(FriendShuffleResponse::of)
-                .limit(RANDOM_COUNT)
-                .toList();
+            .map(FriendShuffleResponse::of)
+            .limit(RANDOM_COUNT)
+            .toList();
     }
 
     @Override
@@ -93,17 +94,16 @@ public class FriendServiceImpl implements FriendService {
         User user = findUser(userId);
 
         List<User> recommendFriends = userRepository.findAllByGroupId(user.getGroup().getId())
-                .stream()
-                .filter(recommend -> !user.getId().equals(recommend.getId()))
-                .filter(friend -> {
-                    return findFriend(userId, friend.getId()) == null;
-                })
-                .toList();
+            .stream()
+            .filter(recommend -> !user.getId().equals(recommend.getId()))
+            .filter(friend -> {
+                return findFriend(userId, friend.getId())==null;
+            })
+            .toList();
 
         val pageList = PaginationUtil.getPage(recommendFriends, pageable).stream()
-                .map(FriendResponse::of)
-                .toList();
-
+            .map(FriendResponse::of)
+            .toList();
 
         return RecommendFriendResponse.of(recommendFriends.size(), pageList);
     }
@@ -120,21 +120,22 @@ public class FriendServiceImpl implements FriendService {
 
     @Override
     public RecommendFriendResponse findAllRecommendKakaoFriends(Pageable pageable, Long userId,
-                                                                KakaoRecommendRequest request) {
+        KakaoRecommendRequest request) {
         userRepository.findById(userId)
-                .orElseThrow(() -> new UserException(USERID_NOT_FOUND_USER_EXCEPTION));
+            .orElseThrow(() -> new UserException(USERID_NOT_FOUND_USER_EXCEPTION));
 
         val kakaoFriends = Arrays.stream(request.friendKakaoId())
-                .filter(friend -> {
-                    Optional<User> userByUuid = userRepository.findByUuid(friend);
-                    return friendRepository.findByFollowingAndFollower(userId, userByUuid.orElseThrow(() -> new UserException(USERID_NOT_FOUND_USER_EXCEPTION)).getId()) == null;
-                })
-                .map(userRepository::findByUuid)
-                .toList();
+            .filter(friend -> {
+                Optional<User> userByUuid = userRepository.findByUuid(friend);
+                return friendRepository.findByFollowingAndFollower(userId,
+                    userByUuid.orElseThrow(() -> new UserException(USERID_NOT_FOUND_USER_EXCEPTION)).getId())==null;
+            })
+            .map(userRepository::findByUuid)
+            .toList();
 
         val pageList = PaginationUtil.getPage(ListUtil.toList(kakaoFriends), pageable).stream()
-                .map(FriendResponse::of)
-                .toList();
+            .map(FriendResponse::of)
+            .toList();
 
         return RecommendFriendResponse.of(kakaoFriends.size(), pageList);
     }
@@ -142,7 +143,7 @@ public class FriendServiceImpl implements FriendService {
 
     private User findUser(Long userId) {
         return userRepository.findById(userId)
-                .orElseThrow(() -> new UserException(USERID_NOT_FOUND_USER_EXCEPTION));
+            .orElseThrow(() -> new UserException(USERID_NOT_FOUND_USER_EXCEPTION));
     }
 
     private Friend findFriend(Long userId, Long friendId) {

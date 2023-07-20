@@ -5,7 +5,12 @@ import static java.time.Duration.ofDays;
 
 import com.yello.server.domain.authorization.dto.ServiceTokenVO;
 import io.jsonwebtoken.Claims;
+import io.jsonwebtoken.ExpiredJwtException;
+import io.jsonwebtoken.JwtParser;
 import io.jsonwebtoken.Jwts;
+import io.jsonwebtoken.MalformedJwtException;
+import io.jsonwebtoken.UnsupportedJwtException;
+import io.jsonwebtoken.security.SignatureException;
 import java.util.Date;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
@@ -18,6 +23,8 @@ import org.springframework.stereotype.Component;
 @RequiredArgsConstructor
 public class JwtTokenProvider {
 
+    public static String ACCESS_TOKEN = "accessToken";
+    public static String REFRESH_TOKEN = "refreshToken";
     // 릴리즈 때 고치세요 ₩~~ >_*
 //    private static final Long accessTokenValidTime = ofHours(4).toMillis();
     private static final Long accessTokenValidTime = ofDays(1).toMillis();
@@ -26,30 +33,44 @@ public class JwtTokenProvider {
     @Value("${spring.jwt.secret}")
     private String secretKey;
 
-    public Long getUserId(String token, String secretKey) {
-        return Long.valueOf(
-                Jwts.parser()
-                        .setSigningKey(secretKey)
-                        .parseClaimsJws(token)
-                        .getBody()
-                        .getId());
+    public Long getUserId(String token) throws ExpiredJwtException, MalformedJwtException, SignatureException, IllegalArgumentException {
+        JwtParser parser = Jwts.parserBuilder()
+            .setSigningKey(secretKey)
+            .build();
+        String userId = parser.parseClaimsJws(token).getBody().getId();
+
+        return Long.valueOf(userId);
     }
 
-    public boolean isExpired(String token, String secretKey) {
-        Claims claims = Jwts.parser()
+    public String getUserUuid(String token) throws ExpiredJwtException, MalformedJwtException, SignatureException, IllegalArgumentException {
+        return Jwts.parserBuilder()
             .setSigningKey(secretKey)
+            .build()
             .parseClaimsJws(token)
-            .getBody();
+            .getBody()
+            .getSubject();
+    }
+
+    public boolean isExpired(String token) {
+        try {
+            Jwts.parser()
+                .setSigningKey(secretKey)
+                .parseClaimsJws(token)
+                .getBody();
+        } catch (ExpiredJwtException e) {
+            return true;
+        }
+
         return false;
     }
 
-    public boolean isRefreshToken(String token, String secretKey) {
+    public boolean isRefreshToken(String token) {
         val header = Jwts.parser()
             .setSigningKey(secretKey)
             .parseClaimsJws(token)
             .getHeader();
 
-        if ("refreshToken".equals(header.get("type").toString())) {
+        if (REFRESH_TOKEN.equals(header.get("type").toString())) {
             return true;
         }
 
@@ -57,13 +78,13 @@ public class JwtTokenProvider {
     }
 
     // access 토큰 확인
-    public boolean isAccessToken(String token, String secretKey) {
+    public boolean isAccessToken(String token) {
         val header = Jwts.parser()
             .setSigningKey(secretKey)
             .parseClaimsJws(token)
             .getHeader();
 
-        if ("accessToken".equals(header.get("type").toString())) {
+        if (ACCESS_TOKEN.equals(header.get("type").toString())) {
             return true;
         }
 
@@ -72,12 +93,12 @@ public class JwtTokenProvider {
 
     // access 토큰 생성
     public String createAccessToken(Long userId, String uuid) {
-        return createJwt(userId, uuid, accessTokenValidTime, "accessToken");
+        return createJwt(userId, uuid, accessTokenValidTime, ACCESS_TOKEN);
     }
 
     // refresh 토큰 생성
     public String createRefreshToken(Long userId, String uuid) {
-        return createJwt(userId, uuid, refreshTokenValidTime, "refreshToken");
+        return createJwt(userId, uuid, refreshTokenValidTime, REFRESH_TOKEN);
     }
 
     // access, refresh 토큰 생성
@@ -100,5 +121,13 @@ public class JwtTokenProvider {
                 .setExpiration(new Date(System.currentTimeMillis() + tokenValidTime))
                 .signWith(HS256, secretKey)
                 .compact();
+    }
+
+    public void tryParse(String token) throws ExpiredJwtException, MalformedJwtException, SignatureException, IllegalArgumentException{
+        JwtParser parser = Jwts.parserBuilder()
+            .setSigningKey(secretKey)
+            .build();
+
+        parser.parse(token);
     }
 }

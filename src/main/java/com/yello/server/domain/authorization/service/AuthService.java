@@ -1,5 +1,6 @@
 package com.yello.server.domain.authorization.service;
 
+import com.yello.server.domain.authorization.dto.ServiceTokenVO;
 import com.yello.server.domain.authorization.dto.request.OAuthRequest;
 import com.yello.server.domain.authorization.dto.request.OnBoardingFriendRequest;
 import com.yello.server.domain.authorization.dto.request.SignUpRequest;
@@ -16,4 +17,5 @@ public interface AuthService {
     GroupNameSearchResponse findSchoolsBySearch(String keyword, Pageable pageable);
     DepartmentSearchResponse findDepartmentsBySearch(String schoolName, String keyword, Pageable pageable);
     OnBoardingFriendResponse findOnBoardingFriends(OnBoardingFriendRequest friendRequest, Pageable pageable);
+    ServiceTokenVO reIssueToken(ServiceTokenVO token);
 }
