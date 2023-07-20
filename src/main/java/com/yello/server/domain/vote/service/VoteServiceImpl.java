@@ -66,7 +66,7 @@ public class VoteServiceImpl implements VoteService {
     private final QuestionService questionService;
 
     public VoteListResponse findAllVotes(Long userId, Pageable pageable) {
-        Integer count = voteRepository.getCountAllByReceiverUserId(userId);
+        Integer count = voteRepository.countAllByReceiverUserId(userId);
         List<VoteResponse> votes = voteRepository.findAllByReceiverUserId(userId, pageable)
             .stream()
             .map(VoteResponse::of)
@@ -94,9 +94,9 @@ public class VoteServiceImpl implements VoteService {
         Vote vote = voteRepository.findById(voteId)
             .orElseThrow(() -> new VoteNotFoundException(NOT_FOUND_VOTE_EXCEPTION));
 
-    User user = findUser(userId);
-    vote.updateKeywordCheck();
-    user.minusPoint(KEYWORD_HINT_POINT);
+        User user = findUser(userId);
+        vote.updateKeywordCheck();
+        user.minusPoint(KEYWORD_HINT_POINT);
 
         return KeywordCheckResponse.of(vote);
     }
@@ -116,7 +116,8 @@ public class VoteServiceImpl implements VoteService {
         Collections.shuffle(question);
 
         List<Question> yelloQuestionList = question.stream()
-            .limit(VOTE_COUNT).toList();
+            .limit(VOTE_COUNT)
+            .toList();
 
         yelloQuestionList.forEach(yello -> yelloVoteList.add(getVoteData(user, yello)));
 

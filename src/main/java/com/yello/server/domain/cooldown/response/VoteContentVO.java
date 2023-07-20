@@ -44,8 +44,8 @@ public record VoteContentVO(
     }
 
     private static String deleteBracket(String target) {
-        if (target.contains("(")) {
-            return target.split("[)]")[1];
+        if (target.contains("/")) {
+            return target.split("/")[1];
         }
         return target;
     }

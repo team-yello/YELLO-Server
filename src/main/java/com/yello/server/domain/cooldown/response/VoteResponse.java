@@ -10,7 +10,7 @@ import lombok.Builder;
 public record VoteResponse(
     @Schema(description = "투표 고유 Id 값")
     Long id,
-
+ 
     @Schema(description = "투표를 보낸 유저의 성별", example = "MALE")
     String senderGender,
 

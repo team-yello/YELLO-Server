@@ -47,7 +47,7 @@ public class FriendServiceImpl implements FriendService {
             .map(friend -> {
                 User user = friend.getTarget();
                 Integer friendCount = friendRepository.findAllByUser(user).size();
-                Integer yelloCount = voteRepository.getCountAllByReceiverUserId(user.getId());
+                Integer yelloCount = voteRepository.countAllByReceiverUserId(user.getId());
                 return UserResponse.of(user, friendCount, yelloCount);
             })
             .toList();

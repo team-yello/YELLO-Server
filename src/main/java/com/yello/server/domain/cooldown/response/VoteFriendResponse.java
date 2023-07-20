@@ -23,7 +23,7 @@ public record VoteFriendResponse(
     @Schema(description = "투표 생성 일자", example = "1시간 전")
     String createdAt
 ) {
-
+ 
     static VoteFriendResponse of(Vote vote) {
         return VoteFriendResponse.builder()
             .friendName(vote.getReceiver().getName())

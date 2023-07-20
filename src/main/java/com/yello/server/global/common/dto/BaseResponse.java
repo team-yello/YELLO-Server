@@ -20,7 +20,7 @@ public class BaseResponse<T> {
     private final String message;
     @JsonInclude(NON_NULL)
     private T data;
-
+ 
     public static BaseResponse success(SuccessCode success) {
         return new BaseResponse<>(success.getHttpStatusCode(), success.getMessage());
     }

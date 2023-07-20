@@ -5,16 +5,16 @@ import lombok.Builder;
 
 @Builder
 public record VoteShuffleFriend(
-        Long id,
-        String yelloId,
-        String name
+    Long id,
+    String yelloId,
+    String name
 ) {
+
     public static VoteShuffleFriend of(Friend friend) {
         return VoteShuffleFriend.builder()
-                .id(friend.getTarget().getId())
-                .yelloId(friend.getTarget().getYelloId())
-                .name(friend.getTarget().getName())
-                .build();
+            .id(friend.getTarget().getId())
+            .yelloId(friend.getTarget().getYelloId())
+            .name(friend.getTarget().getName())
+            .build();
     }
-
 }
