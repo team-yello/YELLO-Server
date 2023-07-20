@@ -13,7 +13,7 @@ public record UserResponse(
     Integer yelloCount,
     Integer friendCount
 ) {
-
+ 
     public static UserResponse of(User user, Integer yelloCount, Integer friendCount) {
         return UserResponse.builder()
             .userId(user.getId())

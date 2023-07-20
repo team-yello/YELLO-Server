@@ -1,15 +1,10 @@
 package com.yello.server.domain.authorization.filter;
 
-import static com.yello.server.global.common.ErrorCode.AUTHENTICATION_ERROR;
 import static com.yello.server.global.common.ErrorCode.AUTH_NOT_FOUND_USER_EXCEPTION;
-import static org.springframework.http.HttpHeaders.AUTHORIZATION;
 
-import com.yello.server.domain.authorization.JwtTokenProvider;
 import com.yello.server.domain.authorization.exception.AuthNotFoundException;
-import com.yello.server.domain.authorization.exception.CustomAuthenticationException;
 import com.yello.server.domain.user.entity.User;
 import com.yello.server.domain.user.entity.UserRepository;
-import io.jsonwebtoken.JwtException;
 import java.io.IOException;
 import java.util.List;
 import javax.servlet.FilterChain;
@@ -18,13 +13,11 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
-import lombok.val;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
-import org.springframework.stereotype.Service;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 @Component
@@ -42,20 +35,7 @@ public class JwtFilter extends OncePerRequestFilter {
         throws ServletException, IOException {
         String requestPath = request.getServletPath();
 
-        if (requestPath.equals("/")
-            || requestPath.startsWith("/swagger-ui")
-            || requestPath.startsWith("/v3/api-docs")
-            || requestPath.startsWith("/api/v1/auth/oauth")
-            || requestPath.startsWith("/api/v1/auth/signup")
-            || requestPath.startsWith("/api/v1/auth/valid")
-            || requestPath.startsWith("/api/v1/auth/friend")
-            || requestPath.startsWith("/api/v1/auth/school/school")
-            || requestPath.startsWith("/api/v1/auth/school/department")) {
-            filterChain.doFilter(request, response);
-            return;
-        }
-
-        if(requestPath.startsWith("/api/v1/auth/token/issue")) {
+        if (isAllowed(requestPath)) {
             filterChain.doFilter(request, response);
             return;
         }
@@ -83,5 +63,22 @@ public class JwtFilter extends OncePerRequestFilter {
         }
 
         filterChain.doFilter(request, response);
+    }
+
+    private Boolean isAllowed(String requestPath) {
+        List<String> allowedPatterns = List.of(
+            "/",
+            "/swagger-ui",
+            "/v3/api-docs",
+            "/api/v1/auth/oauth",
+            "/api/v1/auth/signup",
+            "/api/v1/auth/valid",
+            "/api/v1/auth/friend",
+            "/api/v1/auth/school/school",
+            "/api/v1/auth/school/department"
+        );
+
+        return allowedPatterns.stream()
+            .anyMatch(requestPath::startsWith);
     }
 }

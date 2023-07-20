@@ -8,7 +8,7 @@ public record VoteListResponse(
     Integer totalCount,
     List<VoteResponse> votes
 ) {
-
+ 
     public static VoteListResponse of(Integer totalCount, List<VoteResponse> votes) {
         return VoteListResponse.builder()
             .totalCount(totalCount)

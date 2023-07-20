@@ -1,10 +1,11 @@
 package com.yello.server.domain.authorization.dto.request;
 
-import javax.validation.constraints.NotNull;
 import java.util.List;
+import javax.validation.constraints.NotNull;
 
 public record OnBoardingFriendRequest(
-        @NotNull List<String> friendKakaoId,
-        @NotNull Long groupId
+    @NotNull List<String> friendKakaoId,
+    @NotNull Long groupId
 ) {
+
 }

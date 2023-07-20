@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.Optional;
 
 public class ListUtil {
+
     public static <T> List<T> toList(List<Optional<T>> optionalList) {
         List<T> result = new ArrayList<>();
         optionalList.forEach(optional -> {

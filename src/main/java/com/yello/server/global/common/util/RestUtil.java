@@ -20,41 +20,38 @@ public class RestUtil {
             .defaultHeader(HttpHeaders.CONTENT_TYPE, APPLICATION_JSON_VALUE)
             .build();
 
-        ResponseEntity<KakaoTokenInfo> response = webClient.get()
+        return webClient.get()
             .exchangeToMono(clientResponse -> clientResponse.toEntity(KakaoTokenInfo.class))
             .block();
-
-        return response;
     }
 
-    public static ResponseEntity<KakaoFriendsInfo> getKakaoFriendList(String kakaoAccessToken, String friend_order, Integer offset, Integer limit, String order) {
+    public static ResponseEntity<KakaoFriendsInfo> getKakaoFriendList(String kakaoAccessToken, String friend_order,
+        Integer offset, Integer limit, String order) {
         String baseUrl = KAKAO_FRIEND_LIST_URL + "?";
-        if(friend_order != null){
+        if (friend_order!=null) {
             baseUrl += "friend_order=" + friend_order;
         }
-        if(offset != null) {
+        if (offset!=null) {
             baseUrl += "offset=" + offset;
         }
-        if(limit != null) {
+        if (limit!=null) {
             baseUrl += "limit=" + limit;
         }
-        if(order != null) {
+        if (order!=null) {
             baseUrl += "order=" + order;
         }
-        if(baseUrl.equals(KAKAO_FRIEND_LIST_URL + "?")){
+        if (baseUrl.equals(KAKAO_FRIEND_LIST_URL + "?")) {
             baseUrl = baseUrl.substring(0, baseUrl.length() - 1);
         }
 
         WebClient webClient = WebClient.builder()
-                .baseUrl(baseUrl)
-                .defaultHeader(HttpHeaders.AUTHORIZATION, "Bearer " + kakaoAccessToken)
-                .defaultHeader(HttpHeaders.CONTENT_TYPE, APPLICATION_JSON_VALUE)
-                .build();
+            .baseUrl(baseUrl)
+            .defaultHeader(HttpHeaders.AUTHORIZATION, "Bearer " + kakaoAccessToken)
+            .defaultHeader(HttpHeaders.CONTENT_TYPE, APPLICATION_JSON_VALUE)
+            .build();
 
-        ResponseEntity<KakaoFriendsInfo> response = webClient.get()
-                .exchangeToMono(clientResponse -> clientResponse.toEntity(KakaoFriendsInfo.class))
-                .block();
-
-        return response;
+        return webClient.get()
+            .exchangeToMono(clientResponse -> clientResponse.toEntity(KakaoFriendsInfo.class))
+            .block();
     }
 }

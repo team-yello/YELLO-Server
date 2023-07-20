@@ -25,7 +25,7 @@ public class UserServiceImpl implements UserService {
     @Override
     public UserDetailResponse findUser(Long userId) {
         User user = getUser(userId);
-        Integer yelloCount = voteRepository.getCountAllByReceiverUserId(user.getId());
+        Integer yelloCount = voteRepository.countAllByReceiverUserId(user.getId());
         Integer friendCount = friendRepository.findAllByUser(user).size();
 
         return UserDetailResponse.of(user, yelloCount, friendCount);
@@ -34,7 +34,7 @@ public class UserServiceImpl implements UserService {
     @Override
     public UserResponse findUserById(Long userId) {
         User user = getUser(userId);
-        Integer yelloCount = voteRepository.getCountAllByReceiverUserId(user.getId());
+        Integer yelloCount = voteRepository.countAllByReceiverUserId(user.getId());
         Integer friendCount = friendRepository.findAllByUser(user).size();
 
         return UserResponse.of(user, yelloCount, friendCount);
@@ -49,6 +49,5 @@ public class UserServiceImpl implements UserService {
     public User getUser(Long userId) {
         return userRepository.findById(userId)
             .orElseThrow(() -> new UserException(USERID_NOT_FOUND_USER_EXCEPTION));
-
     }
 }

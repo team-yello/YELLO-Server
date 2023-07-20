@@ -10,7 +10,6 @@ import com.yello.server.domain.authorization.filter.JwtFilter;
 import com.yello.server.domain.user.entity.UserRepository;
 import com.yello.server.global.exception.ExceptionHandlerFilter;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
