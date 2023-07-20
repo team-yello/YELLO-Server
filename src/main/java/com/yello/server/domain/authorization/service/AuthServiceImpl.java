@@ -91,6 +91,8 @@ public class AuthServiceImpl implements AuthService {
         currentUser.renew();
         friendRepository.findAllByUserIdNotFiltered(currentUser.getId())
             .forEach(Friend::renew);
+        friendRepository.findAllByTargetIdNotFiltered(currentUser.getId())
+            .forEach(Friend::renew);
         cooldownRepository.findByUserIdNotFiltered(currentUser.getId())
             .ifPresent(Cooldown::renew);
 
