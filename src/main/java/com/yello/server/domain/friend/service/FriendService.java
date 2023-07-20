@@ -1,12 +1,11 @@
 package com.yello.server.domain.friend.service;
 
-import com.yello.server.domain.friend.dto.FriendsResponse;
 import com.yello.server.domain.friend.dto.request.KakaoRecommendRequest;
 import com.yello.server.domain.friend.dto.response.FriendShuffleResponse;
+import com.yello.server.domain.friend.dto.response.FriendsResponse;
 import com.yello.server.domain.friend.dto.response.RecommendFriendResponse;
-import org.springframework.data.domain.Pageable;
-
 import java.util.List;
+import org.springframework.data.domain.Pageable;
 
 public interface FriendService {
 

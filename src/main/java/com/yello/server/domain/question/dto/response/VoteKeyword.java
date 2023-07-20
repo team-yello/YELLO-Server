@@ -5,11 +5,12 @@ import lombok.Builder;
 
 @Builder
 public record VoteKeyword(
-        String keywordName
+    String keywordName
 ) {
+
     public static VoteKeyword of(Keyword keyword) {
         return VoteKeyword.builder()
-                .keywordName(keyword.getKeywordName())
-                .build();
+            .keywordName(keyword.getKeywordName())
+            .build();
     }
 }

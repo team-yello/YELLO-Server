@@ -1,4 +1,4 @@
-package com.yello.server.domain.friend.dto;
+package com.yello.server.domain.friend.dto.response;
 
 import com.yello.server.domain.user.dto.response.UserResponse;
 import java.util.List;
