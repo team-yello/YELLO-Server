@@ -20,7 +20,6 @@ import io.jsonwebtoken.MalformedJwtException;
 import io.jsonwebtoken.security.SignatureException;
 import java.io.IOException;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import javax.servlet.FilterChain;
 import javax.servlet.ServletException;
@@ -47,7 +46,15 @@ public class JwtExceptionFilter extends OncePerRequestFilter {
 
         String requestPath = request.getServletPath();
 
-        if (isAllowed(requestPath)) {
+        if (requestPath.equals("/")
+            || requestPath.startsWith("/swagger-ui")
+            || requestPath.startsWith("/v3/api-docs")
+            || requestPath.startsWith("/api/v1/auth/oauth")
+            || requestPath.startsWith("/api/v1/auth/signup")
+            || requestPath.startsWith("/api/v1/auth/valid")
+            || requestPath.startsWith("/api/v1/auth/friend")
+            || requestPath.startsWith("/api/v1/auth/school/school")
+            || requestPath.startsWith("/api/v1/auth/school/department")) {
             filterChain.doFilter(request, response);
             return;
         }
@@ -104,22 +111,5 @@ public class JwtExceptionFilter extends OncePerRequestFilter {
         }
 
         filterChain.doFilter(request, response);
-    }
-
-    private Boolean isAllowed(String requestPath) {
-        List<String> allowedPatterns = List.of(
-            "/",
-            "/swagger-ui",
-            "/v3/api-docs",
-            "/api/v1/auth/oauth",
-            "/api/v1/auth/signup",
-            "/api/v1/auth/valid",
-            "/api/v1/auth/friend",
-            "/api/v1/auth/school/school",
-            "/api/v1/auth/school/department"
-        );
-
-        return allowedPatterns.stream()
-            .anyMatch(requestPath::startsWith);
     }
 }
