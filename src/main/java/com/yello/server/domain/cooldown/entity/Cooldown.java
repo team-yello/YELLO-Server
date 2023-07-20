@@ -18,6 +18,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.Where;
 import org.springframework.data.annotation.CreatedDate;
 
 @Getter
@@ -25,6 +26,7 @@ import org.springframework.data.annotation.CreatedDate;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
+@Where(clause = "deleted_at IS NULL")
 public class Cooldown {
 
     @Id
@@ -34,10 +36,13 @@ public class Cooldown {
     @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "userId")
     private User user;
- 
+
     @Column(nullable = false)
     @CreatedDate
     private LocalDateTime createdAt;
+
+    @Column
+    private LocalDateTime deletedAt;
 
     public static Cooldown of(User user, LocalDateTime createdAt) {
         return Cooldown.builder()
@@ -52,5 +57,13 @@ public class Cooldown {
 
     public void updateDate(LocalDateTime createdAt) {
         this.createdAt = createdAt;
+    }
+
+    public void delete() {
+        this.deletedAt = LocalDateTime.now();
+    }
+
+    public void renew() {
+        this.deletedAt = null;
     }
 }

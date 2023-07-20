@@ -2,6 +2,9 @@ package com.yello.server.domain.user.service;
 
 import static com.yello.server.global.common.ErrorCode.USERID_NOT_FOUND_USER_EXCEPTION;
 
+import com.yello.server.domain.cooldown.entity.Cooldown;
+import com.yello.server.domain.cooldown.entity.CooldownRepository;
+import com.yello.server.domain.friend.entity.Friend;
 import com.yello.server.domain.friend.entity.FriendRepository;
 import com.yello.server.domain.user.dto.response.UserDetailResponse;
 import com.yello.server.domain.user.dto.response.UserResponse;
@@ -21,6 +24,7 @@ public class UserServiceImpl implements UserService {
     private final UserRepository userRepository;
     private final FriendRepository friendRepository;
     private final VoteRepository voteRepository;
+    private final CooldownRepository cooldownRepository;
 
     @Override
     public UserDetailResponse findUser(Long userId) {
@@ -43,7 +47,14 @@ public class UserServiceImpl implements UserService {
     @Override
     @Transactional
     public void delete(User user) {
-        userRepository.delete(user);
+        User target = getUser(user.getId());
+        target.delete();
+
+        friendRepository.findAllByUser(target)
+            .forEach(Friend::delete);
+
+        cooldownRepository.findByUser(target)
+            .ifPresent(Cooldown::delete);
     }
 
     public User getUser(Long userId) {

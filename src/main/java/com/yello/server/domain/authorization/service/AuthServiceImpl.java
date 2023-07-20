@@ -60,6 +60,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @RequiredArgsConstructor
+@Transactional(readOnly = true)
 public class AuthServiceImpl implements AuthService {
 
     private final UserRepository userRepository;
@@ -69,6 +70,7 @@ public class AuthServiceImpl implements AuthService {
     private final JwtTokenProvider jwtTokenProvider;
     private final ValueOperations<Long, ServiceTokenVO> tokenValueOperations;
 
+    @Transactional
     @Override
     public OAuthResponse oauthLogin(OAuthRequest oAuthRequest) {
         ResponseEntity<KakaoTokenInfo> response = RestUtil.getKakaoTokenInfo(oAuthRequest.accessToken());
@@ -86,6 +88,12 @@ public class AuthServiceImpl implements AuthService {
             serviceTokenVO
         );
 
+        currentUser.renew();
+        friendRepository.findAllByUserIdNotFiltered(currentUser.getId())
+            .forEach(Friend::renew);
+        cooldownRepository.findByUserIdNotFiltered(currentUser.getId())
+            .ifPresent(Cooldown::renew);
+
         return OAuthResponse.of(serviceTokenVO);
     }
 
@@ -101,8 +109,8 @@ public class AuthServiceImpl implements AuthService {
         return true;
     }
 
-    @Override
     @Transactional
+    @Override
     public SignUpResponse signUp(SignUpRequest signUpRequest) {
         // exception
         Optional<User> userByUUID = userRepository.findByUuid(signUpRequest.uuid());
@@ -135,13 +143,13 @@ public class AuthServiceImpl implements AuthService {
         }
 
         signUpRequest.friends()
-                .stream()
-                .map(userRepository::findById)
-                .filter(Optional::isPresent)
-                .forEach(friend -> {
-                    friendRepository.save(Friend.createFriend(newSignInUser, friend.get()));
-                    friendRepository.save(Friend.createFriend(friend.get(), newSignInUser));
-                });
+            .stream()
+            .map(userRepository::findById)
+            .filter(Optional::isPresent)
+            .forEach(friend -> {
+                friendRepository.save(Friend.createFriend(newSignInUser, friend.get()));
+                friendRepository.save(Friend.createFriend(friend.get(), newSignInUser));
+            });
 
         tokenValueOperations.set(newSignInUser.getId(), newUserTokens);
         return SignUpResponse.of(newSignInUser.getYelloId(), newUserTokens);
