@@ -21,6 +21,8 @@ public interface FriendRepository extends JpaRepository<Friend, Long> {
 
     List<Friend> findAllByUser(User user);
 
+    @Query(value = "select * from friend where user = :userId", nativeQuery = true)
+    List<Friend> findAllByUserIdNotFiltered(Long userId);
 
     @Transactional
     @Modifying(clearAutomatically = true)

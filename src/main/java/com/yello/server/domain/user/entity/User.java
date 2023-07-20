@@ -20,16 +20,12 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.ColumnDefault;
-import org.hibernate.annotations.SQLDelete;
-import org.hibernate.annotations.Where;
 
 @Getter
 @Entity
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-@SQLDelete(sql = "UPDATE user SET deleted_at = NOW() WHERE id = ?")
-@Where(clause = "deleted_at IS NULL")
 public class User extends AuditingTimeEntity {
 
   @Id
@@ -79,25 +75,18 @@ public class User extends AuditingTimeEntity {
   private String email;
 
 
-  @Builder
-  public User(Long recommendCount, String name, String yelloId, Gender gender, Integer point,
-              Social social,
-              String profileImage, String uuid, LocalDateTime deletedAt, School group,
-              Integer groupAdmissionYear,
-              String email) {
-    this.recommendCount = recommendCount;
-    this.name = name;
-    this.yelloId = yelloId;
-    this.gender = gender;
-    this.point = point;
-    this.social = social;
-    this.profileImage = profileImage;
-    this.uuid = uuid;
-    this.deletedAt = deletedAt;
-    this.group = group;
-    this.groupAdmissionYear = groupAdmissionYear;
-    this.email = email;
-  }
+    public void delete() {
+        this.deletedAt = LocalDateTime.now();
+        this.point = 0;
+    }
+
+    public void renew() {
+        this.deletedAt = null;
+    }
+
+    public String getGroupString() {
+        return this.group.toString() + " " + this.getGroupAdmissionYear() + "학번";
+    }
 
   public static User of(SignUpRequest signUpRequest, String uuid, School group) {
     return User.builder()

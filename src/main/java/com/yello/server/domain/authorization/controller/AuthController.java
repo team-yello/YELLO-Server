@@ -128,7 +128,7 @@ public class AuthController {
             content = @Content(mediaType = "application/json", schema = @Schema(implementation = ServiceTokenVO.class))),
     })
     @PostMapping("/token/issue")
-    public BaseResponse<ServiceTokenVO> postReIssueToken( @ServiceToken ServiceTokenVO tokens ) {
+    public BaseResponse<ServiceTokenVO> postReIssueToken(@ServiceToken ServiceTokenVO tokens) {
         val data = authService.reIssueToken(tokens);
         return BaseResponse.success(RE_ISSUE_TOKEN_AUTH_SUCCESS, data);
     }
