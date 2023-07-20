@@ -1,4 +1,4 @@
-package com.yello.server.domain.friend.dto;
+package com.yello.server.domain.friend.dto.response;
 
 import com.yello.server.domain.user.dto.response.UserResponse;
 import java.util.List;
@@ -9,7 +9,7 @@ public record FriendsResponse(
     Long totalCount,
     List<UserResponse> friends
 ) {
- 
+
     public static FriendsResponse of(Long totalCount, List<UserResponse> friends) {
         return FriendsResponse.builder()
             .totalCount(totalCount)

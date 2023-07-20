@@ -6,9 +6,9 @@ import static com.yello.server.global.common.SuccessCode.READ_FRIEND_SUCCESS;
 import static com.yello.server.global.common.util.PaginationUtil.createPageable;
 import static com.yello.server.global.common.util.PaginationUtil.createPageableByNameSort;
 
-import com.yello.server.domain.friend.dto.FriendsResponse;
 import com.yello.server.domain.friend.dto.request.KakaoRecommendRequest;
 import com.yello.server.domain.friend.dto.response.FriendShuffleResponse;
+import com.yello.server.domain.friend.dto.response.FriendsResponse;
 import com.yello.server.domain.friend.dto.response.RecommendFriendResponse;
 import com.yello.server.domain.friend.service.FriendService;
 import com.yello.server.domain.user.entity.User;
@@ -42,7 +42,7 @@ import org.springframework.web.bind.annotation.RestController;
 public class FriendController {
 
     private final FriendService friendService;
-  
+
     @Operation(summary = "친구 추가하기 API", responses = {
         @ApiResponse(
             responseCode = "200",
