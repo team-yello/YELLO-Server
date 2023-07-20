@@ -1,18 +1,18 @@
 package com.yello.server.domain.authorization.dto.response;
 
-import lombok.Builder;
-
 import java.util.List;
+import lombok.Builder;
 
 @Builder
 public record GroupNameSearchResponse(
-        Integer totalCount,
-        List<String> groupNameList
+    Integer totalCount,
+    List<String> groupNameList
 ) {
-    public static GroupNameSearchResponse of(int totalCount, List<String> list) {
+
+    public static GroupNameSearchResponse of(int totalCount, List<String> groupNameList) {
         return GroupNameSearchResponse.builder()
-                .totalCount(totalCount)
-                .groupNameList(list)
-                .build();
+            .totalCount(totalCount)
+            .groupNameList(groupNameList)
+            .build();
     }
 }

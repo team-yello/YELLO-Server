@@ -66,7 +66,7 @@ public class VoteServiceImpl implements VoteService {
     private final QuestionService questionService;
 
     public VoteListResponse findAllVotes(Long userId, Pageable pageable) {
-        Integer count = voteRepository.getCountAllByReceiverUserId(userId);
+        Integer count = voteRepository.countAllByReceiverUserId(userId);
         List<VoteResponse> votes = voteRepository.findAllByReceiverUserId(userId, pageable)
             .stream()
             .map(VoteResponse::of)
@@ -120,7 +120,8 @@ public class VoteServiceImpl implements VoteService {
         Collections.shuffle(question);
 
         List<Question> yelloQuestionList = question.stream()
-            .limit(VOTE_COUNT).toList();
+            .limit(VOTE_COUNT)
+            .toList();
 
         yelloQuestionList.forEach(yello -> yelloVoteList.add(getVoteData(user, yello)));
 

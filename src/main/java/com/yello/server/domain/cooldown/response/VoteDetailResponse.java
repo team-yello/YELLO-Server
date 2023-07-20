@@ -11,7 +11,7 @@ public record VoteDetailResponse(
 
     @Schema(description = "현재 보유중인 포인트")
     Integer currentPoint,
-
+ 
     @Schema(description = "이름 힌트 인덱스"
         + "-1 → 이름 힌트가 아직 밝혀지지 않음"
         + "0 → 첫번째 위치에 이름 힌트가 밝혀짐"

@@ -40,17 +40,17 @@ public class FriendServiceImpl implements FriendService {
   private final UserRepository userRepository;
   private final VoteRepository voteRepository;
 
-  @Override
-  public FriendsResponse findAllFriends(Pageable pageable, Long userId) {
-    Page<Friend> friendsData = friendRepository.findAllFriendsByUserId(pageable, userId);
-    List<UserResponse> friends = friendsData.stream()
-        .map(friend -> {
-          User user = friend.getTarget();
-          Integer friendCount = friendRepository.findAllByUser(user).size();
-          Integer yelloCount = voteRepository.getCountAllByReceiverUserId(user.getId());
-          return UserResponse.of(user, friendCount, yelloCount);
-        })
-        .toList();
+    @Override
+    public FriendsResponse findAllFriends(Pageable pageable, Long userId) {
+        Page<Friend> friendsData = friendRepository.findAllFriendsByUserId(pageable, userId);
+        List<UserResponse> friends = friendsData.stream()
+            .map(friend -> {
+                User user = friend.getTarget();
+                Integer friendCount = friendRepository.findAllByUser(user).size();
+                Integer yelloCount = voteRepository.countAllByReceiverUserId(user.getId());
+                return UserResponse.of(user, friendCount, yelloCount);
+            })
+            .toList();
 
     return FriendsResponse.of(friendsData.getTotalElements(), friends);
   }

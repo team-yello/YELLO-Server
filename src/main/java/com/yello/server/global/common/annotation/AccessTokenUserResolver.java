@@ -19,7 +19,7 @@ public class AccessTokenUserResolver implements HandlerMethodArgumentResolver {
 
         return hasAccessTokenUser && isUserType;
     }
-
+ 
     @Override
     public Object resolveArgument(MethodParameter parameter, ModelAndViewContainer mavContainer,
         NativeWebRequest webRequest, WebDataBinderFactory binderFactory) throws Exception {
