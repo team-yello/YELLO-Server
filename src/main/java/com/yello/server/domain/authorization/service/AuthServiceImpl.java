@@ -140,7 +140,7 @@ public class AuthServiceImpl implements AuthService {
 
             recommendedUser.addRecommendCount(1);
 
-            Optional<Cooldown> cooldown = cooldownRepository.findByUser(recommendedUser);
+            Optional<Cooldown> cooldown = cooldownRepository.findByUserId(recommendedUser.getId());
             cooldown.ifPresent(cooldownRepository::delete);
         }
 

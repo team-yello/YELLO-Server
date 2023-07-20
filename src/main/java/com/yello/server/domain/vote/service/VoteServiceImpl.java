@@ -137,7 +137,7 @@ public class VoteServiceImpl implements VoteService {
             throw new FriendException(LACK_USER_EXCEPTION);
         }
 
-        Cooldown cooldown = cooldownRepository.findByUser(user)
+        Cooldown cooldown = cooldownRepository.findByUserId(user.getId())
             .orElse(Cooldown.of(user, minusTime(LocalDateTime.now(), TIMER_FIFTY_TIME)));
 
         return VoteAvailableResponse.of(user, cooldown);
@@ -153,7 +153,7 @@ public class VoteServiceImpl implements VoteService {
             voteRepository.save(Vote.createVote(vote.keywordName(), sender, findUser(vote.friendId()),
                 questionService.findByQuestionId(vote.questionId()), vote.colorIndex())));
 
-        Optional<Cooldown> cooldown = cooldownRepository.findByUser(sender);
+        Optional<Cooldown> cooldown = cooldownRepository.findByUserId(sender.getId());
         if (cooldown.isEmpty()) {
             cooldownRepository.save(Cooldown.of(sender, LocalDateTime.now()));
         } else {
