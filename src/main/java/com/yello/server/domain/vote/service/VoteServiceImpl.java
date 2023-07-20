@@ -2,6 +2,7 @@ package com.yello.server.domain.vote.service;
 
 import static com.yello.server.domain.vote.common.WeightedRandom.randomPoint;
 import static com.yello.server.global.common.ErrorCode.INVALID_VOTE_EXCEPTION;
+import static com.yello.server.global.common.ErrorCode.LACK_POINT_EXCEPTION;
 import static com.yello.server.global.common.ErrorCode.LACK_USER_EXCEPTION;
 import static com.yello.server.global.common.ErrorCode.NOT_FOUND_VOTE_EXCEPTION;
 import static com.yello.server.global.common.ErrorCode.USERID_NOT_FOUND_USER_EXCEPTION;
@@ -41,7 +42,6 @@ import com.yello.server.domain.vote.entity.Vote;
 import com.yello.server.domain.vote.entity.VoteRepository;
 import com.yello.server.domain.vote.exception.VoteForbiddenException;
 import com.yello.server.domain.vote.exception.VoteNotFoundException;
-import com.yello.server.global.common.ErrorCode;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -94,10 +94,14 @@ public class VoteServiceImpl implements VoteService {
         Vote vote = voteRepository.findById(voteId)
             .orElseThrow(() -> new VoteNotFoundException(NOT_FOUND_VOTE_EXCEPTION));
 
-    User user = findUser(userId);
-    vote.updateKeywordCheck();
-    user.minusPoint(KEYWORD_HINT_POINT);
+        User user = findUser(userId);
+        vote.updateKeywordCheck();
 
+        if (user.getPoint() < KEYWORD_HINT_POINT) {
+            throw new VoteForbiddenException(LACK_POINT_EXCEPTION);
+        }
+
+        user.minusPoint(KEYWORD_HINT_POINT);
         return KeywordCheckResponse.of(vote);
     }
 
@@ -169,7 +173,7 @@ public class VoteServiceImpl implements VoteService {
             throw new VoteNotFoundException(INVALID_VOTE_EXCEPTION);
         }
         if (sender.getPoint() < NAME_HINT_POINT) {
-            throw new VoteForbiddenException(ErrorCode.LACK_POINT_EXCEPTION);
+            throw new VoteForbiddenException(LACK_POINT_EXCEPTION);
         }
         int randomIndex = (int) (Math.random() * 2);
 
