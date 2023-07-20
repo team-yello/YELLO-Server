@@ -13,6 +13,9 @@ public interface UserRepository extends JpaRepository<User, Long> {
     @Query(value = "select u from User u where u.uuid = :uuid")
     Optional<User> findByUuid(String uuid);
 
+    @Query(value = "select u from User u where u.uuid = :uuid and u.deletedAt is null")
+    Optional<User> findExistsByUuid(String uuid);
+
     @Query(value = "select u from User u where u.yelloId = :yelloId and u.deletedAt is null")
     Optional<User> findByYelloId(String yelloId);
 

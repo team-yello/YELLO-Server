@@ -124,7 +124,7 @@ public class FriendServiceImpl implements FriendService {
             .orElseThrow(() -> new UserException(USERID_NOT_FOUND_USER_EXCEPTION));
 
         val kakaoFriends = Arrays.stream(request.friendKakaoId())
-            .map(userRepository::findByUuid)
+            .map(userRepository::findExistsByUuid)
             .filter(Optional::isPresent)
             .filter(friend -> {
                 Optional<Friend> target = friendRepository.findByUserAndTarget(user.getId(), friend.get().getId());
