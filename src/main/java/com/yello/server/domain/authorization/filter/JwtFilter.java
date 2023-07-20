@@ -35,7 +35,15 @@ public class JwtFilter extends OncePerRequestFilter {
         throws ServletException, IOException {
         String requestPath = request.getServletPath();
 
-        if (isAllowed(requestPath)) {
+        if (requestPath.equals("/")
+            || requestPath.startsWith("/swagger-ui")
+            || requestPath.startsWith("/v3/api-docs")
+            || requestPath.startsWith("/api/v1/auth/oauth")
+            || requestPath.startsWith("/api/v1/auth/signup")
+            || requestPath.startsWith("/api/v1/auth/valid")
+            || requestPath.startsWith("/api/v1/auth/friend")
+            || requestPath.startsWith("/api/v1/auth/school/school")
+            || requestPath.startsWith("/api/v1/auth/school/department")) {
             filterChain.doFilter(request, response);
             return;
         }
@@ -65,20 +73,4 @@ public class JwtFilter extends OncePerRequestFilter {
         filterChain.doFilter(request, response);
     }
 
-    private Boolean isAllowed(String requestPath) {
-        List<String> allowedPatterns = List.of(
-            "/",
-            "/swagger-ui",
-            "/v3/api-docs",
-            "/api/v1/auth/oauth",
-            "/api/v1/auth/signup",
-            "/api/v1/auth/valid",
-            "/api/v1/auth/friend",
-            "/api/v1/auth/school/school",
-            "/api/v1/auth/school/department"
-        );
-
-        return allowedPatterns.stream()
-            .anyMatch(requestPath::startsWith);
-    }
 }
