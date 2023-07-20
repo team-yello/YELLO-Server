@@ -1,6 +1,5 @@
 package com.yello.server.domain.friend.entity;
 
-import com.yello.server.domain.user.entity.User;
 import java.util.List;
 import java.util.Optional;
 import org.springframework.data.domain.Page;
@@ -13,20 +12,22 @@ import org.springframework.transaction.annotation.Transactional;
 
 public interface FriendRepository extends JpaRepository<Friend, Long> {
 
-    @Query("select f from Friend f where f.target.id = :targetId and f.user.id = :userId")
+    @Query("select f from Friend f where f.target.id = :targetId and f.user.id = :userId and f.user.deletedAt is null and f.target.deletedAt is null")
     Optional<Friend> findByUserAndTarget(@Param("userId") Long userId, @Param("targetId") Long targetId);
 
-    @Query("select f from Friend f where f.user.id = :userId")
+    @Query("select f from Friend f where f.user.id = :userId and f.target.deletedAt is null")
     Page<Friend> findAllFriendsByUserId(Pageable pageable, @Param("userId") Long userId);
 
-    List<Friend> findAllByUser(User user);
+    @Query("select f from Friend f where f.user.id = :userId and f.user.deletedAt is null and f.target.deletedAt is null")
+    List<Friend> findAllByUserId(Long userId);
 
-    List<Friend> findAllByTarget(User user);
+    @Query("select f from Friend f where f.target.id = :targetId and f.user.deletedAt is null and f.target.deletedAt is null")
+    List<Friend> findAllByTargetId(Long targetId);
 
-    @Query(value = "select * from friend where user = :userId", nativeQuery = true)
+    @Query("select f from Friend f where f.user.id = :userId")
     List<Friend> findAllByUserIdNotFiltered(Long userId);
 
-    @Query(value = "select * from friend where target = :targetId", nativeQuery = true)
+    @Query("select f from Friend f where f.target.id = :targetId")
     List<Friend> findAllByTargetIdNotFiltered(Long targetId);
 
     @Transactional

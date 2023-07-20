@@ -2,25 +2,20 @@ package com.yello.server.domain.user.entity;
 
 import java.util.List;
 import java.util.Optional;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Slice;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 
 public interface UserRepository extends JpaRepository<User, Long> {
 
+    @Query(value = "select u from User u where u.id = :id and u.deletedAt is null")
     Optional<User> findById(Long id);
 
-    Optional<User> findByName(String name);
-
-    @Query(value = "select * from user where uuid = :uuid", nativeQuery = true)
+    @Query(value = "select u from User u where u.uuid = :uuid")
     Optional<User> findByUuid(String uuid);
 
+    @Query(value = "select u from User u where u.yelloId = :yelloId and u.deletedAt is null")
     Optional<User> findByYelloId(String yelloId);
 
-    Slice<User> findAllByGroupId(Long groupId, Pageable pageable);
-
+    @Query(value = "select u from User u where u.group.id = :groupId and u.deletedAt is null")
     List<User> findAllByGroupId(Long groupId);
-
-    Slice<User> findAllByUuidIn(List<String> uuidList, Pageable pageable);
 }

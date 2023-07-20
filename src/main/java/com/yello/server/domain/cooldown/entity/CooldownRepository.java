@@ -7,8 +7,9 @@ import org.springframework.data.jpa.repository.Query;
 
 public interface CooldownRepository extends JpaRepository<Cooldown, Long> {
 
+    @Query("select c from Cooldown c where c.user.id = :userId and c.user.deletedAt is null")
     Optional<Cooldown> findByUser(User user);
 
-    @Query(value = "select * from cooldown where user_id = :userId", nativeQuery = true)
+    @Query("select c from Cooldown c where c.user.id = :userId")
     Optional<Cooldown> findByUserIdNotFiltered(Long userId);
 }

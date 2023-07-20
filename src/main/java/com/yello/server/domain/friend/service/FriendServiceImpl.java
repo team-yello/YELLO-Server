@@ -43,10 +43,11 @@ public class FriendServiceImpl implements FriendService {
     @Override
     public FriendsResponse findAllFriends(Pageable pageable, Long userId) {
         Page<Friend> friendsData = friendRepository.findAllFriendsByUserId(pageable, userId);
+        System.out.println(friendsData.getTotalElements());
         List<UserResponse> friends = friendsData.stream()
             .map(friend -> {
                 User user = friend.getTarget();
-                Integer friendCount = friendRepository.findAllByUser(user).size();
+                Integer friendCount = friendRepository.findAllByUserId(user.getId()).size();
                 Integer yelloCount = voteRepository.countAllByReceiverUserId(user.getId());
                 return UserResponse.of(user, friendCount, yelloCount);
             })
@@ -75,7 +76,7 @@ public class FriendServiceImpl implements FriendService {
     public List<FriendShuffleResponse> shuffleFriend(Long userId) {
         User user = findUser(userId);
 
-        List<Friend> allFriends = friendRepository.findAllByUser(user);
+        List<Friend> allFriends = friendRepository.findAllByUserId(user.getId());
 
         if (allFriends.size() < RANDOM_COUNT) {
             throw new FriendException(LACK_USER_EXCEPTION);

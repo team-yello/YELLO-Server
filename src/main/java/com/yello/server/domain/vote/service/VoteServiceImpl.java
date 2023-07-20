@@ -109,7 +109,7 @@ public class VoteServiceImpl implements VoteService {
     public List<VoteQuestionResponse> findYelloVoteList(Long userId) {
         User user = findUser(userId);
 
-        List<Friend> friends = friendRepository.findAllByUser(user);
+        List<Friend> friends = friendRepository.findAllByUserId(user.getId());
         if (friends.size() < RANDOM_COUNT) {
             throw new FriendException(LACK_USER_EXCEPTION);
         }
@@ -131,7 +131,7 @@ public class VoteServiceImpl implements VoteService {
     @Override
     public VoteAvailableResponse checkVoteAvailable(Long userId) {
         User user = findUser(userId);
-        List<Friend> friends = friendRepository.findAllByUser(user);
+        List<Friend> friends = friendRepository.findAllByUserId(user.getId());
 
         if (friends.size() < RANDOM_COUNT) {
             throw new FriendException(LACK_USER_EXCEPTION);
@@ -200,7 +200,7 @@ public class VoteServiceImpl implements VoteService {
     }
 
     public List<VoteShuffleFriend> getFriendList(User user) {
-        List<Friend> allFriend = friendRepository.findAllByUser(user);
+        List<Friend> allFriend = friendRepository.findAllByUserId(user.getId());
         Collections.shuffle(allFriend);
 
         return allFriend.stream()
