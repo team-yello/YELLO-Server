@@ -150,8 +150,14 @@ public class VoteServiceImpl implements VoteService {
         sender.plusPoint(request.totalPoint());
 
         request.voteAnswerList().forEach(vote ->
-            voteRepository.save(Vote.createVote(vote.keywordName(), sender, findUser(vote.friendId()),
-                questionService.findByQuestionId(vote.questionId()), vote.colorIndex())));
+            voteRepository.save(
+                Vote.createVote(
+                    vote.keywordName(),
+                    sender,
+                    findUser(vote.friendId()),
+                    questionService.findByQuestionId(vote.questionId()), vote.colorIndex())
+            )
+        );
 
         Optional<Cooldown> cooldown = cooldownRepository.findByUserId(sender.getId());
         if (cooldown.isEmpty()) {

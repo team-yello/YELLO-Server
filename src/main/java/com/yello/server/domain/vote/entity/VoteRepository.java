@@ -11,7 +11,11 @@ public interface VoteRepository extends JpaRepository<Vote, Long> {
     @Query("select count(v) from Vote v where v.receiver.id = :userId and v.receiver.deletedAt is null and v.sender.deletedAt is null")
     Integer countAllByReceiverUserId(@Param("userId") Long userId);
 
-    @Query("select v from Vote v where v.receiver.id = :userId and v.receiver.deletedAt is null and v.sender.deletedAt is null")
+    @Query("select v from Vote v "
+        + "where v.receiver.id = :userId "
+        + "and v.receiver.deletedAt is null "
+        + "and v.sender.deletedAt is null "
+        + "order by v.createdAt desc")
     List<Vote> findAllByReceiverUserId(@Param("userId") Long userId, Pageable pageable);
 }
  
