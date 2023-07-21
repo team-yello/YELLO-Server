@@ -12,10 +12,17 @@ import org.springframework.transaction.annotation.Transactional;
 
 public interface FriendRepository extends JpaRepository<Friend, Long> {
 
-    @Query("select f from Friend f where f.target.id = :targetId and f.user.id = :userId and f.user.deletedAt is null and f.target.deletedAt is null")
+    @Query("select f from Friend f "
+        + "where f.target.id = :targetId "
+        + "and f.user.id = :userId "
+        + "and f.user.deletedAt is null "
+        + "and f.target.deletedAt is null")
     Optional<Friend> findByUserAndTarget(@Param("userId") Long userId, @Param("targetId") Long targetId);
 
-    @Query("select f from Friend f where f.user.id = :userId and f.target.deletedAt is null")
+    @Query("select f from Friend f "
+        + "where f.user.id = :userId "
+        + "and f.target.deletedAt is null "
+        + "order by f.target.name asc")
     Page<Friend> findAllFriendsByUserId(Pageable pageable, @Param("userId") Long userId);
 
     @Query("select f from Friend f where f.user.id = :userId and f.user.deletedAt is null and f.target.deletedAt is null")
