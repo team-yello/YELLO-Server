@@ -49,7 +49,7 @@ public class FriendServiceImpl implements FriendService {
                 User user = friend.getTarget();
                 Integer friendCount = friendRepository.findAllByUserId(user.getId()).size();
                 Integer yelloCount = voteRepository.countAllByReceiverUserId(user.getId());
-                return UserResponse.of(user, friendCount, yelloCount);
+                return UserResponse.of(user, yelloCount, friendCount);
             })
             .toList();
 

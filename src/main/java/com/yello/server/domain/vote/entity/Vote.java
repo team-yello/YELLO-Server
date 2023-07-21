@@ -66,7 +66,6 @@ public class Vote extends AuditingTimeEntity {
             .answer(answer)
             .sender(sender)
             .receiver(receiver)
-            .sender(sender)
             .question(question)
             .colorIndex(colorIndex)
             .build();
