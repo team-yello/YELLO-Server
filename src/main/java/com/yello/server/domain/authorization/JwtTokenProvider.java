@@ -2,6 +2,7 @@ package com.yello.server.domain.authorization;
 
 import static io.jsonwebtoken.SignatureAlgorithm.HS256;
 import static java.time.Duration.ofDays;
+import static java.time.Duration.ofMinutes;
 
 import com.yello.server.domain.authorization.dto.ServiceTokenVO;
 import io.jsonwebtoken.Claims;
@@ -23,8 +24,7 @@ import org.springframework.stereotype.Component;
 public class JwtTokenProvider {
 
     //TODO 릴리즈 이후 시간 수정
-//    private static final Long accessTokenValidTime = ofHours(4).toMillis();
-    private static final Long accessTokenValidTime = ofDays(1).toMillis();
+    private static final Long accessTokenValidTime = ofMinutes(30).toMillis();
     private static final Long refreshTokenValidTime = ofDays(14).toMillis();
     public static String ACCESS_TOKEN = "accessToken";
     public static String REFRESH_TOKEN = "refreshToken";
