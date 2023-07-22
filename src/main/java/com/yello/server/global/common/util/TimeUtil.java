@@ -23,7 +23,7 @@ public class TimeUtil {
             return (seconds) + "시간 전";
         }
 
-        return (seconds) + "일 전";
+        return (seconds / HOUR) + "일 전";
     }
 
     public static long getSecondsBetween(LocalDateTime currentDateTime, LocalDateTime localDateTime) {
