@@ -1,10 +1,10 @@
-package com.yello.server.domain.cooldown.response;
+package com.yello.server.domain.vote.dto.response;
 
 import lombok.Builder;
 
 @Builder
 public record VoteCreateResponse(
-    Integer point
+        Integer point
 ) {
 
 }
