@@ -24,7 +24,7 @@ import org.springframework.stereotype.Component;
 public class JwtTokenProvider {
 
     //TODO 릴리즈 이후 시간 수정
-    private static final Long accessTokenValidTime = ofMinutes(3).toMillis();
+    private static final Long accessTokenValidTime = ofMinutes(1).toMillis();
     private static final Long refreshTokenValidTime = ofDays(14).toMillis();
     public static String ACCESS_TOKEN = "accessToken";
     public static String REFRESH_TOKEN = "refreshToken";
