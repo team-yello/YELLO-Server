@@ -56,9 +56,9 @@ public class VoteController {
     @Operation(summary = "친구 투표 조회 API", responses = {
             @ApiResponse(
                     responseCode = "200",
-                    content = @Content(mediaType = "application/json", array = @ArraySchema(schema = @Schema(implementation = VoteQuestionResponse.class)))),
+                    content = @Content(mediaType = "application/json", array = @ArraySchema(schema = @Schema(implementation = VoteFriendResponse.class)))),
     })
-    @GetMapping
+    @GetMapping("/friend")
     public BaseResponse<List<VoteFriendResponse>> findAllFriendVotes(
             @Parameter(name = "page", description = "페이지네이션 페이지 번호입니다.", example = "1")
             @RequestParam Integer page,
@@ -99,7 +99,7 @@ public class VoteController {
                     content = @Content(mediaType = "application/json", array = @ArraySchema(schema = @Schema(implementation = VoteQuestionResponse.class)))),
     })
     @GetMapping("/question")
-    public BaseResponse<List<VoteQuestionResponse>> getYelloVote(
+    public BaseResponse<List<VoteQuestionResponse>> findYelloVote(
             @AccessTokenUser User user
     ) {
         val data = voteService.findYelloVoteList(user.getId());

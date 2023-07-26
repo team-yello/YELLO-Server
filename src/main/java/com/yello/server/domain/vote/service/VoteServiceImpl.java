@@ -72,8 +72,10 @@ public class VoteServiceImpl implements VoteService {
 
     @Override
     public List<VoteFriendResponse> findAllFriendVotes(Long userId, Pageable pageable) {
-        voteRepository.find
-        return null;
+        return voteRepository.findAllReceivedByFriends(userId, pageable)
+                .stream()
+                .map(VoteFriendResponse::of)
+                .toList();
     }
 
     @Transactional

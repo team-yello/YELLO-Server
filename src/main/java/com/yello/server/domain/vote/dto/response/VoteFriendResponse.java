@@ -27,7 +27,7 @@ public record VoteFriendResponse(
         String createdAt
 ) {
 
-    static VoteFriendResponse of(Vote vote) {
+    public static VoteFriendResponse of(Vote vote) {
         return VoteFriendResponse.builder()
                 .id(vote.getId())
                 .receiverName(vote.getReceiver().getName())
