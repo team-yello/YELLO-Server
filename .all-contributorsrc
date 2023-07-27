@@ -15,6 +15,16 @@
       "contributions": [
         "code"
       ]
+    },
+    {
+      "login": "devkwonsehoon",
+      "name": "devkwonsehoon",
+      "avatar_url": "https://avatars.githubusercontent.com/u/54793607?v=4",
+      "profile": "http://devkwonsehoon.github.io",
+      "contributions": [
+        "infra",
+        "code"
+      ]
     }
   ],
   "contributorsPerLine": 7,
