@@ -1,4 +1,4 @@
-package com.yello.server.domain.question.dto.response;
+package com.yello.server.domain.keyword.dto.response;
 
 import com.yello.server.domain.keyword.entity.Keyword;
 import lombok.Builder;

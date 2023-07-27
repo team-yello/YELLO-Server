@@ -1,7 +1,5 @@
 package com.yello.server.global.common.dto;
 
-import static com.fasterxml.jackson.annotation.JsonInclude.Include.NON_NULL;
-
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.yello.server.global.common.ErrorCode;
 import com.yello.server.global.common.SuccessCode;
@@ -10,6 +8,8 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.lang.Nullable;
+
+import static com.fasterxml.jackson.annotation.JsonInclude.Include.NON_NULL;
 
 @Getter
 @RequiredArgsConstructor(access = AccessLevel.PRIVATE)
@@ -20,7 +20,7 @@ public class BaseResponse<T> {
     private final String message;
     @JsonInclude(NON_NULL)
     private T data;
- 
+
     public static BaseResponse success(SuccessCode success) {
         return new BaseResponse<>(success.getHttpStatusCode(), success.getMessage());
     }
@@ -40,4 +40,4 @@ public class BaseResponse<T> {
     public static <T> BaseResponse<T> error(ErrorCode error, @Nullable String message, @Nullable T data) {
         return new BaseResponse<>(error.getHttpStatusCode(), message, data);
     }
-}
+} 

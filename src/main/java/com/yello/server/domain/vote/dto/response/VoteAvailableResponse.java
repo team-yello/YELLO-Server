@@ -1,4 +1,4 @@
-package com.yello.server.domain.question.dto.response;
+package com.yello.server.domain.vote.dto.response;
 
 import com.yello.server.domain.cooldown.entity.Cooldown;
 import com.yello.server.domain.user.entity.User;
@@ -7,9 +7,9 @@ import lombok.Builder;
 
 import java.time.LocalDateTime;
 
+import static com.yello.server.global.common.factory.TimeFactory.plusTime;
+import static com.yello.server.global.common.factory.TimeFactory.toDateFormattedString;
 import static com.yello.server.global.common.util.ConstantUtil.TIMER_MAX_TIME;
-import static com.yello.server.global.common.util.TimeUtil.plusTime;
-import static com.yello.server.global.common.util.TimeUtil.toDateFormattedString;
 
 @Builder
 public record VoteAvailableResponse(

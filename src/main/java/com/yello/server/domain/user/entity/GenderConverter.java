@@ -1,8 +1,9 @@
 package com.yello.server.domain.user.entity;
 
+import lombok.extern.log4j.Log4j2;
+
 import javax.persistence.AttributeConverter;
 import javax.persistence.Converter;
-import lombok.extern.log4j.Log4j2;
 
 @Converter
 @Log4j2
@@ -10,7 +11,7 @@ public class GenderConverter implements AttributeConverter<Gender, String> {
 
     @Override
     public String convertToDatabaseColumn(Gender gender) {
-        if (gender==null) {
+        if (gender == null) {
             return null;
         }
         return gender.getIntial();
@@ -18,7 +19,7 @@ public class GenderConverter implements AttributeConverter<Gender, String> {
 
     @Override
     public Gender convertToEntityAttribute(String dbData) {
-        if (dbData==null) {
+        if (dbData == null) {
             return null;
         }
         try {

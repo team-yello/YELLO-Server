@@ -1,4 +1,4 @@
-package com.yello.server.domain.cooldown.response;
+package com.yello.server.domain.vote.dto.response;
 
 import com.yello.server.domain.user.entity.User;
 import lombok.Builder;

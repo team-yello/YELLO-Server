@@ -7,4 +7,9 @@ public record VoteCreateResponse(
         Integer point
 ) {
 
+    public static VoteCreateResponse of(Integer point) {
+        return VoteCreateResponse.builder()
+                .point(point)
+                .build();
+    }
 }

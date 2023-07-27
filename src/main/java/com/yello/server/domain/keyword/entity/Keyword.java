@@ -1,19 +1,9 @@
 package com.yello.server.domain.keyword.entity;
 
 import com.yello.server.domain.question.entity.Question;
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.FetchType;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
-import lombok.AccessLevel;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
+
+import javax.persistence.*;
 
 @Getter
 @Entity
@@ -21,7 +11,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Keyword {
- 
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -35,8 +25,8 @@ public class Keyword {
 
     public static Keyword of(String keywordName, Question question) {
         return Keyword.builder()
-            .keywordName(keywordName)
-            .question(question)
-            .build();
+                .keywordName(keywordName)
+                .question(question)
+                .build();
     }
 }
