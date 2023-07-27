@@ -1,4 +1,4 @@
-package com.yello.server.global.common.util;
+package com.yello.server.global.common.factory;
 
 import java.time.Duration;
 import java.time.LocalDateTime;

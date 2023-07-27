@@ -1,4 +1,4 @@
-package com.yello.server.global.common.util;
+package com.yello.server.global.common.factory;
 
 import java.util.ArrayList;
 import java.util.List;

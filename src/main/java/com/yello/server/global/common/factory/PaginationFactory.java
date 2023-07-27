@@ -1,4 +1,4 @@
-package com.yello.server.global.common.util;
+package com.yello.server.global.common.factory;
 
 import org.springframework.data.domain.*;
 
