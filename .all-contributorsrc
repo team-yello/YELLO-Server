@@ -14,7 +14,8 @@
       "profile": "http://devkwonsehoon.github.io",
       "contributions": [
         "code",
-        "infra"
+        "infra",
+        "test"
       ]
     }
   ],
