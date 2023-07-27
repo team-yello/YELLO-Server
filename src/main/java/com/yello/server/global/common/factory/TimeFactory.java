@@ -4,7 +4,7 @@ import java.time.Duration;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 
-public class TimeUtil {
+public class TimeFactory {
 
     private static final int SECOND = 60;
     private static final int MINUTE = 60;
