@@ -8,6 +8,15 @@
   "commitConvention": "angular",
   "contributors": [
     {
+      "login": "hyeonjeongs",
+      "name": "hyeonjeong Park",
+      "avatar_url": "https://avatars.githubusercontent.com/u/81394850?v=4",
+      "profile": "https://velog.io/@guri",
+      "contributions": [
+        "code"
+      ]
+    },
+    {
       "login": "devkwonsehoon",
       "name": "devkwonsehoon",
       "avatar_url": "https://avatars.githubusercontent.com/u/54793607?v=4",
