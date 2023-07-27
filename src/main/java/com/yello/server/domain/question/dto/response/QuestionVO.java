@@ -7,7 +7,7 @@ import lombok.Builder;
 import java.util.Objects;
 
 @Builder
-public record VoteQuestionVO(
+public record QuestionVO(
         @Schema(description = "투표 질문 id", example = "1")
         Long questionId,
 
@@ -24,8 +24,8 @@ public record VoteQuestionVO(
         String keywordFoot
 ) {
 
-    public static VoteQuestionVO of(Question question) {
-        return VoteQuestionVO.builder()
+    public static QuestionVO of(Question question) {
+        return QuestionVO.builder()
                 .questionId(Objects.isNull(question.getId()) ? null : question.getId())
                 .nameHead(Objects.isNull(question.getNameHead()) ? null : question.getNameHead())
                 .nameFoot(Objects.isNull(question.getNameFoot()) ? null : question.getNameFoot())
