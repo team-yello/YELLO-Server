@@ -44,7 +44,7 @@ public class JwtExceptionFilter extends OncePerRequestFilter {
         HttpServletResponse response,
         FilterChain filterChain) throws ServletException, IOException {
 
-        String requestPath = request.getServletPath();
+        val requestPath = request.getServletPath();
 
         if (requestPath.equals("/")
             || requestPath.startsWith("/swagger-ui")

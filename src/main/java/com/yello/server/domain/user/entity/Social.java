@@ -1,9 +1,9 @@
 package com.yello.server.domain.user.entity;
 
+import java.text.MessageFormat;
+import java.util.Arrays;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
-
-import java.util.Arrays;
 
 @Getter
 @RequiredArgsConstructor
@@ -15,9 +15,9 @@ public enum Social {
 
     public static Social fromCode(String dbData) {
         return Arrays.stream(Social.values())
-                .filter(v -> v.getIntial().equals(dbData))
-                .findAny()
-                .orElseThrow(() -> new IllegalArgumentException(String.format("존재하지 않는 social 입니다.", dbData)));
+            .filter(v -> v.getIntial().equals(dbData))
+            .findAny()
+            .orElseThrow(() -> new IllegalArgumentException(MessageFormat.format("존재하지 않는 소셜입니다. {0}", dbData)));
     }
 
     public String intial() {
