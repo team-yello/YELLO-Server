@@ -1,4 +1,5 @@
 # YELL:O Backend Team
+
 <!-- ALL-CONTRIBUTORS-BADGE:START - Do not remove or modify this section -->
 [![All Contributors](https://img.shields.io/badge/all_contributors-2-orange.svg?style=flat-square)](#contributors-)
 <!-- ALL-CONTRIBUTORS-BADGE:END -->
@@ -13,6 +14,10 @@
 - [Java 17](https://docs.oracle.com/en/java/javase/17/docs/api/index.html)
 - MySQL, JPA
 
+<br>
+<br>
+<br>
+<br>
 <br>
 
 ## Contributors
