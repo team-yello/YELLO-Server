@@ -1,18 +1,9 @@
 package com.yello.server.domain.pay.entity;
 
 import com.yello.server.domain.user.entity.User;
-import javax.persistence.Entity;
-import javax.persistence.FetchType;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
-import lombok.AccessLevel;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
+
+import javax.persistence.*;
 
 @Entity
 @Getter
@@ -33,9 +24,9 @@ public class Pay {
 
     public static Pay of(Integer optionIndex, User user) {
         return Pay.builder()
-            .optionIndex(optionIndex)
-            .user(user)
-            .build();
+                .optionIndex(optionIndex)
+                .user(user)
+                .build();
     }
 
     public static Pay createPay(Integer optionIndex, User user) {

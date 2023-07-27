@@ -23,11 +23,12 @@ import org.springframework.stereotype.Component;
 @RequiredArgsConstructor
 public class JwtTokenProvider {
 
-    //TODO 릴리즈 이후 시간 수정
-    private static final Long accessTokenValidTime = ofMinutes(1).toMillis();
-    private static final Long refreshTokenValidTime = ofDays(14).toMillis();
-    public static String ACCESS_TOKEN = "accessToken";
-    public static String REFRESH_TOKEN = "refreshToken";
+    public static final String ACCESS_TOKEN = "accessToken";
+    public static final String REFRESH_TOKEN = "refreshToken";
+
+    private static final Long ACCESS_TOKEN_VALID_TIME = ofMinutes(3).toMillis();
+    private static final Long REFRESH_TOKEN_VALID_TIME = ofDays(14).toMillis();
+
     @Value("${spring.jwt.secret}")
     private String secretKey;
 
@@ -90,11 +91,11 @@ public class JwtTokenProvider {
     }
 
     public String createAccessToken(Long userId, String uuid) {
-        return createJwt(userId, uuid, accessTokenValidTime, ACCESS_TOKEN);
+        return createJwt(userId, uuid, ACCESS_TOKEN_VALID_TIME, ACCESS_TOKEN);
     }
 
     public String createRefreshToken(Long userId, String uuid) {
-        return createJwt(userId, uuid, refreshTokenValidTime, REFRESH_TOKEN);
+        return createJwt(userId, uuid, REFRESH_TOKEN_VALID_TIME, REFRESH_TOKEN);
     }
 
     public ServiceTokenVO createServiceToken(Long userId, String uuid) {

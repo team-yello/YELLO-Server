@@ -13,9 +13,13 @@ import static com.yello.server.global.common.util.ConstantUtil.THIRD_POINT_WEIGH
 import java.util.HashMap;
 import java.util.Map;
 
-public class WeightedRandom {
+public class WeightedRandomFactory {
 
     private static final Map<Integer, Double> weight = new HashMap<>();
+
+    private WeightedRandomFactory() {
+        throw new IllegalStateException();
+    }
 
     public static Integer randomPoint() {
         weight.put(MIN_POINT, FIRST_POINT_WEIGHT);

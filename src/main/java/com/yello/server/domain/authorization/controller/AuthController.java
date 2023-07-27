@@ -7,7 +7,7 @@ import static com.yello.server.global.common.SuccessCode.RE_ISSUE_TOKEN_AUTH_SUC
 import static com.yello.server.global.common.SuccessCode.SCHOOL_NAME_SEARCH_SCHOOL_SUCCESS;
 import static com.yello.server.global.common.SuccessCode.SIGN_UP_SUCCESS;
 import static com.yello.server.global.common.SuccessCode.YELLOID_VALIDATION_SUCCESS;
-import static com.yello.server.global.common.util.PaginationUtil.createPageable;
+import static com.yello.server.global.common.factory.PaginationFactory.createPageable;
 
 import com.yello.server.domain.authorization.dto.ServiceTokenVO;
 import com.yello.server.domain.authorization.dto.request.OAuthRequest;

@@ -19,17 +19,17 @@ import org.springframework.stereotype.Component;
 public class CustomAuthenticationEntryPoint implements AuthenticationEntryPoint {
 
     @Override
-    public void commence(
-        HttpServletRequest request,
-        HttpServletResponse response,
-        AuthenticationException authException)
-        throws IOException, ServletException {
+    public void commence(HttpServletRequest request, HttpServletResponse response,
+        AuthenticationException authException) throws IOException, ServletException {
+
         ObjectMapper objectMapper = new ObjectMapper();
         log.error("인증에 실패했습니다.");
+
         CustomAuthenticationException exception = new CustomAuthenticationException(AUTHENTICATION_ERROR);
         response.setStatus(exception.getHttpStatus());
         response.setContentType(APPLICATION_JSON_VALUE);
         response.setCharacterEncoding("UTF-8");
+
         objectMapper.writeValue(
             response.getWriter(),
             BaseResponse.error(exception.getError())

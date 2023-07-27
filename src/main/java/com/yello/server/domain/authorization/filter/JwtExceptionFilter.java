@@ -44,12 +44,13 @@ public class JwtExceptionFilter extends OncePerRequestFilter {
         HttpServletResponse response,
         FilterChain filterChain) throws ServletException, IOException {
 
-        String requestPath = request.getServletPath();
+        val requestPath = request.getServletPath();
 
         if (requestPath.equals("/")
             || requestPath.startsWith("/swagger-ui")
             || requestPath.startsWith("/v3/api-docs")
             || requestPath.startsWith("/api/v1/auth/oauth")
+            || requestPath.startsWith("/api/v1/auth/token")
             || requestPath.startsWith("/api/v1/auth/signup")
             || requestPath.startsWith("/api/v1/auth/valid")
             || requestPath.startsWith("/api/v1/auth/friend")

@@ -4,8 +4,9 @@ import com.yello.server.domain.friend.dto.request.KakaoRecommendRequest;
 import com.yello.server.domain.friend.dto.response.FriendShuffleResponse;
 import com.yello.server.domain.friend.dto.response.FriendsResponse;
 import com.yello.server.domain.friend.dto.response.RecommendFriendResponse;
-import java.util.List;
 import org.springframework.data.domain.Pageable;
+
+import java.util.List;
 
 public interface FriendService {
 
@@ -13,7 +14,7 @@ public interface FriendService {
 
     void addFriend(Long userId, Long targetId);
 
-    List<FriendShuffleResponse> shuffleFriend(Long userId);
+    List<FriendShuffleResponse> findShuffledFriend(Long userId);
 
     RecommendFriendResponse findAllRecommendSchoolFriends(Pageable pageable, Long userId);
 
