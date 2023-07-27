@@ -6,7 +6,8 @@ import lombok.Getter;
 
 @Getter
 public class NotExpiredTokenForbiddenException extends CustomException {
-  public NotExpiredTokenForbiddenException(ErrorCode error) {
-    super(error, "[NotExpiredTokenException] " + error.getMessage());
-  }
+
+    public NotExpiredTokenForbiddenException(ErrorCode error) {
+        super(error, "[NotExpiredTokenException] " + error.getMessage());
+    }
 }

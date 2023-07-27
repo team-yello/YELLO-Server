@@ -4,7 +4,7 @@ import com.yello.server.domain.vote.entity.Vote;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Builder;
 
-import static com.yello.server.global.common.util.TimeUtil.toFormattedString;
+import static com.yello.server.global.common.factory.TimeFactory.toFormattedString;
 
 @Builder
 public record VoteResponse(

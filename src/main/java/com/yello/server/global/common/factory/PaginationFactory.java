@@ -1,4 +1,4 @@
-package com.yello.server.global.common.util;
+package com.yello.server.global.common.factory;
 
 import java.util.Collections;
 import java.util.List;
@@ -8,9 +8,13 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 
-public class PaginationUtil {
+public class PaginationFactory {
 
     private static final int PAGE_LIMIT = 10;
+
+    private PaginationFactory() {
+        throw new IllegalStateException();
+    }
 
     public static Pageable createPageable(Integer page) {
         return PageRequest.of(page, PAGE_LIMIT);

@@ -6,8 +6,7 @@ import com.yello.server.domain.user.entity.User;
 
 public interface UserService {
 
-
-    UserDetailResponse findUser(Long userId);
+    UserDetailResponse findMyProfile(Long userId);
 
     UserResponse findUserById(Long userId);
 

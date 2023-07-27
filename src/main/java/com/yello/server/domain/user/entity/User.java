@@ -100,12 +100,12 @@ public class User extends AuditingTimeEntity {
         this.deletedAt = null;
     }
 
-    public String getGroupString() {
+    public String groupString() {
         return this.group.toString() + " " + this.getGroupAdmissionYear() + "학번";
     }
 
-    public void addRecommendCount(int count) {
-        this.recommendCount += count;
+    public void increaseRecommendCount() {
+        this.recommendCount += 1;
     }
 
     public void plusPoint(Integer point) {

@@ -24,7 +24,7 @@ public class RedisConfiguration {
     public RedisConnectionFactory redisConnectionFactory() {
         return new LettuceConnectionFactory(host, port);
     }
- 
+
     @Bean
     public RedisTemplate<Long, ServiceTokenVO> redisTokenTemplate() {
         RedisTemplate<Long, ServiceTokenVO> redisTemplate = new RedisTemplate<>();

@@ -5,17 +5,17 @@ import lombok.Builder;
 
 @Builder
 public record FriendResponse(
-    Long id,
-    String name,
-    String group,
-    String profileImage
+        Long id,
+        String name,
+        String group,
+        String profileImage
 ) {
 
     public static FriendResponse of(User user) {
         return FriendResponse.builder()
                 .id(user.getId())
                 .name(user.getName())
-                .group(user.getGroupString())
+                .group(user.groupString())
                 .profileImage(user.getProfileImage())
                 .build();
     }

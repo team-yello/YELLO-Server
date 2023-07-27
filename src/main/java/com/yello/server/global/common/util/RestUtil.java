@@ -13,6 +13,10 @@ public class RestUtil {
     private static final String KAKAO_TOKEN_INFO_URL = "https://kapi.kakao.com/v1/user/access_token_info";
     private static final String KAKAO_FRIEND_LIST_URL = "https://kapi.kakao.com/v1/api/talk/friends";
 
+    private RestUtil() {
+        throw new IllegalStateException();
+    }
+
     public static ResponseEntity<KakaoTokenInfo> getKakaoTokenInfo(String kakaoAccessToken) {
         WebClient webClient = WebClient.builder()
             .baseUrl(KAKAO_TOKEN_INFO_URL)
@@ -25,11 +29,11 @@ public class RestUtil {
             .block();
     }
 
-    public static ResponseEntity<KakaoFriendsInfo> getKakaoFriendList(String kakaoAccessToken, String friend_order,
+    public static ResponseEntity<KakaoFriendsInfo> getKakaoFriendList(String kakaoAccessToken, String friendOrder,
         Integer offset, Integer limit, String order) {
         String baseUrl = KAKAO_FRIEND_LIST_URL + "?";
-        if (friend_order!=null) {
-            baseUrl += "friend_order=" + friend_order;
+        if (friendOrder!=null) {
+            baseUrl += "friendOrder=" + friendOrder;
         }
         if (offset!=null) {
             baseUrl += "offset=" + offset;

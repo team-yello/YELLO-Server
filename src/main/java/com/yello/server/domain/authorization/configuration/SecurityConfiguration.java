@@ -1,6 +1,5 @@
 package com.yello.server.domain.authorization.configuration;
 
-import static org.springframework.http.HttpMethod.GET;
 import static org.springframework.security.config.http.SessionCreationPolicy.STATELESS;
 
 import com.yello.server.domain.authorization.JwtTokenProvider;
@@ -33,14 +32,14 @@ public class SecurityConfiguration {
         return httpSecurity
             .httpBasic().disable()
             .csrf().disable()
-            .cors().and()
+            .cors()
+            .and()
             .authorizeRequests()
-            .antMatchers("/api/v1/auth/oauth").permitAll()
-            .antMatchers("/api/v1/auth/signup").permitAll()
-            .antMatchers(GET, "/api/*").authenticated()
+            .antMatchers("/api/v1/auth/oauth", "/api/v1/auth/signup").permitAll()
+            .antMatchers("/api/*").authenticated()
             .and()
             .sessionManagement()
-            .sessionCreationPolicy(STATELESS) // jwt 사용하는 경우 사용
+            .sessionCreationPolicy(STATELESS)
             .and()
             .exceptionHandling()
             .authenticationEntryPoint(customAuthenticationEntryPoint)

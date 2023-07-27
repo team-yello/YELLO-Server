@@ -1,6 +1,6 @@
 package com.yello.server.domain.friend.dto.response;
 
-public record Friend(
+public record FriendVO(
     Long id,
     String uuid
 ) {

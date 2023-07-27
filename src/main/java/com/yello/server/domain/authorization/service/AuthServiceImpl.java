@@ -41,8 +41,8 @@ import com.yello.server.domain.user.entity.User;
 import com.yello.server.domain.user.entity.UserRepository;
 import com.yello.server.domain.user.exception.UserConflictException;
 import com.yello.server.domain.user.exception.UserNotFoundException;
-import com.yello.server.global.common.util.ListUtil;
-import com.yello.server.global.common.util.PaginationUtil;
+import com.yello.server.global.common.factory.ListFactory;
+import com.yello.server.global.common.factory.PaginationFactory;
 import com.yello.server.global.common.util.RestUtil;
 import java.util.ArrayList;
 import java.util.Comparator;
@@ -105,7 +105,7 @@ public class AuthServiceImpl implements AuthService {
             throw new AuthBadRequestException(YELLOID_REQUIRED_EXCEPTION);
         }
 
-        User user = userRepository.findByYelloId(yelloId)
+        userRepository.findByYelloId(yelloId)
             .orElseThrow(() -> new UserNotFoundException(YELLOID_NOT_FOUND_USER_EXCEPTION));
 
         return true;
@@ -138,7 +138,7 @@ public class AuthServiceImpl implements AuthService {
             User recommendedUser = userRepository.findByYelloId(signUpRequest.recommendId())
                 .orElseThrow(() -> new UserNotFoundException(YELLOID_NOT_FOUND_USER_EXCEPTION));
 
-            recommendedUser.addRecommendCount(1);
+            recommendedUser.increaseRecommendCount();
 
             Optional<Cooldown> cooldown = cooldownRepository.findByUserId(recommendedUser.getId());
             cooldown.ifPresent(cooldownRepository::delete);
@@ -172,14 +172,14 @@ public class AuthServiceImpl implements AuthService {
             .toList();
 
         totalList.addAll(groupFriends);
-        totalList.addAll(ListUtil.toList(kakaoFriends));
+        totalList.addAll(ListFactory.toNonNullableList(kakaoFriends));
 
         totalList = totalList.stream()
             .distinct()
             .sorted(Comparator.comparing(User::getName))
             .toList();
 
-        val pageList = PaginationUtil.getPage(totalList, pageable)
+        val pageList = PaginationFactory.getPage(totalList, pageable)
             .stream()
             .toList();
 
