@@ -6,11 +6,13 @@ import java.util.Optional;
 
 public class ListFactory {
 
+    private ListFactory() {
+        throw new IllegalStateException();
+    }
+
     public static <T> List<T> toNonNullableList(List<Optional<T>> optionalList) {
         List<T> result = new ArrayList<>();
-        optionalList.forEach(optional -> {
-            optional.ifPresent(result::add);
-        });
+        optionalList.forEach(optional -> optional.ifPresent(result::add));
         return result;
     }
 }

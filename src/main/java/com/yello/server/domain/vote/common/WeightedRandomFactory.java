@@ -17,6 +17,10 @@ public class WeightedRandomFactory {
 
     private static final Map<Integer, Double> weight = new HashMap<>();
 
+    private WeightedRandomFactory() {
+        throw new IllegalStateException();
+    }
+
     public static Integer randomPoint() {
         weight.put(MIN_POINT, FIRST_POINT_WEIGHT);
         weight.put(MIN_POINT + 1, SECOND_POINT_WEIGHT);

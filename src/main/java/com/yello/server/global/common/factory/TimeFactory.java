@@ -10,6 +10,10 @@ public class TimeFactory {
     private static final int MINUTE = 60;
     private static final int HOUR = 24;
 
+    private TimeFactory() {
+        throw new IllegalStateException();
+    }
+
     public static String toFormattedString(LocalDateTime localDateTime) {
         LocalDateTime currentDateTime = LocalDateTime.now();
         Duration duration = Duration.between(localDateTime, currentDateTime);
@@ -33,7 +37,7 @@ public class TimeFactory {
 
     public static String toDateFormattedString(LocalDateTime localDateTime) {
         DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
-        return localDateTime.format(dateTimeFormatter).toString();
+        return localDateTime.format(dateTimeFormatter);
     }
 
     public static LocalDateTime plusTime(LocalDateTime localDateTime, int time) {
