@@ -1,0 +1,26 @@
+{
+  "files": [
+    "README.md"
+  ],
+  "imageSize": 100,
+  "commit": false,
+  "commitType": "docs",
+  "commitConvention": "angular",
+  "contributors": [
+    {
+      "login": "hyeonjeongs",
+      "name": "hyeonjeong Park",
+      "avatar_url": "https://avatars.githubusercontent.com/u/81394850?v=4",
+      "profile": "https://velog.io/@guri",
+      "contributions": [
+        "code"
+      ]
+    }
+  ],
+  "contributorsPerLine": 7,
+  "skipCi": true,
+  "repoType": "github",
+  "repoHost": "https://github.com",
+  "projectName": "YELLO-Server",
+  "projectOwner": "team-yello"
+}
