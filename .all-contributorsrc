@@ -16,6 +16,15 @@
         "code",
         "infra"
       ]
+    },
+    {
+      "login": "euije",
+      "name": "Lee Euije",
+      "avatar_url": "https://avatars.githubusercontent.com/u/12531340?v=4",
+      "profile": "https://github.com/euije",
+      "contributions": [
+        "code"
+      ]
     }
   ],
   "contributorsPerLine": 7,
