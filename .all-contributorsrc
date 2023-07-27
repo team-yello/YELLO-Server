@@ -8,16 +8,6 @@
   "commitConvention": "angular",
   "contributors": [
     {
-      "login": "devkwonsehoon",
-      "name": "devkwonsehoon",
-      "avatar_url": "https://avatars.githubusercontent.com/u/54793607?v=4",
-      "profile": "http://devkwonsehoon.github.io",
-      "contributions": [
-        "code",
-        "infra"
-      ]
-    },
-    {
       "login": "euije",
       "name": "Lee Euije",
       "avatar_url": "https://avatars.githubusercontent.com/u/12531340?v=4",
@@ -32,9 +22,19 @@
       "avatar_url": "https://avatars.githubusercontent.com/u/81394850?v=4",
       "profile": "https://velog.io/@guri",
       "contributions": [
-        "code",
+        "code"
       ]
-    }
+    },
+    {
+      "login": "devkwonsehoon",
+      "name": "devkwonsehoon",
+      "avatar_url": "https://avatars.githubusercontent.com/u/54793607?v=4",
+      "profile": "http://devkwonsehoon.github.io",
+      "contributions": [
+        "infra",
+        "code"
+      ]
+    },
   ],
   "contributorsPerLine": 7,
   "skipCi": true,
