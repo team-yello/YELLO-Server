@@ -202,42 +202,38 @@ public class AuthServiceImpl implements AuthService {
 
     @Override
     public ServiceTokenVO reIssueToken(@NotNull ServiceTokenVO tokens) {
-        ServiceTokenVO newTokens = null;
-
         boolean isAccessTokenExpired = jwtTokenProvider.isExpired(tokens.accessToken());
         boolean isRefreshTokenExpired = jwtTokenProvider.isExpired(tokens.refreshToken());
 
-        if (!isAccessTokenExpired && !isRefreshTokenExpired) {
-            throw new NotExpiredTokenForbiddenException(TOKEN_NOT_EXPIRED_AUTH_EXCEPTION);
-        } else if (isAccessTokenExpired && isRefreshTokenExpired) {
-            throw new NotExpiredTokenForbiddenException(TOKEN_ALL_EXPIRED_AUTH_EXCEPTION);
+        if (isAccessTokenExpired) {
+
+            if (isRefreshTokenExpired) {
+                throw new NotExpiredTokenForbiddenException(TOKEN_ALL_EXPIRED_AUTH_EXCEPTION);
+            }
+
+            val refreshToken = tokens.refreshToken();
+            Long userId = jwtTokenProvider.getUserId(refreshToken);
+            String uuid = jwtTokenProvider.getUserUuid(refreshToken);
+
+            findUser(userId);
+            findUserByUuid(uuid);
+
+            String newAccessToken = jwtTokenProvider.createAccessToken(userId, uuid);
+            val token = ServiceTokenVO.of(newAccessToken, tokens.refreshToken());
+            tokenValueOperations.set(userId, token);
+            return token;
         }
 
-        if (isAccessTokenExpired && !isRefreshTokenExpired) {
-            Long refreshTokenUserId = jwtTokenProvider.getUserId(tokens.refreshToken());
-            String refreshUuid = jwtTokenProvider.getUserUuid(tokens.refreshToken());
+        throw new NotExpiredTokenForbiddenException(TOKEN_NOT_EXPIRED_AUTH_EXCEPTION);
+    }
 
-            userRepository.findById(refreshTokenUserId)
-                .orElseThrow(() -> new AuthNotFoundException(AUTH_NOT_FOUND_USER_EXCEPTION));
-            userRepository.findByUuid(refreshUuid)
-                .orElseThrow(() -> new AuthNotFoundException(AUTH_UUID_NOT_FOUND_USER_EXCEPTION));
+    private User findUser(Long userId) {
+        return userRepository.findById(userId)
+            .orElseThrow(() -> new AuthNotFoundException(AUTH_NOT_FOUND_USER_EXCEPTION));
+    }
 
-            String newAccessToken = jwtTokenProvider.createAccessToken(refreshTokenUserId, refreshUuid);
-            newTokens = ServiceTokenVO.of(newAccessToken, tokens.refreshToken());
-        } else if (!isAccessTokenExpired && isRefreshTokenExpired) {
-            Long accessTokenUserId = jwtTokenProvider.getUserId(tokens.accessToken());
-            String accessUuid = jwtTokenProvider.getUserUuid(tokens.accessToken());
-
-            userRepository.findById(accessTokenUserId)
-                .orElseThrow(() -> new AuthNotFoundException(AUTH_NOT_FOUND_USER_EXCEPTION));
-            userRepository.findByUuid(accessUuid)
-                .orElseThrow(() -> new AuthNotFoundException(AUTH_UUID_NOT_FOUND_USER_EXCEPTION));
-
-            String newRefreshToken = jwtTokenProvider.createRefreshToken(accessTokenUserId, accessUuid);
-            newTokens = ServiceTokenVO.of(tokens.accessToken(), newRefreshToken);
-        }
-
-        tokenValueOperations.set(jwtTokenProvider.getUserId(newTokens.accessToken()), newTokens);
-        return newTokens;
+    private User findUserByUuid(String uuid) {
+        return userRepository.findByUuid(uuid)
+            .orElseThrow(() -> new AuthNotFoundException(AUTH_UUID_NOT_FOUND_USER_EXCEPTION));
     }
 }
