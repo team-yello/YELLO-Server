@@ -40,3 +40,6 @@ out/
 ### config ###
 application.yml
 application-dev.yml
+
+### monitoring ###
+prometheus-grafana
