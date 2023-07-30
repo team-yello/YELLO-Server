@@ -36,15 +36,9 @@ public class JwtFilter extends OncePerRequestFilter {
         val requestPath = request.getServletPath();
 
         if (requestPath.equals("/")
-            || requestPath.startsWith("/swagger-ui")
-            || requestPath.startsWith("/v3/api-docs")
-            || requestPath.startsWith("/api/v1/auth/token")
-            || requestPath.startsWith("/api/v1/auth/oauth")
-            || requestPath.startsWith("/api/v1/auth/signup")
-            || requestPath.startsWith("/api/v1/auth/valid")
-            || requestPath.startsWith("/api/v1/auth/friend")
-            || requestPath.startsWith("/api/v1/auth/school/school")
-            || requestPath.startsWith("/api/v1/auth/school/department")) {
+            || requestPath.startsWith("/swagger-ui") || requestPath.startsWith("/v3/api-docs")
+            || requestPath.startsWith("/actuator") || requestPath.startsWith("/prometheus")
+            || requestPath.startsWith("/api/v1/auth")) {
             filterChain.doFilter(request, response);
             return;
         }
