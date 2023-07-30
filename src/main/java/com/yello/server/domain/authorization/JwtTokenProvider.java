@@ -2,7 +2,7 @@ package com.yello.server.domain.authorization;
 
 import static io.jsonwebtoken.SignatureAlgorithm.HS256;
 import static java.time.Duration.ofDays;
-import static java.time.Duration.ofMinutes;
+import static java.time.Duration.ofSeconds;
 
 import com.yello.server.domain.authorization.dto.ServiceTokenVO;
 import io.jsonwebtoken.Claims;
@@ -26,7 +26,7 @@ public class JwtTokenProvider {
     public static final String ACCESS_TOKEN = "accessToken";
     public static final String REFRESH_TOKEN = "refreshToken";
 
-    private static final Long ACCESS_TOKEN_VALID_TIME = ofMinutes(3).toMillis();
+    private static final Long ACCESS_TOKEN_VALID_TIME = ofSeconds(30).toMillis();
     private static final Long REFRESH_TOKEN_VALID_TIME = ofDays(14).toMillis();
 
     @Value("${spring.jwt.secret}")
