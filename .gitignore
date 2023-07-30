@@ -42,4 +42,5 @@ application.yml
 application-dev.yml
 
 ### monitoring ###
-prometheus-grafana
+monitoring/prometheus/volume
+monitoring/grafana
