@@ -1,32 +1,33 @@
 package com.yello.server.global.configuration;
 
-import io.swagger.v3.oas.annotations.OpenAPIDefinition;
-import io.swagger.v3.oas.annotations.info.Info;
-import io.swagger.v3.oas.annotations.info.License;
-import io.swagger.v3.oas.annotations.tags.Tag;
-import lombok.RequiredArgsConstructor;
+import io.swagger.v3.oas.models.Components;
+import io.swagger.v3.oas.models.OpenAPI;
+import io.swagger.v3.oas.models.info.Info;
+import io.swagger.v3.oas.models.security.SecurityRequirement;
+import io.swagger.v3.oas.models.security.SecurityScheme;
+import java.util.Arrays;
+import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
-
-@OpenAPIDefinition(
-        info = @Info(title = "YELL:O API Documentation",
-                description = "YELL:O API 공식 명세서 입니다.",
-                version = "v1",
-                license = @License(
-                        name = "Apache License Version 2.0",
-                        url = "http://www.apache.org/licenses/LICENSE-2.0"
-                )
-        ),
-        tags = {
-                @Tag(name = "01. Vote", description = "투표(Yello) API"),
-                @Tag(name = "02. Friend", description = "친구 API"),
-                @Tag(name = "03. Authentication", description = "인증/인가 API"),
-                @Tag(name = "04. User", description = "유저 API"),
-                @Tag(name = "05. Pay", description = "화면 전환율 API [임시]"),
-        }
-)
-@RequiredArgsConstructor
 @Configuration
 public class SwaggerConfiguration {
 
+    @Bean
+    public OpenAPI openAPI() {
+        Info info = new Info()
+            .title("YELL:O API Documentation")
+            .description("YELL:O API 공식 명세서 입니다.")
+            .version("v1");
+
+        SecurityScheme securityScheme = new SecurityScheme()
+            .type(SecurityScheme.Type.HTTP).scheme("bearer").bearerFormat("JWT")
+            .in(SecurityScheme.In.HEADER).name("Authorization");
+
+        SecurityRequirement securityRequirement = new SecurityRequirement().addList("Bearer Token");
+
+        return new OpenAPI()
+            .components(new Components().addSecuritySchemes("Bearer Token", securityScheme))
+            .security(Arrays.asList(securityRequirement))
+            .info(info);
+    }
 }
