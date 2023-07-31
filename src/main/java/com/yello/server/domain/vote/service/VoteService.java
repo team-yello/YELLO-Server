@@ -61,8 +61,8 @@ public class VoteService {
     private final VoteRepository voteRepository;
 
     public VoteListResponse findAllVotes(Long userId, Pageable pageable) {
-        Integer count = voteRepository.countAllByReceiverUserId(userId);
-        List<VoteResponse> votes = voteRepository.findAllByReceiverUserId(userId, pageable)
+        final Integer count = voteRepository.countAllByReceiverUserId(userId);
+        final List<VoteResponse> votes = voteRepository.findAllByReceiverUserId(userId, pageable)
             .stream()
             .map(VoteResponse::of)
             .toList();
@@ -71,7 +71,7 @@ public class VoteService {
 
     @Transactional
     public VoteDetailResponse findVoteById(Long id) {
-        Vote vote = voteRepository.findById(id);
+        final Vote vote = voteRepository.findById(id);
         vote.read();
         return VoteDetailResponse.of(vote);
     }
@@ -85,8 +85,8 @@ public class VoteService {
 
     @Transactional
     public KeywordCheckResponse checkKeyword(Long userId, Long voteId) {
-        Vote vote = voteRepository.findById(voteId);
-        User user = userRepository.findById(userId);
+        final Vote vote = voteRepository.findById(voteId);
+        final User user = userRepository.findById(userId);
 
         vote.checkKeyword();
 
@@ -99,17 +99,17 @@ public class VoteService {
     }
 
     public List<QuestionForVoteResponse> findVoteQuestionList(Long userId) {
-        User user = userRepository.findById(userId);
+        final User user = userRepository.findById(userId);
 
-        List<Friend> friends = friendRepository.findAllByUserId(user.getId());
+        final List<Friend> friends = friendRepository.findAllByUserId(user.getId());
         if (friends.size() < RANDOM_COUNT) {
             throw new FriendException(LACK_USER_EXCEPTION);
         }
 
-        List<Question> questions = questionRepository.findAll();
+        final List<Question> questions = questionRepository.findAll();
         Collections.shuffle(questions);
 
-        List<Question> questionList = questions.stream()
+        final List<Question> questionList = questions.stream()
             .limit(VOTE_COUNT)
             .toList();
 
@@ -119,14 +119,14 @@ public class VoteService {
     }
 
     public VoteAvailableResponse checkVoteAvailable(Long userId) {
-        User user = userRepository.findById(userId);
-        List<Friend> friends = friendRepository.findAllByUserId(user.getId());
+        final User user = userRepository.findById(userId);
+        final List<Friend> friends = friendRepository.findAllByUserId(user.getId());
 
         if (friends.size() < RANDOM_COUNT) {
             throw new FriendException(LACK_USER_EXCEPTION);
         }
 
-        Cooldown cooldown = cooldownRepository.findByUserId(user.getId())
+        final Cooldown cooldown = cooldownRepository.findByUserId(user.getId())
             .orElse(Cooldown.of(user, minusTime(LocalDateTime.now(), COOL_DOWN_TIME)));
 
         return VoteAvailableResponse.of(user, cooldown);
@@ -134,9 +134,9 @@ public class VoteService {
 
     @Transactional
     public VoteCreateResponse createVote(Long userId, CreateVoteRequest request) {
-        User sender = userRepository.findById(userId);
+        final User sender = userRepository.findById(userId);
 
-        List<VoteAnswer> voteAnswerList = request.voteAnswerList();
+        final List<VoteAnswer> voteAnswerList = request.voteAnswerList();
         IntStream.range(0, voteAnswerList.size())
                 .forEach(index -> {
                     if (index > 0 && voteAnswerList.get(index - 1).questionId() == voteAnswerList.get(index).questionId()) {
@@ -149,7 +149,7 @@ public class VoteService {
                     voteRepository.save(newVote);
                 });
 
-        Optional<Cooldown> cooldown = cooldownRepository.findByUserId(sender.getId());
+        final Optional<Cooldown> cooldown = cooldownRepository.findByUserId(sender.getId());
         if (cooldown.isEmpty()) {
             cooldownRepository.save(Cooldown.of(sender, LocalDateTime.now()));
         } else {
@@ -162,13 +162,13 @@ public class VoteService {
 
     @Transactional
     public RevealNameResponse revealNameHint(Long userId, Long voteId) {
-        User sender = userRepository.findById(userId);
+        final User sender = userRepository.findById(userId);
 
         if (sender.getPoint() < NAME_HINT_POINT) {
             throw new VoteForbiddenException(LACK_POINT_EXCEPTION);
         }
 
-        Vote vote = voteRepository.findById(voteId);
+        final Vote vote = voteRepository.findById(voteId);
         if (vote.getNameHint()!=NAME_HINT_DEFAULT) {
             throw new VoteNotFoundException(INVALID_VOTE_EXCEPTION);
         }
@@ -181,7 +181,7 @@ public class VoteService {
     }
 
     private QuestionForVoteResponse generateVoteQuestion(User user, Question question) {
-        List<Keyword> keywordList = question.getKeywordList();
+        final List<Keyword> keywordList = question.getKeywordList();
         Collections.shuffle(keywordList);
 
         return QuestionForVoteResponse.builder()
@@ -193,7 +193,7 @@ public class VoteService {
     }
 
     private List<FriendShuffleResponse> getShuffledFriends(User user) {
-        List<Friend> allFriend = friendRepository.findAllByUserId(user.getId());
+        final List<Friend> allFriend = friendRepository.findAllByUserId(user.getId());
         Collections.shuffle(allFriend);
 
         return allFriend.stream()
@@ -203,7 +203,7 @@ public class VoteService {
     }
 
     private List<String> getShuffledKeywords(Question question) {
-        List<Keyword> keywordList = question.getKeywordList();
+        final List<Keyword> keywordList = question.getKeywordList();
         Collections.shuffle(keywordList);
 
         return keywordList.stream()
