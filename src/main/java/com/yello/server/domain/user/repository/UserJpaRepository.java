@@ -17,10 +17,10 @@ public interface UserJpaRepository extends JpaRepository<User, Long> {
         "where u.uuid = :uuid")
     Optional<User> findByUuid(String uuid);
 
-    @Query("select u from User u " +
+    @Query("select case when count(u) > 0 then true else false end from User u " +
         "where u.uuid = :uuid " +
         "and u.deletedAt is null")
-    Optional<User> findExistsByUuid(String uuid);
+    boolean existsByUuid(String uuid);
 
     @Query("select u from User u " +
         "where u.yelloId = :yelloId " +

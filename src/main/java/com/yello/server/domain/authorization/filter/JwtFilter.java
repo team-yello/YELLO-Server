@@ -24,8 +24,6 @@ import org.springframework.web.filter.OncePerRequestFilter;
 public class JwtFilter extends OncePerRequestFilter {
 
     public static final String BEARER = "Bearer ";
-    public static final String X_ACCESS_AUTH = "X-ACCESS-AUTH";
-    public static final String X_REFRESH_AUTH = "X-REFRESH-AUTH";
     private final UserRepository userRepository;
 
     @Override
