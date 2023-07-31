@@ -1,10 +1,7 @@
 package com.yello.server.domain.vote.service;
 
 import static com.yello.server.domain.vote.common.WeightedRandomFactory.randomPoint;
-import static com.yello.server.global.common.ErrorCode.INVALID_VOTE_EXCEPTION;
-import static com.yello.server.global.common.ErrorCode.LACK_POINT_EXCEPTION;
-import static com.yello.server.global.common.ErrorCode.LACK_USER_EXCEPTION;
-import static com.yello.server.global.common.ErrorCode.NOT_FOUND_QUESTION_EXCEPTION;
+import static com.yello.server.global.common.ErrorCode.*;
 import static com.yello.server.global.common.factory.TimeFactory.minusTime;
 import static com.yello.server.global.common.util.ConstantUtil.COOL_DOWN_TIME;
 import static com.yello.server.global.common.util.ConstantUtil.KEYWORD_HINT_POINT;
@@ -29,6 +26,7 @@ import com.yello.server.domain.question.exception.QuestionException;
 import com.yello.server.domain.user.entity.User;
 import com.yello.server.domain.user.repository.UserRepository;
 import com.yello.server.domain.vote.dto.request.CreateVoteRequest;
+import com.yello.server.domain.vote.dto.request.VoteAnswer;
 import com.yello.server.domain.vote.dto.response.RevealNameResponse;
 import com.yello.server.domain.vote.dto.response.VoteAvailableResponse;
 import com.yello.server.domain.vote.dto.response.VoteCreateResponse;
@@ -44,6 +42,8 @@ import java.time.LocalDateTime;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.IntStream;
+
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -136,15 +136,18 @@ public class VoteService {
     public VoteCreateResponse createVote(Long userId, CreateVoteRequest request) {
         User sender = userRepository.findById(userId);
 
-        request.voteAnswerList()
-            .forEach(voteAnswer -> {
-                User receiver = userRepository.findById(voteAnswer.friendId());
-                Question question = findQuestion(voteAnswer.questionId());
+        List<VoteAnswer> voteAnswerList = request.voteAnswerList();
+        IntStream.range(0, voteAnswerList.size())
+                .forEach(index -> {
+                    if (index > 0 && voteAnswerList.get(index - 1).questionId() == voteAnswerList.get(index).questionId()) {
+                        throw new VoteForbiddenException(DUPLICATE_VOTE_EXCEPTION);
+                    }
 
-                Vote newVote = Vote.createVote(voteAnswer.keywordName(), sender, receiver, question,
-                    voteAnswer.colorIndex());
-                voteRepository.save(newVote);
-            });
+                    User receiver = userRepository.findById(voteAnswerList.get(index).friendId());
+                    Question question = findQuestion(voteAnswerList.get(index).questionId());
+                    Vote newVote = Vote.createVote(voteAnswerList.get(index).keywordName(), sender, receiver, question, voteAnswerList.get(index).colorIndex());
+                    voteRepository.save(newVote);
+                });
 
         Optional<Cooldown> cooldown = cooldownRepository.findByUserId(sender.getId());
         if (cooldown.isEmpty()) {
