@@ -79,7 +79,7 @@ public class Vote extends AuditingTimeEntity {
         this.isAnswerRevealed = true;
     }
 
-    public void checkKeywordIndexOf(int nameHint) {
+    public void checkNameIndexOf(int nameHint) {
         this.nameHint = nameHint;
     }
 

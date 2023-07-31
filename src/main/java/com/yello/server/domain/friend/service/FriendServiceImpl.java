@@ -17,7 +17,7 @@ import com.yello.server.domain.friend.exception.FriendNotFoundException;
 import com.yello.server.domain.user.dto.response.UserResponse;
 import com.yello.server.domain.user.entity.User;
 import com.yello.server.domain.user.repository.UserRepository;
-import com.yello.server.domain.vote.entity.VoteRepository;
+import com.yello.server.domain.vote.repository.VoteRepository;
 import com.yello.server.global.common.factory.PaginationFactory;
 import java.util.Arrays;
 import java.util.Collections;
@@ -104,7 +104,7 @@ public class FriendServiceImpl implements FriendService {
 
         return RecommendFriendResponse.of(recommendFriends.size(), pageList);
     }
- 
+
     @Transactional
     @Override
     public void deleteFriend(Long userId, Long targetId) {
