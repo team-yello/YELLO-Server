@@ -1,5 +1,6 @@
-package com.yello.server.domain.friend.entity;
+package com.yello.server.domain.friend.repository;
 
+import com.yello.server.domain.friend.entity.Friend;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -11,7 +12,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.List;
 import java.util.Optional;
 
-public interface FriendRepository extends JpaRepository<Friend, Long> {
+public interface FriendJpaRepository extends JpaRepository<Friend, Long> {
 
     @Query("select count(f) from Friend f " +
             "where f.user.id = :userId " +
