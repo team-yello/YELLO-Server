@@ -3,7 +3,7 @@ package com.yello.server.domain.pay.controller;
 import static com.yello.server.global.common.SuccessCode.CREATE_PAY_COUNT;
 
 import com.yello.server.domain.pay.dto.request.PayCountRequest;
-import com.yello.server.domain.pay.sevice.PayService;
+import com.yello.server.domain.pay.service.PayService;
 import com.yello.server.domain.user.entity.User;
 import com.yello.server.global.common.annotation.AccessTokenUser;
 import com.yello.server.global.common.dto.BaseResponse;
@@ -23,18 +23,18 @@ import org.springframework.web.bind.annotation.RestController;
 @RequiredArgsConstructor
 public class PayController {
 
-    private final PayService payService;
+  private final PayService payService;
 
-    @Operation(summary = "결제 전환율 체크 API", responses = {
-        @ApiResponse(
-            responseCode = "200",
-            content = @Content(mediaType = "application/json"))
-    })
-    @PostMapping
-    public BaseResponse postPayCount(
-        @AccessTokenUser User user,
-        @RequestBody PayCountRequest request) {
-        payService.postPayCount(user.getId(), request.index());
-        return BaseResponse.success(CREATE_PAY_COUNT);
-    }
+  @Operation(summary = "결제 전환율 체크 API", responses = {
+      @ApiResponse(
+          responseCode = "200",
+          content = @Content(mediaType = "application/json"))
+  })
+  @PostMapping
+  public BaseResponse postPayCount(
+      @AccessTokenUser User user,
+      @RequestBody PayCountRequest request) {
+    payService.postPayCount(user.getId(), request.index());
+    return BaseResponse.success(CREATE_PAY_COUNT);
+  }
 }

@@ -1,4 +1,4 @@
-package com.yello.server.domain.pay.sevice;
+package com.yello.server.domain.pay.service;
 
 import com.yello.server.domain.pay.entity.Pay;
 import com.yello.server.domain.pay.repository.PayRepository;
@@ -12,16 +12,16 @@ import org.springframework.transaction.annotation.Transactional;
 @Service
 @RequiredArgsConstructor
 @Transactional(readOnly = true)
-public class PayServiceImpl implements PayService {
+public class PayService {
 
   private final UserRepository userRepository;
   private final PayRepository payRepository;
 
   @Transactional
-  @Override
   public void postPayCount(Long userId, Integer optionIndex) {
-    User user = userRepository.findById(userId);
-    List<Pay> allByUserAndIndex = payRepository.findAllByUserAndOptionIndex(user, optionIndex);
+    final User user = userRepository.findById(userId);
+    final List<Pay> allByUserAndIndex = payRepository.findAllByUserAndOptionIndex(user,
+        optionIndex);
     if (allByUserAndIndex.isEmpty()) {
       payRepository.save(Pay.createPay(optionIndex, user));
     }
