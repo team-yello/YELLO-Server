@@ -3,11 +3,21 @@ package com.yello.server.domain.vote.entity;
 import com.yello.server.domain.question.entity.Question;
 import com.yello.server.domain.user.entity.User;
 import com.yello.server.global.common.dto.AuditingTimeEntity;
-import lombok.*;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.FetchType;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+import lombok.AccessLevel;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
 import org.hibernate.annotations.ColumnDefault;
 import org.hibernate.annotations.DynamicInsert;
-
-import javax.persistence.*;
 
 @Entity
 @Getter
@@ -53,12 +63,12 @@ public class Vote extends AuditingTimeEntity {
 
     public static Vote of(String answer, User sender, User receiver, Question question, Integer colorIndex) {
         return Vote.builder()
-                .answer(answer)
-                .sender(sender)
-                .receiver(receiver)
-                .question(question)
-                .colorIndex(colorIndex)
-                .build();
+            .answer(answer)
+            .sender(sender)
+            .receiver(receiver)
+            .question(question)
+            .colorIndex(colorIndex)
+            .build();
     }
 
     public static Vote createVote(String answer, User sender, User receiver, Question question, Integer colorIndex) {

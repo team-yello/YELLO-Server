@@ -1,15 +1,11 @@
 package com.yello.server.domain.authorization.service;
 
-import static com.yello.server.global.common.ErrorCode.AUTH_NOT_FOUND_USER_EXCEPTION;
-import static com.yello.server.global.common.ErrorCode.AUTH_UUID_NOT_FOUND_USER_EXCEPTION;
 import static com.yello.server.global.common.ErrorCode.GROUPID_NOT_FOUND_GROUP_EXCEPTION;
-import static com.yello.server.global.common.ErrorCode.NOT_SIGNIN_USER_EXCEPTION;
 import static com.yello.server.global.common.ErrorCode.OAUTH_TOKEN_EXCEPTION;
 import static com.yello.server.global.common.ErrorCode.TOKEN_ALL_EXPIRED_AUTH_EXCEPTION;
 import static com.yello.server.global.common.ErrorCode.TOKEN_NOT_EXPIRED_AUTH_EXCEPTION;
 import static com.yello.server.global.common.ErrorCode.UUID_CONFLICT_USER_EXCEPTION;
 import static com.yello.server.global.common.ErrorCode.YELLOID_CONFLICT_USER_EXCEPTION;
-import static com.yello.server.global.common.ErrorCode.YELLOID_NOT_FOUND_USER_EXCEPTION;
 import static com.yello.server.global.common.ErrorCode.YELLOID_REQUIRED_EXCEPTION;
 import static org.springframework.http.HttpStatus.BAD_REQUEST;
 import static org.springframework.http.HttpStatus.UNAUTHORIZED;
@@ -26,9 +22,7 @@ import com.yello.server.domain.authorization.dto.response.OAuthResponse;
 import com.yello.server.domain.authorization.dto.response.OnBoardingFriendResponse;
 import com.yello.server.domain.authorization.dto.response.SignUpResponse;
 import com.yello.server.domain.authorization.exception.AuthBadRequestException;
-import com.yello.server.domain.authorization.exception.AuthNotFoundException;
 import com.yello.server.domain.authorization.exception.NotExpiredTokenForbiddenException;
-import com.yello.server.domain.authorization.exception.NotSignedInException;
 import com.yello.server.domain.authorization.exception.OAuthException;
 import com.yello.server.domain.cooldown.entity.Cooldown;
 import com.yello.server.domain.cooldown.entity.CooldownRepository;
@@ -38,10 +32,8 @@ import com.yello.server.domain.group.entity.School;
 import com.yello.server.domain.group.entity.SchoolRepository;
 import com.yello.server.domain.group.exception.GroupNotFoundException;
 import com.yello.server.domain.user.entity.User;
-import com.yello.server.domain.user.entity.UserRepository;
 import com.yello.server.domain.user.exception.UserConflictException;
-import com.yello.server.domain.user.exception.UserNotFoundException;
-import com.yello.server.global.common.factory.ListFactory;
+import com.yello.server.domain.user.repository.UserRepository;
 import com.yello.server.global.common.factory.PaginationFactory;
 import com.yello.server.global.common.util.RestUtil;
 import java.util.ArrayList;
@@ -52,6 +44,7 @@ import java.util.Optional;
 import javax.validation.constraints.NotNull;
 import lombok.RequiredArgsConstructor;
 import lombok.val;
+import org.apache.commons.lang3.ObjectUtils;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.redis.core.ValueOperations;
 import org.springframework.http.ResponseEntity;
@@ -73,16 +66,19 @@ public class AuthServiceImpl implements AuthService {
     @Transactional
     @Override
     public OAuthResponse oauthLogin(OAuthRequest oAuthRequest) {
-        ResponseEntity<KakaoTokenInfo> response = RestUtil.getKakaoTokenInfo(oAuthRequest.accessToken());
+        final ResponseEntity<KakaoTokenInfo> response = RestUtil.getKakaoTokenInfo(oAuthRequest.accessToken());
 
         if (response.getStatusCode()==BAD_REQUEST || response.getStatusCode()==UNAUTHORIZED) {
             throw new OAuthException(OAUTH_TOKEN_EXCEPTION);
         }
 
-        User currentUser = userRepository.findByUuid(String.valueOf(response.getBody().id()))
-            .orElseThrow(() -> new NotSignedInException(NOT_SIGNIN_USER_EXCEPTION));
+        final User currentUser = userRepository.findByUuid(String.valueOf(response.getBody().id()));
 
-        ServiceTokenVO serviceTokenVO = jwtTokenProvider.createServiceToken(currentUser.getId(), currentUser.getUuid());
+        final ServiceTokenVO serviceTokenVO = jwtTokenProvider.createServiceToken(
+            currentUser.getId(),
+            currentUser.getUuid()
+        );
+
         tokenValueOperations.set(
             currentUser.getId(),
             serviceTokenVO
@@ -105,9 +101,7 @@ public class AuthServiceImpl implements AuthService {
             throw new AuthBadRequestException(YELLOID_REQUIRED_EXCEPTION);
         }
 
-        userRepository.findByYelloId(yelloId)
-            .orElseThrow(() -> new UserNotFoundException(YELLOID_NOT_FOUND_USER_EXCEPTION));
-
+        userRepository.findByYelloId(yelloId);
         return true;
     }
 
@@ -115,13 +109,13 @@ public class AuthServiceImpl implements AuthService {
     @Override
     public SignUpResponse signUp(SignUpRequest signUpRequest) {
         // exception
-        Optional<User> userByUUID = userRepository.findByUuid(signUpRequest.uuid());
-        if (userByUUID.isPresent()) {
+        User userByUUID = userRepository.findByUuid(signUpRequest.uuid());
+        if (ObjectUtils.isNotEmpty(userByUUID)) {
             throw new UserConflictException(UUID_CONFLICT_USER_EXCEPTION);
         }
 
-        Optional<User> userByYelloId = userRepository.findByYelloId(signUpRequest.yelloId());
-        if (userByYelloId.isPresent()) {
+        User userByYelloId = userRepository.findByYelloId(signUpRequest.yelloId());
+        if (ObjectUtils.isNotEmpty(userByYelloId)) {
             throw new UserConflictException(YELLOID_CONFLICT_USER_EXCEPTION);
         }
 
@@ -135,9 +129,7 @@ public class AuthServiceImpl implements AuthService {
         );
 
         if (signUpRequest.recommendId()!=null && !"".equals(signUpRequest.recommendId())) {
-            User recommendedUser = userRepository.findByYelloId(signUpRequest.recommendId())
-                .orElseThrow(() -> new UserNotFoundException(YELLOID_NOT_FOUND_USER_EXCEPTION));
-
+            User recommendedUser = userRepository.findByYelloId(signUpRequest.recommendId());
             recommendedUser.increaseRecommendCount();
 
             Optional<Cooldown> cooldown = cooldownRepository.findByUserId(recommendedUser.getId());
@@ -147,10 +139,9 @@ public class AuthServiceImpl implements AuthService {
         signUpRequest.friends()
             .stream()
             .map(userRepository::findById)
-            .filter(Optional::isPresent)
             .forEach(friend -> {
-                friendRepository.save(Friend.createFriend(newSignInUser, friend.get()));
-                friendRepository.save(Friend.createFriend(friend.get(), newSignInUser));
+                friendRepository.save(Friend.createFriend(newSignInUser, friend));
+                friendRepository.save(Friend.createFriend(friend, newSignInUser));
             });
 
         tokenValueOperations.set(newSignInUser.getId(), newUserTokens);
@@ -172,7 +163,7 @@ public class AuthServiceImpl implements AuthService {
             .toList();
 
         totalList.addAll(groupFriends);
-        totalList.addAll(ListFactory.toNonNullableList(kakaoFriends));
+        totalList.addAll(kakaoFriends);
 
         totalList = totalList.stream()
             .distinct()
@@ -215,8 +206,8 @@ public class AuthServiceImpl implements AuthService {
             Long userId = jwtTokenProvider.getUserId(refreshToken);
             String uuid = jwtTokenProvider.getUserUuid(refreshToken);
 
-            findUser(userId);
-            findUserByUuid(uuid);
+            userRepository.findById(userId);
+            userRepository.findByUuid(uuid);
 
             String newAccessToken = jwtTokenProvider.createAccessToken(userId, uuid);
             val token = ServiceTokenVO.of(newAccessToken, tokens.refreshToken());
@@ -225,15 +216,5 @@ public class AuthServiceImpl implements AuthService {
         }
 
         throw new NotExpiredTokenForbiddenException(TOKEN_NOT_EXPIRED_AUTH_EXCEPTION);
-    }
-
-    private User findUser(Long userId) {
-        return userRepository.findById(userId)
-            .orElseThrow(() -> new AuthNotFoundException(AUTH_NOT_FOUND_USER_EXCEPTION));
-    }
-
-    private User findUserByUuid(String uuid) {
-        return userRepository.findByUuid(uuid)
-            .orElseThrow(() -> new AuthNotFoundException(AUTH_UUID_NOT_FOUND_USER_EXCEPTION));
     }
 }
