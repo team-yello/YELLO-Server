@@ -1,6 +1,7 @@
 package com.yello.server.small.user;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 import com.yello.server.domain.cooldown.repository.CooldownRepository;
 import com.yello.server.domain.friend.repository.FriendRepository;
@@ -10,6 +11,7 @@ import com.yello.server.domain.user.dto.response.UserResponse;
 import com.yello.server.domain.user.entity.Gender;
 import com.yello.server.domain.user.entity.Social;
 import com.yello.server.domain.user.entity.User;
+import com.yello.server.domain.user.exception.UserNotFoundException;
 import com.yello.server.domain.user.repository.UserRepository;
 import com.yello.server.domain.user.service.UserService;
 import com.yello.server.domain.vote.repository.VoteRepository;
@@ -89,6 +91,18 @@ class UserServiceTest {
     }
 
     @Test
+    void 존재하지_않는_유저_조회_시_UserNotFoundException이_발생합니다() {
+        // given
+        final Long userId = 123123L;
+
+        // when
+        // then
+        assertThatThrownBy(() -> userService.findUserById(userId))
+            .isInstanceOf(UserNotFoundException.class)
+            .hasMessageContaining("[UserNotFoundException] 탈퇴했거나 존재하지 않는 유저의 id 입니다.");
+    }
+
+    @Test
     void 유저_삭제에_성공합니다() {
         // given
         final Long userId = 1L;
@@ -98,7 +112,7 @@ class UserServiceTest {
         userService.delete(user);
 
         // then
-        assertThat(user.getPoint()).isEqualTo(0);
+        assertThat(user.getPoint()).isZero();
         assertThat(user.getDeletedAt()).isBeforeOrEqualTo(LocalDateTime.now());
     }
 }
