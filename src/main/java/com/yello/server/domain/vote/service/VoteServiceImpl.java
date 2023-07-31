@@ -17,6 +17,7 @@ import com.yello.server.domain.user.entity.User;
 import com.yello.server.domain.user.entity.UserRepository;
 import com.yello.server.domain.user.exception.UserException;
 import com.yello.server.domain.vote.dto.request.CreateVoteRequest;
+import com.yello.server.domain.vote.dto.request.VoteAnswer;
 import com.yello.server.domain.vote.dto.response.*;
 import com.yello.server.domain.vote.entity.Vote;
 import com.yello.server.domain.vote.entity.VoteRepository;
@@ -31,9 +32,11 @@ import java.time.LocalDateTime;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.IntStream;
 
 import static com.yello.server.domain.vote.common.WeightedRandomFactory.randomPoint;
 import static com.yello.server.global.common.ErrorCode.*;
+import static com.yello.server.global.common.ErrorCode.DUPLICATE_VOTE_EXCEPTION;
 import static com.yello.server.global.common.factory.TimeFactory.minusTime;
 import static com.yello.server.global.common.util.ConstantUtil.*;
 
@@ -129,13 +132,18 @@ public class VoteServiceImpl implements VoteService {
     @Override
     public VoteCreateResponse createVote(Long userId, CreateVoteRequest request) {
         User sender = findUser(userId);
+        sender.plusPoint(request.totalPoint());
+        List<VoteAnswer> voteAnswerList = request.voteAnswerList();
 
-        request.voteAnswerList()
-                .forEach(voteAnswer -> {
-                    User receiver = findUser(voteAnswer.friendId());
-                    Question question = findQuestion(voteAnswer.questionId());
+        IntStream.range(0, voteAnswerList.size())
+                .forEach(index -> {
+                    if (index > 0 && voteAnswerList.get(index - 1).questionId() == voteAnswerList.get(index).questionId()) {
+                        throw new VoteForbiddenException(DUPLICATE_VOTE_EXCEPTION);
+                    }
 
-                    Vote newVote = Vote.createVote(voteAnswer.keywordName(), sender, receiver, question, voteAnswer.colorIndex());
+                    User receiver = findUser(voteAnswerList.get(index).friendId());
+                    Question question = findQuestion(voteAnswerList.get(index).questionId());
+                    Vote newVote = Vote.createVote(voteAnswerList.get(index).keywordName(), sender, receiver, question, voteAnswerList.get(index).colorIndex());
                     voteRepository.save(newVote);
                 });
 
@@ -146,8 +154,7 @@ public class VoteServiceImpl implements VoteService {
             cooldown.get().updateDate(LocalDateTime.now());
         }
 
-        sender.plusPoint(request.totalPoint());
-        return VoteCreateResponse.of(sender.getPoint());
+        return VoteCreateResponse.builder().point(sender.getPoint()).build();
     }
 
     @Transactional
