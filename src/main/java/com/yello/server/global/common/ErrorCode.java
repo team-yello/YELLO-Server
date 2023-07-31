@@ -49,6 +49,7 @@ public enum ErrorCode {
     TOKEN_NOT_EXPIRED_AUTH_EXCEPTION(FORBIDDEN, "토큰이 모두 유효하여 재발급 받을 수 없습니다."),
     TOKEN_ALL_EXPIRED_AUTH_EXCEPTION(FORBIDDEN, "토큰이 모두 만료하여 재발급 받을 수 없습니다. 재로그인 하세요."),
     TOKEN_INFO_NOT_SAME_AUTH_EXCEPTION(FORBIDDEN, "AccessToken과 RefreshToken의 정보가 동일하지 않습니다."),
+    DUPLICATE_VOTE_EXCEPTION(FORBIDDEN,"중복된 투표가 전달되었습니다."),
 
     /**
      * 404 NOT FOUND

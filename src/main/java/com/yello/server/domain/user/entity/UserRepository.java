@@ -2,13 +2,15 @@ package com.yello.server.domain.user.entity;
 
 import java.util.List;
 import java.util.Optional;
+
+import io.lettuce.core.dynamic.annotation.Param;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 
 public interface UserRepository extends JpaRepository<User, Long> {
 
     @Query(value = "select u from User u where u.id = :id and u.deletedAt is null")
-    Optional<User> findById(Long id);
+    Optional<User> findById(@Param("id") Long id);
 
     @Query(value = "select u from User u where u.uuid = :uuid")
     Optional<User> findByUuid(String uuid);
