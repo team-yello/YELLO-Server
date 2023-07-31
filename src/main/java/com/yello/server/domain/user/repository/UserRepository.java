@@ -11,7 +11,7 @@ public interface UserRepository {
 
     User findByUuid(String uuid);
 
-    User findExistsByUuid(String uuid);
+    boolean existsByUuid(String uuid);
 
     User findByYelloId(String yelloId);
 

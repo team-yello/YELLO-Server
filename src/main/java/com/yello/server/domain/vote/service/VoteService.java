@@ -14,11 +14,11 @@ import static com.yello.server.global.common.util.ConstantUtil.RANDOM_COUNT;
 import static com.yello.server.global.common.util.ConstantUtil.VOTE_COUNT;
 
 import com.yello.server.domain.cooldown.entity.Cooldown;
-import com.yello.server.domain.cooldown.entity.CooldownRepository;
+import com.yello.server.domain.cooldown.repository.CooldownRepository;
 import com.yello.server.domain.friend.dto.response.FriendShuffleResponse;
 import com.yello.server.domain.friend.entity.Friend;
-import com.yello.server.domain.friend.entity.FriendRepository;
 import com.yello.server.domain.friend.exception.FriendException;
+import com.yello.server.domain.friend.repository.FriendRepository;
 import com.yello.server.domain.keyword.dto.response.KeywordCheckResponse;
 import com.yello.server.domain.keyword.entity.Keyword;
 import com.yello.server.domain.question.dto.response.QuestionForVoteResponse;

@@ -30,13 +30,12 @@ import org.springframework.transaction.annotation.Transactional;
 @Service
 @RequiredArgsConstructor
 @Transactional(readOnly = true)
-public class FriendServiceImpl implements FriendService {
+public class FriendService {
 
     private final FriendRepository friendRepository;
     private final UserRepository userRepository;
     private final VoteRepository voteRepository;
-
-    @Override
+    
     public FriendsResponse findAllFriends(Pageable pageable, Long userId) {
         Page<Friend> friendsData = friendRepository.findAllFriendsByUserId(pageable, userId);
         List<UserResponse> friends = friendsData.stream()
@@ -52,7 +51,6 @@ public class FriendServiceImpl implements FriendService {
     }
 
     @Transactional
-    @Override
     public void addFriend(Long userId, Long targetId) {
         User target = userRepository.findById(targetId);
         User user = userRepository.findById(userId);
@@ -67,7 +65,6 @@ public class FriendServiceImpl implements FriendService {
         friendRepository.save(Friend.createFriend(target, user));
     }
 
-    @Override
     public List<FriendShuffleResponse> findShuffledFriend(Long userId) {
         User user = userRepository.findById(userId);
 
@@ -85,7 +82,6 @@ public class FriendServiceImpl implements FriendService {
             .toList();
     }
 
-    @Override
     public RecommendFriendResponse findAllRecommendSchoolFriends(Pageable pageable, Long userId) {
         User user = userRepository.findById(userId);
 
@@ -104,7 +100,6 @@ public class FriendServiceImpl implements FriendService {
     }
 
     @Transactional
-    @Override
     public void deleteFriend(Long userId, Long targetId) {
         User target = userRepository.findById(targetId);
         User user = userRepository.findById(userId);
@@ -115,7 +110,6 @@ public class FriendServiceImpl implements FriendService {
         friendRepository.deleteByUserAndTarget(user.getId(), target.getId());
     }
 
-    @Override
     public RecommendFriendResponse findAllRecommendKakaoFriends(Pageable pageable, Long userId,
         KakaoRecommendRequest request) {
         User user = userRepository.findById(userId);

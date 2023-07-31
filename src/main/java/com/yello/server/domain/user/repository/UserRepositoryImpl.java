@@ -37,9 +37,8 @@ public class UserRepositoryImpl implements UserRepository {
     }
 
     @Override
-    public User findExistsByUuid(String uuid) {
-        return userJpaRepository.findExistsByUuid(uuid)
-            .orElseThrow(() -> new UserNotFoundException(AUTH_UUID_NOT_FOUND_USER_EXCEPTION));
+    public boolean existsByUuid(String uuid) {
+        return userJpaRepository.existsByUuid(uuid);
     }
 
     @Override

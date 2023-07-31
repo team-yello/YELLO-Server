@@ -13,4 +13,8 @@ public interface CooldownJpaRepository extends JpaRepository<Cooldown, Long> {
     @Query("select c from Cooldown c where c.user.id = :userId")
     Optional<Cooldown> findByUserIdNotFiltered(Long userId);
 
+    @Query("select case when count(c) > 0 then true else false end from Cooldown c " +
+        "where c.user.id = :userId " +
+        "and c.deletedAt is null")
+    boolean existsByUserId(Long userId);
 }
