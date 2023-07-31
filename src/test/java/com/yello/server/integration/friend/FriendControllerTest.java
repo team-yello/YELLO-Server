@@ -3,7 +3,7 @@ package com.yello.server.integration.friend;
 import com.yello.server.domain.friend.entity.FriendRepository;
 import com.yello.server.domain.friend.service.FriendService;
 import com.yello.server.domain.group.entity.SchoolRepository;
-import com.yello.server.domain.user.entity.UserRepository;
+import com.yello.server.domain.user.repository.UserJpaRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.transaction.annotation.Transactional;
@@ -14,7 +14,7 @@ import org.springframework.transaction.annotation.Transactional;
 class FriendControllerTest {
 
     @Autowired
-    UserRepository userRepository;
+    UserJpaRepository userRepository;
     @Autowired
     FriendRepository friendRepository;
     @Autowired

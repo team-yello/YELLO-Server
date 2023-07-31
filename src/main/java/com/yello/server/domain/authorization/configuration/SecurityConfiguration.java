@@ -6,7 +6,7 @@ import com.yello.server.domain.authorization.JwtTokenProvider;
 import com.yello.server.domain.authorization.exception.CustomAuthenticationEntryPoint;
 import com.yello.server.domain.authorization.filter.JwtExceptionFilter;
 import com.yello.server.domain.authorization.filter.JwtFilter;
-import com.yello.server.domain.user.entity.UserRepository;
+import com.yello.server.domain.user.repository.UserRepository;
 import com.yello.server.global.exception.ExceptionHandlerFilter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
