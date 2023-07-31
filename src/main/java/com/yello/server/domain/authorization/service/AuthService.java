@@ -98,19 +98,19 @@ public class AuthService {
     @Transactional
     public SignUpResponse signUp(SignUpRequest signUpRequest) {
         // exception
-        User userByUUID = userRepository.findByUuid(signUpRequest.uuid());
+        final User userByUUID = userRepository.findByUuid(signUpRequest.uuid());
         if (ObjectUtils.isNotEmpty(userByUUID)) {
             throw new UserConflictException(UUID_CONFLICT_USER_EXCEPTION);
         }
 
-        User userByYelloId = userRepository.findByYelloId(signUpRequest.yelloId());
+        final User userByYelloId = userRepository.findByYelloId(signUpRequest.yelloId());
         if (ObjectUtils.isNotEmpty(userByYelloId)) {
             throw new UserConflictException(YELLOID_CONFLICT_USER_EXCEPTION);
         }
 
         School group = schoolRepository.findById(signUpRequest.groupId());
 
-        User newSignInUser = userRepository.save(User.of(signUpRequest, signUpRequest.uuid(), group));
+        final User newSignInUser = userRepository.save(User.of(signUpRequest, signUpRequest.uuid(), group));
         ServiceTokenVO newUserTokens = jwtTokenProvider.createServiceToken(
                 newSignInUser.getId(),
                 newSignInUser.getUuid()
@@ -120,7 +120,7 @@ public class AuthService {
             User recommendedUser = userRepository.findByYelloId(signUpRequest.recommendId());
             recommendedUser.increaseRecommendCount();
 
-            Optional<Cooldown> cooldown = cooldownRepository.findByUserId(recommendedUser.getId());
+            final Optional<Cooldown> cooldown = cooldownRepository.findByUserId(recommendedUser.getId());
             cooldown.ifPresent(cooldownRepository::delete);
         }
 
@@ -141,8 +141,8 @@ public class AuthService {
 
         schoolRepository.findById(friendRequest.groupId());
 
-        val groupFriends = userRepository.findAllByGroupId(friendRequest.groupId());
-        val kakaoFriends = friendRequest.friendKakaoId()
+        final List<User> groupFriends = userRepository.findAllByGroupId(friendRequest.groupId());
+        final List<User> kakaoFriends = friendRequest.friendKakaoId()
                 .stream()
                 .map(String::valueOf)
                 .map(userRepository::findByUuid)
@@ -156,7 +156,7 @@ public class AuthService {
                 .sorted(Comparator.comparing(User::getName))
                 .toList();
 
-        val pageList = PaginationFactory.getPage(totalList, pageable)
+        final List<User> pageList = PaginationFactory.getPage(totalList, pageable)
                 .stream()
                 .toList();
 
@@ -165,13 +165,13 @@ public class AuthService {
 
     public GroupNameSearchResponse findSchoolsBySearch(String keyword, Pageable pageable) {
         int totalCount = schoolRepository.countDistinctSchoolNameContaining(keyword);
-        List<String> nameList = schoolRepository.findDistinctSchoolNameContaining(keyword, pageable);
+        final List<String> nameList = schoolRepository.findDistinctSchoolNameContaining(keyword, pageable);
         return GroupNameSearchResponse.of(totalCount, nameList);
     }
 
     public DepartmentSearchResponse findDepartmentsBySearch(String schoolName, String keyword, Pageable pageable) {
         int totalCount = schoolRepository.countAllBySchoolNameContaining(schoolName, keyword);
-        List<School> schoolResult = schoolRepository.findAllBySchoolNameContaining(schoolName, keyword, pageable);
+        final List<School> schoolResult = schoolRepository.findAllBySchoolNameContaining(schoolName, keyword, pageable);
         return DepartmentSearchResponse.of(totalCount, schoolResult);
     }
 

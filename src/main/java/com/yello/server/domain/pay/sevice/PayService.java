@@ -20,8 +20,8 @@ public class PayService {
 
     @Transactional
     public void postPayCount(Long userId, Integer optionIndex) {
-        User user = userRepository.findById(userId);
-        List<Pay> allByUserAndIndex = payRepository.findAllByUserAndOptionIndex(user, optionIndex);
+        final User user = userRepository.findById(userId);
+        final List<Pay> allByUserAndIndex = payRepository.findAllByUserAndOptionIndex(user, optionIndex);
         if (allByUserAndIndex.isEmpty()) {
             payRepository.save(Pay.createPay(optionIndex, user));
         }
