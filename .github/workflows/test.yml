@@ -28,7 +28,7 @@ jobs:
       uses: qafficient/junit-report-slack@v1.0.0
       with:
         # Name of the test run
-        testRunName: YELLO: TEST 결과지📊
+        testRunName: YELLO - TEST 결과지📊
         # Slack Conversation ID ie: C12355667
         slackChannelId: C05E6PLQEMQ
         # Secret Slack Token
