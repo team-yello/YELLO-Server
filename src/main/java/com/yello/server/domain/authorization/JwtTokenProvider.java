@@ -12,6 +12,7 @@ import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.MalformedJwtException;
 import io.jsonwebtoken.security.SignatureException;
 import java.util.Date;
+import lombok.AllArgsConstructor;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import lombok.val;
@@ -21,110 +22,111 @@ import org.springframework.stereotype.Component;
 @Log4j2
 @Component
 @RequiredArgsConstructor
+@AllArgsConstructor
 public class JwtTokenProvider {
 
-    public static final String ACCESS_TOKEN = "accessToken";
-    public static final String REFRESH_TOKEN = "refreshToken";
+  public static final String ACCESS_TOKEN = "accessToken";
+  public static final String REFRESH_TOKEN = "refreshToken";
 
-    private static final Long ACCESS_TOKEN_VALID_TIME = ofSeconds(30).toMillis();
-    private static final Long REFRESH_TOKEN_VALID_TIME = ofDays(14).toMillis();
+  private static final Long ACCESS_TOKEN_VALID_TIME = ofSeconds(30).toMillis();
+  private static final Long REFRESH_TOKEN_VALID_TIME = ofDays(14).toMillis();
 
-    @Value("${spring.jwt.secret}")
-    private String secretKey;
+  @Value("${spring.jwt.secret}")
+  private String secretKey;
 
-    public Long getUserId(String token)
-        throws ExpiredJwtException, MalformedJwtException, SignatureException, IllegalArgumentException {
+  public Long getUserId(String token)
+      throws ExpiredJwtException, MalformedJwtException, SignatureException, IllegalArgumentException {
 
-        JwtParser parser = Jwts.parserBuilder()
-            .setSigningKey(secretKey)
-            .build();
+    JwtParser parser = Jwts.parserBuilder()
+        .setSigningKey(secretKey)
+        .build();
 
-        String userId = parser.parseClaimsJws(token)
-            .getBody()
-            .getId();
+    String userId = parser.parseClaimsJws(token)
+        .getBody()
+        .getId();
 
-        return Long.valueOf(userId);
+    return Long.valueOf(userId);
+  }
+
+  public String getUserUuid(String token)
+      throws ExpiredJwtException, MalformedJwtException, SignatureException, IllegalArgumentException {
+    return Jwts.parserBuilder()
+        .setSigningKey(secretKey)
+        .build()
+        .parseClaimsJws(token)
+        .getBody()
+        .getSubject();
+  }
+
+  public boolean isExpired(String token) {
+    try {
+      Jwts.parserBuilder()
+          .setSigningKey(secretKey)
+          .build()
+          .parseClaimsJws(token)
+          .getBody();
+    } catch (ExpiredJwtException e) {
+      return true;
     }
 
-    public String getUserUuid(String token)
-        throws ExpiredJwtException, MalformedJwtException, SignatureException, IllegalArgumentException {
-        return Jwts.parserBuilder()
-            .setSigningKey(secretKey)
-            .build()
-            .parseClaimsJws(token)
-            .getBody()
-            .getSubject();
-    }
+    return false;
+  }
 
-    public boolean isExpired(String token) {
-        try {
-            Jwts.parserBuilder()
-                .setSigningKey(secretKey)
-                .build()
-                .parseClaimsJws(token)
-                .getBody();
-        } catch (ExpiredJwtException e) {
-            return true;
-        }
+  public boolean isRefreshToken(String token) {
+    val header = Jwts.parserBuilder()
+        .setSigningKey(secretKey)
+        .build()
+        .parseClaimsJws(token)
+        .getBody();
 
-        return false;
-    }
+    return REFRESH_TOKEN.equals(header.get("type").toString());
+  }
 
-    public boolean isRefreshToken(String token) {
-        val header = Jwts.parserBuilder()
-            .setSigningKey(secretKey)
-            .build()
-            .parseClaimsJws(token)
-            .getBody();
+  public boolean isAccessToken(String token) {
+    val header = Jwts.parserBuilder()
+        .setSigningKey(secretKey)
+        .build()
+        .parseClaimsJws(token)
+        .getBody();
 
-        return REFRESH_TOKEN.equals(header.get("type").toString());
-    }
+    return ACCESS_TOKEN.equals(header.get("type").toString());
+  }
 
-    public boolean isAccessToken(String token) {
-        val header = Jwts.parserBuilder()
-            .setSigningKey(secretKey)
-            .build()
-            .parseClaimsJws(token)
-            .getBody();
+  public String createAccessToken(Long userId, String uuid) {
+    return createJwt(userId, uuid, ACCESS_TOKEN_VALID_TIME, ACCESS_TOKEN);
+  }
 
-        return ACCESS_TOKEN.equals(header.get("type").toString());
-    }
+  public String createRefreshToken(Long userId, String uuid) {
+    return createJwt(userId, uuid, REFRESH_TOKEN_VALID_TIME, REFRESH_TOKEN);
+  }
 
-    public String createAccessToken(Long userId, String uuid) {
-        return createJwt(userId, uuid, ACCESS_TOKEN_VALID_TIME, ACCESS_TOKEN);
-    }
+  public ServiceTokenVO createServiceToken(Long userId, String uuid) {
+    return ServiceTokenVO.of(
+        createAccessToken(userId, uuid),
+        createRefreshToken(userId, uuid)
+    );
+  }
 
-    public String createRefreshToken(Long userId, String uuid) {
-        return createJwt(userId, uuid, REFRESH_TOKEN_VALID_TIME, REFRESH_TOKEN);
-    }
+  public String createJwt(Long userId, String uuid, Long tokenValidTime, String tokenType) {
+    Claims claims = Jwts.claims()
+        .setSubject(uuid)
+        .setId(String.valueOf(userId));
 
-    public ServiceTokenVO createServiceToken(Long userId, String uuid) {
-        return ServiceTokenVO.of(
-            createAccessToken(userId, uuid),
-            createRefreshToken(userId, uuid)
-        );
-    }
+    return Jwts.builder()
+        .setClaims(claims)
+        .setHeaderParam("type", tokenType)
+        .setIssuedAt(new Date(System.currentTimeMillis()))
+        .setExpiration(new Date(System.currentTimeMillis() + tokenValidTime))
+        .signWith(HS256, secretKey)
+        .compact();
+  }
 
-    public String createJwt(Long userId, String uuid, Long tokenValidTime, String tokenType) {
-        Claims claims = Jwts.claims()
-            .setSubject(uuid)
-            .setId(String.valueOf(userId));
+  public void tryParse(String token)
+      throws ExpiredJwtException, MalformedJwtException, SignatureException, IllegalArgumentException {
+    JwtParser parser = Jwts.parserBuilder()
+        .setSigningKey(secretKey)
+        .build();
 
-        return Jwts.builder()
-            .setClaims(claims)
-            .setHeaderParam("type", tokenType)
-            .setIssuedAt(new Date(System.currentTimeMillis()))
-            .setExpiration(new Date(System.currentTimeMillis() + tokenValidTime))
-            .signWith(HS256, secretKey)
-            .compact();
-    }
-
-    public void tryParse(String token)
-        throws ExpiredJwtException, MalformedJwtException, SignatureException, IllegalArgumentException {
-        JwtParser parser = Jwts.parserBuilder()
-            .setSigningKey(secretKey)
-            .build();
-
-        parser.parse(token);
-    }
+    parser.parse(token);
+  }
 }
