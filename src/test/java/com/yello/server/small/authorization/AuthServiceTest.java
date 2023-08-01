@@ -98,4 +98,9 @@ public class AuthServiceTest {
         .isInstanceOf(AuthBadRequestException.class)
         .hasMessageContaining(YELLOID_REQUIRED_EXCEPTION.getMessage());
   }
+
+  @Test
+  void 회원가입에_성공합니다() {
+
+  }
 }
