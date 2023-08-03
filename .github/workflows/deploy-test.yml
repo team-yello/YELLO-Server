@@ -55,8 +55,8 @@ jobs:
       - name: ⏳ AWS에 연결을 진행합니다.
         uses: aws-actions/configure-aws-credentials@v1
         with:
-          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY }}
-          aws-secret-access-key: ${{ secrets.AWS_SECRET_KEY }}
+          aws-access-key-id: ${{ secrets.AWS_TEST_ACCESS_KEY }}
+          aws-secret-access-key: ${{ secrets.AWS_TEST_SECRET_KEY }}
           aws-region: ${{ secrets.AWS_REGION }}
 
       - name: 🪣 배포를 위해 S3에 프로젝트를 업로드합니다.
