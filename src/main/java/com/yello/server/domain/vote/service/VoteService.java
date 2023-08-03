@@ -45,7 +45,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.IntStream;
-g
+
 import lombok.Builder;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
@@ -74,8 +74,8 @@ public class VoteService {
   }
 
   @Transactional
-  public VoteDetailResponse findVoteById(Long id) {
-    final Vote vote = voteRepository.findById(id);
+  public VoteDetailResponse findVoteById(Long voteId) {
+    final Vote vote = voteRepository.findById(voteId);
     vote.read();
     return VoteDetailResponse.of(vote);
   }
