@@ -7,6 +7,7 @@ import com.yello.server.domain.question.exception.QuestionException;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
 
 @Repository
 @RequiredArgsConstructor
@@ -23,5 +24,11 @@ public class QuestionRepositoryImpl implements QuestionRepository {
   public Question findById(Long id) {
     return questionJpaRepository.findById(id)
         .orElseThrow(() -> new QuestionException(NOT_FOUND_QUESTION_EXCEPTION));
+  }
+
+  @Transactional
+  @Override
+  public Question save(Question question) {
+    return questionJpaRepository.save(question);
   }
 }

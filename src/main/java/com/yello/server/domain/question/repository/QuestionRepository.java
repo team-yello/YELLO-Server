@@ -8,4 +8,6 @@ public interface QuestionRepository {
   List<Question> findAll();
 
   Question findById(Long id);
+
+  Question save(Question question);
 }
