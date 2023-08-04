@@ -1,5 +1,6 @@
 package com.yello.server.domain.authorization.service;
 
+import static com.yello.server.global.common.ErrorCode.NOT_SIGNIN_USER_EXCEPTION;
 import static com.yello.server.global.common.ErrorCode.OAUTH_TOKEN_EXCEPTION;
 import static com.yello.server.global.common.ErrorCode.TOKEN_ALL_EXPIRED_AUTH_EXCEPTION;
 import static com.yello.server.global.common.ErrorCode.TOKEN_NOT_EXPIRED_AUTH_EXCEPTION;
@@ -22,6 +23,7 @@ import com.yello.server.domain.authorization.dto.response.OnBoardingFriendRespon
 import com.yello.server.domain.authorization.dto.response.SignUpResponse;
 import com.yello.server.domain.authorization.exception.AuthBadRequestException;
 import com.yello.server.domain.authorization.exception.NotExpiredTokenForbiddenException;
+import com.yello.server.domain.authorization.exception.NotSignedInException;
 import com.yello.server.domain.authorization.exception.OAuthException;
 import com.yello.server.domain.cooldown.entity.Cooldown;
 import com.yello.server.domain.cooldown.repository.CooldownRepository;
@@ -69,24 +71,28 @@ public class AuthService {
             throw new OAuthException(OAUTH_TOKEN_EXCEPTION);
         }
 
-        final User currentUser = userRepository.getByUuid(String.valueOf(response.getBody().id()));
+        final Optional<User> target = userRepository.findByUuid(String.valueOf(response.getBody().id()));
+        if (target.isEmpty()) {
+            throw new NotSignedInException(NOT_SIGNIN_USER_EXCEPTION);
+        }
 
+        final User user = target.get();
         final ServiceTokenVO serviceTokenVO = jwtTokenProvider.createServiceToken(
-            currentUser.getId(),
-            currentUser.getUuid()
+            user.getId(),
+            user.getUuid()
         );
 
         tokenValueOperations.set(
-            currentUser.getId(),
+            user.getId(),
             serviceTokenVO
         );
 
-        currentUser.renew();
-        friendRepository.findAllByUserIdNotFiltered(currentUser.getId())
+        user.renew();
+        friendRepository.findAllByUserIdNotFiltered(user.getId())
             .forEach(Friend::renew);
-        friendRepository.findAllByTargetIdNotFiltered(currentUser.getId())
+        friendRepository.findAllByTargetIdNotFiltered(user.getId())
             .forEach(Friend::renew);
-        cooldownRepository.findByUserIdNotFiltered(currentUser.getId())
+        cooldownRepository.findByUserIdNotFiltered(user.getId())
             .ifPresent(Cooldown::renew);
 
         return OAuthResponse.of(serviceTokenVO);
