@@ -5,16 +5,16 @@ import java.util.List;
 
 public interface UserRepository {
 
-    User save(User user);
+  User save(User user);
 
-    User findById(Long id);
+  User findById(Long id);
 
-    User findByUuid(String uuid);
+  User findByUuid(String uuid);
 
-    boolean existsByUuid(String uuid);
+  boolean existsByUuid(String uuid);
 
-    User findByYelloId(String yelloId);
+  User findByYelloId(String yelloId);
 
-    List<User> findAllByGroupId(Long groupId);
+  List<User> findAllByGroupId(Long groupId);
 
 }
