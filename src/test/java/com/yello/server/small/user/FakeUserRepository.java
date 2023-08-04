@@ -17,8 +17,12 @@ public class FakeUserRepository implements UserRepository {
 
     @Override
     public User save(User user) {
+        if (user.getId() != null && user.getId() > id) {
+            id = user.getId();
+        }
+
         User newUser = User.builder()
-            .id(user.getId() == null ? id++ : user.getId())
+            .id(user.getId() == null ? ++id : user.getId())
             .recommendCount(0L)
             .name(user.getName())
             .yelloId(user.getYelloId())
@@ -34,7 +38,7 @@ public class FakeUserRepository implements UserRepository {
             .build();
 
         data.add(newUser);
-        return user;
+        return newUser;
     }
 
     @Override

@@ -147,9 +147,7 @@ public class VoteService {
         final List<VoteAnswer> voteAnswerList = request.voteAnswerList();
         IntStream.range(0, voteAnswerList.size())
             .forEach(index -> {
-                if (index > 0 && voteAnswerList.get(index - 1).questionId() == voteAnswerList.get(
-                        index)
-                    .questionId()) {
+                if (index > 0 && voteAnswerList.get(index - 1).questionId() == voteAnswerList.get(index).questionId()) {
                     throw new VoteForbiddenException(DUPLICATE_VOTE_EXCEPTION);
                 }
 

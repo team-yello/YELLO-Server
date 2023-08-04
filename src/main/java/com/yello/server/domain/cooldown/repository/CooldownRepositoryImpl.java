@@ -14,8 +14,8 @@ public class CooldownRepositoryImpl implements CooldownRepository {
     private final CooldownJpaRepository cooldownJpaRepository;
 
     @Override
-    public void save(Cooldown cooldown) {
-        cooldownJpaRepository.save(cooldown);
+    public Cooldown save(Cooldown cooldown) {
+        return cooldownJpaRepository.save(cooldown);
     }
 
     @Override

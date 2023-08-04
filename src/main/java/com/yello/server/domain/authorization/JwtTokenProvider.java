@@ -12,7 +12,6 @@ import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.MalformedJwtException;
 import io.jsonwebtoken.security.SignatureException;
 import java.util.Date;
-import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import lombok.val;
 import org.springframework.beans.factory.annotation.Value;
@@ -20,7 +19,6 @@ import org.springframework.stereotype.Component;
 
 @Log4j2
 @Component
-@RequiredArgsConstructor
 public class JwtTokenProvider {
 
     public static final String ACCESS_TOKEN = "accessToken";
@@ -29,8 +27,11 @@ public class JwtTokenProvider {
     private static final Long ACCESS_TOKEN_VALID_TIME = ofSeconds(30).toMillis();
     private static final Long REFRESH_TOKEN_VALID_TIME = ofDays(14).toMillis();
 
-    @Value("${spring.jwt.secret}")
-    private String secretKey;
+    public String secretKey;
+
+    public JwtTokenProvider(@Value("${spring.jwt.secret}") String secretKey) {
+        this.secretKey = secretKey;
+    }
 
     public Long getUserId(String token)
         throws ExpiredJwtException, MalformedJwtException, SignatureException,

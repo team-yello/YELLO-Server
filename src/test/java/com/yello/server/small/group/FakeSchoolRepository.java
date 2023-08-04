@@ -1,52 +1,61 @@
-package com.yello.server.domain.group.repository;
+package com.yello.server.small.group;
 
 import static com.yello.server.global.common.ErrorCode.GROUPID_NOT_FOUND_GROUP_EXCEPTION;
 
 import com.yello.server.domain.group.entity.School;
 import com.yello.server.domain.group.exception.GroupNotFoundException;
+import com.yello.server.domain.group.repository.SchoolRepository;
+import java.util.ArrayList;
 import java.util.List;
-import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
-import org.springframework.stereotype.Repository;
-import org.springframework.transaction.annotation.Transactional;
 
-@Repository
-@RequiredArgsConstructor
-@Transactional(readOnly = true)
-public class SchoolRepositoryImpl implements SchoolRepository {
+public class FakeSchoolRepository implements SchoolRepository {
 
-    private final SchoolJpaRepository schoolJpaRepository;
-
+    private final List<School> data = new ArrayList<>();
+    private Long id = 0L;
 
     @Override
     public School save(School school) {
-        return schoolJpaRepository.save(school);
+        if (school.getId() != null && school.getId() > id) {
+            id = school.getId();
+        }
+
+        School newSchool = School.builder()
+            .id(school.getId() == null ? ++id : school.getId())
+            .schoolName(school.getSchoolName())
+            .departmentName(school.getDepartmentName())
+            .build();
+
+        data.add(newSchool);
+        return newSchool;
     }
 
     @Override
     public School findById(Long id) {
-        return schoolJpaRepository.findById(id)
+        return data.stream()
+            .filter(school -> school.getId().equals(id))
+            .findFirst()
             .orElseThrow(() -> new GroupNotFoundException(GROUPID_NOT_FOUND_GROUP_EXCEPTION));
     }
 
     @Override
     public Integer countDistinctSchoolNameContaining(String schoolName) {
-        return schoolJpaRepository.countDistinctSchoolNameContaining(schoolName);
+        return null;
     }
 
     @Override
     public List<String> findDistinctSchoolNameContaining(String schoolName, Pageable pageable) {
-        return schoolJpaRepository.findDistinctSchoolNameContaining(schoolName, pageable);
+        return null;
     }
 
     @Override
     public Integer countAllBySchoolNameContaining(String schoolName, String departmentName) {
-        return schoolJpaRepository.countAllBySchoolNameContaining(schoolName, departmentName);
+        return null;
     }
 
     @Override
     public List<School> findAllBySchoolNameContaining(String schoolName, String departmentName,
         Pageable pageable) {
-        return schoolJpaRepository.findAllBySchoolNameContaining(schoolName, departmentName, pageable);
+        return null;
     }
 }

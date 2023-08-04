@@ -38,9 +38,8 @@ public class ExceptionHandlerFilter extends OncePerRequestFilter {
         BaseResponse baseResponse = BaseResponse.error(errorCode);
         try {
             response.getWriter()
-                .write(
-                    objectMapper.configure(JsonWriteFeature.ESCAPE_NON_ASCII.mappedFeature(), true)
-                        .writeValueAsString(baseResponse));
+                .write(objectMapper.configure(JsonWriteFeature.ESCAPE_NON_ASCII.mappedFeature(), true)
+                    .writeValueAsString(baseResponse));
         } catch (IOException exception) {
             exception.printStackTrace();
         }

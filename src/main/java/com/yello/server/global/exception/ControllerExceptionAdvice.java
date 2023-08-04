@@ -61,8 +61,7 @@ public class ControllerExceptionAdvice {
     })
     public ResponseEntity<BaseResponse> BadRequestException(BindException exception) {
         return ResponseEntity.status(BAD_REQUEST)
-            .body(BaseResponse.error(FIELD_REQUIRED_EXCEPTION,
-                FIELD_REQUIRED_EXCEPTION.getMessage()));
+            .body(BaseResponse.error(FIELD_REQUIRED_EXCEPTION, FIELD_REQUIRED_EXCEPTION.getMessage()));
     }
 
     @ExceptionHandler({
@@ -72,8 +71,7 @@ public class ControllerExceptionAdvice {
     public ResponseEntity<BaseResponse> BadRequestException(
         HttpMessageConversionException exception) {
         return ResponseEntity.status(BAD_REQUEST)
-            .body(BaseResponse.error(FIELD_REQUIRED_EXCEPTION,
-                FIELD_REQUIRED_EXCEPTION.getMessage()));
+            .body(BaseResponse.error(FIELD_REQUIRED_EXCEPTION, FIELD_REQUIRED_EXCEPTION.getMessage()));
     }
 
     @ExceptionHandler({
@@ -83,8 +81,7 @@ public class ControllerExceptionAdvice {
     public ResponseEntity<BaseResponse> BadRequestException(
         MissingServletRequestParameterException exception) {
         return ResponseEntity.status(BAD_REQUEST)
-            .body(BaseResponse.error(QUERY_STRING_REQUIRED_EXCEPTION,
-                QUERY_STRING_REQUIRED_EXCEPTION.getMessage()));
+            .body(BaseResponse.error(QUERY_STRING_REQUIRED_EXCEPTION, QUERY_STRING_REQUIRED_EXCEPTION.getMessage()));
     }
 
     /**

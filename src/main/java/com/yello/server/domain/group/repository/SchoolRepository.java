@@ -6,6 +6,8 @@ import org.springframework.data.domain.Pageable;
 
 public interface SchoolRepository {
 
+    School save(School school);
+
     School findById(Long id);
 
     Integer countDistinctSchoolNameContaining(String schoolName);

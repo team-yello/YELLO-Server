@@ -28,10 +28,8 @@ public record QuestionVO(
             .questionId(Objects.isNull(question.getId()) ? null : question.getId())
             .nameHead(Objects.isNull(question.getNameHead()) ? null : question.getNameHead())
             .nameFoot(Objects.isNull(question.getNameFoot()) ? null : question.getNameFoot())
-            .keywordHead(
-                Objects.isNull(question.getKeywordHead()) ? null : question.getKeywordHead())
-            .keywordFoot(
-                Objects.isNull(question.getKeywordFoot()) ? null : question.getKeywordFoot())
+            .keywordHead(Objects.isNull(question.getKeywordHead()) ? null : question.getKeywordHead())
+            .keywordFoot(Objects.isNull(question.getKeywordFoot()) ? null : question.getKeywordFoot())
             .build();
     }
 }
