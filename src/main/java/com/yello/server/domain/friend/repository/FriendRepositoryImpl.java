@@ -16,7 +16,7 @@ import org.springframework.transaction.annotation.Transactional;
 @Transactional(readOnly = true)
 public class FriendRepositoryImpl implements FriendRepository {
 
-    private FriendJpaRepository friendJpaRepository;
+    private final FriendJpaRepository friendJpaRepository;
 
     @Transactional
     @Override
