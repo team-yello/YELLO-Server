@@ -103,7 +103,7 @@ public class AuthService {
             throw new AuthBadRequestException(YELLOID_REQUIRED_EXCEPTION);
         }
 
-        userRepository.findByYelloId(yelloId);
+        userRepository.getByYelloId(yelloId);
         return true;
     }
 
@@ -201,8 +201,8 @@ public class AuthService {
             Long userId = jwtTokenProvider.getUserId(refreshToken);
             String uuid = jwtTokenProvider.getUserUuid(refreshToken);
 
-            userRepository.findById(userId);
-            userRepository.findByUuid(uuid);
+            userRepository.getById(userId);
+            userRepository.getByUuid(uuid);
 
             String newAccessToken = jwtTokenProvider.createAccessToken(userId, uuid);
             val token = ServiceTokenVO.of(newAccessToken, tokens.refreshToken());
