@@ -97,7 +97,8 @@ public class FriendController {
         @Valid @RequestParam Integer page,
         @AccessTokenUser User user
     ) {
-        val data = friendService.findAllRecommendSchoolFriends(createPageableByNameSort(page), user.getId());
+        val data = friendService.findAllRecommendSchoolFriends(createPageableByNameSort(page),
+            user.getId());
         return BaseResponse.success(SuccessCode.READ_FRIEND_SUCCESS, data);
     }
 
@@ -112,7 +113,9 @@ public class FriendController {
         @Valid @RequestParam Integer page,
         @AccessTokenUser User user
     ) {
-        val data = friendService.findAllRecommendKakaoFriends(createPageableByNameSort(page), user.getId(), request);
+        val data =
+            friendService.findAllRecommendKakaoFriends(createPageableByNameSort(page), user.getId(),
+                request);
         return BaseResponse.success(READ_FRIEND_SUCCESS, data);
     }
 

@@ -30,7 +30,8 @@ public class TimeFactory {
         return (seconds / HOUR) + "일 전";
     }
 
-    public static long getSecondsBetween(LocalDateTime currentDateTime, LocalDateTime localDateTime) {
+    public static long getSecondsBetween(LocalDateTime currentDateTime,
+        LocalDateTime localDateTime) {
         Duration duration = Duration.between(localDateTime, currentDateTime);
         return duration.getSeconds();
     }

@@ -10,15 +10,15 @@ import org.springframework.stereotype.Repository;
 @RequiredArgsConstructor
 public class PayRepositoryImpl implements PayRepository {
 
-  private final PayJpaRepository payJpaRepository;
+    private final PayJpaRepository payJpaRepository;
 
-  @Override
-  public Pay save(Pay pay) {
-    return payJpaRepository.save(pay);
-  }
+    @Override
+    public Pay save(Pay pay) {
+        return payJpaRepository.save(pay);
+    }
 
-  @Override
-  public List<Pay> findAllByUserAndOptionIndex(User user, Integer optionIndex) {
-    return payJpaRepository.findAllByUserAndOptionIndex(user, optionIndex);
-  }
+    @Override
+    public List<Pay> findAllByUserAndOptionIndex(User user, Integer optionIndex) {
+        return payJpaRepository.findAllByUserAndOptionIndex(user, optionIndex);
+    }
 }

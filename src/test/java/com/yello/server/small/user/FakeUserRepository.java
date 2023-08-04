@@ -18,12 +18,12 @@ public class FakeUserRepository implements UserRepository {
     @Override
     public User save(User user) {
         User newUser = User.builder()
-            .id(user.getId()==null ? id++ : user.getId())
+            .id(user.getId() == null ? id++ : user.getId())
             .recommendCount(0L)
             .name(user.getName())
             .yelloId(user.getYelloId())
             .gender(user.getGender())
-            .point(200)
+            .point(2000)
             .social(user.getSocial())
             .profileImage(user.getProfileImage())
             .uuid(user.getUuid())

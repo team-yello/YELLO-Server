@@ -1,9 +1,8 @@
 package com.yello.server.domain.group.repository;
 
 import com.yello.server.domain.group.entity.School;
-
-import org.springframework.data.domain.Pageable;
 import java.util.List;
+import org.springframework.data.domain.Pageable;
 
 public interface SchoolRepository {
 
@@ -15,5 +14,6 @@ public interface SchoolRepository {
 
     Integer countAllBySchoolNameContaining(String schoolName, String departmentName);
 
-    List<School> findAllBySchoolNameContaining(String schoolName, String departmentName, Pageable pageable);
+    List<School> findAllBySchoolNameContaining(String schoolName, String departmentName,
+        Pageable pageable);
 }

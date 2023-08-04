@@ -1,12 +1,16 @@
 package com.yello.server.global.common;
 
 
+import static org.springframework.http.HttpStatus.BAD_REQUEST;
+import static org.springframework.http.HttpStatus.CONFLICT;
+import static org.springframework.http.HttpStatus.FORBIDDEN;
+import static org.springframework.http.HttpStatus.NOT_FOUND;
+import static org.springframework.http.HttpStatus.UNAUTHORIZED;
+
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import org.springframework.http.HttpStatus;
-
-import static org.springframework.http.HttpStatus.*;
 
 @Getter
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
@@ -45,7 +49,7 @@ public enum ErrorCode {
     TOKEN_NOT_EXPIRED_AUTH_EXCEPTION(FORBIDDEN, "토큰이 모두 유효합니다."),
     TOKEN_ALL_EXPIRED_AUTH_EXCEPTION(FORBIDDEN, "토큰이 모두 만료됐습니다."),
     TOKEN_INFO_NOT_SAME_AUTH_EXCEPTION(FORBIDDEN, "동일하지 않은 액세스 토큰과 리프레시 토큰입니다."),
-    DUPLICATE_VOTE_EXCEPTION(FORBIDDEN,"중복된 투표가 전달되었습니다."),
+    DUPLICATE_VOTE_EXCEPTION(FORBIDDEN, "중복된 투표가 전달되었습니다."),
 
     /**
      * 404 NOT FOUND

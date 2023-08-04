@@ -33,6 +33,7 @@ dependencies {
     compileOnly 'org.projectlombok:lombok'
     annotationProcessor 'org.projectlombok:lombok'
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
+    testImplementation 'org.junit.jupiter:junit-jupiter-params:5.4.2'
 
     // JPA & Database
     implementation 'org.springframework.boot:spring-boot-starter-data-jpa'

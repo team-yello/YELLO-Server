@@ -17,9 +17,10 @@ public enum Gender {
         return Arrays.stream(Gender.values())
             .filter(v -> v.getIntial().equals(dbData))
             .findAny()
-            .orElseThrow(() -> new IllegalArgumentException(MessageFormat.format("존재하지 않는 성별입니다. {0}", dbData)));
+            .orElseThrow(() -> new IllegalArgumentException(
+                MessageFormat.format("존재하지 않는 성별입니다. {0}", dbData)));
     }
- 
+
     public String intial() {
         return intial;
     }

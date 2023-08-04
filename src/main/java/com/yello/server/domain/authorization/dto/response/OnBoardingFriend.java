@@ -15,7 +15,7 @@ public record OnBoardingFriend(
 
     public static OnBoardingFriend of(User user) {
         return OnBoardingFriend.builder()
-            .group(user.getSocial()==Social.KAKAO ? "KAKAO" : "SCHOOL")
+            .group(user.getSocial() == Social.KAKAO ? "KAKAO" : "SCHOOL")
             .id(user.getId())
             .name(user.getName())
             .profileImage(user.getProfileImage())

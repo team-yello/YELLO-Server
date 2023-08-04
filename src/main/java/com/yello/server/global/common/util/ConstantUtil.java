@@ -3,7 +3,7 @@ package com.yello.server.global.common.util;
 public class ConstantUtil {
 
     public static final int RANDOM_COUNT = 4;
-    public static final int VOTE_COUNT = 10;
+    public static final int VOTE_COUNT = 8;
     public static final long TIMER_TIME = 2400L;
     public static final int MIN_POINT = 7;
     public static final double FIRST_POINT_WEIGHT = 0.24;

@@ -33,7 +33,8 @@ public class JwtTokenProvider {
     private String secretKey;
 
     public Long getUserId(String token)
-        throws ExpiredJwtException, MalformedJwtException, SignatureException, IllegalArgumentException {
+        throws ExpiredJwtException, MalformedJwtException, SignatureException,
+        IllegalArgumentException {
 
         JwtParser parser = Jwts.parserBuilder()
             .setSigningKey(secretKey)
@@ -47,7 +48,8 @@ public class JwtTokenProvider {
     }
 
     public String getUserUuid(String token)
-        throws ExpiredJwtException, MalformedJwtException, SignatureException, IllegalArgumentException {
+        throws ExpiredJwtException, MalformedJwtException, SignatureException,
+        IllegalArgumentException {
         return Jwts.parserBuilder()
             .setSigningKey(secretKey)
             .build()
@@ -120,7 +122,8 @@ public class JwtTokenProvider {
     }
 
     public void tryParse(String token)
-        throws ExpiredJwtException, MalformedJwtException, SignatureException, IllegalArgumentException {
+        throws ExpiredJwtException, MalformedJwtException, SignatureException,
+        IllegalArgumentException {
         JwtParser parser = Jwts.parserBuilder()
             .setSigningKey(secretKey)
             .build();
