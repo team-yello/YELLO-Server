@@ -14,16 +14,16 @@ import org.springframework.transaction.annotation.Transactional;
 @Transactional(readOnly = true)
 public class PayService {
 
-  private final UserRepository userRepository;
-  private final PayRepository payRepository;
+    private final UserRepository userRepository;
+    private final PayRepository payRepository;
 
-  @Transactional
-  public void postPayCount(Long userId, Integer optionIndex) {
-    final User user = userRepository.findById(userId);
-    final List<Pay> allByUserAndIndex = payRepository.findAllByUserAndOptionIndex(user,
-        optionIndex);
-    if (allByUserAndIndex.isEmpty()) {
-      payRepository.save(Pay.createPay(optionIndex, user));
+    @Transactional
+    public void postPayCount(Long userId, Integer optionIndex) {
+        final User user = userRepository.getById(userId);
+        final List<Pay> allByUserAndIndex = payRepository.findAllByUserAndOptionIndex(user,
+            optionIndex);
+        if (allByUserAndIndex.isEmpty()) {
+            payRepository.save(Pay.createPay(optionIndex, user));
+        }
     }
-  }
 }

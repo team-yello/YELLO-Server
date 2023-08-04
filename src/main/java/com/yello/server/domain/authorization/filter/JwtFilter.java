@@ -43,7 +43,7 @@ public class JwtFilter extends OncePerRequestFilter {
         final Long userId = (Long) request.getAttribute("userId");
         log.info("Current user's id: {}", userId);
 
-        final User user = userRepository.findById(userId);
+        final User user = userRepository.getById(userId);
 
         try {
             val authenticationToken = new UsernamePasswordAuthenticationToken(

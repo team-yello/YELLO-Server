@@ -35,7 +35,7 @@ public class FriendService {
     private final FriendRepository friendRepository;
     private final UserRepository userRepository;
     private final VoteRepository voteRepository;
-    
+
     public FriendsResponse findAllFriends(Pageable pageable, Long userId) {
         final Page<Friend> friendsData = friendRepository.findAllFriendsByUserId(pageable, userId);
         List<UserResponse> friends = friendsData.stream()
@@ -52,8 +52,8 @@ public class FriendService {
 
     @Transactional
     public void addFriend(Long userId, Long targetId) {
-        final User target = userRepository.findById(targetId);
-        final User user = userRepository.findById(userId);
+        final User target = userRepository.getById(targetId);
+        final User user = userRepository.getById(userId);
 
         final Friend friendData = friendRepository.findByUserAndTarget(userId, targetId);
 
@@ -66,7 +66,7 @@ public class FriendService {
     }
 
     public List<FriendShuffleResponse> findShuffledFriend(Long userId) {
-        final User user = userRepository.findById(userId);
+        final User user = userRepository.getById(userId);
 
         final List<Friend> allFriends = friendRepository.findAllByUserId(user.getId());
 
@@ -83,7 +83,7 @@ public class FriendService {
     }
 
     public RecommendFriendResponse findAllRecommendSchoolFriends(Pageable pageable, Long userId) {
-        final User user = userRepository.findById(userId);
+        final User user = userRepository.getById(userId);
 
         List<User> recommendFriends = userRepository.findAllByGroupId(user.getGroup().getId())
             .stream()
@@ -101,8 +101,8 @@ public class FriendService {
 
     @Transactional
     public void deleteFriend(Long userId, Long targetId) {
-        final User target = userRepository.findById(targetId);
-        final User user = userRepository.findById(userId);
+        final User target = userRepository.getById(targetId);
+        final User user = userRepository.getById(userId);
 
         friendRepository.findByUserAndTarget(userId, targetId);
         friendRepository.findByUserAndTarget(targetId, userId);
@@ -112,11 +112,11 @@ public class FriendService {
 
     public RecommendFriendResponse findAllRecommendKakaoFriends(Pageable pageable, Long userId,
         KakaoRecommendRequest request) {
-        final User user = userRepository.findById(userId);
+        final User user = userRepository.getById(userId);
 
         List<User> kakaoFriends = Arrays.stream(request.friendKakaoId())
             .filter(userRepository::existsByUuid)
-            .map(userRepository::findByUuid)
+            .map(userRepository::getByUuid)
             .filter(friend -> !friendRepository.existsByUserAndTarget(user.getId(), friend.getId()))
             .toList();
 

@@ -9,6 +9,7 @@ import com.yello.server.domain.user.exception.UserNotFoundException;
 import com.yello.server.domain.user.repository.UserRepository;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 public class FakeUserRepository implements UserRepository {
 
@@ -38,7 +39,14 @@ public class FakeUserRepository implements UserRepository {
     }
 
     @Override
-    public User findById(Long id) {
+    public Optional<User> findById(Long id) {
+        return data.stream()
+            .filter(user -> user.getId().equals(id))
+            .findFirst();
+    }
+
+    @Override
+    public User getById(Long id) {
         return data.stream()
             .filter(user -> user.getId().equals(id))
             .findFirst()
@@ -46,7 +54,14 @@ public class FakeUserRepository implements UserRepository {
     }
 
     @Override
-    public User findByUuid(String uuid) {
+    public Optional<User> findByUuid(String uuid) {
+        return data.stream()
+            .filter(user -> user.getUuid().equals(uuid))
+            .findFirst();
+    }
+
+    @Override
+    public User getByUuid(String uuid) {
         return data.stream()
             .filter(user -> user.getUuid().equals(uuid))
             .findFirst()
@@ -60,7 +75,14 @@ public class FakeUserRepository implements UserRepository {
     }
 
     @Override
-    public User findByYelloId(String yelloId) {
+    public Optional<User> findByYelloId(String yelloId) {
+        return data.stream()
+            .filter(user -> user.getYelloId().equals(yelloId))
+            .findFirst();
+    }
+
+    @Override
+    public User getByYelloId(String yelloId) {
         return data.stream()
             .filter(user -> user.getYelloId().equals(yelloId))
             .findFirst()

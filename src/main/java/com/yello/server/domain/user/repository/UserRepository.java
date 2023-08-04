@@ -2,18 +2,25 @@ package com.yello.server.domain.user.repository;
 
 import com.yello.server.domain.user.entity.User;
 import java.util.List;
+import java.util.Optional;
 
 public interface UserRepository {
 
     User save(User user);
 
-    User findById(Long id);
+    Optional<User> findById(Long id);
 
-    User findByUuid(String uuid);
+    User getById(Long id);
+
+    Optional<User> findByUuid(String uuid);
+
+    User getByUuid(String uuid);
 
     boolean existsByUuid(String uuid);
 
-    User findByYelloId(String yelloId);
+    Optional<User> findByYelloId(String yelloId);
+
+    User getByYelloId(String yelloId);
 
     List<User> findAllByGroupId(Long groupId);
 
