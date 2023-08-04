@@ -30,7 +30,8 @@ public record VoteAvailableResponse(
             .build();
     }
 
-    public static VoteAvailableResponse of(User user, Boolean isPossible, LocalDateTime localDateTime) {
+    public static VoteAvailableResponse of(User user, Boolean isPossible,
+        LocalDateTime localDateTime) {
         return VoteAvailableResponse.builder()
             .isPossible(isPossible)
             .point(user.getPoint())

@@ -24,6 +24,4 @@ public interface FriendRepository {
     List<Friend> findAllByUserIdNotFiltered(Long userId);
 
     List<Friend> findAllByTargetIdNotFiltered(Long targetId);
-
-    void deleteByUserAndTarget(Long userId, Long targetId);
 }

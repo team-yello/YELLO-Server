@@ -17,7 +17,7 @@ public class FakeVoteRepository implements VoteRepository {
     @Override
     public Vote save(Vote vote) {
         Vote newVote = Vote.builder()
-            .id(id++)
+            .id(vote.getId() == null ? id++ : vote.getId())
             .answer(vote.getAnswer())
             .nameHint(vote.getNameHint())
             .isAnswerRevealed(vote.getIsAnswerRevealed())
@@ -26,6 +26,7 @@ public class FakeVoteRepository implements VoteRepository {
             .receiver(vote.getReceiver())
             .question(vote.getQuestion())
             .colorIndex(vote.getColorIndex())
+            .createdAt(vote.getCreatedAt())
             .build();
         data.add(newVote);
         return newVote;

@@ -11,12 +11,15 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.OneToMany;
 import lombok.AccessLevel;
+import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 @Entity
 @Getter
+@Builder
+@AllArgsConstructor
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Question {
 
@@ -41,4 +44,10 @@ public class Question {
         this.keywordHead = keywordHead;
         this.keywordFoot = keywordFoot;
     }
+
+
+    public void addKeyword(Keyword keyword) {
+        this.keywordList.add(keyword);
+    }
+
 }

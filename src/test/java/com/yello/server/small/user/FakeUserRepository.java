@@ -27,7 +27,7 @@ public class FakeUserRepository implements UserRepository {
             .name(user.getName())
             .yelloId(user.getYelloId())
             .gender(user.getGender())
-            .point(200)
+            .point(2000)
             .social(user.getSocial())
             .profileImage(user.getProfileImage())
             .uuid(user.getUuid())

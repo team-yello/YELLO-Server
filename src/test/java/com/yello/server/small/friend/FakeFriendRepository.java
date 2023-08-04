@@ -13,7 +13,7 @@ import org.springframework.data.domain.Pageable;
 
 public class FakeFriendRepository implements FriendRepository {
 
-    private final List<Friend> data = new ArrayList<>();
+    private List<Friend> data = new ArrayList<>();
     private Long id = 0L;
 
     @Override
@@ -97,10 +97,5 @@ public class FakeFriendRepository implements FriendRepository {
         return data.stream()
             .filter(friend -> friend.getTarget().getId().equals(targetId))
             .toList();
-    }
-
-    @Override
-    public void deleteByUserAndTarget(Long userId, Long targetId) {
-        //do something
     }
 }

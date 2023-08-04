@@ -13,15 +13,15 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
-import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.experimental.SuperBuilder;
 import org.hibernate.annotations.ColumnDefault;
 import org.hibernate.annotations.DynamicInsert;
 
 @Entity
 @Getter
-@Builder
+@SuperBuilder
 @DynamicInsert
 @AllArgsConstructor
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
@@ -61,7 +61,8 @@ public class Vote extends AuditingTimeEntity {
     @Column(nullable = false)
     private Integer colorIndex;
 
-    public static Vote of(String answer, User sender, User receiver, Question question, Integer colorIndex) {
+    public static Vote of(String answer, User sender, User receiver, Question question,
+        Integer colorIndex) {
         return Vote.builder()
             .answer(answer)
             .sender(sender)
@@ -71,7 +72,8 @@ public class Vote extends AuditingTimeEntity {
             .build();
     }
 
-    public static Vote createVote(String answer, User sender, User receiver, Question question, Integer colorIndex) {
+    public static Vote createVote(String answer, User sender, User receiver, Question question,
+        Integer colorIndex) {
         return Vote.of(answer, sender, receiver, question, colorIndex);
     }
 

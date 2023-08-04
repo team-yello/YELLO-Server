@@ -68,7 +68,8 @@ public class ControllerExceptionAdvice {
         // Post인데 @RequestBody 없을 때
         HttpMessageNotReadableException.class
     })
-    public ResponseEntity<BaseResponse> BadRequestException(HttpMessageConversionException exception) {
+    public ResponseEntity<BaseResponse> BadRequestException(
+        HttpMessageConversionException exception) {
         return ResponseEntity.status(BAD_REQUEST)
             .body(BaseResponse.error(FIELD_REQUIRED_EXCEPTION, FIELD_REQUIRED_EXCEPTION.getMessage()));
     }
@@ -77,7 +78,8 @@ public class ControllerExceptionAdvice {
         // @RequestParam 이 없을 때
         MissingServletRequestParameterException.class
     })
-    public ResponseEntity<BaseResponse> BadRequestException(MissingServletRequestParameterException exception) {
+    public ResponseEntity<BaseResponse> BadRequestException(
+        MissingServletRequestParameterException exception) {
         return ResponseEntity.status(BAD_REQUEST)
             .body(BaseResponse.error(QUERY_STRING_REQUIRED_EXCEPTION, QUERY_STRING_REQUIRED_EXCEPTION.getMessage()));
     }

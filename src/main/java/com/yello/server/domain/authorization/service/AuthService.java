@@ -150,7 +150,8 @@ public class AuthService {
             User recommendedUser = userRepository.findByYelloId(recommendYelloId);
             recommendedUser.increaseRecommendCount();
 
-            final Optional<Cooldown> cooldown = cooldownRepository.findByUserId(recommendedUser.getId());
+            final Optional<Cooldown> cooldown =
+                cooldownRepository.findByUserId(recommendedUser.getId());
             cooldown.ifPresent(cooldownRepository::delete);
         }
     }
