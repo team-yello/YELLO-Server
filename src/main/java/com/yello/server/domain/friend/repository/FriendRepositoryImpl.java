@@ -5,6 +5,7 @@ import static com.yello.server.global.common.ErrorCode.NOT_FOUND_FRIEND_EXCEPTIO
 import com.yello.server.domain.friend.entity.Friend;
 import com.yello.server.domain.friend.exception.FriendNotFoundException;
 import java.util.List;
+import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -30,7 +31,12 @@ public class FriendRepositoryImpl implements FriendRepository {
     }
 
     @Override
-    public Friend findByUserAndTarget(Long userId, Long targetId) {
+    public Optional<Friend> findByUserAndTarget(Long userId, Long targetId) {
+        return friendJpaRepository.findByUserAndTarget(userId, targetId);
+    }
+
+    @Override
+    public Friend getByUserAndTarget(Long userId, Long targetId) {
         return friendJpaRepository.findByUserAndTarget(userId, targetId)
             .orElseThrow(() -> new FriendNotFoundException(NOT_FOUND_FRIEND_EXCEPTION));
     }

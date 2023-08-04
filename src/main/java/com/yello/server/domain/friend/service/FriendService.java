@@ -20,8 +20,8 @@ import com.yello.server.global.common.factory.PaginationFactory;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
 import lombok.RequiredArgsConstructor;
-import org.apache.commons.lang3.ObjectUtils;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -55,9 +55,9 @@ public class FriendService {
         final User target = userRepository.getById(targetId);
         final User user = userRepository.getById(userId);
 
-        final Friend friendData = friendRepository.findByUserAndTarget(userId, targetId);
+        final Optional<Friend> friendData = friendRepository.findByUserAndTarget(userId, targetId);
 
-        if (ObjectUtils.isNotEmpty(friendData)) {
+        if (friendData.isPresent()) {
             throw new FriendException(EXIST_FRIEND_EXCEPTION);
         }
 
