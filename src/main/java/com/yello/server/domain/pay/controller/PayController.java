@@ -23,18 +23,18 @@ import org.springframework.web.bind.annotation.RestController;
 @RequiredArgsConstructor
 public class PayController {
 
-  private final PayService payService;
+    private final PayService payService;
 
-  @Operation(summary = "결제 전환율 체크 API", responses = {
-      @ApiResponse(
-          responseCode = "200",
-          content = @Content(mediaType = "application/json"))
-  })
-  @PostMapping
-  public BaseResponse postPayCount(
-      @AccessTokenUser User user,
-      @RequestBody PayCountRequest request) {
-    payService.postPayCount(user.getId(), request.index());
-    return BaseResponse.success(CREATE_PAY_COUNT);
-  }
+    @Operation(summary = "결제 전환율 체크 API", responses = {
+        @ApiResponse(
+            responseCode = "200",
+            content = @Content(mediaType = "application/json"))
+    })
+    @PostMapping
+    public BaseResponse postPayCount(
+        @AccessTokenUser User user,
+        @RequestBody PayCountRequest request) {
+        payService.postPayCount(user.getId(), request.index());
+        return BaseResponse.success(CREATE_PAY_COUNT);
+    }
 }

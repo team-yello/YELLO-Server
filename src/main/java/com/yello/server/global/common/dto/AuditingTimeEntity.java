@@ -20,9 +20,9 @@ import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 @EntityListeners(AuditingEntityListener.class)
 public abstract class AuditingTimeEntity {
 
-  @CreatedDate
-  protected LocalDateTime createdAt;
+    @CreatedDate
+    protected LocalDateTime createdAt;
 
-  @LastModifiedDate
-  protected LocalDateTime updatedAt;
+    @LastModifiedDate
+    protected LocalDateTime updatedAt;
 }

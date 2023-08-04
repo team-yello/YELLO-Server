@@ -44,7 +44,8 @@ public class SecurityConfiguration {
             .exceptionHandling()
             .authenticationEntryPoint(customAuthenticationEntryPoint)
             .and()
-            .addFilterBefore(new JwtFilter(userRepository), UsernamePasswordAuthenticationFilter.class)
+            .addFilterBefore(new JwtFilter(userRepository),
+                UsernamePasswordAuthenticationFilter.class)
             .addFilterBefore(new JwtExceptionFilter(jwtTokenProvider), JwtFilter.class)
             .addFilterBefore(new ExceptionHandlerFilter(), JwtExceptionFilter.class)
             .build();

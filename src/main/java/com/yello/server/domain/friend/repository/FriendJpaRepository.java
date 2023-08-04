@@ -25,7 +25,8 @@ public interface FriendJpaRepository extends JpaRepository<Friend, Long> {
         "and f.user.deletedAt is null " +
         "and f.target.deletedAt is null " +
         "and f.deletedAt is null")
-    Optional<Friend> findByUserAndTarget(@Param("userId") Long userId, @Param("targetId") Long targetId);
+    Optional<Friend> findByUserAndTarget(@Param("userId") Long userId,
+        @Param("targetId") Long targetId);
 
     @Query("select case when count(f) > 0 then true else false end from Friend f " +
         "where f.target.id = :targetId " +

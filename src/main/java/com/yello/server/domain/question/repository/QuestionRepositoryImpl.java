@@ -13,22 +13,22 @@ import org.springframework.transaction.annotation.Transactional;
 @RequiredArgsConstructor
 public class QuestionRepositoryImpl implements QuestionRepository {
 
-  private final QuestionJpaRepository questionJpaRepository;
+    private final QuestionJpaRepository questionJpaRepository;
 
-  @Override
-  public List<Question> findAll() {
-    return questionJpaRepository.findAll();
-  }
+    @Override
+    public List<Question> findAll() {
+        return questionJpaRepository.findAll();
+    }
 
-  @Override
-  public Question findById(Long id) {
-    return questionJpaRepository.findById(id)
-        .orElseThrow(() -> new QuestionException(NOT_FOUND_QUESTION_EXCEPTION));
-  }
+    @Override
+    public Question findById(Long id) {
+        return questionJpaRepository.findById(id)
+            .orElseThrow(() -> new QuestionException(NOT_FOUND_QUESTION_EXCEPTION));
+    }
 
-  @Transactional
-  @Override
-  public Question save(Question question) {
-    return questionJpaRepository.save(question);
-  }
+    @Transactional
+    @Override
+    public Question save(Question question) {
+        return questionJpaRepository.save(question);
+    }
 }

@@ -10,7 +10,7 @@ public class SocialConverter implements AttributeConverter<Social, String> {
 
     @Override
     public String convertToDatabaseColumn(Social social) {
-        if (social==null) {
+        if (social == null) {
             return null;
         }
         return social.getIntial();
@@ -18,7 +18,7 @@ public class SocialConverter implements AttributeConverter<Social, String> {
 
     @Override
     public Social convertToEntityAttribute(String dbData) {
-        if (dbData==null) {
+        if (dbData == null) {
             return null;
         }
         try {

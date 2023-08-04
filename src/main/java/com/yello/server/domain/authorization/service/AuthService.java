@@ -1,5 +1,14 @@
 package com.yello.server.domain.authorization.service;
 
+import static com.yello.server.global.common.ErrorCode.OAUTH_TOKEN_EXCEPTION;
+import static com.yello.server.global.common.ErrorCode.TOKEN_ALL_EXPIRED_AUTH_EXCEPTION;
+import static com.yello.server.global.common.ErrorCode.TOKEN_NOT_EXPIRED_AUTH_EXCEPTION;
+import static com.yello.server.global.common.ErrorCode.UUID_CONFLICT_USER_EXCEPTION;
+import static com.yello.server.global.common.ErrorCode.YELLOID_CONFLICT_USER_EXCEPTION;
+import static com.yello.server.global.common.ErrorCode.YELLOID_REQUIRED_EXCEPTION;
+import static org.springframework.http.HttpStatus.BAD_REQUEST;
+import static org.springframework.http.HttpStatus.UNAUTHORIZED;
+
 import com.yello.server.domain.authorization.JwtTokenProvider;
 import com.yello.server.domain.authorization.dto.ServiceTokenVO;
 import com.yello.server.domain.authorization.dto.kakao.KakaoTokenInfo;
@@ -25,6 +34,12 @@ import com.yello.server.domain.user.exception.UserConflictException;
 import com.yello.server.domain.user.repository.UserRepository;
 import com.yello.server.global.common.factory.PaginationFactory;
 import com.yello.server.global.common.util.RestUtil;
+import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.List;
+import java.util.Objects;
+import java.util.Optional;
+import javax.validation.constraints.NotNull;
 import lombok.RequiredArgsConstructor;
 import lombok.val;
 import org.apache.commons.lang3.ObjectUtils;
@@ -33,14 +48,6 @@ import org.springframework.data.redis.core.ValueOperations;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import javax.validation.constraints.NotNull;
-import java.util.*;
-
-import static com.yello.server.global.common.ErrorCode.*;
-import static com.yello.server.global.common.ErrorCode.TOKEN_NOT_EXPIRED_AUTH_EXCEPTION;
-import static org.springframework.http.HttpStatus.BAD_REQUEST;
-import static org.springframework.http.HttpStatus.UNAUTHORIZED;
 
 @Service
 @RequiredArgsConstructor
@@ -57,7 +64,8 @@ public class AuthService {
 
     @Transactional
     public OAuthResponse oauthLogin(OAuthRequest oAuthRequest) {
-        final ResponseEntity<KakaoTokenInfo> response = RestUtil.getKakaoTokenInfo(oAuthRequest.accessToken());
+        final ResponseEntity<KakaoTokenInfo> response =
+            RestUtil.getKakaoTokenInfo(oAuthRequest.accessToken());
 
         if (response.getStatusCode() == BAD_REQUEST || response.getStatusCode() == UNAUTHORIZED) {
             throw new OAuthException(OAUTH_TOKEN_EXCEPTION);
@@ -66,22 +74,22 @@ public class AuthService {
         final User currentUser = userRepository.findByUuid(String.valueOf(response.getBody().id()));
 
         final ServiceTokenVO serviceTokenVO = jwtTokenProvider.createServiceToken(
-                currentUser.getId(),
-                currentUser.getUuid()
+            currentUser.getId(),
+            currentUser.getUuid()
         );
 
         tokenValueOperations.set(
-                currentUser.getId(),
-                serviceTokenVO
+            currentUser.getId(),
+            serviceTokenVO
         );
 
         currentUser.renew();
         friendRepository.findAllByUserIdNotFiltered(currentUser.getId())
-                .forEach(Friend::renew);
+            .forEach(Friend::renew);
         friendRepository.findAllByTargetIdNotFiltered(currentUser.getId())
-                .forEach(Friend::renew);
+            .forEach(Friend::renew);
         cooldownRepository.findByUserIdNotFiltered(currentUser.getId())
-                .ifPresent(Cooldown::renew);
+            .ifPresent(Cooldown::renew);
 
         return OAuthResponse.of(serviceTokenVO);
     }
@@ -110,68 +118,74 @@ public class AuthService {
 
         School group = schoolRepository.findById(signUpRequest.groupId());
 
-        final User newSignInUser = userRepository.save(User.of(signUpRequest, signUpRequest.uuid(), group));
+        final User newSignInUser =
+            userRepository.save(User.of(signUpRequest, signUpRequest.uuid(), group));
         ServiceTokenVO newUserTokens = jwtTokenProvider.createServiceToken(
-                newSignInUser.getId(),
-                newSignInUser.getUuid()
+            newSignInUser.getId(),
+            newSignInUser.getUuid()
         );
 
         if (signUpRequest.recommendId() != null && !"".equals(signUpRequest.recommendId())) {
             User recommendedUser = userRepository.findByYelloId(signUpRequest.recommendId());
             recommendedUser.increaseRecommendCount();
 
-            final Optional<Cooldown> cooldown = cooldownRepository.findByUserId(recommendedUser.getId());
+            final Optional<Cooldown> cooldown =
+                cooldownRepository.findByUserId(recommendedUser.getId());
             cooldown.ifPresent(cooldownRepository::delete);
         }
 
         signUpRequest.friends()
-                .stream()
-                .map(userRepository::findById)
-                .forEach(friend -> {
-                    friendRepository.save(Friend.createFriend(newSignInUser, friend));
-                    friendRepository.save(Friend.createFriend(friend, newSignInUser));
-                });
+            .stream()
+            .map(userRepository::findById)
+            .forEach(friend -> {
+                friendRepository.save(Friend.createFriend(newSignInUser, friend));
+                friendRepository.save(Friend.createFriend(friend, newSignInUser));
+            });
 
         tokenValueOperations.set(newSignInUser.getId(), newUserTokens);
         return SignUpResponse.of(newSignInUser.getYelloId(), newUserTokens);
     }
 
-    public OnBoardingFriendResponse findOnBoardingFriends(OnBoardingFriendRequest friendRequest, Pageable pageable) {
+    public OnBoardingFriendResponse findOnBoardingFriends(OnBoardingFriendRequest friendRequest,
+        Pageable pageable) {
         List<User> totalList = new ArrayList<>();
 
         schoolRepository.findById(friendRequest.groupId());
 
         final List<User> groupFriends = userRepository.findAllByGroupId(friendRequest.groupId());
         final List<User> kakaoFriends = friendRequest.friendKakaoId()
-                .stream()
-                .map(String::valueOf)
-                .map(userRepository::findByUuid)
-                .toList();
+            .stream()
+            .map(String::valueOf)
+            .map(userRepository::findByUuid)
+            .toList();
 
         totalList.addAll(groupFriends);
         totalList.addAll(kakaoFriends);
 
         totalList = totalList.stream()
-                .distinct()
-                .sorted(Comparator.comparing(User::getName))
-                .toList();
+            .distinct()
+            .sorted(Comparator.comparing(User::getName))
+            .toList();
 
         final List<User> pageList = PaginationFactory.getPage(totalList, pageable)
-                .stream()
-                .toList();
+            .stream()
+            .toList();
 
         return OnBoardingFriendResponse.of(totalList.size(), pageList);
     }
 
     public GroupNameSearchResponse findSchoolsBySearch(String keyword, Pageable pageable) {
         int totalCount = schoolRepository.countDistinctSchoolNameContaining(keyword);
-        final List<String> nameList = schoolRepository.findDistinctSchoolNameContaining(keyword, pageable);
+        final List<String> nameList =
+            schoolRepository.findDistinctSchoolNameContaining(keyword, pageable);
         return GroupNameSearchResponse.of(totalCount, nameList);
     }
 
-    public DepartmentSearchResponse findDepartmentsBySearch(String schoolName, String keyword, Pageable pageable) {
+    public DepartmentSearchResponse findDepartmentsBySearch(String schoolName, String keyword,
+        Pageable pageable) {
         int totalCount = schoolRepository.countAllBySchoolNameContaining(schoolName, keyword);
-        final List<School> schoolResult = schoolRepository.findAllBySchoolNameContaining(schoolName, keyword, pageable);
+        final List<School> schoolResult =
+            schoolRepository.findAllBySchoolNameContaining(schoolName, keyword, pageable);
         return DepartmentSearchResponse.of(totalCount, schoolResult);
     }
 

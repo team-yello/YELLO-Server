@@ -17,7 +17,8 @@ public enum Social {
         return Arrays.stream(Social.values())
             .filter(v -> v.getIntial().equals(dbData))
             .findAny()
-            .orElseThrow(() -> new IllegalArgumentException(MessageFormat.format("존재하지 않는 소셜입니다. {0}", dbData)));
+            .orElseThrow(() -> new IllegalArgumentException(
+                MessageFormat.format("존재하지 않는 소셜입니다. {0}", dbData)));
     }
 
     public String intial() {

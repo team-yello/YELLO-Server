@@ -51,7 +51,7 @@ public class JwtExceptionFilter extends OncePerRequestFilter {
         val accessHeader = request.getHeader(AUTHORIZATION);
         log.info("Authorization : {}", accessHeader);
 
-        if (accessHeader==null || !accessHeader.startsWith(BEARER)) {
+        if (accessHeader == null || !accessHeader.startsWith(BEARER)) {
             throw new CustomAuthenticationException(AUTHENTICATION_ERROR);
         }
 
