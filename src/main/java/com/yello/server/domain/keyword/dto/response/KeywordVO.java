@@ -5,12 +5,12 @@ import lombok.Builder;
 
 @Builder
 public record KeywordVO(
-        String keywordName
+    String keywordName
 ) {
 
     public static KeywordVO of(Keyword keyword) {
         return KeywordVO.builder()
-                .keywordName(keyword.getKeywordName())
-                .build();
+            .keywordName(keyword.getKeywordName())
+            .build();
     }
 }

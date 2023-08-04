@@ -11,30 +11,30 @@ import org.springframework.transaction.annotation.Transactional;
 @Transactional(readOnly = true)
 public class CooldownRepositoryImpl implements CooldownRepository {
 
-  private final CooldownJpaRepository cooldownJpaRepository;
+    private final CooldownJpaRepository cooldownJpaRepository;
 
-  @Override
-  public Cooldown save(Cooldown cooldown) {
-    return cooldownJpaRepository.save(cooldown);
-  }
+    @Override
+    public Cooldown save(Cooldown cooldown) {
+        return cooldownJpaRepository.save(cooldown);
+    }
 
-  @Override
-  public Optional<Cooldown> findByUserId(Long userId) {
-    return cooldownJpaRepository.findByUserId(userId);
-  }
+    @Override
+    public Optional<Cooldown> findByUserId(Long userId) {
+        return cooldownJpaRepository.findByUserId(userId);
+    }
 
-  @Override
-  public boolean existsByUserId(Long userId) {
-    return cooldownJpaRepository.existsByUserId(userId);
-  }
+    @Override
+    public boolean existsByUserId(Long userId) {
+        return cooldownJpaRepository.existsByUserId(userId);
+    }
 
-  @Override
-  public Optional<Cooldown> findByUserIdNotFiltered(Long userId) {
-    return cooldownJpaRepository.findByUserIdNotFiltered(userId);
-  }
+    @Override
+    public Optional<Cooldown> findByUserIdNotFiltered(Long userId) {
+        return cooldownJpaRepository.findByUserIdNotFiltered(userId);
+    }
 
-  @Override
-  public void delete(Cooldown cooldown) {
-    cooldownJpaRepository.delete(cooldown);
-  }
+    @Override
+    public void delete(Cooldown cooldown) {
+        cooldownJpaRepository.delete(cooldown);
+    }
 }

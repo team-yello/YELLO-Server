@@ -15,38 +15,38 @@ import org.springframework.transaction.annotation.Transactional;
 @Transactional(readOnly = true)
 public class SchoolRepositoryImpl implements SchoolRepository {
 
-  private final SchoolJpaRepository schoolJpaRepository;
+    private final SchoolJpaRepository schoolJpaRepository;
 
 
-  @Override
-  public School save(School school) {
-    return schoolJpaRepository.save(school);
-  }
+    @Override
+    public School save(School school) {
+        return schoolJpaRepository.save(school);
+    }
 
-  @Override
-  public School findById(Long id) {
-    return schoolJpaRepository.findById(id)
-        .orElseThrow(() -> new GroupNotFoundException(GROUPID_NOT_FOUND_GROUP_EXCEPTION));
-  }
+    @Override
+    public School findById(Long id) {
+        return schoolJpaRepository.findById(id)
+            .orElseThrow(() -> new GroupNotFoundException(GROUPID_NOT_FOUND_GROUP_EXCEPTION));
+    }
 
-  @Override
-  public Integer countDistinctSchoolNameContaining(String schoolName) {
-    return schoolJpaRepository.countDistinctSchoolNameContaining(schoolName);
-  }
+    @Override
+    public Integer countDistinctSchoolNameContaining(String schoolName) {
+        return schoolJpaRepository.countDistinctSchoolNameContaining(schoolName);
+    }
 
-  @Override
-  public List<String> findDistinctSchoolNameContaining(String schoolName, Pageable pageable) {
-    return schoolJpaRepository.findDistinctSchoolNameContaining(schoolName, pageable);
-  }
+    @Override
+    public List<String> findDistinctSchoolNameContaining(String schoolName, Pageable pageable) {
+        return schoolJpaRepository.findDistinctSchoolNameContaining(schoolName, pageable);
+    }
 
-  @Override
-  public Integer countAllBySchoolNameContaining(String schoolName, String departmentName) {
-    return schoolJpaRepository.countAllBySchoolNameContaining(schoolName, departmentName);
-  }
+    @Override
+    public Integer countAllBySchoolNameContaining(String schoolName, String departmentName) {
+        return schoolJpaRepository.countAllBySchoolNameContaining(schoolName, departmentName);
+    }
 
-  @Override
-  public List<School> findAllBySchoolNameContaining(String schoolName, String departmentName,
-                                                    Pageable pageable) {
-    return schoolJpaRepository.findAllBySchoolNameContaining(schoolName, departmentName, pageable);
-  }
+    @Override
+    public List<School> findAllBySchoolNameContaining(String schoolName, String departmentName,
+        Pageable pageable) {
+        return schoolJpaRepository.findAllBySchoolNameContaining(schoolName, departmentName, pageable);
+    }
 }

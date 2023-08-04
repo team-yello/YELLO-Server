@@ -27,8 +27,8 @@ public class ServiceTokenResolver implements HandlerMethodArgumentResolver {
         NativeWebRequest webRequest, WebDataBinderFactory binderFactory) throws Exception {
         String accessTokenHeader = webRequest.getHeader("X-ACCESS-AUTH");
         String refreshTokenHeader = webRequest.getHeader("X-REFRESH-AUTH");
-        
-        if (accessTokenHeader==null || refreshTokenHeader==null
+
+        if (accessTokenHeader == null || refreshTokenHeader == null
             || !refreshTokenHeader.startsWith(BEARER)
             || !accessTokenHeader.startsWith(BEARER)) {
             throw new CustomAuthenticationException(AUTHENTICATION_ERROR);

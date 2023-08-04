@@ -7,5 +7,5 @@ import org.springframework.stereotype.Repository;
 @RequiredArgsConstructor
 public class KeywordRepositoryImpl implements KeywordRepository {
 
-  private final KeywordJpaRepository keywordJpaRepository;
+    private final KeywordJpaRepository keywordJpaRepository;
 }

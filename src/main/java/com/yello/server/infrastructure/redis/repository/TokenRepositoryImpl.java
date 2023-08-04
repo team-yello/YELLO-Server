@@ -8,15 +8,16 @@ import org.springframework.stereotype.Repository;
 @Repository
 @RequiredArgsConstructor
 public class TokenRepositoryImpl implements TokenRepository {
-  private final ValueOperations<Long, ServiceTokenVO> redisTokenRepository;
 
-  @Override
-  public void set(Long key, ServiceTokenVO value) {
-    redisTokenRepository.set(key, value);
-  }
+    private final ValueOperations<Long, ServiceTokenVO> redisTokenRepository;
 
-  @Override
-  public ServiceTokenVO get(Long key) {
-    return redisTokenRepository.get(key);
-  }
+    @Override
+    public void set(Long key, ServiceTokenVO value) {
+        redisTokenRepository.set(key, value);
+    }
+
+    @Override
+    public ServiceTokenVO get(Long key) {
+        return redisTokenRepository.get(key);
+    }
 }

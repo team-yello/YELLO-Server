@@ -45,7 +45,6 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.IntStream;
-
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -140,16 +139,17 @@ public class VoteService {
 
         final List<VoteAnswer> voteAnswerList = request.voteAnswerList();
         IntStream.range(0, voteAnswerList.size())
-                .forEach(index -> {
-                    if (index > 0 && voteAnswerList.get(index - 1).questionId() == voteAnswerList.get(index).questionId()) {
-                        throw new VoteForbiddenException(DUPLICATE_VOTE_EXCEPTION);
-                    }
+            .forEach(index -> {
+                if (index > 0 && voteAnswerList.get(index - 1).questionId() == voteAnswerList.get(index).questionId()) {
+                    throw new VoteForbiddenException(DUPLICATE_VOTE_EXCEPTION);
+                }
 
-                    User receiver = userRepository.findById(voteAnswerList.get(index).friendId());
-                    Question question = findQuestion(voteAnswerList.get(index).questionId());
-                    Vote newVote = Vote.createVote(voteAnswerList.get(index).keywordName(), sender, receiver, question, voteAnswerList.get(index).colorIndex());
-                    voteRepository.save(newVote);
-                });
+                User receiver = userRepository.findById(voteAnswerList.get(index).friendId());
+                Question question = findQuestion(voteAnswerList.get(index).questionId());
+                Vote newVote = Vote.createVote(voteAnswerList.get(index).keywordName(), sender, receiver, question,
+                    voteAnswerList.get(index).colorIndex());
+                voteRepository.save(newVote);
+            });
 
         final Optional<Cooldown> cooldown = cooldownRepository.findByUserId(sender.getId());
         if (cooldown.isEmpty()) {
@@ -171,7 +171,7 @@ public class VoteService {
         }
 
         final Vote vote = voteRepository.findById(voteId);
-        if (vote.getNameHint()!=NAME_HINT_DEFAULT) {
+        if (vote.getNameHint() != NAME_HINT_DEFAULT) {
             throw new VoteNotFoundException(INVALID_VOTE_EXCEPTION);
         }
 
@@ -214,8 +214,8 @@ public class VoteService {
             .toList();
     }
 
-  private Question findQuestion(Long questionId) {
-    return questionRepository.findById(questionId);
-  }
+    private Question findQuestion(Long questionId) {
+        return questionRepository.findById(questionId);
+    }
 
 }

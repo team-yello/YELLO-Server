@@ -32,16 +32,16 @@ public class RestUtil {
     public static ResponseEntity<KakaoFriendsInfo> getKakaoFriendList(String kakaoAccessToken, String friendOrder,
         Integer offset, Integer limit, String order) {
         String baseUrl = KAKAO_FRIEND_LIST_URL + "?";
-        if (friendOrder!=null) {
+        if (friendOrder != null) {
             baseUrl += "friendOrder=" + friendOrder;
         }
-        if (offset!=null) {
+        if (offset != null) {
             baseUrl += "offset=" + offset;
         }
-        if (limit!=null) {
+        if (limit != null) {
             baseUrl += "limit=" + limit;
         }
-        if (order!=null) {
+        if (order != null) {
             baseUrl += "order=" + order;
         }
         if (baseUrl.equals(KAKAO_FRIEND_LIST_URL + "?")) {

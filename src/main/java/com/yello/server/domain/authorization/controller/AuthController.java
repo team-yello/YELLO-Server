@@ -43,93 +43,93 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/api/v1/auth")
 public class AuthController {
 
-  private final AuthService authService;
+    private final AuthService authService;
 
-  @Operation(summary = "소셜 로그인 API", responses = {
-      @ApiResponse(
-          responseCode = "201",
-          content = @Content(mediaType = "application/json", schema = @Schema(implementation = OAuthResponse.class))),
-  })
-  @PostMapping("/oauth")
-  public BaseResponse<OAuthResponse> oauthLogin(@RequestBody OAuthRequest oAuthRequest) {
-    val data = authService.oauthLogin(oAuthRequest);
-    return BaseResponse.success(LOGIN_SUCCESS, data);
-  }
+    @Operation(summary = "소셜 로그인 API", responses = {
+        @ApiResponse(
+            responseCode = "201",
+            content = @Content(mediaType = "application/json", schema = @Schema(implementation = OAuthResponse.class))),
+    })
+    @PostMapping("/oauth")
+    public BaseResponse<OAuthResponse> oauthLogin(@RequestBody OAuthRequest oAuthRequest) {
+        val data = authService.oauthLogin(oAuthRequest);
+        return BaseResponse.success(LOGIN_SUCCESS, data);
+    }
 
-  @Operation(summary = "옐로 아이디 중복 확인 API", responses = {
-      @ApiResponse(
-          responseCode = "200",
-          content = @Content(mediaType = "application/json", schema = @Schema(implementation = Boolean.class))),
-  })
-  @GetMapping("/valid")
-  public BaseResponse<Boolean> getYelloIdValidation(@RequestParam("yelloId") String yelloId) {
-    val data = authService.isYelloIdDuplicated(yelloId);
-    return BaseResponse.success(YELLOID_VALIDATION_SUCCESS, data);
-  }
+    @Operation(summary = "옐로 아이디 중복 확인 API", responses = {
+        @ApiResponse(
+            responseCode = "200",
+            content = @Content(mediaType = "application/json", schema = @Schema(implementation = Boolean.class))),
+    })
+    @GetMapping("/valid")
+    public BaseResponse<Boolean> getYelloIdValidation(@RequestParam("yelloId") String yelloId) {
+        val data = authService.isYelloIdDuplicated(yelloId);
+        return BaseResponse.success(YELLOID_VALIDATION_SUCCESS, data);
+    }
 
-  @Operation(summary = "회원가입 API", responses = {
-      @ApiResponse(
-          responseCode = "201",
-          content = @Content(mediaType = "application/json", schema = @Schema(implementation = SignUpResponse.class))),
-  })
-  @PostMapping("/signup")
-  public BaseResponse<SignUpResponse> postSignUp(
-      @Valid @RequestBody SignUpRequest signUpRequest) {
-    val data = authService.signUp(signUpRequest);
-    return BaseResponse.success(SIGN_UP_SUCCESS, data);
-  }
+    @Operation(summary = "회원가입 API", responses = {
+        @ApiResponse(
+            responseCode = "201",
+            content = @Content(mediaType = "application/json", schema = @Schema(implementation = SignUpResponse.class))),
+    })
+    @PostMapping("/signup")
+    public BaseResponse<SignUpResponse> postSignUp(
+        @Valid @RequestBody SignUpRequest signUpRequest) {
+        val data = authService.signUp(signUpRequest);
+        return BaseResponse.success(SIGN_UP_SUCCESS, data);
+    }
 
-  @Operation(summary = "가입한 친구 목록 불러오기 API", responses = {
-      @ApiResponse(
-          responseCode = "200",
-          content = @Content(mediaType = "application/json", schema = @Schema(implementation = OnBoardingFriendResponse.class))),
-  })
-  @PostMapping("/friend")
-  public BaseResponse<OnBoardingFriendResponse> postFriendList(
-      @Valid @RequestBody OnBoardingFriendRequest friendRequest,
-      @NotNull @RequestParam("page") Integer page
-  ) {
-    val data = authService.findOnBoardingFriends(friendRequest, createPageable(page));
-    return BaseResponse.success(ONBOARDING_FRIENDS_SUCCESS, data);
-  }
+    @Operation(summary = "가입한 친구 목록 불러오기 API", responses = {
+        @ApiResponse(
+            responseCode = "200",
+            content = @Content(mediaType = "application/json", schema = @Schema(implementation = OnBoardingFriendResponse.class))),
+    })
+    @PostMapping("/friend")
+    public BaseResponse<OnBoardingFriendResponse> postFriendList(
+        @Valid @RequestBody OnBoardingFriendRequest friendRequest,
+        @NotNull @RequestParam("page") Integer page
+    ) {
+        val data = authService.findOnBoardingFriends(friendRequest, createPageable(page));
+        return BaseResponse.success(ONBOARDING_FRIENDS_SUCCESS, data);
+    }
 
-  @Operation(summary = "대학교 이름 검색하기 API", responses = {
-      @ApiResponse(
-          responseCode = "200",
-          content = @Content(mediaType = "application/json", schema = @Schema(implementation = GroupNameSearchResponse.class))),
-  })
-  @GetMapping("/school/school")
-  public BaseResponse<GroupNameSearchResponse> getSchoolList(
-      @NotNull @RequestParam("search") String keyword,
-      @NotNull @RequestParam("page") Integer page
-  ) {
-    val data = authService.findSchoolsBySearch(keyword, createPageable(page));
-    return BaseResponse.success(SCHOOL_NAME_SEARCH_SCHOOL_SUCCESS, data);
-  }
+    @Operation(summary = "대학교 이름 검색하기 API", responses = {
+        @ApiResponse(
+            responseCode = "200",
+            content = @Content(mediaType = "application/json", schema = @Schema(implementation = GroupNameSearchResponse.class))),
+    })
+    @GetMapping("/school/school")
+    public BaseResponse<GroupNameSearchResponse> getSchoolList(
+        @NotNull @RequestParam("search") String keyword,
+        @NotNull @RequestParam("page") Integer page
+    ) {
+        val data = authService.findSchoolsBySearch(keyword, createPageable(page));
+        return BaseResponse.success(SCHOOL_NAME_SEARCH_SCHOOL_SUCCESS, data);
+    }
 
-  @Operation(summary = "대학교 이름으로 학과 이름 검색하기 API", responses = {
-      @ApiResponse(
-          responseCode = "200",
-          content = @Content(mediaType = "application/json", schema = @Schema(implementation = DepartmentSearchResponse.class))),
-  })
-  @GetMapping("/school/department")
-  public BaseResponse<DepartmentSearchResponse> getDepartmentList(
-      @NotNull @RequestParam("school") String schoolName,
-      @NotNull @RequestParam("search") String keyword,
-      @NotNull @RequestParam("page") Integer page
-  ) {
-    val data = authService.findDepartmentsBySearch(schoolName, keyword, createPageable(page));
-    return BaseResponse.success(DEPARTMENT_NAME_SEARCH_BY_SCHOOL_NAME_SCHOOL_SUCCESS, data);
-  }
+    @Operation(summary = "대학교 이름으로 학과 이름 검색하기 API", responses = {
+        @ApiResponse(
+            responseCode = "200",
+            content = @Content(mediaType = "application/json", schema = @Schema(implementation = DepartmentSearchResponse.class))),
+    })
+    @GetMapping("/school/department")
+    public BaseResponse<DepartmentSearchResponse> getDepartmentList(
+        @NotNull @RequestParam("school") String schoolName,
+        @NotNull @RequestParam("search") String keyword,
+        @NotNull @RequestParam("page") Integer page
+    ) {
+        val data = authService.findDepartmentsBySearch(schoolName, keyword, createPageable(page));
+        return BaseResponse.success(DEPARTMENT_NAME_SEARCH_BY_SCHOOL_NAME_SCHOOL_SUCCESS, data);
+    }
 
-  @Operation(summary = "토큰 재발급 API", responses = {
-      @ApiResponse(
-          responseCode = "201",
-          content = @Content(mediaType = "application/json", schema = @Schema(implementation = ServiceTokenVO.class))),
-  })
-  @PostMapping("/token/issue")
-  public BaseResponse<ServiceTokenVO> postReIssueToken(@ServiceToken ServiceTokenVO tokens) {
-    val data = authService.reIssueToken(tokens);
-    return BaseResponse.success(RE_ISSUE_TOKEN_AUTH_SUCCESS, data);
-  }
+    @Operation(summary = "토큰 재발급 API", responses = {
+        @ApiResponse(
+            responseCode = "201",
+            content = @Content(mediaType = "application/json", schema = @Schema(implementation = ServiceTokenVO.class))),
+    })
+    @PostMapping("/token/issue")
+    public BaseResponse<ServiceTokenVO> postReIssueToken(@ServiceToken ServiceTokenVO tokens) {
+        val data = authService.reIssueToken(tokens);
+        return BaseResponse.success(RE_ISSUE_TOKEN_AUTH_SUCCESS, data);
+    }
 }

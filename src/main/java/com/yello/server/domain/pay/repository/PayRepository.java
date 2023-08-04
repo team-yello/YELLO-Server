@@ -6,7 +6,7 @@ import java.util.List;
 
 public interface PayRepository {
 
-  Pay save(Pay pay);
+    Pay save(Pay pay);
 
-  List<Pay> findAllByUserAndOptionIndex(User user, Integer optionIndex);
+    List<Pay> findAllByUserAndOptionIndex(User user, Integer optionIndex);
 }

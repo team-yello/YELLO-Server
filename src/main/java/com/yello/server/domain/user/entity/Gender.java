@@ -19,7 +19,7 @@ public enum Gender {
             .findAny()
             .orElseThrow(() -> new IllegalArgumentException(MessageFormat.format("존재하지 않는 성별입니다. {0}", dbData)));
     }
- 
+
     public String intial() {
         return intial;
     }

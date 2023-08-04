@@ -11,51 +11,51 @@ import org.springframework.data.domain.Pageable;
 
 public class FakeSchoolRepository implements SchoolRepository {
 
-  private final List<School> data = new ArrayList<>();
-  private Long id = 0L;
+    private final List<School> data = new ArrayList<>();
+    private Long id = 0L;
 
-  @Override
-  public School save(School school) {
-    if (school.getId() != null && school.getId() > id) {
-      id = school.getId();
+    @Override
+    public School save(School school) {
+        if (school.getId() != null && school.getId() > id) {
+            id = school.getId();
+        }
+
+        School newSchool = School.builder()
+            .id(school.getId() == null ? ++id : school.getId())
+            .schoolName(school.getSchoolName())
+            .departmentName(school.getDepartmentName())
+            .build();
+
+        data.add(newSchool);
+        return newSchool;
     }
 
-    School newSchool = School.builder()
-        .id(school.getId() == null ? ++id : school.getId())
-        .schoolName(school.getSchoolName())
-        .departmentName(school.getDepartmentName())
-        .build();
+    @Override
+    public School findById(Long id) {
+        return data.stream()
+            .filter(school -> school.getId().equals(id))
+            .findFirst()
+            .orElseThrow(() -> new GroupNotFoundException(GROUPID_NOT_FOUND_GROUP_EXCEPTION));
+    }
 
-    data.add(newSchool);
-    return newSchool;
-  }
+    @Override
+    public Integer countDistinctSchoolNameContaining(String schoolName) {
+        return null;
+    }
 
-  @Override
-  public School findById(Long id) {
-    return data.stream()
-        .filter(school -> school.getId().equals(id))
-        .findFirst()
-        .orElseThrow(() -> new GroupNotFoundException(GROUPID_NOT_FOUND_GROUP_EXCEPTION));
-  }
+    @Override
+    public List<String> findDistinctSchoolNameContaining(String schoolName, Pageable pageable) {
+        return null;
+    }
 
-  @Override
-  public Integer countDistinctSchoolNameContaining(String schoolName) {
-    return null;
-  }
+    @Override
+    public Integer countAllBySchoolNameContaining(String schoolName, String departmentName) {
+        return null;
+    }
 
-  @Override
-  public List<String> findDistinctSchoolNameContaining(String schoolName, Pageable pageable) {
-    return null;
-  }
-
-  @Override
-  public Integer countAllBySchoolNameContaining(String schoolName, String departmentName) {
-    return null;
-  }
-
-  @Override
-  public List<School> findAllBySchoolNameContaining(String schoolName, String departmentName,
-                                                    Pageable pageable) {
-    return null;
-  }
+    @Override
+    public List<School> findAllBySchoolNameContaining(String schoolName, String departmentName,
+        Pageable pageable) {
+        return null;
+    }
 }

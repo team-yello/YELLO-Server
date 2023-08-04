@@ -5,16 +5,17 @@ import java.util.List;
 import org.springframework.data.domain.Pageable;
 
 public interface SchoolRepository {
-  School save(School school);
 
-  School findById(Long id);
+    School save(School school);
 
-  Integer countDistinctSchoolNameContaining(String schoolName);
+    School findById(Long id);
 
-  List<String> findDistinctSchoolNameContaining(String schoolName, Pageable pageable);
+    Integer countDistinctSchoolNameContaining(String schoolName);
 
-  Integer countAllBySchoolNameContaining(String schoolName, String departmentName);
+    List<String> findDistinctSchoolNameContaining(String schoolName, Pageable pageable);
 
-  List<School> findAllBySchoolNameContaining(String schoolName, String departmentName,
-                                             Pageable pageable);
+    Integer countAllBySchoolNameContaining(String schoolName, String departmentName);
+
+    List<School> findAllBySchoolNameContaining(String schoolName, String departmentName,
+        Pageable pageable);
 }

@@ -12,69 +12,69 @@ import java.util.List;
 
 public class FakeUserRepository implements UserRepository {
 
-  private final List<User> data = new ArrayList<>();
-  private Long id = 0L;
+    private final List<User> data = new ArrayList<>();
+    private Long id = 0L;
 
-  @Override
-  public User save(User user) {
-    if (user.getId() != null && user.getId() > id) {
-      id = user.getId();
+    @Override
+    public User save(User user) {
+        if (user.getId() != null && user.getId() > id) {
+            id = user.getId();
+        }
+
+        User newUser = User.builder()
+            .id(user.getId() == null ? ++id : user.getId())
+            .recommendCount(0L)
+            .name(user.getName())
+            .yelloId(user.getYelloId())
+            .gender(user.getGender())
+            .point(200)
+            .social(user.getSocial())
+            .profileImage(user.getProfileImage())
+            .uuid(user.getUuid())
+            .deletedAt(null)
+            .group(user.getGroup())
+            .groupAdmissionYear(user.getGroupAdmissionYear())
+            .email(user.getEmail())
+            .build();
+
+        data.add(newUser);
+        return newUser;
     }
 
-    User newUser = User.builder()
-        .id(user.getId() == null ? ++id : user.getId())
-        .recommendCount(0L)
-        .name(user.getName())
-        .yelloId(user.getYelloId())
-        .gender(user.getGender())
-        .point(200)
-        .social(user.getSocial())
-        .profileImage(user.getProfileImage())
-        .uuid(user.getUuid())
-        .deletedAt(null)
-        .group(user.getGroup())
-        .groupAdmissionYear(user.getGroupAdmissionYear())
-        .email(user.getEmail())
-        .build();
+    @Override
+    public User findById(Long id) {
+        return data.stream()
+            .filter(user -> user.getId().equals(id))
+            .findFirst()
+            .orElseThrow(() -> new UserNotFoundException(USERID_NOT_FOUND_USER_EXCEPTION));
+    }
 
-    data.add(newUser);
-    return newUser;
-  }
+    @Override
+    public User findByUuid(String uuid) {
+        return data.stream()
+            .filter(user -> user.getUuid().equals(uuid))
+            .findFirst()
+            .orElseThrow(() -> new UserNotFoundException(AUTH_UUID_NOT_FOUND_USER_EXCEPTION));
+    }
 
-  @Override
-  public User findById(Long id) {
-    return data.stream()
-        .filter(user -> user.getId().equals(id))
-        .findFirst()
-        .orElseThrow(() -> new UserNotFoundException(USERID_NOT_FOUND_USER_EXCEPTION));
-  }
+    @Override
+    public boolean existsByUuid(String uuid) {
+        return data.stream()
+            .anyMatch(user -> user.getUuid().equals(uuid));
+    }
 
-  @Override
-  public User findByUuid(String uuid) {
-    return data.stream()
-        .filter(user -> user.getUuid().equals(uuid))
-        .findFirst()
-        .orElseThrow(() -> new UserNotFoundException(AUTH_UUID_NOT_FOUND_USER_EXCEPTION));
-  }
+    @Override
+    public User findByYelloId(String yelloId) {
+        return data.stream()
+            .filter(user -> user.getYelloId().equals(yelloId))
+            .findFirst()
+            .orElseThrow(() -> new UserNotFoundException(YELLOID_NOT_FOUND_USER_EXCEPTION));
+    }
 
-  @Override
-  public boolean existsByUuid(String uuid) {
-    return data.stream()
-        .anyMatch(user -> user.getUuid().equals(uuid));
-  }
-
-  @Override
-  public User findByYelloId(String yelloId) {
-    return data.stream()
-        .filter(user -> user.getYelloId().equals(yelloId))
-        .findFirst()
-        .orElseThrow(() -> new UserNotFoundException(YELLOID_NOT_FOUND_USER_EXCEPTION));
-  }
-
-  @Override
-  public List<User> findAllByGroupId(Long groupId) {
-    return data.stream()
-        .filter(user -> user.getGroup().getId().equals(groupId))
-        .toList();
-  }
+    @Override
+    public List<User> findAllByGroupId(Long groupId) {
+        return data.stream()
+            .filter(user -> user.getGroup().getId().equals(groupId))
+            .toList();
+    }
 }
