@@ -35,6 +35,7 @@ import com.yello.server.domain.user.exception.UserNotFoundException;
 import com.yello.server.domain.user.repository.UserRepository;
 import com.yello.server.global.common.factory.PaginationFactory;
 import com.yello.server.global.common.util.RestUtil;
+import com.yello.server.infrastructure.redis.repository.TokenRepository;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
@@ -46,26 +47,35 @@ import lombok.RequiredArgsConstructor;
 import lombok.val;
 import org.apache.commons.lang3.ObjectUtils;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.redis.core.ValueOperations;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 @Builder
 @Service
 @RequiredArgsConstructor
-@Transactional(readOnly = true)
 public class AuthService {
-
 
   private final UserRepository userRepository;
   private final SchoolRepository schoolRepository;
   private final FriendRepository friendRepository;
   private final CooldownRepository cooldownRepository;
   private final JwtTokenProvider jwtTokenProvider;
-  private final ValueOperations<Long, ServiceTokenVO> tokenValueOperations;
+  private final TokenRepository tokenValueOperations;
 
-  @Transactional
+  // TODO softDelete 우아하게 처리하는 방법으로 바꾸기
+  public void renewUserInformation(User currentUser) {
+    currentUser.renew();
+
+    friendRepository.findAllByUserIdNotFiltered(currentUser.getId())
+        .forEach(Friend::renew);
+    friendRepository.findAllByTargetIdNotFiltered(currentUser.getId())
+        .forEach(Friend::renew);
+    cooldownRepository.findByUserIdNotFiltered(currentUser.getId())
+        .ifPresent(Cooldown::renew);
+  }
+
+  // TODO 응답을 주입 받을 수 있도록 설계
+  // TODO 테스트 코드 작성
   public OAuthResponse oauthLogin(OAuthRequest oAuthRequest) {
     final ResponseEntity<KakaoTokenInfo> response = RestUtil.getKakaoTokenInfo(
         oAuthRequest.accessToken());
@@ -76,23 +86,10 @@ public class AuthService {
 
     final User currentUser = userRepository.findByUuid(String.valueOf(response.getBody().id()));
 
-    final ServiceTokenVO serviceTokenVO = jwtTokenProvider.createServiceToken(
-        currentUser.getId(),
-        currentUser.getUuid()
-    );
+    final ServiceTokenVO serviceTokenVO =
+        this.registerToken(currentUser.getId(), currentUser.getUuid());
 
-    tokenValueOperations.set(
-        currentUser.getId(),
-        serviceTokenVO
-    );
-
-    currentUser.renew();
-    friendRepository.findAllByUserIdNotFiltered(currentUser.getId())
-        .forEach(Friend::renew);
-    friendRepository.findAllByTargetIdNotFiltered(currentUser.getId())
-        .forEach(Friend::renew);
-    cooldownRepository.findByUserIdNotFiltered(currentUser.getId())
-        .ifPresent(Cooldown::renew);
+    this.renewUserInformation(currentUser);
 
     return OAuthResponse.of(serviceTokenVO);
   }
@@ -111,62 +108,91 @@ public class AuthService {
     return true;
   }
 
-  @Transactional
   public SignUpResponse signUp(SignUpRequest signUpRequest) {
+    final User signUpUser = this.signUpUser(signUpRequest);
+    this.recommendUser(signUpRequest.recommendId());
+    final ServiceTokenVO signUpToken = this.registerToken(signUpUser.getId(), signUpUser.getUuid());
+    this.makeFriend(signUpUser, signUpRequest.friends());
+
+    return SignUpResponse.of(signUpUser.getYelloId(), signUpToken);
+  }
+
+  public User signUpUser(SignUpRequest signUpRequest) {
     // exception
-    final User userByUUID = userRepository.findByUuid(signUpRequest.uuid());
+    User userByUUID = null;
+    try {
+      userByUUID = userRepository.findByUuid(signUpRequest.uuid());
+    } catch (UserNotFoundException exception) {
+      // doing nothing
+    }
     if (ObjectUtils.isNotEmpty(userByUUID)) {
       throw new UserConflictException(UUID_CONFLICT_USER_EXCEPTION);
     }
 
-    final User userByYelloId = userRepository.findByYelloId(signUpRequest.yelloId());
+    User userByYelloId = null;
+    try {
+      userByYelloId = userRepository.findByYelloId(signUpRequest.yelloId());
+    } catch (UserNotFoundException exception) {
+      // doing nothing
+    }
     if (ObjectUtils.isNotEmpty(userByYelloId)) {
       throw new UserConflictException(YELLOID_CONFLICT_USER_EXCEPTION);
     }
 
     School group = schoolRepository.findById(signUpRequest.groupId());
 
-    final User newSignInUser = userRepository.save(
-        User.of(signUpRequest, signUpRequest.uuid(), group));
-    ServiceTokenVO newUserTokens = jwtTokenProvider.createServiceToken(
-        newSignInUser.getId(),
-        newSignInUser.getUuid()
-    );
+    final User newSignInUser = userRepository.save(User.of(signUpRequest, group));
+    return newSignInUser;
+  }
 
-    if (signUpRequest.recommendId() != null && !"".equals(signUpRequest.recommendId())) {
-      User recommendedUser = userRepository.findByYelloId(signUpRequest.recommendId());
+  public void recommendUser(String recommendYelloId) {
+    if (recommendYelloId != null && !recommendYelloId.isEmpty()) {
+      User recommendedUser = userRepository.findByYelloId(recommendYelloId);
       recommendedUser.increaseRecommendCount();
 
       final Optional<Cooldown> cooldown = cooldownRepository.findByUserId(recommendedUser.getId());
       cooldown.ifPresent(cooldownRepository::delete);
     }
+  }
 
-    signUpRequest.friends()
+  public ServiceTokenVO registerToken(Long id, String uuid) {
+    ServiceTokenVO newUserTokens = jwtTokenProvider.createServiceToken(
+        id,
+        uuid
+    );
+    tokenValueOperations.set(id, newUserTokens);
+
+    return newUserTokens;
+  }
+
+  public void makeFriend(User user, List<Long> friendIds) {
+    friendIds
         .stream()
-        .map(userRepository::findById)
+        .map((id) -> {
+          try {
+            return userRepository.findById(id);
+          } catch (UserNotFoundException exception) {
+            return null;
+          }
+        })
         .forEach(friend -> {
-          friendRepository.save(Friend.createFriend(newSignInUser, friend));
-          friendRepository.save(Friend.createFriend(friend, newSignInUser));
+          if (friend != null) {
+            friendRepository.save(Friend.createFriend(user, friend));
+            friendRepository.save(Friend.createFriend(friend, user));
+          }
         });
-
-    tokenValueOperations.set(newSignInUser.getId(), newUserTokens);
-    return SignUpResponse.of(newSignInUser.getYelloId(), newUserTokens);
   }
 
   public OnBoardingFriendResponse findOnBoardingFriends(OnBoardingFriendRequest friendRequest,
-      Pageable pageable) {
+                                                        Pageable pageable) {
     List<User> totalList = new ArrayList<>();
 
-    schoolRepository.findById(friendRequest.groupId());
-
-    final List<User> groupFriends = userRepository.findAllByGroupId(friendRequest.groupId());
     final List<User> kakaoFriends = friendRequest.friendKakaoId()
         .stream()
         .map(String::valueOf)
         .map(userRepository::findByUuid)
         .toList();
 
-    totalList.addAll(groupFriends);
     totalList.addAll(kakaoFriends);
 
     totalList = totalList.stream()
@@ -189,7 +215,7 @@ public class AuthService {
   }
 
   public DepartmentSearchResponse findDepartmentsBySearch(String schoolName, String keyword,
-      Pageable pageable) {
+                                                          Pageable pageable) {
     int totalCount = schoolRepository.countAllBySchoolNameContaining(schoolName, keyword);
     final List<School> schoolResult = schoolRepository.findAllBySchoolNameContaining(schoolName,
         keyword, pageable);
