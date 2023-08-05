@@ -2,6 +2,7 @@ package com.yello.server.domain.friend.repository;
 
 import com.yello.server.domain.friend.entity.Friend;
 import java.util.List;
+import java.util.Optional;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
@@ -11,7 +12,9 @@ public interface FriendRepository {
 
     Integer countAllByUserId(Long userId);
 
-    Friend findByUserAndTarget(Long userId, Long targetId);
+    Optional<Friend> findByUserAndTarget(Long userId, Long targetId);
+
+    Friend getByUserAndTarget(Long userId, Long targetId);
 
     boolean existsByUserAndTarget(Long userId, Long targetId);
 

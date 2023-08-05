@@ -2,13 +2,16 @@ package com.yello.server.domain.group.repository;
 
 import com.yello.server.domain.group.entity.School;
 import java.util.List;
+import java.util.Optional;
 import org.springframework.data.domain.Pageable;
 
 public interface SchoolRepository {
 
     School save(School school);
 
-    School findById(Long id);
+    School getById(Long id);
+
+    Optional<School> findById(Long id);
 
     Integer countDistinctSchoolNameContaining(String schoolName);
 

@@ -5,6 +5,7 @@ import static com.yello.server.global.common.ErrorCode.GROUPID_NOT_FOUND_GROUP_E
 import com.yello.server.domain.group.entity.School;
 import com.yello.server.domain.group.exception.GroupNotFoundException;
 import java.util.List;
+import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Repository;
@@ -24,9 +25,14 @@ public class SchoolRepositoryImpl implements SchoolRepository {
     }
 
     @Override
-    public School findById(Long id) {
+    public School getById(Long id) {
         return schoolJpaRepository.findById(id)
             .orElseThrow(() -> new GroupNotFoundException(GROUPID_NOT_FOUND_GROUP_EXCEPTION));
+    }
+
+    @Override
+    public Optional<School> findById(Long id) {
+        return schoolJpaRepository.findById(id);
     }
 
     @Override

@@ -7,6 +7,7 @@ import com.yello.server.domain.friend.exception.FriendNotFoundException;
 import com.yello.server.domain.friend.repository.FriendRepository;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
@@ -42,7 +43,15 @@ public class FakeFriendRepository implements FriendRepository {
     }
 
     @Override
-    public Friend findByUserAndTarget(Long userId, Long targetId) {
+    public Optional<Friend> findByUserAndTarget(Long userId, Long targetId) {
+        return data.stream()
+            .filter(friend -> friend.getUser().getId().equals(userId) && friend.getTarget().getId().equals(targetId)
+                && friend.getDeletedAt()==null)
+            .findFirst();
+    }
+
+    @Override
+    public Friend getByUserAndTarget(Long userId, Long targetId) {
         return data.stream()
             .filter(friend -> friend.getUser().getId().equals(userId) &&
                 friend.getTarget().getId().equals(targetId)

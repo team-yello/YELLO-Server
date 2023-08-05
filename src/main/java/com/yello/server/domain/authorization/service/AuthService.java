@@ -1,5 +1,6 @@
 package com.yello.server.domain.authorization.service;
 
+import static com.yello.server.global.common.ErrorCode.NOT_SIGNIN_USER_EXCEPTION;
 import static com.yello.server.global.common.ErrorCode.OAUTH_TOKEN_EXCEPTION;
 import static com.yello.server.global.common.ErrorCode.TOKEN_ALL_EXPIRED_AUTH_EXCEPTION;
 import static com.yello.server.global.common.ErrorCode.TOKEN_NOT_EXPIRED_AUTH_EXCEPTION;
@@ -22,6 +23,7 @@ import com.yello.server.domain.authorization.dto.response.OnBoardingFriendRespon
 import com.yello.server.domain.authorization.dto.response.SignUpResponse;
 import com.yello.server.domain.authorization.exception.AuthBadRequestException;
 import com.yello.server.domain.authorization.exception.NotExpiredTokenForbiddenException;
+import com.yello.server.domain.authorization.exception.NotSignedInException;
 import com.yello.server.domain.authorization.exception.OAuthException;
 import com.yello.server.domain.cooldown.entity.Cooldown;
 import com.yello.server.domain.cooldown.repository.CooldownRepository;
@@ -31,12 +33,11 @@ import com.yello.server.domain.group.entity.School;
 import com.yello.server.domain.group.repository.SchoolRepository;
 import com.yello.server.domain.user.entity.User;
 import com.yello.server.domain.user.exception.UserConflictException;
-import com.yello.server.domain.user.exception.UserNotFoundException;
 import com.yello.server.domain.user.repository.UserRepository;
+import com.yello.server.global.common.factory.ListFactory;
 import com.yello.server.global.common.factory.PaginationFactory;
 import com.yello.server.global.common.util.RestUtil;
 import com.yello.server.infrastructure.redis.repository.TokenRepository;
-import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Objects;
@@ -45,10 +46,11 @@ import javax.validation.constraints.NotNull;
 import lombok.Builder;
 import lombok.RequiredArgsConstructor;
 import lombok.val;
-import org.apache.commons.lang3.ObjectUtils;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
 
 @Builder
 @Service
@@ -84,8 +86,12 @@ public class AuthService {
             throw new OAuthException(OAUTH_TOKEN_EXCEPTION);
         }
 
-        final User currentUser = userRepository.findByUuid(String.valueOf(response.getBody().id()));
+        final Optional<User> target = userRepository.findByUuid(String.valueOf(response.getBody().id()));
+        if (target.isEmpty()) {
+            throw new NotSignedInException(NOT_SIGNIN_USER_EXCEPTION);
+        }
 
+        final User currentUser = target.get();
         final ServiceTokenVO serviceTokenVO =
             this.registerToken(currentUser.getId(), currentUser.getUuid());
 
@@ -99,15 +105,10 @@ public class AuthService {
             throw new AuthBadRequestException(YELLOID_REQUIRED_EXCEPTION);
         }
 
-        try {
-            userRepository.findByYelloId(yelloId);
-        } catch (UserNotFoundException e) {
-            return false;
-        }
-
-        return true;
+        return userRepository.findByYelloId(yelloId).isPresent();
     }
 
+    @Transactional
     public SignUpResponse signUp(SignUpRequest signUpRequest) {
         final User signUpUser = this.signUpUser(signUpRequest);
         this.recommendUser(signUpRequest.recommendId());
@@ -119,27 +120,17 @@ public class AuthService {
 
     public User signUpUser(SignUpRequest signUpRequest) {
         // exception
-        User userByUUID = null;
-        try {
-            userByUUID = userRepository.findByUuid(signUpRequest.uuid());
-        } catch (UserNotFoundException exception) {
-            // doing nothing
-        }
-        if (ObjectUtils.isNotEmpty(userByUUID)) {
-            throw new UserConflictException(UUID_CONFLICT_USER_EXCEPTION);
-        }
+        userRepository.findByUuid(signUpRequest.uuid())
+            .ifPresent(action -> {
+                throw new UserConflictException(UUID_CONFLICT_USER_EXCEPTION);
+            });
 
-        User userByYelloId = null;
-        try {
-            userByYelloId = userRepository.findByYelloId(signUpRequest.yelloId());
-        } catch (UserNotFoundException exception) {
-            // doing nothing
-        }
-        if (ObjectUtils.isNotEmpty(userByYelloId)) {
-            throw new UserConflictException(YELLOID_CONFLICT_USER_EXCEPTION);
-        }
+        userRepository.findByYelloId(signUpRequest.yelloId())
+            .ifPresent(action -> {
+                throw new UserConflictException(YELLOID_CONFLICT_USER_EXCEPTION);
+            });
 
-        School group = schoolRepository.findById(signUpRequest.groupId());
+        School group = schoolRepository.getById(signUpRequest.groupId());
 
         final User newSignInUser = userRepository.save(User.of(signUpRequest, group));
         return newSignInUser;
@@ -147,7 +138,7 @@ public class AuthService {
 
     public void recommendUser(String recommendYelloId) {
         if (recommendYelloId != null && !recommendYelloId.isEmpty()) {
-            User recommendedUser = userRepository.findByYelloId(recommendYelloId);
+            User recommendedUser = userRepository.getByYelloId(recommendYelloId);
             recommendedUser.increaseRecommendCount();
 
             final Optional<Cooldown> cooldown =
@@ -169,34 +160,26 @@ public class AuthService {
     public void makeFriend(User user, List<Long> friendIds) {
         friendIds
             .stream()
-            .map((id) -> {
-                try {
-                    return userRepository.findById(id);
-                } catch (UserNotFoundException exception) {
-                    return null;
-                }
-            })
+            .map(userRepository::findById)
             .forEach(friend -> {
-                if (friend != null) {
-                    friendRepository.save(Friend.createFriend(user, friend));
-                    friendRepository.save(Friend.createFriend(friend, user));
+                if (friend.isPresent()) {
+                    friendRepository.save(Friend.createFriend(user, friend.get()));
+                    friendRepository.save(Friend.createFriend(friend.get(), user));
                 }
             });
     }
 
     public OnBoardingFriendResponse findOnBoardingFriends(OnBoardingFriendRequest friendRequest,
         Pageable pageable) {
-        List<User> totalList = new ArrayList<>();
 
-        final List<User> kakaoFriends = friendRequest.friendKakaoId()
+        final List<User> kakaoFriends = ListFactory.toNonNullableList(friendRequest.friendKakaoId()
             .stream()
             .map(String::valueOf)
             .map(userRepository::findByUuid)
-            .toList();
+            .toList());
 
-        totalList.addAll(kakaoFriends);
-
-        totalList = totalList.stream()
+        final List<User> totalList = kakaoFriends
+            .stream()
             .distinct()
             .sorted(Comparator.comparing(User::getName))
             .toList();
@@ -237,8 +220,8 @@ public class AuthService {
             Long userId = jwtTokenProvider.getUserId(refreshToken);
             String uuid = jwtTokenProvider.getUserUuid(refreshToken);
 
-            userRepository.findById(userId);
-            userRepository.findByUuid(uuid);
+            userRepository.getById(userId);
+            userRepository.getByUuid(uuid);
 
             String newAccessToken = jwtTokenProvider.createAccessToken(userId, uuid);
             val token = ServiceTokenVO.of(newAccessToken, tokens.refreshToken());

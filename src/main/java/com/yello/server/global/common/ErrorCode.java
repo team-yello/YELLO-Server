@@ -58,6 +58,7 @@ public enum ErrorCode {
     AUTH_NOT_FOUND_USER_EXCEPTION(NOT_FOUND, "토큰 정보에 해당하는 유저가 존재하지 않습니다."),
     AUTH_UUID_NOT_FOUND_USER_EXCEPTION(NOT_FOUND, "토큰 uuid에 해당하는 유저가 존재하지 않습니다."),
     GROUPID_NOT_FOUND_GROUP_EXCEPTION(NOT_FOUND, "해당 그룹 id의 그룹이 존재하지 않습니다."),
+    ID_NOT_FOUND_COOLDOWN_EXCEPTION(NOT_FOUND, "해당 id의 cooldown이 존재하지 않습니다."),
     USERID_NOT_FOUND_USER_EXCEPTION(NOT_FOUND, "탈퇴했거나 존재하지 않는 유저의 id 입니다."),
     TOKEN_TIME_EXPIRED_EXCEPTION(UNAUTHORIZED, "인증되지 않은 유저입니다."),
     NOT_FOUND_VOTE_EXCEPTION(NOT_FOUND, "존재하지 않는 투표입니다."),

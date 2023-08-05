@@ -26,7 +26,7 @@ public class UserService {
     private final CooldownRepository cooldownRepository;
 
     public UserDetailResponse findMyProfile(Long userId) {
-        final User user = userRepository.findById(userId);
+        final User user = userRepository.getById(userId);
         final Integer yelloCount = voteRepository.countAllByReceiverUserId(user.getId());
         final Integer friendCount = friendRepository.findAllByUserId(user.getId()).size();
 
@@ -34,7 +34,7 @@ public class UserService {
     }
 
     public UserResponse findUserById(Long userId) {
-        final User user = userRepository.findById(userId);
+        final User user = userRepository.getById(userId);
         final Integer yelloCount = voteRepository.countAllByReceiverUserId(user.getId());
         final Integer friendCount = friendRepository.findAllByUserId(user.getId()).size();
 
@@ -43,7 +43,7 @@ public class UserService {
 
     @Transactional
     public void delete(User user) {
-        final User target = userRepository.findById(user.getId());
+        final User target = userRepository.getById(user.getId());
         target.delete();
 
         friendRepository.findAllByUserId(target.getId())

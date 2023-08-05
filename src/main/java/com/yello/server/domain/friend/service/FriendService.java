@@ -21,6 +21,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
 import lombok.Builder;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -54,12 +55,12 @@ public class FriendService {
 
     @Transactional
     public void addFriend(Long userId, Long targetId) {
-        final User target = userRepository.findById(targetId);
-        final User user = userRepository.findById(userId);
+        final User target = userRepository.getById(targetId);
+        final User user = userRepository.getById(userId);
 
-        boolean exists = friendRepository.existsByUserAndTarget(userId, targetId);
+        final Optional<Friend> friendData = friendRepository.findByUserAndTarget(userId, targetId);
 
-        if (exists) {
+        if (friendData.isPresent()) {
             throw new FriendException(EXIST_FRIEND_EXCEPTION);
         }
 
@@ -68,9 +69,9 @@ public class FriendService {
     }
 
     public List<FriendShuffleResponse> findShuffledFriend(Long userId) {
-        final User user = userRepository.findById(userId);
+        final User user = userRepository.getById(userId);
 
-        List<Friend> allFriends = new ArrayList<>(friendRepository.findAllByUserId(user.getId()));
+        final List<Friend> allFriends = new ArrayList<>(friendRepository.findAllByUserId(user.getId()));
 
         if (allFriends.size() < RANDOM_COUNT) {
             throw new FriendException(LACK_USER_EXCEPTION);
@@ -85,7 +86,7 @@ public class FriendService {
     }
 
     public RecommendFriendResponse findAllRecommendSchoolFriends(Pageable pageable, Long userId) {
-        final User user = userRepository.findById(userId);
+        final User user = userRepository.getById(userId);
 
         List<User> recommendFriends = userRepository.findAllByGroupId(user.getGroup().getId())
             .stream()
@@ -103,20 +104,20 @@ public class FriendService {
 
     @Transactional
     public void deleteFriend(Long userId, Long targetId) {
-        userRepository.findById(userId);
-        userRepository.findById(targetId);
+        final User target = userRepository.getById(targetId);
+        final User user = userRepository.getById(userId);
 
-        friendRepository.findByUserAndTarget(userId, targetId).delete();
-        friendRepository.findByUserAndTarget(targetId, userId).delete();
+        friendRepository.getByUserAndTarget(userId, targetId).delete();
+        friendRepository.getByUserAndTarget(targetId, userId).delete();
     }
 
     public RecommendFriendResponse findAllRecommendKakaoFriends(Pageable pageable, Long userId,
         KakaoRecommendRequest request) {
-        final User user = userRepository.findById(userId);
+        final User user = userRepository.getById(userId);
 
         List<User> kakaoFriends = Arrays.stream(request.friendKakaoId())
             .filter(userRepository::existsByUuid)
-            .map(userRepository::findByUuid)
+            .map(userRepository::getByUuid)
             .filter(friend -> !friendRepository.existsByUserAndTarget(user.getId(), friend.getId()))
             .toList();
 
