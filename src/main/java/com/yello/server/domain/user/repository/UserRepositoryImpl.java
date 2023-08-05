@@ -7,6 +7,7 @@ import static com.yello.server.global.common.ErrorCode.YELLOID_NOT_FOUND_USER_EX
 import com.yello.server.domain.user.entity.User;
 import com.yello.server.domain.user.exception.UserNotFoundException;
 import java.util.List;
+import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
@@ -25,13 +26,23 @@ public class UserRepositoryImpl implements UserRepository {
     }
 
     @Override
-    public User findById(Long id) {
+    public Optional<User> findById(Long id) {
+        return userJpaRepository.findById(id);
+    }
+
+    @Override
+    public User getById(Long id) {
         return userJpaRepository.findById(id)
             .orElseThrow(() -> new UserNotFoundException(USERID_NOT_FOUND_USER_EXCEPTION));
     }
 
     @Override
-    public User findByUuid(String uuid) {
+    public Optional<User> findByUuid(String uuid) {
+        return userJpaRepository.findByUuid(uuid);
+    }
+
+    @Override
+    public User getByUuid(String uuid) {
         return userJpaRepository.findByUuid(uuid)
             .orElseThrow(() -> new UserNotFoundException(AUTH_UUID_NOT_FOUND_USER_EXCEPTION));
     }
@@ -42,7 +53,12 @@ public class UserRepositoryImpl implements UserRepository {
     }
 
     @Override
-    public User findByYelloId(String yelloId) {
+    public Optional<User> findByYelloId(String yelloId) {
+        return userJpaRepository.findByYelloId(yelloId);
+    }
+
+    @Override
+    public User getByYelloId(String yelloId) {
         return userJpaRepository.findByYelloId(yelloId)
             .orElseThrow(() -> new UserNotFoundException(YELLOID_NOT_FOUND_USER_EXCEPTION));
     }

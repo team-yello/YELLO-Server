@@ -1,0 +1,35 @@
+# This workflow uses actions that are not certified by GitHub.
+# They are provided by a third-party and are governed by
+# separate terms of service, privacy policy, and support
+# documentation.
+# This workflow will build a Java project with Gradle and cache/restore any dependencies to improve the workflow execution time
+# For more information see: https://docs.github.com/en/actions/automating-builds-and-tests/building-and-testing-java-with-gradle
+
+name: 📊 YELL:O Test
+
+on:
+  push:
+    branches: [ "develop" ]
+  pull_request:
+    branches: [ "develop" ]
+
+permissions:
+  contents: read
+
+jobs:
+  build:
+
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Junit Test 결과를 Slack으로 전송합니다 📊
+      # You may pin to the exact commit or the version.
+      # uses: qafficient/junit-report-slack@120a2bdaa43befe8d9b6cb471ccb0d51301a9daf
+      uses: qafficient/junit-report-slack@v1.0.0
+      with:
+        # Name of the test run
+        testRunName: YELLO - TEST 결과지📊
+        # Slack Conversation ID ie: C12355667
+        slackChannelId: C05E6PLQEMQ
+        # Secret Slack Token
+        slackToken: ${{ secrets.SLACK_ACCESS_TOKEN }}

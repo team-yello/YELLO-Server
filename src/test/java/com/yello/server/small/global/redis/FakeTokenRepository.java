@@ -14,7 +14,27 @@ public class FakeTokenRepository implements TokenRepository {
     }
 
     @Override
+    public void setDeviceToken(String uuid, String deviceToken) {
+
+    }
+
+    @Override
     public ServiceTokenVO get(Long key) {
         return data.get(Long.parseLong(key.toString()));
+    }
+
+    @Override
+    public String getDeviceToken(String uuid) {
+        return null;
+    }
+
+    @Override
+    public void deleteDeviceToken(String uuid) {
+
+    }
+
+    @Override
+    public Boolean hasKey(String uuid) {
+        return null;
     }
 }

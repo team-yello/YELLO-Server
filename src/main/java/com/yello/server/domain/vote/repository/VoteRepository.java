@@ -2,13 +2,16 @@ package com.yello.server.domain.vote.repository;
 
 import com.yello.server.domain.vote.entity.Vote;
 import java.util.List;
+import java.util.Optional;
 import org.springframework.data.domain.Pageable;
 
 public interface VoteRepository {
 
     Vote save(Vote vote);
 
-    Vote findById(Long id);
+    Vote getById(Long id);
+
+    Optional<Vote> findById(Long id);
 
     Integer countAllByReceiverUserId(Long userId);
 

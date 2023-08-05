@@ -19,7 +19,7 @@ public class PayService {
 
     @Transactional
     public void postPayCount(Long userId, Integer optionIndex) {
-        final User user = userRepository.findById(userId);
+        final User user = userRepository.getById(userId);
         final List<Pay> allByUserAndIndex = payRepository.findAllByUserAndOptionIndex(user,
             optionIndex);
         if (allByUserAndIndex.isEmpty()) {

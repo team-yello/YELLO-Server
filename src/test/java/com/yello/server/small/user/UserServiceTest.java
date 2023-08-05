@@ -106,7 +106,7 @@ class UserServiceTest {
     void 유저_삭제에_성공합니다() {
         // given
         final Long userId = 1L;
-        final User user = userRepository.findById(userId);
+        final User user = userRepository.getById(userId);
 
         // when
         userService.delete(user);

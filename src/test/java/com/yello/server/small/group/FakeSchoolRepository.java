@@ -7,6 +7,7 @@ import com.yello.server.domain.group.exception.GroupNotFoundException;
 import com.yello.server.domain.group.repository.SchoolRepository;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import org.springframework.data.domain.Pageable;
 
 public class FakeSchoolRepository implements SchoolRepository {
@@ -31,11 +32,18 @@ public class FakeSchoolRepository implements SchoolRepository {
     }
 
     @Override
-    public School findById(Long id) {
+    public School getById(Long id) {
         return data.stream()
             .filter(school -> school.getId().equals(id))
             .findFirst()
             .orElseThrow(() -> new GroupNotFoundException(GROUPID_NOT_FOUND_GROUP_EXCEPTION));
+    }
+
+    @Override
+    public Optional<School> findById(Long id) {
+        return data.stream()
+            .filter(school -> school.getId().equals(id))
+            .findFirst();
     }
 
     @Override

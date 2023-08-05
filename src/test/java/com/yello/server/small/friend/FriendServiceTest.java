@@ -123,7 +123,7 @@ class FriendServiceTest {
 
         // when
         friendService.addFriend(userId, targetId);
-        final Friend friend = friendRepository.findByUserAndTarget(userId, targetId);
+        final Friend friend = friendRepository.getByUserAndTarget(userId, targetId);
 
         // then
         assertThat(friend.getUser().getName()).isEqualTo("test");

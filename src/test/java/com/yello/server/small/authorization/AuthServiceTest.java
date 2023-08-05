@@ -122,7 +122,7 @@ public class AuthServiceTest {
         Long userId = 0L;
 
         // when
-        final User softDeletedUser = userRepository.findById(userId);
+        final User softDeletedUser = userRepository.getById(userId);
         authService.renewUserInformation(softDeletedUser);
 
         final List<LocalDateTime> targetIds =
@@ -199,7 +199,7 @@ public class AuthServiceTest {
 
         // when
         final User signUpUser = authService.signUpUser(request);
-        final User expectedUser = userRepository.findById(signUpUser.getId());
+        final User expectedUser = userRepository.getById(signUpUser.getId());
 
         // then
         assertThat(signUpUser).isEqualTo(expectedUser);
@@ -286,9 +286,9 @@ public class AuthServiceTest {
         String recommendYelloId = "hj_p__";
 
         // when
-        final Long before = userRepository.findByYelloId(recommendYelloId).getRecommendCount();
+        final Long before = userRepository.getByYelloId(recommendYelloId).getRecommendCount();
         authService.recommendUser(recommendYelloId);
-        final User after = userRepository.findByYelloId(recommendYelloId);
+        final User after = userRepository.getByYelloId(recommendYelloId);
 
         // then
         assertThat(after.getRecommendCount()).isEqualTo(before + 1L);
@@ -298,14 +298,14 @@ public class AuthServiceTest {
     void 회원가입_친구_추천에_성공합니다_쿨다운삭제() {
         // given
         String recommendYelloId = "hj_p__";
-        final User before = userRepository.findByYelloId(recommendYelloId);
+        final User before = userRepository.getByYelloId(recommendYelloId);
         cooldownRepository.save(Cooldown.builder()
             .user(before)
             .build());
 
         // when
         authService.recommendUser(recommendYelloId);
-        final User after = userRepository.findByYelloId(recommendYelloId);
+        final User after = userRepository.getByYelloId(recommendYelloId);
         final Optional<Cooldown> cooldown = cooldownRepository.findByUserId(after.getId());
 
         // then
@@ -339,7 +339,7 @@ public class AuthServiceTest {
         friendList.add(3L);
 
         // when
-        final User user = userRepository.findById(id);
+        final User user = userRepository.getById(id);
         authService.makeFriend(user, friendList);
 
         final List<Long> targetId = friendRepository.findAllByUserId(user.getId())
@@ -379,7 +379,7 @@ public class AuthServiceTest {
         kakaoFriendList.add("123456");
 
         final List<Long> expectedList = Stream.of("123", "1234", "12345", "123456")
-            .map(userRepository::findByUuid)
+            .map(userRepository::getByUuid)
             .map(User::getId)
             .toList();
 

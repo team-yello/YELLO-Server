@@ -5,6 +5,7 @@ import static com.yello.server.global.common.ErrorCode.NOT_FOUND_VOTE_EXCEPTION;
 import com.yello.server.domain.vote.entity.Vote;
 import com.yello.server.domain.vote.exception.VoteNotFoundException;
 import java.util.List;
+import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Repository;
@@ -24,9 +25,14 @@ public class VoteRepositoryImpl implements VoteRepository {
     }
 
     @Override
-    public Vote findById(Long id) {
+    public Vote getById(Long id) {
         return voteJpaRepository.findById(id)
             .orElseThrow(() -> new VoteNotFoundException(NOT_FOUND_VOTE_EXCEPTION));
+    }
+
+    @Override
+    public Optional<Vote> findById(Long id) {
+        return voteJpaRepository.findById(id);
     }
 
     @Override

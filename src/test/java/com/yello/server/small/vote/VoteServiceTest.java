@@ -181,32 +181,32 @@ public class VoteServiceTest {
             .id(1L)
             .colorIndex(0).answer("test")
             .isRead(false).nameHint(-1).isAnswerRevealed(false)
-            .sender(userRepository.findById(2L))
-            .receiver(userRepository.findById(1L))
+            .sender(userRepository.getById(2L))
+            .receiver(userRepository.getById(1L))
             .question(question1).createdAt(LocalDateTime.now())
             .build());
         voteRepository.save(Vote.builder()
             .id(2L)
             .colorIndex(0).answer("test2")
             .isRead(false).nameHint(-1).isAnswerRevealed(false)
-            .sender(userRepository.findById(2L))
-            .receiver(userRepository.findById(1L))
+            .sender(userRepository.getById(2L))
+            .receiver(userRepository.getById(1L))
             .question(question2).createdAt(LocalDateTime.now().minusMinutes(1))
             .build());
         voteRepository.save(Vote.builder()
             .id(3L)
             .colorIndex(0).answer("test3")
             .isRead(false).nameHint(-1).isAnswerRevealed(false)
-            .sender(userRepository.findById(2L))
-            .receiver(userRepository.findById(1L))
+            .sender(userRepository.getById(2L))
+            .receiver(userRepository.getById(1L))
             .question(question3).createdAt(LocalDateTime.now().minusMinutes(2))
             .build());
         voteRepository.save(Vote.builder()
             .id(3L)
             .colorIndex(0).answer("test3")
             .isRead(false).nameHint(-1).isAnswerRevealed(false)
-            .sender(userRepository.findById(2L))
-            .receiver(userRepository.findById(1L))
+            .sender(userRepository.getById(2L))
+            .receiver(userRepository.getById(1L))
             .question(question3).createdAt(LocalDateTime.now().minusMinutes(2))
             .build());
 
@@ -233,7 +233,7 @@ public class VoteServiceTest {
     void 상세_투표_조회에_성공합니다() {
         // given
         final Long voteId = 1L;
-        final Vote vote = voteRepository.findById(voteId);
+        final Vote vote = voteRepository.getById(voteId);
 
         // when
         final VoteDetailResponse result = voteService.findVoteById(voteId);
@@ -265,8 +265,8 @@ public class VoteServiceTest {
         // given
         final Long userId = 1L;
         final Long voteId = 1L;
-        final Vote vote = voteRepository.findById(voteId);
-        final User user = userRepository.findById(userId);
+        final Vote vote = voteRepository.getById(voteId);
+        final User user = userRepository.getById(userId);
         final Integer beforePoint = user.getPoint();
 
         // when
@@ -335,7 +335,7 @@ public class VoteServiceTest {
         // given
         final Long userId = 1L;
         final Long voteId = 1L;
-        final User user = userRepository.findById(userId);
+        final User user = userRepository.getById(userId);
 
         // when
         RevealNameResponse result = voteService.revealNameHint(userId, voteId);

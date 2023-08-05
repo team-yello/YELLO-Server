@@ -77,7 +77,7 @@ public class VoteService {
 
     @Transactional
     public VoteDetailResponse findVoteById(Long voteId) {
-        final Vote vote = voteRepository.findById(voteId);
+        final Vote vote = voteRepository.getById(voteId);
         vote.read();
         return VoteDetailResponse.of(vote);
     }
@@ -91,8 +91,8 @@ public class VoteService {
 
     @Transactional
     public KeywordCheckResponse checkKeyword(Long userId, Long voteId) {
-        final Vote vote = voteRepository.findById(voteId);
-        final User user = userRepository.findById(userId);
+        final Vote vote = voteRepository.getById(voteId);
+        final User user = userRepository.getById(userId);
 
         vote.checkKeyword();
 
@@ -105,16 +105,14 @@ public class VoteService {
     }
 
     public List<QuestionForVoteResponse> findVoteQuestionList(Long userId) {
-        final User user = userRepository.findById(userId);
+        final User user = userRepository.getById(userId);
 
         final List<Friend> friends = friendRepository.findAllByUserId(user.getId());
-
         if (friends.size() < RANDOM_COUNT) {
             throw new FriendException(LACK_USER_EXCEPTION);
         }
 
         final List<Question> questions = questionRepository.findAll();
-
         Collections.shuffle(Arrays.asList(questions));
 
         final List<Question> questionList = questions.stream()
@@ -127,7 +125,7 @@ public class VoteService {
     }
 
     public VoteAvailableResponse checkVoteAvailable(Long userId) {
-        final User user = userRepository.findById(userId);
+        final User user = userRepository.getById(userId);
         final List<Friend> friends = friendRepository.findAllByUserId(user.getId());
 
         if (friends.size() < RANDOM_COUNT) {
@@ -142,21 +140,20 @@ public class VoteService {
 
     @Transactional
     public VoteCreateResponse createVote(Long userId, CreateVoteRequest request) {
-        final User sender = userRepository.findById(userId);
+        final User sender = userRepository.getById(userId);
 
         final List<VoteAnswer> voteAnswerList = request.voteAnswerList();
         IntStream.range(0, voteAnswerList.size())
             .forEach(index -> {
-                if (index > 0 && voteAnswerList.get(index - 1).questionId() == voteAnswerList.get(index).questionId()) {
+                if (index > 0 && voteAnswerList.get(index - 1).questionId() == voteAnswerList.get(index)
+                    .questionId()) {
                     throw new VoteForbiddenException(DUPLICATE_VOTE_EXCEPTION);
                 }
 
-                User receiver = userRepository.findById(voteAnswerList.get(index).friendId());
-                Question question =
-                    questionRepository.findById(voteAnswerList.get(index).questionId());
-                Vote newVote =
-                    Vote.createVote(voteAnswerList.get(index).keywordName(), sender, receiver,
-                        question, voteAnswerList.get(index).colorIndex());
+                User receiver = userRepository.getById(voteAnswerList.get(index).friendId());
+                Question question = questionRepository.findById(voteAnswerList.get(index).questionId());
+                Vote newVote = Vote.createVote(voteAnswerList.get(index).keywordName(), sender, receiver,
+                    question, voteAnswerList.get(index).colorIndex());
                 voteRepository.save(newVote);
             });
 
@@ -173,13 +170,13 @@ public class VoteService {
 
     @Transactional
     public RevealNameResponse revealNameHint(Long userId, Long voteId) {
-        final User sender = userRepository.findById(userId);
+        final User sender = userRepository.getById(userId);
 
         if (sender.getPoint() < NAME_HINT_POINT) {
             throw new VoteForbiddenException(LACK_POINT_EXCEPTION);
         }
 
-        final Vote vote = voteRepository.findById(voteId);
+        final Vote vote = voteRepository.getById(voteId);
         if (vote.getNameHint() != NAME_HINT_DEFAULT) {
             throw new VoteNotFoundException(INVALID_VOTE_EXCEPTION);
         }
