@@ -22,4 +22,13 @@ public class FCMManagerImpl implements FCMManager {
             .build();
     }
 
+    @Override
+    public Message createMessage(String deviceToken, Notification notification, String path) {
+        return Message.builder()
+            .setToken(deviceToken)
+            .setNotification(notification)
+            .putData("path", path)
+            .build();
+    }
+
 }

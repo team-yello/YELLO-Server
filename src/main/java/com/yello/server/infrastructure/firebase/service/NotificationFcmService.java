@@ -4,7 +4,7 @@ import com.google.firebase.messaging.Message;
 import com.google.firebase.messaging.Notification;
 import com.yello.server.domain.user.entity.User;
 import com.yello.server.domain.user.repository.UserRepository;
-import com.yello.server.infrastructure.firebase.dto.request.NotificationRequest;
+import com.yello.server.infrastructure.firebase.dto.request.NotificationMessage;
 import com.yello.server.infrastructure.firebase.manager.FCMManager;
 import com.yello.server.infrastructure.redis.repository.TokenRepository;
 import lombok.Builder;
@@ -21,13 +21,19 @@ public class NotificationFcmService implements NotificationService {
     private final FCMManager fcmManager;
 
     @Override
-    public void sendNotification(NotificationRequest notificationRequest) {
+    public void sendNotification(User receiver, NotificationMessage notificationMessage) {
+        final User receiveUser = userRepository.getById(receiver.getId());
+        final String deviceToken = tokenRepository.getDeviceToken(receiveUser.getUuid());
+        final Notification notification = notificationMessage.toNotification();
 
-        final User user = userRepository.getById(notificationRequest.targetId());
-        final String deviceToken = tokenRepository.getDeviceToken(user.getUuid());
-        final Notification notification = notificationRequest.toNotification();
-        final Message message = fcmManager.createMessage(deviceToken, notification);
+        final Message message;
+        if (notificationMessage.path()!=null) {
+            message = fcmManager.createMessage(deviceToken, notification, notificationMessage.path());
+        } else {
+            message = fcmManager.createMessage(deviceToken, notification);
+        }
 
         fcmManager.send(message);
     }
+
 }

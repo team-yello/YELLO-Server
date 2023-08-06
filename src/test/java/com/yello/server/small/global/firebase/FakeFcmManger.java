@@ -18,4 +18,12 @@ public class FakeFcmManger implements FCMManager {
             .setNotification(notification)
             .build();
     }
+
+    public Message createMessage(String deviceToken, Notification notification, String path) {
+        return Message.builder()
+            .setToken(deviceToken)
+            .setNotification(notification)
+            .putData("path", path)
+            .build();
+    }
 }

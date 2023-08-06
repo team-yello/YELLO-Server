@@ -9,4 +9,6 @@ public interface FCMManager {
 
     Message createMessage(String deviceToken, Notification notification);
 
+    Message createMessage(String deviceToken, Notification notification, String path);
+
 }
