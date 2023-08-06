@@ -1,4 +1,4 @@
-package com.yello.server.small.keyword;
+package com.yello.server.small.domain.keyword;
 
 import com.yello.server.domain.keyword.entity.Keyword;
 import com.yello.server.domain.keyword.repository.KeywordRepository;
@@ -13,7 +13,7 @@ public class FakeKeywordRepository implements KeywordRepository {
     @Override
     public Keyword save(Keyword keyword) {
         Keyword newKeyword = Keyword.builder()
-            .id(keyword.getId() == null ? id++ : keyword.getId())
+            .id(keyword.getId()==null ? id++ : keyword.getId())
             .keywordName(keyword.getKeywordName())
             .question(keyword.getQuestion())
             .build();

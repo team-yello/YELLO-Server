@@ -1,4 +1,4 @@
-package com.yello.server.small.vote;
+package com.yello.server.small.domain.vote;
 
 import static com.yello.server.global.common.factory.PaginationFactory.createPageable;
 import static org.assertj.core.api.Assertions.assertThat;
@@ -27,11 +27,11 @@ import com.yello.server.domain.vote.dto.response.VoteListResponse;
 import com.yello.server.domain.vote.entity.Vote;
 import com.yello.server.domain.vote.repository.VoteRepository;
 import com.yello.server.domain.vote.service.VoteService;
-import com.yello.server.small.cooldown.FakeCooldownRepository;
-import com.yello.server.small.friend.FakeFriendRepository;
-import com.yello.server.small.keyword.FakeKeywordRepository;
-import com.yello.server.small.question.FakeQuestionRepository;
-import com.yello.server.small.user.FakeUserRepository;
+import com.yello.server.small.domain.cooldown.FakeCooldownRepository;
+import com.yello.server.small.domain.friend.FakeFriendRepository;
+import com.yello.server.small.domain.keyword.FakeKeywordRepository;
+import com.yello.server.small.domain.question.FakeQuestionRepository;
+import com.yello.server.small.domain.user.FakeUserRepository;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;

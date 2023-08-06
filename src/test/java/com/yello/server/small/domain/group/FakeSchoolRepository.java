@@ -1,4 +1,4 @@
-package com.yello.server.small.group;
+package com.yello.server.small.domain.group;
 
 import static com.yello.server.global.common.ErrorCode.GROUPID_NOT_FOUND_GROUP_EXCEPTION;
 
@@ -17,12 +17,12 @@ public class FakeSchoolRepository implements SchoolRepository {
 
     @Override
     public School save(School school) {
-        if (school.getId() != null && school.getId() > id) {
+        if (school.getId()!=null && school.getId() > id) {
             id = school.getId();
         }
 
         School newSchool = School.builder()
-            .id(school.getId() == null ? ++id : school.getId())
+            .id(school.getId()==null ? ++id : school.getId())
             .schoolName(school.getSchoolName())
             .departmentName(school.getDepartmentName())
             .build();

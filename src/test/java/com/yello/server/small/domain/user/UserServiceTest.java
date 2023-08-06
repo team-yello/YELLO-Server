@@ -1,4 +1,4 @@
-package com.yello.server.small.user;
+package com.yello.server.small.domain.user;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
@@ -15,9 +15,9 @@ import com.yello.server.domain.user.exception.UserNotFoundException;
 import com.yello.server.domain.user.repository.UserRepository;
 import com.yello.server.domain.user.service.UserService;
 import com.yello.server.domain.vote.repository.VoteRepository;
-import com.yello.server.small.cooldown.FakeCooldownRepository;
-import com.yello.server.small.friend.FakeFriendRepository;
-import com.yello.server.small.vote.FakeVoteRepository;
+import com.yello.server.small.domain.cooldown.FakeCooldownRepository;
+import com.yello.server.small.domain.friend.FakeFriendRepository;
+import com.yello.server.small.domain.vote.FakeVoteRepository;
 import java.time.LocalDateTime;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;

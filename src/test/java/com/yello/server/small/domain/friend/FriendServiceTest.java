@@ -1,4 +1,4 @@
-package com.yello.server.small.friend;
+package com.yello.server.small.domain.friend;
 
 import static com.yello.server.global.common.factory.PaginationFactory.createPageable;
 import static org.assertj.core.api.Assertions.assertThat;
@@ -20,8 +20,8 @@ import com.yello.server.domain.user.entity.User;
 import com.yello.server.domain.user.exception.UserNotFoundException;
 import com.yello.server.domain.user.repository.UserRepository;
 import com.yello.server.domain.vote.repository.VoteRepository;
-import com.yello.server.small.user.FakeUserRepository;
-import com.yello.server.small.vote.FakeVoteRepository;
+import com.yello.server.small.domain.user.FakeUserRepository;
+import com.yello.server.small.domain.vote.FakeVoteRepository;
 import java.util.List;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;

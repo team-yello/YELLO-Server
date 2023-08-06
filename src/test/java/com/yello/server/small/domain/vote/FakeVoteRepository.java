@@ -1,4 +1,4 @@
-package com.yello.server.small.vote;
+package com.yello.server.small.domain.vote;
 
 import static com.yello.server.global.common.ErrorCode.NOT_FOUND_VOTE_EXCEPTION;
 
@@ -18,7 +18,7 @@ public class FakeVoteRepository implements VoteRepository {
     @Override
     public Vote save(Vote vote) {
         Vote newVote = Vote.builder()
-            .id(vote.getId() == null ? id++ : vote.getId())
+            .id(vote.getId()==null ? id++ : vote.getId())
             .answer(vote.getAnswer())
             .nameHint(vote.getNameHint())
             .isAnswerRevealed(vote.getIsAnswerRevealed())
