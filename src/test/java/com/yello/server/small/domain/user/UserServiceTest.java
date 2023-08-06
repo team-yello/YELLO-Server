@@ -61,7 +61,6 @@ class UserServiceTest {
             .deletedAt(null).group(school)
             .groupAdmissionYear(17).email("hello@test.com")
             .build());
-
     }
 
     @Test
