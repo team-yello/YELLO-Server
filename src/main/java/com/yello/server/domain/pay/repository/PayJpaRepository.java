@@ -7,5 +7,5 @@ import org.springframework.data.jpa.repository.JpaRepository;
 
 public interface PayJpaRepository extends JpaRepository<Pay, Long> {
 
-  List<Pay> findAllByUserAndOptionIndex(User user, Integer optionIndex);
+    List<Pay> findAllByUserAndOptionIndex(User user, Integer optionIndex);
 }

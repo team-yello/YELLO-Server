@@ -17,10 +17,12 @@ import com.yello.server.domain.user.entity.User;
 import com.yello.server.domain.user.repository.UserRepository;
 import com.yello.server.domain.vote.repository.VoteRepository;
 import com.yello.server.global.common.factory.PaginationFactory;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
+import lombok.Builder;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -28,6 +30,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 @Service
+@Builder
 @RequiredArgsConstructor
 @Transactional(readOnly = true)
 public class FriendService {
@@ -68,7 +71,7 @@ public class FriendService {
     public List<FriendShuffleResponse> findShuffledFriend(Long userId) {
         final User user = userRepository.getById(userId);
 
-        final List<Friend> allFriends = friendRepository.findAllByUserId(user.getId());
+        final List<Friend> allFriends = new ArrayList<>(friendRepository.findAllByUserId(user.getId()));
 
         if (allFriends.size() < RANDOM_COUNT) {
             throw new FriendException(LACK_USER_EXCEPTION);
@@ -104,10 +107,8 @@ public class FriendService {
         final User target = userRepository.getById(targetId);
         final User user = userRepository.getById(userId);
 
-        friendRepository.findByUserAndTarget(userId, targetId);
-        friendRepository.findByUserAndTarget(targetId, userId);
-
-        friendRepository.deleteByUserAndTarget(user.getId(), target.getId());
+        friendRepository.getByUserAndTarget(userId, targetId).delete();
+        friendRepository.getByUserAndTarget(targetId, userId).delete();
     }
 
     public RecommendFriendResponse findAllRecommendKakaoFriends(Pageable pageable, Long userId,

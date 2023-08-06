@@ -74,7 +74,7 @@ public class User extends AuditingTimeEntity {
     @Column(nullable = false)
     private String email;
 
-    public static User of(SignUpRequest signUpRequest, String uuid, School group) {
+    public static User of(SignUpRequest signUpRequest, School group) {
         return User.builder()
             .recommendCount(0L)
             .name(signUpRequest.name())
@@ -83,7 +83,7 @@ public class User extends AuditingTimeEntity {
             .point(200)
             .social(signUpRequest.social())
             .profileImage(signUpRequest.profileImage())
-            .uuid(uuid)
+            .uuid(signUpRequest.uuid())
             .deletedAt(null)
             .group(group)
             .groupAdmissionYear(signUpRequest.groupAdmissionYear())

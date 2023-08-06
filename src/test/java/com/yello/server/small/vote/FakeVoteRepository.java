@@ -7,6 +7,7 @@ import com.yello.server.domain.vote.exception.VoteNotFoundException;
 import com.yello.server.domain.vote.repository.VoteRepository;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import org.springframework.data.domain.Pageable;
 
 public class FakeVoteRepository implements VoteRepository {
@@ -17,7 +18,7 @@ public class FakeVoteRepository implements VoteRepository {
     @Override
     public Vote save(Vote vote) {
         Vote newVote = Vote.builder()
-            .id(id++)
+            .id(vote.getId() == null ? id++ : vote.getId())
             .answer(vote.getAnswer())
             .nameHint(vote.getNameHint())
             .isAnswerRevealed(vote.getIsAnswerRevealed())
@@ -26,17 +27,25 @@ public class FakeVoteRepository implements VoteRepository {
             .receiver(vote.getReceiver())
             .question(vote.getQuestion())
             .colorIndex(vote.getColorIndex())
+            .createdAt(vote.getCreatedAt())
             .build();
         data.add(newVote);
         return newVote;
     }
 
     @Override
-    public Vote findById(Long id) {
+    public Vote getById(Long id) {
         return data.stream()
             .filter(vote -> vote.getId().equals(id))
             .findFirst()
             .orElseThrow(() -> new VoteNotFoundException(NOT_FOUND_VOTE_EXCEPTION));
+    }
+
+    @Override
+    public Optional<Vote> findById(Long id) {
+        return data.stream()
+            .filter(vote -> vote.getId().equals(id))
+            .findFirst();
     }
 
     @Override

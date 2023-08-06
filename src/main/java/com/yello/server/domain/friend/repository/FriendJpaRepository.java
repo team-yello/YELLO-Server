@@ -6,10 +6,8 @@ import java.util.Optional;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
-import org.springframework.transaction.annotation.Transactional;
 
 public interface FriendJpaRepository extends JpaRepository<Friend, Long> {
 
@@ -25,7 +23,8 @@ public interface FriendJpaRepository extends JpaRepository<Friend, Long> {
         "and f.user.deletedAt is null " +
         "and f.target.deletedAt is null " +
         "and f.deletedAt is null")
-    Optional<Friend> findByUserAndTarget(@Param("userId") Long userId, @Param("targetId") Long targetId);
+    Optional<Friend> findByUserAndTarget(@Param("userId") Long userId,
+        @Param("targetId") Long targetId);
 
     @Query("select case when count(f) > 0 then true else false end from Friend f " +
         "where f.target.id = :targetId " +
@@ -60,11 +59,4 @@ public interface FriendJpaRepository extends JpaRepository<Friend, Long> {
     @Query("select f from Friend f " +
         "where f.target.id = :targetId")
     List<Friend> findAllByTargetIdNotFiltered(Long targetId);
-
-    @Transactional
-    @Modifying(clearAutomatically = true)
-    @Query("delete from Friend f " +
-        "where f.target.id = :targetId " +
-        "and f.user.id = :userId")
-    void deleteByUserAndTarget(@Param("userId") Long userId, @Param("targetId") Long targetId);
 }

@@ -70,11 +70,4 @@ public class FriendRepositoryImpl implements FriendRepository {
     public List<Friend> findAllByTargetIdNotFiltered(Long targetId) {
         return friendJpaRepository.findAllByTargetIdNotFiltered(targetId);
     }
-
-    @Transactional
-    @Override
-    public void deleteByUserAndTarget(Long userId, Long targetId) {
-        friendJpaRepository.deleteByUserAndTarget(userId, targetId);
-        friendJpaRepository.deleteByUserAndTarget(targetId, userId);
-    }
 }

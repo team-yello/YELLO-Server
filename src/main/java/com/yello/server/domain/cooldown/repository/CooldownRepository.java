@@ -5,8 +5,10 @@ import java.util.Optional;
 
 public interface CooldownRepository {
 
-    void save(Cooldown cooldown);
+    Cooldown save(Cooldown cooldown);
 
+    Cooldown getByUserid(Long userId);
+    
     Optional<Cooldown> findByUserId(Long userId);
 
     boolean existsByUserId(Long userId);

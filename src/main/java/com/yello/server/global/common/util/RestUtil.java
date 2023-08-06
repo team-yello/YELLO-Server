@@ -10,8 +10,10 @@ import org.springframework.web.reactive.function.client.WebClient;
 
 public class RestUtil {
 
-    private static final String KAKAO_TOKEN_INFO_URL = "https://kapi.kakao.com/v1/user/access_token_info";
-    private static final String KAKAO_FRIEND_LIST_URL = "https://kapi.kakao.com/v1/api/talk/friends";
+    private static final String KAKAO_TOKEN_INFO_URL =
+        "https://kapi.kakao.com/v1/user/access_token_info";
+    private static final String KAKAO_FRIEND_LIST_URL =
+        "https://kapi.kakao.com/v1/api/talk/friends";
 
     private RestUtil() {
         throw new IllegalStateException();
@@ -29,19 +31,20 @@ public class RestUtil {
             .block();
     }
 
-    public static ResponseEntity<KakaoFriendsInfo> getKakaoFriendList(String kakaoAccessToken, String friendOrder,
+    public static ResponseEntity<KakaoFriendsInfo> getKakaoFriendList(String kakaoAccessToken,
+        String friendOrder,
         Integer offset, Integer limit, String order) {
         String baseUrl = KAKAO_FRIEND_LIST_URL + "?";
-        if (friendOrder!=null) {
+        if (friendOrder != null) {
             baseUrl += "friendOrder=" + friendOrder;
         }
-        if (offset!=null) {
+        if (offset != null) {
             baseUrl += "offset=" + offset;
         }
-        if (limit!=null) {
+        if (limit != null) {
             baseUrl += "limit=" + limit;
         }
-        if (order!=null) {
+        if (order != null) {
             baseUrl += "order=" + order;
         }
         if (baseUrl.equals(KAKAO_FRIEND_LIST_URL + "?")) {
