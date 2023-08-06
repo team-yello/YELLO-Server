@@ -40,7 +40,7 @@ out/
 ### config ###
 application.yml
 application-dev.yml
-yello-*-firebase-*.json
+firebase*.json
 
 ### monitoring ###
 monitoring/prometheus/volume

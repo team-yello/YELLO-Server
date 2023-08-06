@@ -64,6 +64,7 @@ public enum ErrorCode {
     NOT_FOUND_VOTE_EXCEPTION(NOT_FOUND, "존재하지 않는 투표입니다."),
     NOT_FOUND_QUESTION_EXCEPTION(NOT_FOUND, "존재하지 않는 질문입니다."),
     NOT_FOUND_FRIEND_EXCEPTION(NOT_FOUND, "존재하지 않는 친구이거나 친구 관계가 아닙니다."),
+    REDIS_NOT_FOUND_UUID(NOT_FOUND, "uuid에 해당하는 디바이스 토큰 정보를 찾을 수 없습니다."),
 
     /**
      * 409 CONFLICT

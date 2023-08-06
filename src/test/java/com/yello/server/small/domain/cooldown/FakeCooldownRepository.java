@@ -1,4 +1,4 @@
-package com.yello.server.small.cooldown;
+package com.yello.server.small.domain.cooldown;
 
 import static com.yello.server.global.common.ErrorCode.ID_NOT_FOUND_COOLDOWN_EXCEPTION;
 
@@ -16,12 +16,12 @@ public class FakeCooldownRepository implements CooldownRepository {
 
     @Override
     public Cooldown save(Cooldown cooldown) {
-        if (cooldown.getId() != null && cooldown.getId() > id) {
+        if (cooldown.getId()!=null && cooldown.getId() > id) {
             id = cooldown.getId();
         }
 
         Cooldown newCooldown = Cooldown.builder()
-            .id(cooldown.getId() == null ? ++id : cooldown.getId())
+            .id(cooldown.getId()==null ? ++id : cooldown.getId())
             .user(cooldown.getUser())
             .createdAt(cooldown.getCreatedAt())
             .deletedAt(null)

@@ -42,6 +42,7 @@ import com.yello.server.domain.vote.exception.VoteForbiddenException;
 import com.yello.server.domain.vote.exception.VoteNotFoundException;
 import com.yello.server.domain.vote.repository.VoteRepository;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
@@ -140,21 +141,25 @@ public class VoteService {
 
     @Transactional
     public VoteCreateResponse createVote(Long userId, CreateVoteRequest request) {
+        List<Vote> votes = new ArrayList<>();
         final User sender = userRepository.getById(userId);
 
         final List<VoteAnswer> voteAnswerList = request.voteAnswerList();
         IntStream.range(0, voteAnswerList.size())
             .forEach(index -> {
-                if (index > 0 && voteAnswerList.get(index - 1).questionId() == voteAnswerList.get(index)
-                    .questionId()) {
+                VoteAnswer answer = voteAnswerList.get(index);
+
+                if (index > 0 && voteAnswerList.get(index - 1).questionId().equals(answer.questionId())) {
                     throw new VoteForbiddenException(DUPLICATE_VOTE_EXCEPTION);
                 }
 
-                User receiver = userRepository.getById(voteAnswerList.get(index).friendId());
-                Question question = questionRepository.findById(voteAnswerList.get(index).questionId());
-                Vote newVote = Vote.createVote(voteAnswerList.get(index).keywordName(), sender, receiver,
-                    question, voteAnswerList.get(index).colorIndex());
-                voteRepository.save(newVote);
+                User receiver = userRepository.getById(answer.friendId());
+                Question question = questionRepository.findById(answer.questionId());
+                Vote newVote = Vote.createVote(answer.keywordName(), sender, receiver,
+                    question, answer.colorIndex());
+
+                Vote savedVote = voteRepository.save(newVote);
+                votes.add(savedVote);
             });
 
         final Optional<Cooldown> cooldown = cooldownRepository.findByUserId(sender.getId());
@@ -165,7 +170,7 @@ public class VoteService {
         }
 
         sender.plusPoint(request.totalPoint());
-        return VoteCreateResponse.of(sender.getPoint());
+        return VoteCreateResponse.of(sender.getPoint(), votes);
     }
 
     @Transactional
@@ -177,7 +182,7 @@ public class VoteService {
         }
 
         final Vote vote = voteRepository.getById(voteId);
-        if (vote.getNameHint() != NAME_HINT_DEFAULT) {
+        if (vote.getNameHint()!=NAME_HINT_DEFAULT) {
             throw new VoteNotFoundException(INVALID_VOTE_EXCEPTION);
         }
 

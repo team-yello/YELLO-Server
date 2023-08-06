@@ -21,6 +21,7 @@ import com.yello.server.domain.vote.service.VoteService;
 import com.yello.server.global.common.SuccessCode;
 import com.yello.server.global.common.annotation.AccessTokenUser;
 import com.yello.server.global.common.dto.BaseResponse;
+import com.yello.server.infrastructure.firebase.service.NotificationService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.ArraySchema;
@@ -47,6 +48,7 @@ import org.springframework.web.bind.annotation.RestController;
 public class VoteController {
 
     private final VoteService voteService;
+    private final NotificationService notificationService;
 
     @Operation(summary = "내 투표 전체 조회 API", responses = {
         @ApiResponse(
@@ -141,7 +143,8 @@ public class VoteController {
         @RequestBody CreateVoteRequest request
     ) {
         val data = voteService.createVote(user.getId(), request);
-        return BaseResponse.success(CREATE_VOTE_SUCCESS, data);
+        data.votes().forEach(notificationService::sendYelloNotification);
+        return BaseResponse.success(CREATE_VOTE_SUCCESS, data.toOnlyPoint());
     }
 
     @Operation(summary = "투표 이름 부분 조회 API", responses = {
@@ -155,6 +158,7 @@ public class VoteController {
         @PathVariable Long voteId
     ) {
         val data = voteService.revealNameHint(user.getId(), voteId);
+
         return BaseResponse.success(SuccessCode.REVEAL_NAME_HINT_SUCCESS, data);
     }
 }
