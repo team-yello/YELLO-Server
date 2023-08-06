@@ -15,9 +15,11 @@ import com.yello.server.domain.user.exception.UserNotFoundException;
 import com.yello.server.domain.user.repository.UserRepository;
 import com.yello.server.domain.user.service.UserService;
 import com.yello.server.domain.vote.repository.VoteRepository;
+import com.yello.server.infrastructure.redis.repository.TokenRepository;
 import com.yello.server.small.domain.cooldown.FakeCooldownRepository;
 import com.yello.server.small.domain.friend.FakeFriendRepository;
 import com.yello.server.small.domain.vote.FakeVoteRepository;
+import com.yello.server.small.global.redis.FakeTokenRepository;
 import java.time.LocalDateTime;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -28,6 +30,7 @@ class UserServiceTest {
     private final FriendRepository friendRepository = new FakeFriendRepository();
     private final VoteRepository voteRepository = new FakeVoteRepository();
     private final CooldownRepository cooldownRepository = new FakeCooldownRepository();
+    private final TokenRepository tokenRepository = new FakeTokenRepository();
     private UserService userService;
 
     @BeforeEach
@@ -37,6 +40,7 @@ class UserServiceTest {
             .friendRepository(friendRepository)
             .voteRepository(voteRepository)
             .cooldownRepository(cooldownRepository)
+            .tokenRepository(tokenRepository)
             .build();
 
         School school = School.builder()
@@ -113,5 +117,6 @@ class UserServiceTest {
         // then
         assertThat(user.getPoint()).isZero();
         assertThat(user.getDeletedAt()).isBeforeOrEqualTo(LocalDateTime.now());
+        assertThat(tokenRepository.hasKey(user.getUuid())).isFalse();
     }
 }
