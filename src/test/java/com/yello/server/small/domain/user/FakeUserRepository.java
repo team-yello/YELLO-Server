@@ -1,4 +1,4 @@
-package com.yello.server.small.user;
+package com.yello.server.small.domain.user;
 
 import static com.yello.server.global.common.ErrorCode.AUTH_UUID_NOT_FOUND_USER_EXCEPTION;
 import static com.yello.server.global.common.ErrorCode.USERID_NOT_FOUND_USER_EXCEPTION;
@@ -18,12 +18,12 @@ public class FakeUserRepository implements UserRepository {
 
     @Override
     public User save(User user) {
-        if (user.getId() != null && user.getId() > id) {
+        if (user.getId()!=null && user.getId() > id) {
             id = user.getId();
         }
 
         User newUser = User.builder()
-            .id(user.getId() == null ? ++id : user.getId())
+            .id(user.getId()==null ? ++id : user.getId())
             .recommendCount(0L)
             .name(user.getName())
             .yelloId(user.getYelloId())

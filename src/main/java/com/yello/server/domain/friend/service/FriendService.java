@@ -17,6 +17,7 @@ import com.yello.server.domain.user.entity.User;
 import com.yello.server.domain.user.repository.UserRepository;
 import com.yello.server.domain.vote.repository.VoteRepository;
 import com.yello.server.global.common.factory.PaginationFactory;
+import com.yello.server.infrastructure.firebase.service.NotificationService;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -38,6 +39,7 @@ public class FriendService {
     private final FriendRepository friendRepository;
     private final UserRepository userRepository;
     private final VoteRepository voteRepository;
+    private final NotificationService notificationService;
 
     public FriendsResponse findAllFriends(Pageable pageable, Long userId) {
         final Page<Friend> friendsData = friendRepository.findAllFriendsByUserId(pageable, userId);
@@ -54,7 +56,7 @@ public class FriendService {
     }
 
     @Transactional
-    public void addFriend(Long userId, Long targetId) {
+    public Friend addFriend(Long userId, Long targetId) {
         final User target = userRepository.getById(targetId);
         final User user = userRepository.getById(userId);
 
@@ -64,8 +66,9 @@ public class FriendService {
             throw new FriendException(EXIST_FRIEND_EXCEPTION);
         }
 
-        friendRepository.save(Friend.createFriend(user, target));
+        Friend friend = friendRepository.save(Friend.createFriend(user, target));
         friendRepository.save(Friend.createFriend(target, user));
+        return friend;
     }
 
     public List<FriendShuffleResponse> findShuffledFriend(Long userId) {

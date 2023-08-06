@@ -15,6 +15,7 @@ import com.yello.server.domain.user.entity.User;
 import com.yello.server.global.common.SuccessCode;
 import com.yello.server.global.common.annotation.AccessTokenUser;
 import com.yello.server.global.common.dto.BaseResponse;
+import com.yello.server.infrastructure.firebase.service.NotificationService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.ArraySchema;
@@ -43,6 +44,7 @@ import org.springframework.web.bind.annotation.RestController;
 public class FriendController {
 
     private final FriendService friendService;
+    private final NotificationService notificationService;
 
     @Operation(summary = "친구 추가하기 API", responses = {
         @ApiResponse(
@@ -55,7 +57,8 @@ public class FriendController {
         @Parameter(name = "targetId", description = "친구 신청할 상대 유저의 아이디 값 입니다.")
         @Valid @PathVariable Long targetId,
         @AccessTokenUser User user) {
-        friendService.addFriend(user.getId(), targetId);
+        val data = friendService.addFriend(user.getId(), targetId);
+        notificationService.sendFriendNotification(data);
         return BaseResponse.success(ADD_FRIEND_SUCCESS);
     }
 

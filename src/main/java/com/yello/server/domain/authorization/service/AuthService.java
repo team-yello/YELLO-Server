@@ -82,7 +82,7 @@ public class AuthService {
         final ResponseEntity<KakaoTokenInfo> response = RestUtil.getKakaoTokenInfo(
             oAuthRequest.accessToken());
 
-        if (response.getStatusCode() == BAD_REQUEST || response.getStatusCode() == UNAUTHORIZED) {
+        if (response.getStatusCode()==BAD_REQUEST || response.getStatusCode()==UNAUTHORIZED) {
             throw new OAuthException(OAUTH_TOKEN_EXCEPTION);
         }
 
@@ -133,6 +133,7 @@ public class AuthService {
         School group = schoolRepository.getById(signUpRequest.groupId());
 
         final User newSignInUser = userRepository.save(User.of(signUpRequest, group));
+        tokenValueOperations.setDeviceToken(newSignInUser.getUuid(), signUpRequest.deviceToken());
         return newSignInUser;
     }
 

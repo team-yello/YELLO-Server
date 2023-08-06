@@ -29,6 +29,7 @@ import com.yello.server.domain.vote.exception.VoteForbiddenException;
 import com.yello.server.domain.vote.exception.VoteNotFoundException;
 import com.yello.server.global.common.dto.BaseResponse;
 import com.yello.server.infrastructure.redis.exception.RedisException;
+import com.yello.server.infrastructure.redis.exception.RedisNotFoundException;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.HttpMessageConversionException;
 import org.springframework.http.converter.HttpMessageNotReadableException;
@@ -120,7 +121,8 @@ public class ControllerExceptionAdvice {
         VoteNotFoundException.class,
         GroupNotFoundException.class,
         FriendNotFoundException.class,
-        QuestionNotFoundException.class
+        QuestionNotFoundException.class,
+        RedisNotFoundException.class
     })
     public ResponseEntity<BaseResponse> NotFoundException(CustomException exception) {
         return ResponseEntity.status(NOT_FOUND)

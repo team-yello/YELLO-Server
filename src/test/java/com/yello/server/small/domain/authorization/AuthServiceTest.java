@@ -1,4 +1,4 @@
-package com.yello.server.small.authorization;
+package com.yello.server.small.domain.authorization;
 
 import static com.yello.server.global.common.ErrorCode.GROUPID_NOT_FOUND_GROUP_EXCEPTION;
 import static com.yello.server.global.common.ErrorCode.UUID_CONFLICT_USER_EXCEPTION;
@@ -28,11 +28,11 @@ import com.yello.server.domain.user.exception.UserConflictException;
 import com.yello.server.domain.user.repository.UserRepository;
 import com.yello.server.global.common.factory.PaginationFactory;
 import com.yello.server.infrastructure.redis.repository.TokenRepository;
-import com.yello.server.small.cooldown.FakeCooldownRepository;
-import com.yello.server.small.friend.FakeFriendRepository;
+import com.yello.server.small.domain.cooldown.FakeCooldownRepository;
+import com.yello.server.small.domain.friend.FakeFriendRepository;
+import com.yello.server.small.domain.group.FakeSchoolRepository;
+import com.yello.server.small.domain.user.FakeUserRepository;
 import com.yello.server.small.global.redis.FakeTokenRepository;
-import com.yello.server.small.group.FakeSchoolRepository;
-import com.yello.server.small.user.FakeUserRepository;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Base64;
