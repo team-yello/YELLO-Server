@@ -1,6 +1,9 @@
 package com.yello.server.infrastructure.redis.repository;
 
+import static com.yello.server.global.common.ErrorCode.REDIS_NOT_FOUND_UUID;
+
 import com.yello.server.domain.authorization.dto.ServiceTokenVO;
+import com.yello.server.infrastructure.redis.exception.RedisNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.data.redis.core.ValueOperations;
@@ -31,6 +34,10 @@ public class TokenRepositoryImpl implements TokenRepository {
 
     @Override
     public String getDeviceToken(String uuid) {
+        if (!hasKey(uuid)) {
+            throw new RedisNotFoundException(REDIS_NOT_FOUND_UUID);
+        }
+        
         return redisDeviceTokenRepository.opsForValue()
             .get(uuid);
     }
