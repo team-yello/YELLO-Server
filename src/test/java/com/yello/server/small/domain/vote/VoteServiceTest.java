@@ -341,7 +341,7 @@ public class VoteServiceTest {
         RevealNameResponse result = voteService.revealNameHint(userId, voteId);
 
         // then
-        assertThat(result.name()).isIn('t', 'e');
+        assertThat(result.name()).isIn('y', 'e');
         assertThat(result.nameIndex()).isLessThan(2);
 
     }
