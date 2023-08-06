@@ -9,8 +9,7 @@ import lombok.Builder;
 @Builder
 public record NotificationMessage(
     String title,
-    String message,
-    String path
+    String message
 ) {
 
     public static NotificationMessage toVoteAvailableNotificationContent() {
@@ -27,12 +26,11 @@ public record NotificationMessage(
             .build();
     }
 
-    public static NotificationMessage toYelloNotificationContent(User user, String path) {
+    public static NotificationMessage toYelloNotificationContent(User user) {
         final String target = Gender.MALE.getIntial().equals(user.getGender().getIntial()) ? "남학생" : "여학생";
         return NotificationMessage.builder()
             .title(MessageFormat.format("{0}이 쪽지를 보냈어요!", target))
             .message("나는 너가 ...")
-            .path(path)
             .build();
     }
 
