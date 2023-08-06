@@ -9,6 +9,7 @@ import com.yello.server.domain.user.dto.response.UserResponse;
 import com.yello.server.domain.user.entity.User;
 import com.yello.server.domain.user.repository.UserRepository;
 import com.yello.server.domain.vote.repository.VoteRepository;
+import com.yello.server.infrastructure.redis.repository.TokenRepository;
 import lombok.Builder;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -24,6 +25,7 @@ public class UserService {
     private final FriendRepository friendRepository;
     private final VoteRepository voteRepository;
     private final CooldownRepository cooldownRepository;
+    private final TokenRepository tokenRepository;
 
     public UserDetailResponse findMyProfile(Long userId) {
         final User user = userRepository.getById(userId);
@@ -54,5 +56,7 @@ public class UserService {
 
         cooldownRepository.findByUserId(target.getId())
             .ifPresent(Cooldown::delete);
+
+        tokenRepository.deleteDeviceToken(target.getUuid());
     }
 }
