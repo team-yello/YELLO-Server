@@ -1,15 +1,16 @@
 package com.yello.server.small.global.firebase;
 
-import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
+import com.yello.server.domain.friend.entity.Friend;
 import com.yello.server.domain.group.entity.School;
+import com.yello.server.domain.question.entity.Question;
 import com.yello.server.domain.user.entity.Gender;
 import com.yello.server.domain.user.entity.Social;
 import com.yello.server.domain.user.entity.User;
 import com.yello.server.domain.user.exception.UserNotFoundException;
 import com.yello.server.domain.user.repository.UserRepository;
-import com.yello.server.infrastructure.firebase.dto.request.NotificationMessage;
+import com.yello.server.domain.vote.entity.Vote;
 import com.yello.server.infrastructure.firebase.manager.FCMManager;
 import com.yello.server.infrastructure.firebase.service.NotificationFcmService;
 import com.yello.server.infrastructure.firebase.service.NotificationService;
@@ -17,6 +18,7 @@ import com.yello.server.infrastructure.redis.exception.RedisNotFoundException;
 import com.yello.server.infrastructure.redis.repository.TokenRepository;
 import com.yello.server.small.domain.user.FakeUserRepository;
 import com.yello.server.small.global.redis.FakeTokenRepository;
+import java.time.LocalDateTime;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -27,7 +29,6 @@ class NotificationFcmServiceTest {
     private final FCMManager fcmManager = new FakeFcmManger();
 
     private NotificationService notificationService;
-    private NotificationMessage notificationMessage;
 
     private User user;
     private User target;
@@ -77,54 +78,54 @@ class NotificationFcmServiceTest {
     void 쪽지_받음_푸시_알림_전송에_성공합니다() {
         // given
         tokenRepository.setDeviceToken(target.getUuid(), "test-device-token");
-        notificationMessage = NotificationMessage.toYelloNotificationContent(user, "/dummy");
+        Question question = Question.builder()
+            .id(1L)
+            .nameHead(null).nameFoot("와")
+            .keywordHead("멋진").keywordFoot("에서 놀고싶어")
+            .build();
+        Vote vote = Vote.builder()
+            .id(1L)
+            .colorIndex(0).answer("test")
+            .isRead(false).nameHint(-1).isAnswerRevealed(false)
+            .sender(userRepository.getById(1L))
+            .receiver(userRepository.getById(2L))
+            .question(question).createdAt(LocalDateTime.now())
+            .build();
 
         // when
-        notificationService.sendNotification(target, notificationMessage);
-
         // then
-        assertThat(notificationMessage.title()).isEqualTo("남학생이 쪽지를 보냈어요!");
-        assertThat(notificationMessage.message()).isEqualTo("나는 너가 ...");
-        assertThat(notificationMessage.path()).isEqualTo("/dummy");
+        notificationService.sendYelloNotification(vote);
     }
 
     @Test
     void 투표_가능_푸시_알림_전송에_성공합니다() {
         // given
         tokenRepository.setDeviceToken(target.getUuid(), "test-device-token");
-        notificationMessage = NotificationMessage.toVoteAvailableNotificationContent();
 
         // when
-        notificationService.sendNotification(target, notificationMessage);
-
         // then
-        assertThat(notificationMessage.title()).isEqualTo("친구에게 쪽지 보내고 포인트 받기");
-        assertThat(notificationMessage.message()).isEqualTo("대기시간이 다 지났어요. 친구들에게 투표해봐요!");
+        notificationService.sendVoteAvailableNotification(target.getId());
     }
 
     @Test
     void 친구_푸시_알림_전송에_성공합니다() {
         // given
         tokenRepository.setDeviceToken(target.getUuid(), "test-device-token");
-        notificationMessage = NotificationMessage.toFriendNotificationContent(user);
+        Friend friend = Friend.createFriend(user, target);
 
         // when
-        notificationService.sendNotification(target, notificationMessage);
-
         // then
-        assertThat(notificationMessage.title()).isEqualTo("test님이 회원님과 친구가 되었어요");
-        assertThat(notificationMessage.message()).isEqualTo("친구와 쪽지를 주고받아 보세요!");
+        notificationService.sendFriendNotification(friend);
     }
 
     @Test
     void 푸시_알림_전송_시_존재하지_않는_유저인_경우에_UserNotFoundException이_발생합니다() {
         // given
         tokenRepository.setDeviceToken(target.getUuid(), "test-device-token");
-        notificationMessage = NotificationMessage.toYelloNotificationContent(user, "/path");
 
         // when
         // then
-        assertThatThrownBy(() -> notificationService.sendNotification(dummy, notificationMessage))
+        assertThatThrownBy(() -> notificationService.sendVoteAvailableNotification(dummy.getId()))
             .isInstanceOf(UserNotFoundException.class)
             .hasMessageContaining("[UserNotFoundException] 탈퇴했거나 존재하지 않는 유저의 id 입니다.");
     }
@@ -132,11 +133,9 @@ class NotificationFcmServiceTest {
     @Test
     void 푸시_알림_전송_시_UUID에_대한_DeviceToken이_없는_경우_RedisNotFoundException이_발생합니다() {
         // given
-        notificationMessage = NotificationMessage.toYelloNotificationContent(user, "/path");
-
         // when
         // then
-        assertThatThrownBy(() -> notificationService.sendNotification(target, notificationMessage))
+        assertThatThrownBy(() -> notificationService.sendVoteAvailableNotification(target.getId()))
             .isInstanceOf(RedisNotFoundException.class)
             .hasMessageContaining("[RedisNotFoundException] uuid에 해당하는 디바이스 토큰 정보를 찾을 수 없습니다.");
 
