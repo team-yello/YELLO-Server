@@ -96,7 +96,7 @@ public class AuthService {
             this.registerToken(currentUser.getId(), currentUser.getUuid());
 
         this.renewUserInformation(currentUser);
-
+        tokenValueOperations.setDeviceToken(currentUser.getUuid(), oAuthRequest.deviceToken());
         return OAuthResponse.of(serviceTokenVO);
     }
 
@@ -138,7 +138,7 @@ public class AuthService {
     }
 
     public void recommendUser(String recommendYelloId) {
-        if (recommendYelloId != null && !recommendYelloId.isEmpty()) {
+        if (recommendYelloId!=null && !recommendYelloId.isEmpty()) {
             User recommendedUser = userRepository.getByYelloId(recommendYelloId);
             recommendedUser.increaseRecommendCount();
 
