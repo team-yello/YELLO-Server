@@ -1,23 +1,13 @@
 package com.yello.server.domain.vote.dto.response;
 
-import com.yello.server.domain.vote.entity.Vote;
-import java.util.List;
 import lombok.Builder;
 
 @Builder
 public record VoteCreateResponse(
-    Integer point,
-    List<Vote> votes
+    Integer point
 ) {
 
-    public static VoteCreateResponse of(Integer point, List<Vote> votes) {
-        return VoteCreateResponse.builder()
-            .point(point)
-            .votes(votes)
-            .build();
-    }
-
-    public VoteCreateResponse toOnlyPoint() {
+    public static VoteCreateResponse of(Integer point) {
         return VoteCreateResponse.builder()
             .point(point)
             .build();

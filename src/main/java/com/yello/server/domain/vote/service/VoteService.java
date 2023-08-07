@@ -32,7 +32,7 @@ import com.yello.server.domain.vote.dto.request.CreateVoteRequest;
 import com.yello.server.domain.vote.dto.request.VoteAnswer;
 import com.yello.server.domain.vote.dto.response.RevealNameResponse;
 import com.yello.server.domain.vote.dto.response.VoteAvailableResponse;
-import com.yello.server.domain.vote.dto.response.VoteCreateResponse;
+import com.yello.server.domain.vote.dto.response.VoteCreateVO;
 import com.yello.server.domain.vote.dto.response.VoteDetailResponse;
 import com.yello.server.domain.vote.dto.response.VoteFriendResponse;
 import com.yello.server.domain.vote.dto.response.VoteListResponse;
@@ -140,7 +140,7 @@ public class VoteService {
     }
 
     @Transactional
-    public VoteCreateResponse createVote(Long userId, CreateVoteRequest request) {
+    public VoteCreateVO createVote(Long userId, CreateVoteRequest request) {
         List<Vote> votes = new ArrayList<>();
         final User sender = userRepository.getById(userId);
 
@@ -170,7 +170,7 @@ public class VoteService {
         }
 
         sender.plusPoint(request.totalPoint());
-        return VoteCreateResponse.of(sender.getPoint(), votes);
+        return VoteCreateVO.of(sender.getPoint(), votes);
     }
 
     @Transactional
