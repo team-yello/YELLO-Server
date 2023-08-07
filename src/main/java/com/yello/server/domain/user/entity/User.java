@@ -74,6 +74,17 @@ public class User extends AuditingTimeEntity {
     @Column(nullable = false)
     private String email;
 
+    @ColumnDefault("0")
+    @Column(nullable = false)
+    private Integer ticketCount;
+
+    @Column(nullable = false)
+    private String deviceToken;
+
+    @Column(nullable = false)
+    @Convert(converter = SubscribeConverter.class)
+    private Subscribe subscribe;
+
     public static User of(SignUpRequest signUpRequest, School group) {
         return User.builder()
             .recommendCount(0L)
@@ -88,12 +99,15 @@ public class User extends AuditingTimeEntity {
             .group(group)
             .groupAdmissionYear(signUpRequest.groupAdmissionYear())
             .email(signUpRequest.email())
+            .deviceToken(signUpRequest.deviceToken())
+            .subscribe(signUpRequest.subscribe())
             .build();
     }
 
     public void delete() {
         this.deletedAt = LocalDateTime.now();
         this.point = 0;
+        this.deviceToken = null;
     }
 
     public void renew() {
@@ -114,6 +128,14 @@ public class User extends AuditingTimeEntity {
 
     public void minusPoint(Integer point) {
         this.point -= point;
+    }
+
+    public String getDeviceToken() {
+        return this.deviceToken;
+    }
+
+    public void setDeviceToken(String deviceToken) {
+        this.deviceToken = deviceToken;
     }
 
 }

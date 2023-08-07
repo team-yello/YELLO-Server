@@ -14,7 +14,6 @@ import com.yello.server.domain.vote.entity.Vote;
 import com.yello.server.infrastructure.firebase.manager.FCMManager;
 import com.yello.server.infrastructure.firebase.service.NotificationFcmService;
 import com.yello.server.infrastructure.firebase.service.NotificationService;
-import com.yello.server.infrastructure.redis.exception.RedisNotFoundException;
 import com.yello.server.infrastructure.redis.repository.TokenRepository;
 import com.yello.server.small.domain.user.FakeUserRepository;
 import com.yello.server.small.global.redis.FakeTokenRepository;
@@ -77,7 +76,7 @@ class NotificationFcmServiceTest {
     @Test
     void 쪽지_받음_푸시_알림_전송에_성공합니다() {
         // given
-        tokenRepository.setDeviceToken(target.getUuid(), "test-device-token");
+        target.setDeviceToken("test-device-token");
         Question question = Question.builder()
             .id(1L)
             .nameHead(null).nameFoot("와")
@@ -100,7 +99,7 @@ class NotificationFcmServiceTest {
     @Test
     void 투표_가능_푸시_알림_전송에_성공합니다() {
         // given
-        tokenRepository.setDeviceToken(target.getUuid(), "test-device-token");
+        target.setDeviceToken("test-device-token");
 
         // when
         // then
@@ -110,7 +109,7 @@ class NotificationFcmServiceTest {
     @Test
     void 친구_푸시_알림_전송에_성공합니다() {
         // given
-        tokenRepository.setDeviceToken(target.getUuid(), "test-device-token");
+        target.setDeviceToken("test-device-token");
         Friend friend = Friend.createFriend(user, target);
 
         // when
@@ -121,7 +120,7 @@ class NotificationFcmServiceTest {
     @Test
     void 푸시_알림_전송_시_존재하지_않는_유저인_경우에_UserNotFoundException이_발생합니다() {
         // given
-        tokenRepository.setDeviceToken(target.getUuid(), "test-device-token");
+        target.setDeviceToken("test-device-token");
 
         // when
         // then
@@ -129,16 +128,4 @@ class NotificationFcmServiceTest {
             .isInstanceOf(UserNotFoundException.class)
             .hasMessageContaining("[UserNotFoundException] 탈퇴했거나 존재하지 않는 유저의 id 입니다.");
     }
-
-    @Test
-    void 푸시_알림_전송_시_UUID에_대한_DeviceToken이_없는_경우_RedisNotFoundException이_발생합니다() {
-        // given
-        // when
-        // then
-        assertThatThrownBy(() -> notificationService.sendVoteAvailableNotification(target.getId()))
-            .isInstanceOf(RedisNotFoundException.class)
-            .hasMessageContaining("[RedisNotFoundException] uuid에 해당하는 디바이스 토큰 정보를 찾을 수 없습니다.");
-
-    }
-
 }
