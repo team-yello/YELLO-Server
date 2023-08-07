@@ -144,7 +144,9 @@ public class VoteController {
     ) {
         val data = voteService.createVote(user.getId(), request);
         data.votes().forEach(notificationService::sendYelloNotification);
-        return BaseResponse.success(CREATE_VOTE_SUCCESS, data.toOnlyPoint());
+
+        val response = VoteCreateResponse.of(data.point());
+        return BaseResponse.success(CREATE_VOTE_SUCCESS, response);
     }
 
     @Operation(summary = "투표 이름 부분 조회 API", responses = {

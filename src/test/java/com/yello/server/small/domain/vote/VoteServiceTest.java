@@ -20,7 +20,7 @@ import com.yello.server.domain.vote.dto.request.CreateVoteRequest;
 import com.yello.server.domain.vote.dto.request.VoteAnswer;
 import com.yello.server.domain.vote.dto.response.RevealNameResponse;
 import com.yello.server.domain.vote.dto.response.VoteAvailableResponse;
-import com.yello.server.domain.vote.dto.response.VoteCreateResponse;
+import com.yello.server.domain.vote.dto.response.VoteCreateVO;
 import com.yello.server.domain.vote.dto.response.VoteDetailResponse;
 import com.yello.server.domain.vote.dto.response.VoteFriendResponse;
 import com.yello.server.domain.vote.dto.response.VoteListResponse;
@@ -323,7 +323,7 @@ public class VoteServiceTest {
             .build();
 
         // when
-        VoteCreateResponse result = voteService.createVote(userId, request);
+        VoteCreateVO result = voteService.createVote(userId, request);
 
         // then
         assertThat(result.point()).isEqualTo(2003);
