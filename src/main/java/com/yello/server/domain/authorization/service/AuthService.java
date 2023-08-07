@@ -96,7 +96,7 @@ public class AuthService {
             this.registerToken(currentUser.getId(), currentUser.getUuid());
 
         this.renewUserInformation(currentUser);
-        tokenValueOperations.setDeviceToken(currentUser.getUuid(), oAuthRequest.deviceToken());
+        currentUser.setDeviceToken(oAuthRequest.deviceToken());
         return OAuthResponse.of(serviceTokenVO);
     }
 
@@ -133,7 +133,7 @@ public class AuthService {
         School group = schoolRepository.getById(signUpRequest.groupId());
 
         final User newSignInUser = userRepository.save(User.of(signUpRequest, group));
-        tokenValueOperations.setDeviceToken(newSignInUser.getUuid(), signUpRequest.deviceToken());
+        newSignInUser.setDeviceToken(signUpRequest.deviceToken());
         return newSignInUser;
     }
 

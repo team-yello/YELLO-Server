@@ -26,11 +26,12 @@ public class NotificationFcmService implements NotificationService {
     @Override
     public void sendYelloNotification(Vote vote) {
         final User receiveUser = vote.getReceiver();
-        final String deviceToken = tokenRepository.getDeviceToken(receiveUser.getUuid());
+
         final Notification notification = NotificationMessage.toYelloNotificationContent(receiveUser)
             .toNotification();
+
         final String path = MessageFormat.format("/api/v1/vote/{0}", vote.getId());
-        final Message message = fcmManager.createMessage(deviceToken, notification, path);
+        final Message message = fcmManager.createMessage(receiveUser.getDeviceToken(), notification, path);
 
         fcmManager.send(message);
     }
@@ -38,11 +39,11 @@ public class NotificationFcmService implements NotificationService {
     @Override
     public void sendFriendNotification(Friend friend) {
         final User receiveUser = friend.getTarget();
-        final String deviceToken = tokenRepository.getDeviceToken(receiveUser.getUuid());
+
         final Notification notification = NotificationMessage.toFriendNotificationContent(receiveUser)
             .toNotification();
 
-        final Message message = fcmManager.createMessage(deviceToken, notification);
+        final Message message = fcmManager.createMessage(receiveUser.getDeviceToken(), notification);
 
         fcmManager.send(message);
     }
@@ -50,11 +51,11 @@ public class NotificationFcmService implements NotificationService {
     @Override
     public void sendVoteAvailableNotification(Long receiverId) {
         final User receiveUser = userRepository.getById(receiverId);
-        final String deviceToken = tokenRepository.getDeviceToken(receiveUser.getUuid());
+
         final Notification notification = NotificationMessage.toVoteAvailableNotificationContent()
             .toNotification();
 
-        final Message message = fcmManager.createMessage(deviceToken, notification);
+        final Message message = fcmManager.createMessage(receiveUser.getDeviceToken(), notification);
 
         fcmManager.send(message);
     }
