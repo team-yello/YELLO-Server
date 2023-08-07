@@ -56,7 +56,5 @@ public class UserService {
 
         cooldownRepository.findByUserId(target.getId())
             .ifPresent(Cooldown::delete);
-
-        tokenRepository.deleteDeviceToken(target.getUuid());
     }
 }

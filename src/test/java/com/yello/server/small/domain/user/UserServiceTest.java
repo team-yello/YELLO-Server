@@ -117,6 +117,6 @@ class UserServiceTest {
         // then
         assertThat(user.getPoint()).isZero();
         assertThat(user.getDeletedAt()).isBeforeOrEqualTo(LocalDateTime.now());
-        assertThat(tokenRepository.hasKey(user.getUuid())).isFalse();
+        assertThat(user.getDeviceToken()).isNull();
     }
 }
