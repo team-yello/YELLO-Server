@@ -74,6 +74,17 @@ public class User extends AuditingTimeEntity {
     @Column(nullable = false)
     private String email;
 
+    @ColumnDefault("0")
+    @Column(nullable = false)
+    private Integer ticketCount;
+
+    @Column(nullable = false)
+    private String deviceToken;
+
+    @Column(nullable = false)
+    @Convert(converter = SubscribeConverter.class)
+    private Subscribe subscribe;
+
     public static User of(SignUpRequest signUpRequest, School group) {
         return User.builder()
             .recommendCount(0L)
@@ -88,6 +99,8 @@ public class User extends AuditingTimeEntity {
             .group(group)
             .groupAdmissionYear(signUpRequest.groupAdmissionYear())
             .email(signUpRequest.email())
+            .deviceToken(signUpRequest.deviceToken())
+            .subscribe(signUpRequest.subscribe())
             .build();
     }
 
