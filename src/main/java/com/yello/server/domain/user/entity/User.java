@@ -102,6 +102,7 @@ public class User extends AuditingTimeEntity {
             .email(signUpRequest.email())
             .deviceToken(signUpRequest.deviceToken())
             .subscribe(Subscribe.NORMAL)
+            .ticketCount(0)
             .build();
     }
 
