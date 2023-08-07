@@ -82,6 +82,7 @@ public class User extends AuditingTimeEntity {
     private String deviceToken;
 
     @Column(nullable = false)
+    @ColumnDefault("normal")
     @Convert(converter = SubscribeConverter.class)
     private Subscribe subscribe;
 
@@ -100,7 +101,6 @@ public class User extends AuditingTimeEntity {
             .groupAdmissionYear(signUpRequest.groupAdmissionYear())
             .email(signUpRequest.email())
             .deviceToken(signUpRequest.deviceToken())
-            .subscribe(signUpRequest.subscribe())
             .build();
     }
 
