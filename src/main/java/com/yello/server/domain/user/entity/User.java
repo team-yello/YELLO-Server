@@ -101,6 +101,7 @@ public class User extends AuditingTimeEntity {
             .groupAdmissionYear(signUpRequest.groupAdmissionYear())
             .email(signUpRequest.email())
             .deviceToken(signUpRequest.deviceToken())
+            .subscribe(Subscribe.NORMAL)
             .build();
     }
 
