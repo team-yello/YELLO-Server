@@ -57,6 +57,15 @@ public class FakeVoteRepository implements VoteRepository {
     }
 
     @Override
+    public Integer countUnreadByReceiverUserId(Long userId) {
+        return data.stream()
+            .filter(vote -> vote.getReceiver().getId().equals(userId))
+            .filter(vote -> !vote.getIsRead())
+            .toList()
+            .size();
+    }
+
+    @Override
     public List<Vote> findAllByReceiverUserId(Long userId, Pageable pageable) {
         return data.stream()
             .filter(vote -> vote.getReceiver().getId().equals(userId))

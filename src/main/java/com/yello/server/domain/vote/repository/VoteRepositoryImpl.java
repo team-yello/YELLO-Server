@@ -41,6 +41,11 @@ public class VoteRepositoryImpl implements VoteRepository {
     }
 
     @Override
+    public Integer countUnreadByReceiverUserId(Long userId) {
+        return voteJpaRepository.countUnreadByReceiverUserId(userId);
+    }
+
+    @Override
     public List<Vote> findAllByReceiverUserId(Long userId, Pageable pageable) {
         return voteJpaRepository.findAllByReceiverUserId(userId, pageable);
     }
