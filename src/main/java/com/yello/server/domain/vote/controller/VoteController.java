@@ -71,7 +71,7 @@ public class VoteController {
             responseCode = "200",
             content = @Content(mediaType = "application/json", schema = @Schema(implementation = VoteUnreadCountResponse.class))),
     })
-    @GetMapping
+    @GetMapping("/count")
     public BaseResponse<VoteUnreadCountResponse> getUnreadVoteCount(
         @AccessTokenUser User user
     ) {
