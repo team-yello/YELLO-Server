@@ -25,25 +25,27 @@ public class NotificationFcmService implements NotificationService {
 
     @Override
     public void sendYelloNotification(Vote vote) {
-        final User receiveUser = vote.getReceiver();
+        final User receiver = vote.getReceiver();
+        final User sender = vote.getSender();
 
-        final Notification notification = NotificationMessage.toYelloNotificationContent(receiveUser)
+        final Notification notification = NotificationMessage.toYelloNotificationContent(sender)
             .toNotification();
 
         final String path = MessageFormat.format("/api/v1/vote/{0}", vote.getId());
-        final Message message = fcmManager.createMessage(receiveUser.getDeviceToken(), notification, path);
+        final Message message = fcmManager.createMessage(receiver.getDeviceToken(), notification, path);
 
         fcmManager.send(message);
     }
 
     @Override
     public void sendFriendNotification(Friend friend) {
-        final User receiveUser = friend.getTarget();
+        final User receiver = friend.getTarget();
+        final User sender = friend.getUser();
 
-        final Notification notification = NotificationMessage.toFriendNotificationContent(receiveUser)
+        final Notification notification = NotificationMessage.toFriendNotificationContent(sender)
             .toNotification();
 
-        final Message message = fcmManager.createMessage(receiveUser.getDeviceToken(), notification);
+        final Message message = fcmManager.createMessage(receiver.getDeviceToken(), notification);
 
         fcmManager.send(message);
     }
