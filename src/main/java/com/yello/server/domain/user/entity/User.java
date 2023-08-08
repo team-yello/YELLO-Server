@@ -78,10 +78,10 @@ public class User extends AuditingTimeEntity {
     @Column(nullable = false)
     private Integer ticketCount;
 
-    @Column(nullable = false)
     private String deviceToken;
 
     @Column(nullable = false)
+    @ColumnDefault("normal")
     @Convert(converter = SubscribeConverter.class)
     private Subscribe subscribe;
 
@@ -100,7 +100,8 @@ public class User extends AuditingTimeEntity {
             .groupAdmissionYear(signUpRequest.groupAdmissionYear())
             .email(signUpRequest.email())
             .deviceToken(signUpRequest.deviceToken())
-            .subscribe(signUpRequest.subscribe())
+            .subscribe(Subscribe.NORMAL)
+            .ticketCount(0)
             .build();
     }
 
