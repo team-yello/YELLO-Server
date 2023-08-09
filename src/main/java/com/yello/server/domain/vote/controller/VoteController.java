@@ -17,6 +17,7 @@ import com.yello.server.domain.vote.dto.response.VoteCreateResponse;
 import com.yello.server.domain.vote.dto.response.VoteDetailResponse;
 import com.yello.server.domain.vote.dto.response.VoteFriendResponse;
 import com.yello.server.domain.vote.dto.response.VoteListResponse;
+import com.yello.server.domain.vote.dto.response.VoteUnreadCountResponse;
 import com.yello.server.domain.vote.service.VoteService;
 import com.yello.server.global.common.SuccessCode;
 import com.yello.server.global.common.annotation.AccessTokenUser;
@@ -62,6 +63,19 @@ public class VoteController {
         @AccessTokenUser User user
     ) {
         val data = voteService.findAllVotes(user.getId(), createPageable(page));
+        return BaseResponse.success(READ_VOTE_SUCCESS, data);
+    }
+
+    @Operation(summary = "읽지 않은 쪽지 개수 조회 API", responses = {
+        @ApiResponse(
+            responseCode = "200",
+            content = @Content(mediaType = "application/json", schema = @Schema(implementation = VoteUnreadCountResponse.class))),
+    })
+    @GetMapping("/count")
+    public BaseResponse<VoteUnreadCountResponse> getUnreadVoteCount(
+        @AccessTokenUser User user
+    ) {
+        val data = voteService.getUnreadVoteCount(user.getId());
         return BaseResponse.success(READ_VOTE_SUCCESS, data);
     }
 

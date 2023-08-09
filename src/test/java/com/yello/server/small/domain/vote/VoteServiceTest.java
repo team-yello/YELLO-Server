@@ -24,6 +24,7 @@ import com.yello.server.domain.vote.dto.response.VoteCreateVO;
 import com.yello.server.domain.vote.dto.response.VoteDetailResponse;
 import com.yello.server.domain.vote.dto.response.VoteFriendResponse;
 import com.yello.server.domain.vote.dto.response.VoteListResponse;
+import com.yello.server.domain.vote.dto.response.VoteUnreadCountResponse;
 import com.yello.server.domain.vote.entity.Vote;
 import com.yello.server.domain.vote.repository.VoteRepository;
 import com.yello.server.domain.vote.service.VoteService;
@@ -226,7 +227,18 @@ public class VoteServiceTest {
         // then
         assertThat(result.totalCount()).isEqualTo(4);
         assertThat(result.votes().get(0).id()).isEqualTo(1L);
+    }
 
+    @Test
+    void 읽지_않은_투표_개수_조회에_성공합니다() {
+        // given
+        final Long userId = 1L;
+
+        // when
+        final VoteUnreadCountResponse result = voteService.getUnreadVoteCount(userId);
+
+        // then
+        assertThat(result.totalCount()).isEqualTo(4);
     }
 
     @Test

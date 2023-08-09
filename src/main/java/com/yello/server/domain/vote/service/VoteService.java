@@ -37,6 +37,7 @@ import com.yello.server.domain.vote.dto.response.VoteDetailResponse;
 import com.yello.server.domain.vote.dto.response.VoteFriendResponse;
 import com.yello.server.domain.vote.dto.response.VoteListResponse;
 import com.yello.server.domain.vote.dto.response.VoteResponse;
+import com.yello.server.domain.vote.dto.response.VoteUnreadCountResponse;
 import com.yello.server.domain.vote.entity.Vote;
 import com.yello.server.domain.vote.exception.VoteForbiddenException;
 import com.yello.server.domain.vote.exception.VoteNotFoundException;
@@ -74,6 +75,11 @@ public class VoteService {
             .map(VoteResponse::of)
             .toList();
         return VoteListResponse.of(count, votes);
+    }
+
+    public VoteUnreadCountResponse getUnreadVoteCount(Long userId) {
+        final Integer count = voteRepository.countUnreadByReceiverUserId(userId);
+        return VoteUnreadCountResponse.of(count);
     }
 
     @Transactional
