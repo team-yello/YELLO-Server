@@ -2,7 +2,7 @@ package com.yello.server.infrastructure.firebase.manager;
 
 import com.google.firebase.messaging.FirebaseMessaging;
 import com.google.firebase.messaging.Message;
-import com.google.firebase.messaging.Notification;
+import com.yello.server.infrastructure.firebase.dto.request.NotificationMessage;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -15,18 +15,20 @@ public class FCMManagerImpl implements FCMManager {
     }
 
     @Override
-    public Message createMessage(String deviceToken, Notification notification) {
+    public Message createMessage(String deviceToken, NotificationMessage notificationMessage) {
         return Message.builder()
             .setToken(deviceToken)
-            .setNotification(notification)
+            .setNotification(notificationMessage.toNotification())
+            .putData("type", notificationMessage.type().name())
             .build();
     }
 
     @Override
-    public Message createMessage(String deviceToken, Notification notification, String path) {
+    public Message createMessage(String deviceToken, NotificationMessage notificationMessage, String path) {
         return Message.builder()
             .setToken(deviceToken)
-            .setNotification(notification)
+            .setNotification(notificationMessage.toNotification())
+            .putData("type", notificationMessage.type().name())
             .putData("path", path)
             .build();
     }
