@@ -2,7 +2,9 @@ package com.yello.server.domain.friend.controller;
 
 import static com.yello.server.global.common.SuccessCode.ADD_FRIEND_SUCCESS;
 import static com.yello.server.global.common.SuccessCode.DELETE_FRIEND_SUCCESS;
+import static com.yello.server.global.common.SuccessCode.FRIEND_SEARCH_SUCCESS;
 import static com.yello.server.global.common.SuccessCode.READ_FRIEND_SUCCESS;
+import static com.yello.server.global.common.SuccessCode.SHUFFLE_FRIEND_SUCCESS;
 import static com.yello.server.global.common.factory.PaginationFactory.createPageable;
 import static com.yello.server.global.common.factory.PaginationFactory.createPageableByNameSort;
 
@@ -12,7 +14,6 @@ import com.yello.server.domain.friend.dto.response.FriendsResponse;
 import com.yello.server.domain.friend.dto.response.RecommendFriendResponse;
 import com.yello.server.domain.friend.service.FriendService;
 import com.yello.server.domain.user.entity.User;
-import com.yello.server.global.common.SuccessCode;
 import com.yello.server.global.common.annotation.AccessTokenUser;
 import com.yello.server.global.common.dto.BaseResponse;
 import com.yello.server.infrastructure.firebase.service.NotificationService;
@@ -86,7 +87,7 @@ public class FriendController {
     public BaseResponse<List<FriendShuffleResponse>> findShuffledFriend(
         @AccessTokenUser User user) {
         val friendShuffleResponse = friendService.findShuffledFriend(user.getId());
-        return BaseResponse.success(SuccessCode.SHUFFLE_FRIEND_SUCCESS, friendShuffleResponse);
+        return BaseResponse.success(SHUFFLE_FRIEND_SUCCESS, friendShuffleResponse);
     }
 
     @Operation(summary = "그룹 추천친구 조회 API", responses = {
@@ -102,7 +103,7 @@ public class FriendController {
     ) {
         val data = friendService.findAllRecommendSchoolFriends(createPageableByNameSort(page),
             user.getId());
-        return BaseResponse.success(SuccessCode.READ_FRIEND_SUCCESS, data);
+        return BaseResponse.success(READ_FRIEND_SUCCESS, data);
     }
 
     @Operation(summary = "카카오 추천 친구 API", responses = {
@@ -134,5 +135,21 @@ public class FriendController {
         @AccessTokenUser User user) {
         friendService.deleteFriend(user.getId(), targetId);
         return BaseResponse.success(DELETE_FRIEND_SUCCESS);
+    }
+
+    @Operation(summary = "친구 검색 API", responses = {
+        @ApiResponse(
+            responseCode = "200",
+            content = @Content(mediaType = "application/json", schema = @Schema(implementation = RecommendFriendResponse.class)))
+    })
+    @GetMapping("/search")
+    public BaseResponse<RecommendFriendResponse> searchFriend(
+        @AccessTokenUser User user,
+        @Valid @RequestParam("page") Integer page,
+        @Valid @RequestParam("name") String name
+    ) {
+        val data = friendService.searchFriendByName(user.getId(), page, name);
+        // 이름이 한글인경우, 영어인경우 체크
+        return BaseResponse.success(FRIEND_SEARCH_SUCCESS, data);
     }
 }

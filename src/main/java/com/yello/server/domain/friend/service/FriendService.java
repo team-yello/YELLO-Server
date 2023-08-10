@@ -74,7 +74,8 @@ public class FriendService {
     public List<FriendShuffleResponse> findShuffledFriend(Long userId) {
         final User user = userRepository.getById(userId);
 
-        final List<Friend> allFriends = new ArrayList<>(friendRepository.findAllByUserId(user.getId()));
+        final List<Friend> allFriends =
+            new ArrayList<>(friendRepository.findAllByUserId(user.getId()));
 
         if (allFriends.size() < RANDOM_COUNT) {
             throw new FriendException(LACK_USER_EXCEPTION);
@@ -131,4 +132,9 @@ public class FriendService {
 
         return RecommendFriendResponse.of(kakaoFriends.size(), pageList);
     }
+
+    public RecommendFriendResponse searchFriendByName(Long userId, Integer page, String name) {
+
+    }
+
 }

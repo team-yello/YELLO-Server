@@ -7,10 +7,12 @@ import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
+import org.springframework.data.domain.Sort.Direction;
 
 public class PaginationFactory {
 
-    private static final int PAGE_LIMIT = 10;
+    private static final int PAGE_LIMIT = 100;
+    private static final int PAGE_LIMIT_FRIEND = 10;
 
     private PaginationFactory() {
         throw new IllegalStateException();
@@ -22,6 +24,14 @@ public class PaginationFactory {
 
     public static Pageable createPageableByNameSort(Integer page) {
         return PageRequest.of(page, PAGE_LIMIT, Sort.by(Sort.Direction.ASC, "name"));
+    }
+
+    public static Pageable createFriendPageableByNameSort(Integer page) {
+        return PageRequest.of(page, PAGE_LIMIT_FRIEND, Sort.by(Direction.ASC, "name"));
+    }
+
+    public static Pageable createFriendPageableByAgeSort(Integer page) {
+        return PageRequest.of(page, PAGE_LIMIT_FRIEND, Sort.by(Direction.DESC, "groupAdmissionYear"));
     }
 
     public static <T> Page<T> getPage(List<T> list, Pageable pageable) {
