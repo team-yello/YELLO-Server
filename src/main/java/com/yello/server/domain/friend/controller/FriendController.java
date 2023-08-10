@@ -5,6 +5,7 @@ import static com.yello.server.global.common.SuccessCode.DELETE_FRIEND_SUCCESS;
 import static com.yello.server.global.common.SuccessCode.FRIEND_SEARCH_SUCCESS;
 import static com.yello.server.global.common.SuccessCode.READ_FRIEND_SUCCESS;
 import static com.yello.server.global.common.SuccessCode.SHUFFLE_FRIEND_SUCCESS;
+import static com.yello.server.global.common.factory.PaginationFactory.createFriendPageable;
 import static com.yello.server.global.common.factory.PaginationFactory.createPageable;
 import static com.yello.server.global.common.factory.PaginationFactory.createPageableByNameSort;
 
@@ -12,6 +13,7 @@ import com.yello.server.domain.friend.dto.request.KakaoRecommendRequest;
 import com.yello.server.domain.friend.dto.response.FriendShuffleResponse;
 import com.yello.server.domain.friend.dto.response.FriendsResponse;
 import com.yello.server.domain.friend.dto.response.RecommendFriendResponse;
+import com.yello.server.domain.friend.dto.response.SearchFriendResponse;
 import com.yello.server.domain.friend.service.FriendService;
 import com.yello.server.domain.user.entity.User;
 import com.yello.server.global.common.annotation.AccessTokenUser;
@@ -143,12 +145,13 @@ public class FriendController {
             content = @Content(mediaType = "application/json", schema = @Schema(implementation = RecommendFriendResponse.class)))
     })
     @GetMapping("/search")
-    public BaseResponse<RecommendFriendResponse> searchFriend(
+    public BaseResponse<SearchFriendResponse> searchFriend(
         @AccessTokenUser User user,
         @Valid @RequestParam("page") Integer page,
-        @Valid @RequestParam("name") String name
+        @Valid @RequestParam("name") String keyword
     ) {
-        val data = friendService.searchFriendByName(user.getId(), page, name);
+        val data =
+            friendService.searchFriend(user.getId(), createFriendPageable(page), keyword);
         // 이름이 한글인경우, 영어인경우 체크
         return BaseResponse.success(FRIEND_SEARCH_SUCCESS, data);
     }

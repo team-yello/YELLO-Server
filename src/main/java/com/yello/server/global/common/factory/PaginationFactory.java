@@ -7,7 +7,6 @@ import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
-import org.springframework.data.domain.Sort.Direction;
 
 public class PaginationFactory {
 
@@ -26,13 +25,10 @@ public class PaginationFactory {
         return PageRequest.of(page, PAGE_LIMIT, Sort.by(Sort.Direction.ASC, "name"));
     }
 
-    public static Pageable createFriendPageableByNameSort(Integer page) {
-        return PageRequest.of(page, PAGE_LIMIT_FRIEND, Sort.by(Direction.ASC, "name"));
+    public static Pageable createFriendPageable(Integer page) {
+        return PageRequest.of(page, PAGE_LIMIT_FRIEND);
     }
 
-    public static Pageable createFriendPageableByAgeSort(Integer page) {
-        return PageRequest.of(page, PAGE_LIMIT_FRIEND, Sort.by(Direction.DESC, "groupAdmissionYear"));
-    }
 
     public static <T> Page<T> getPage(List<T> list, Pageable pageable) {
         int start = (int) pageable.getOffset();

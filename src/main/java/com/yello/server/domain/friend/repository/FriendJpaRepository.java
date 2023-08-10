@@ -59,4 +59,6 @@ public interface FriendJpaRepository extends JpaRepository<Friend, Long> {
     @Query("select f from Friend f " +
         "where f.target.id = :targetId")
     List<Friend> findAllByTargetIdNotFiltered(Long targetId);
+
+
 }

@@ -9,6 +9,8 @@ import com.yello.server.domain.friend.dto.response.FriendResponse;
 import com.yello.server.domain.friend.dto.response.FriendShuffleResponse;
 import com.yello.server.domain.friend.dto.response.FriendsResponse;
 import com.yello.server.domain.friend.dto.response.RecommendFriendResponse;
+import com.yello.server.domain.friend.dto.response.SearchFriendResponse;
+import com.yello.server.domain.friend.dto.response.SearchFriendVO;
 import com.yello.server.domain.friend.entity.Friend;
 import com.yello.server.domain.friend.exception.FriendException;
 import com.yello.server.domain.friend.repository.FriendRepository;
@@ -18,6 +20,7 @@ import com.yello.server.domain.user.repository.UserRepository;
 import com.yello.server.domain.vote.repository.VoteRepository;
 import com.yello.server.global.common.factory.PaginationFactory;
 import com.yello.server.infrastructure.firebase.service.NotificationService;
+import java.lang.Character.UnicodeBlock;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -133,8 +136,37 @@ public class FriendService {
         return RecommendFriendResponse.of(kakaoFriends.size(), pageList);
     }
 
-    public RecommendFriendResponse searchFriendByName(Long userId, Integer page, String name) {
+    public SearchFriendResponse searchFriend(Long userId, Pageable pageable,
+        String keyword) {
+        final User user = userRepository.getById(userId);
+        final String groupName = user.getGroup().getSchoolName();
 
+        List<User> friendList = new ArrayList<>();
+
+        if (!isEnglish(keyword)) {
+            friendList.addAll(userRepository.findAllByGroupContainingName(groupName, keyword));
+            friendList.addAll(userRepository.findAllByOtherGroupContainingName(groupName, keyword));
+
+        } else {
+            friendList.addAll(userRepository.findAllByGroupContainingYelloId(groupName, keyword));
+            friendList.addAll(
+                userRepository.findAllByOtherGroupContainingYelloId(groupName, keyword));
+        }
+        List<SearchFriendVO> pageList = PaginationFactory.getPage(friendList, pageable)
+            .stream()
+            .map(friend -> SearchFriendVO.of(friend,
+                friendRepository.existsByUserAndTarget(userId, friend.getId())))
+            .toList();
+
+        return SearchFriendResponse.of(pageList.size(), pageList);
     }
 
+    public boolean isEnglish(String keyword) {
+        for (char c : keyword.toCharArray()) {
+            if (Character.UnicodeBlock.of(c) != UnicodeBlock.BASIC_LATIN) {
+                return false;
+            }
+        }
+        return true;
+    }
 }

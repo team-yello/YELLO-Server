@@ -24,4 +24,12 @@ public interface UserRepository {
 
     List<User> findAllByGroupId(Long groupId);
 
+    List<User> findAllByGroupContainingName(String groupName, String keyword);
+
+    List<User> findAllByOtherGroupContainingName(String groupName, String keyword);
+
+    List<User> findAllByGroupContainingYelloId(String groupName, String keyword);
+
+    List<User> findAllByOtherGroupContainingYelloId(String groupName, String keyword);
+
 }
