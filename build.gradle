@@ -78,6 +78,9 @@ dependencies {
     // FCM
     implementation 'com.google.firebase:firebase-admin:9.2.0'
 
+    // rabbitmq
+    implementation 'org.springframework.amqp:spring-rabbit:2.3.12'
+
 }
 
 tasks.named('test') {

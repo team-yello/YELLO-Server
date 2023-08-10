@@ -25,9 +25,8 @@ public class NotificationFcmService implements NotificationService {
     @Override
     public void sendYelloNotification(Vote vote) {
         final User receiver = vote.getReceiver();
-        final User sender = vote.getSender();
 
-        NotificationMessage notificationMessage = NotificationMessage.toYelloNotificationContent(sender);
+        NotificationMessage notificationMessage = NotificationMessage.toYelloNotificationContent(vote);
 
         final String path = MessageFormat.format("/api/v1/vote/{0}", vote.getId());
         final Message message = fcmManager.createMessage(receiver.getDeviceToken(), notificationMessage, path);

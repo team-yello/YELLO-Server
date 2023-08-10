@@ -1,6 +1,7 @@
 package com.yello.server.domain.question.entity;
 
 import com.yello.server.domain.keyword.entity.Keyword;
+import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.List;
 import javax.persistence.CascadeType;
@@ -15,6 +16,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.val;
 
 @Entity
 @Getter
@@ -45,9 +47,18 @@ public class Question {
         this.keywordFoot = keywordFoot;
     }
 
+    private static String deleteBracket(String target) {
+        val slashIndex = target.indexOf('/');
+        return slashIndex!=-1 ? target.substring(slashIndex + 1) : target;
+    }
 
     public void addKeyword(Keyword keyword) {
         this.keywordList.add(keyword);
+    }
+
+    public String toNotificationSentence() {
+        val foot = deleteBracket(this.nameFoot);
+        return MessageFormat.format("{0} 너{1} ... ", this.nameHead, foot);
     }
 
 }
