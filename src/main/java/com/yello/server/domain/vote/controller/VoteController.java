@@ -6,6 +6,7 @@ import static com.yello.server.global.common.SuccessCode.READ_VOTE_SUCCESS;
 import static com.yello.server.global.common.SuccessCode.READ_YELLO_START_SUCCESS;
 import static com.yello.server.global.common.SuccessCode.READ_YELLO_VOTE_SUCCESS;
 import static com.yello.server.global.common.factory.PaginationFactory.createPageable;
+import static com.yello.server.global.common.factory.PaginationFactory.createPageableLimitTen;
 
 import com.yello.server.domain.keyword.dto.response.KeywordCheckResponse;
 import com.yello.server.domain.question.dto.response.QuestionForVoteResponse;
@@ -90,7 +91,7 @@ public class VoteController {
         @RequestParam Integer page,
         @AccessTokenUser User user
     ) {
-        val data = voteService.findAllFriendVotes(user.getId(), createPageable(page));
+        val data = voteService.findAllFriendVotes(user.getId(), createPageableLimitTen(page));
         return BaseResponse.success(READ_VOTE_SUCCESS, data);
     }
 
