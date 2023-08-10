@@ -5,9 +5,8 @@ import static com.yello.server.global.common.SuccessCode.DELETE_FRIEND_SUCCESS;
 import static com.yello.server.global.common.SuccessCode.FRIEND_SEARCH_SUCCESS;
 import static com.yello.server.global.common.SuccessCode.READ_FRIEND_SUCCESS;
 import static com.yello.server.global.common.SuccessCode.SHUFFLE_FRIEND_SUCCESS;
-import static com.yello.server.global.common.factory.PaginationFactory.createFriendPageable;
-import static com.yello.server.global.common.factory.PaginationFactory.createPageable;
 import static com.yello.server.global.common.factory.PaginationFactory.createPageableByNameSort;
+import static com.yello.server.global.common.factory.PaginationFactory.createPageableLimitTen;
 
 import com.yello.server.domain.friend.dto.request.KakaoRecommendRequest;
 import com.yello.server.domain.friend.dto.response.FriendShuffleResponse;
@@ -76,7 +75,7 @@ public class FriendController {
         @Parameter(name = "page", description = "페이지네이션 페이지 번호입니다.", example = "1")
         @Valid @RequestParam Integer page,
         @AccessTokenUser User user) {
-        val data = friendService.findAllFriends(createPageable(page), user.getId());
+        val data = friendService.findAllFriends(createPageableLimitTen(page), user.getId());
         return BaseResponse.success(READ_FRIEND_SUCCESS, data);
     }
 
@@ -151,7 +150,7 @@ public class FriendController {
         @Valid @RequestParam("keyword") String keyword
     ) {
         val data =
-            friendService.searchFriend(user.getId(), createFriendPageable(page), keyword);
+            friendService.searchFriend(user.getId(), createPageableLimitTen(page), keyword);
         // 이름이 한글인경우, 영어인경우 체크
         return BaseResponse.success(FRIEND_SEARCH_SUCCESS, data);
     }
