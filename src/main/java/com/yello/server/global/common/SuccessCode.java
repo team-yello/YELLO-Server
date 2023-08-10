@@ -1,12 +1,12 @@
 package com.yello.server.global.common;
 
+import static org.springframework.http.HttpStatus.CREATED;
+import static org.springframework.http.HttpStatus.OK;
+
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import org.springframework.http.HttpStatus;
-
-import static org.springframework.http.HttpStatus.CREATED;
-import static org.springframework.http.HttpStatus.OK;
 
 @Getter
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
@@ -29,6 +29,7 @@ public enum SuccessCode {
     SCHOOL_NAME_SEARCH_SCHOOL_SUCCESS(OK, "학교 검색에 성공했습니다."),
     DEPARTMENT_NAME_SEARCH_BY_SCHOOL_NAME_SCHOOL_SUCCESS(OK, "학과 검색에 성공했습니다."),
     REVEAL_NAME_HINT_SUCCESS(OK, "이름 초성 확인하는데 성공했습니다."),
+    FRIEND_SEARCH_SUCCESS(OK, "친구 검색하기에 성공했습니다."),
 
     /**
      * 201 CREATED

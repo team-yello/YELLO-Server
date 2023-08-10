@@ -3,10 +3,9 @@ package com.yello.server.domain.user.repository;
 import com.yello.server.domain.user.entity.User;
 import java.util.List;
 import java.util.Optional;
-
-import org.springframework.data.repository.query.Param;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 
 public interface UserJpaRepository extends JpaRepository<User, Long> {
 
@@ -33,4 +32,38 @@ public interface UserJpaRepository extends JpaRepository<User, Long> {
         "where u.group.id = :groupId " +
         "and u.deletedAt is null")
     List<User> findAllByGroupId(@Param("groupId") Long groupId);
+
+
+    @Query("select u from User u "
+        + "where u.group.id = :groupId "
+        + "And u.name like CONCAT('%', :keyword, '%') "
+        + "and u.deletedAt is null "
+        + "order by u.name ASC ")
+    List<User> findAllByGroupContainingName(@Param("groupId") Long groupId,
+        @Param("keyword") String keyword);
+
+    @Query("select u from User u "
+        + "where u.group.id <> :groupId "
+        + "And u.name like CONCAT('%', :keyword, '%') "
+        + "and u.deletedAt is null "
+        + "order by u.groupAdmissionYear DESC ")
+    List<User> findAllByOtherGroupContainingName(@Param("groupId") Long groupId,
+        @Param("keyword") String keyword);
+
+    @Query("select u from User u "
+        + "where u.group.id = :groupId "
+        + "And LOWER(u.yelloId) like LOWER(CONCAT('%', :keyword, '%')) "
+        + "and u.deletedAt is null "
+        + "order by u.yelloId ASC ")
+    List<User> findAllByGroupContainingYelloId(@Param("groupId") Long groupId,
+        @Param("keyword") String keyword);
+
+    @Query("select u from User u "
+        + "where u.group.id <> :groupId "
+        + "And LOWER(u.yelloId) like LOWER(CONCAT('%', :keyword, '%')) "
+        + "and u.deletedAt is null "
+        + "order by u.groupAdmissionYear DESC ")
+    List<User> findAllByOtherGroupContainingYelloId(@Param("groupId") Long groupId,
+        @Param("keyword") String keyword);
+
 }

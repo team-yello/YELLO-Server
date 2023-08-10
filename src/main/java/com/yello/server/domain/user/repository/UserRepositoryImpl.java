@@ -67,4 +67,24 @@ public class UserRepositoryImpl implements UserRepository {
     public List<User> findAllByGroupId(Long groupId) {
         return userJpaRepository.findAllByGroupId(groupId);
     }
+
+    @Override
+    public List<User> findAllByGroupContainingName(Long groupId, String keyword) {
+        return userJpaRepository.findAllByGroupContainingName(groupId, keyword);
+    }
+
+    @Override
+    public List<User> findAllByOtherGroupContainingName(Long groupId, String keyword) {
+        return userJpaRepository.findAllByOtherGroupContainingName(groupId, keyword);
+    }
+
+    @Override
+    public List<User> findAllByGroupContainingYelloId(Long groupId, String keyword) {
+        return userJpaRepository.findAllByGroupContainingYelloId(groupId, keyword);
+    }
+
+    @Override
+    public List<User> findAllByOtherGroupContainingYelloId(Long groupId, String keyword) {
+        return userJpaRepository.findAllByOtherGroupContainingYelloId(groupId, keyword);
+    }
 }
