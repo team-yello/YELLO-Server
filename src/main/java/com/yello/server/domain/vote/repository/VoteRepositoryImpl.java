@@ -54,4 +54,9 @@ public class VoteRepositoryImpl implements VoteRepository {
     public List<Vote> findAllReceivedByFriends(Long userId, Pageable pageable) {
         return voteJpaRepository.findAllReceivedByFriends(userId, pageable);
     }
+
+    @Override
+    public Integer countAllReceivedByFriends(Long userId) {
+        return voteJpaRepository.countAllReceivedByFriends(userId);
+    }
 }
