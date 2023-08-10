@@ -82,10 +82,10 @@ public class VoteController {
     @Operation(summary = "친구 투표 조회 API", responses = {
         @ApiResponse(
             responseCode = "200",
-            content = @Content(mediaType = "application/json", array = @ArraySchema(schema = @Schema(implementation = VoteFriendResponse.class)))),
+            content = @Content(mediaType = "application/json", schema = @Schema(implementation = VoteFriendResponse.class))),
     })
     @GetMapping("/friend")
-    public BaseResponse<List<VoteFriendResponse>> findAllFriendVotes(
+    public BaseResponse<VoteFriendResponse> findAllFriendVotes(
         @Parameter(name = "page", description = "페이지네이션 페이지 번호입니다.", example = "1")
         @RequestParam Integer page,
         @AccessTokenUser User user
