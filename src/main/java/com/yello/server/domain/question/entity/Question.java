@@ -58,7 +58,9 @@ public class Question {
 
     public String toNotificationSentence() {
         val foot = deleteBracket(this.nameFoot);
+        if (this.nameHead==null) {
+            return MessageFormat.format("너{0} ... ", foot);
+        }
         return MessageFormat.format("{0} 너{1} ... ", this.nameHead, foot);
     }
-
 }
