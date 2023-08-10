@@ -20,4 +20,6 @@ public interface VoteRepository {
     List<Vote> findAllByReceiverUserId(Long userId, Pageable pageable);
 
     List<Vote> findAllReceivedByFriends(Long userId, Pageable pageable);
+
+    Integer countAllReceivedByFriends(Long userId);
 }
