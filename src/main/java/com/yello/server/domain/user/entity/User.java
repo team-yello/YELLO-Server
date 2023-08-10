@@ -68,7 +68,7 @@ public class User extends AuditingTimeEntity {
     private School group;
 
     @Column(nullable = false)
-    private Integer groupAdmissionYear;
+    private int groupAdmissionYear;
 
     @Email
     @Column(nullable = false)

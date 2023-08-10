@@ -148,7 +148,7 @@ public class FriendController {
     public BaseResponse<SearchFriendResponse> searchFriend(
         @AccessTokenUser User user,
         @Valid @RequestParam("page") Integer page,
-        @Valid @RequestParam("name") String keyword
+        @Valid @RequestParam("keyword") String keyword
     ) {
         val data =
             friendService.searchFriend(user.getId(), createFriendPageable(page), keyword);

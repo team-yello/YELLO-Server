@@ -139,26 +139,27 @@ public class FriendService {
     public SearchFriendResponse searchFriend(Long userId, Pageable pageable,
         String keyword) {
         final User user = userRepository.getById(userId);
-        final String groupName = user.getGroup().getSchoolName();
+        final Long groupId = user.getGroup().getId();
 
         List<User> friendList = new ArrayList<>();
 
         if (!isEnglish(keyword)) {
-            friendList.addAll(userRepository.findAllByGroupContainingName(groupName, keyword));
-            friendList.addAll(userRepository.findAllByOtherGroupContainingName(groupName, keyword));
+            friendList.addAll(userRepository.findAllByGroupContainingName(groupId, keyword));
+            friendList.addAll(userRepository.findAllByOtherGroupContainingName(groupId, keyword));
 
         } else {
-            friendList.addAll(userRepository.findAllByGroupContainingYelloId(groupName, keyword));
+            friendList.addAll(userRepository.findAllByGroupContainingYelloId(groupId, keyword));
             friendList.addAll(
-                userRepository.findAllByOtherGroupContainingYelloId(groupName, keyword));
+                userRepository.findAllByOtherGroupContainingYelloId(groupId, keyword));
         }
         List<SearchFriendVO> pageList = PaginationFactory.getPage(friendList, pageable)
             .stream()
+            .filter(friend -> !userId.equals(friend.getId()))
             .map(friend -> SearchFriendVO.of(friend,
                 friendRepository.existsByUserAndTarget(userId, friend.getId())))
             .toList();
 
-        return SearchFriendResponse.of(pageList.size(), pageList);
+        return SearchFriendResponse.of(friendList.size(), pageList);
     }
 
     public boolean isEnglish(String keyword) {

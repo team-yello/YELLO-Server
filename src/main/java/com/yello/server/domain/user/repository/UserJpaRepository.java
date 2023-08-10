@@ -35,35 +35,35 @@ public interface UserJpaRepository extends JpaRepository<User, Long> {
 
 
     @Query("select u from User u "
-        + "where u.group.schoolName = :groupName "
+        + "where u.group.id = :groupId "
         + "And u.name like CONCAT('%', :keyword, '%') "
         + "and u.deletedAt is null "
         + "order by u.name ASC ")
-    List<User> findAllByGroupContainingName(@Param("groupName") String groupName,
+    List<User> findAllByGroupContainingName(@Param("groupId") Long groupId,
         @Param("keyword") String keyword);
 
     @Query("select u from User u "
-        + "where u.group.schoolName <> :groupName "
+        + "where u.group.id <> :groupId "
         + "And u.name like CONCAT('%', :keyword, '%') "
         + "and u.deletedAt is null "
         + "order by u.groupAdmissionYear DESC ")
-    List<User> findAllByOtherGroupContainingName(@Param("groupName") String groupName,
+    List<User> findAllByOtherGroupContainingName(@Param("groupId") Long groupId,
         @Param("keyword") String keyword);
 
     @Query("select u from User u "
-        + "where u.group.schoolName = :groupName "
+        + "where u.group.id = :groupId "
         + "And LOWER(u.yelloId) like LOWER(CONCAT('%', :keyword, '%')) "
         + "and u.deletedAt is null "
-        + "order by u.name ASC ")
-    List<User> findAllByGroupContainingYelloId(@Param("groupName") String groupName,
+        + "order by u.yelloId ASC ")
+    List<User> findAllByGroupContainingYelloId(@Param("groupId") Long groupId,
         @Param("keyword") String keyword);
 
     @Query("select u from User u "
-        + "where u.group.schoolName <> :groupName "
+        + "where u.group.id <> :groupId "
         + "And LOWER(u.yelloId) like LOWER(CONCAT('%', :keyword, '%')) "
         + "and u.deletedAt is null "
         + "order by u.groupAdmissionYear DESC ")
-    List<User> findAllByOtherGroupContainingYelloId(@Param("groupName") String groupName,
+    List<User> findAllByOtherGroupContainingYelloId(@Param("groupId") Long groupId,
         @Param("keyword") String keyword);
 
 }
