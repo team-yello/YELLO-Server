@@ -3,6 +3,7 @@ package com.yello.server.infrastructure.firebase.dto.request;
 import com.google.firebase.messaging.Notification;
 import com.yello.server.domain.user.entity.Gender;
 import com.yello.server.domain.user.entity.User;
+import com.yello.server.domain.vote.entity.Vote;
 import com.yello.server.infrastructure.firebase.dto.NotificationType;
 import java.text.MessageFormat;
 import lombok.Builder;
@@ -30,11 +31,13 @@ public record NotificationMessage(
             .build();
     }
 
-    public static NotificationMessage toYelloNotificationContent(User user) {
-        final String target = Gender.MALE.getIntial().equals(user.getGender().getIntial()) ? "남학생" : "여학생";
+    public static NotificationMessage toYelloNotificationContent(Vote vote) {
+        final User sender = vote.getSender();
+
+        final String target = Gender.MALE.getIntial().equals(sender.getGender().getIntial()) ? "남학생" : "여학생";
         return NotificationMessage.builder()
             .title(MessageFormat.format("{0}이 쪽지를 보냈어요!", target))
-            .message("나는 너가 ...")
+            .message(vote.getQuestion().toNotificationSentence())
             .type(NotificationType.NEW_VOTE)
             .build();
     }
