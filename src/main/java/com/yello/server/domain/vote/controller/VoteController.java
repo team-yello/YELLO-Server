@@ -6,6 +6,7 @@ import static com.yello.server.global.common.SuccessCode.READ_VOTE_SUCCESS;
 import static com.yello.server.global.common.SuccessCode.READ_YELLO_START_SUCCESS;
 import static com.yello.server.global.common.SuccessCode.READ_YELLO_VOTE_SUCCESS;
 import static com.yello.server.global.common.factory.PaginationFactory.createPageable;
+import static com.yello.server.global.common.factory.PaginationFactory.createPageableLimitTen;
 
 import com.yello.server.domain.keyword.dto.response.KeywordCheckResponse;
 import com.yello.server.domain.question.dto.response.QuestionForVoteResponse;
@@ -82,15 +83,15 @@ public class VoteController {
     @Operation(summary = "친구 투표 조회 API", responses = {
         @ApiResponse(
             responseCode = "200",
-            content = @Content(mediaType = "application/json", array = @ArraySchema(schema = @Schema(implementation = VoteFriendResponse.class)))),
+            content = @Content(mediaType = "application/json", schema = @Schema(implementation = VoteFriendResponse.class))),
     })
     @GetMapping("/friend")
-    public BaseResponse<List<VoteFriendResponse>> findAllFriendVotes(
+    public BaseResponse<VoteFriendResponse> findAllFriendVotes(
         @Parameter(name = "page", description = "페이지네이션 페이지 번호입니다.", example = "1")
         @RequestParam Integer page,
         @AccessTokenUser User user
     ) {
-        val data = voteService.findAllFriendVotes(user.getId(), createPageable(page));
+        val data = voteService.findAllFriendVotes(user.getId(), createPageableLimitTen(page));
         return BaseResponse.success(READ_VOTE_SUCCESS, data);
     }
 

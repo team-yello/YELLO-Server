@@ -35,6 +35,7 @@ import com.yello.server.domain.vote.dto.response.VoteAvailableResponse;
 import com.yello.server.domain.vote.dto.response.VoteCreateVO;
 import com.yello.server.domain.vote.dto.response.VoteDetailResponse;
 import com.yello.server.domain.vote.dto.response.VoteFriendResponse;
+import com.yello.server.domain.vote.dto.response.VoteFriendVO;
 import com.yello.server.domain.vote.dto.response.VoteListResponse;
 import com.yello.server.domain.vote.dto.response.VoteResponse;
 import com.yello.server.domain.vote.dto.response.VoteUnreadCountResponse;
@@ -89,11 +90,13 @@ public class VoteService {
         return VoteDetailResponse.of(vote);
     }
 
-    public List<VoteFriendResponse> findAllFriendVotes(Long userId, Pageable pageable) {
-        return voteRepository.findAllReceivedByFriends(userId, pageable)
+    public VoteFriendResponse findAllFriendVotes(Long userId, Pageable pageable) {
+        final Integer totalCount = voteRepository.countAllReceivedByFriends(userId);
+        final List<VoteFriendVO> list = voteRepository.findAllReceivedByFriends(userId, pageable)
             .stream()
-            .map(VoteFriendResponse::of)
+            .map(VoteFriendVO::of)
             .toList();
+        return VoteFriendResponse.of(totalCount, list);
     }
 
     @Transactional
@@ -188,7 +191,7 @@ public class VoteService {
         }
 
         final Vote vote = voteRepository.getById(voteId);
-        if (vote.getNameHint()!=NAME_HINT_DEFAULT) {
+        if (vote.getNameHint() != NAME_HINT_DEFAULT) {
             throw new VoteNotFoundException(INVALID_VOTE_EXCEPTION);
         }
 

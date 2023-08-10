@@ -65,15 +65,20 @@ public class AuthService {
     private final TokenRepository tokenValueOperations;
 
     // TODO softDelete 우아하게 처리하는 방법으로 바꾸기
-    public void renewUserInformation(User currentUser) {
-        currentUser.renew();
+    public Boolean renewUserInformation(User currentUser) {
+        if (currentUser.getDeletedAt()!=null) {
+            currentUser.renew();
 
-        friendRepository.findAllByUserIdNotFiltered(currentUser.getId())
-            .forEach(Friend::renew);
-        friendRepository.findAllByTargetIdNotFiltered(currentUser.getId())
-            .forEach(Friend::renew);
-        cooldownRepository.findByUserIdNotFiltered(currentUser.getId())
-            .ifPresent(Cooldown::renew);
+            friendRepository.findAllByUserIdNotFiltered(currentUser.getId())
+                .forEach(Friend::renew);
+            friendRepository.findAllByTargetIdNotFiltered(currentUser.getId())
+                .forEach(Friend::renew);
+            cooldownRepository.findByUserIdNotFiltered(currentUser.getId())
+                .ifPresent(Cooldown::renew);
+
+            return true;
+        }
+        return false;
     }
 
     // TODO 응답을 주입 받을 수 있도록 설계
@@ -95,9 +100,9 @@ public class AuthService {
         final ServiceTokenVO serviceTokenVO =
             this.registerToken(currentUser.getId(), currentUser.getUuid());
 
-        this.renewUserInformation(currentUser);
+        final Boolean isResigned = this.renewUserInformation(currentUser);
         currentUser.setDeviceToken(oAuthRequest.deviceToken());
-        return OAuthResponse.of(serviceTokenVO);
+        return OAuthResponse.of(isResigned, serviceTokenVO);
     }
 
     public Boolean isYelloIdDuplicated(String yelloId) {

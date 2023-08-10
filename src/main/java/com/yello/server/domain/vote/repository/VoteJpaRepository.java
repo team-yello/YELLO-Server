@@ -32,5 +32,12 @@ public interface VoteJpaRepository extends JpaRepository<Vote, Long> {
         + "and v.receiver.deletedAt is null "
         + "order by v.createdAt desc")
     List<Vote> findAllReceivedByFriends(@Param("userId") Long userId, Pageable pageable);
+
+    @Query("select count(v) from Vote v where v.receiver.id in "
+        + "(select f.target.id from Friend f where f.user.id = :userId and f.deletedAt is null) "
+        + "and v.sender.deletedAt is null "
+        + "and v.receiver.deletedAt is null "
+        + "order by v.createdAt desc")
+    Integer countAllReceivedByFriends(@Param("userId") Long userId);
 }
  

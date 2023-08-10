@@ -18,7 +18,7 @@ public class FakeVoteRepository implements VoteRepository {
     @Override
     public Vote save(Vote vote) {
         Vote newVote = Vote.builder()
-            .id(vote.getId()==null ? id++ : vote.getId())
+            .id(vote.getId() == null ? id++ : vote.getId())
             .answer(vote.getAnswer())
             .nameHint(vote.getNameHint())
             .isAnswerRevealed(vote.getIsAnswerRevealed())
@@ -81,5 +81,13 @@ public class FakeVoteRepository implements VoteRepository {
             .skip(pageable.getOffset())
             .limit(pageable.getPageSize())
             .toList();
+    }
+
+    @Override
+    public Integer countAllReceivedByFriends(Long userId) {
+        return data.stream()
+            .filter(vote -> vote.getReceiver().getId().equals(userId))
+            .toList()
+            .size();
     }
 }

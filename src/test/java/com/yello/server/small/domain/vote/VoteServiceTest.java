@@ -263,13 +263,13 @@ public class VoteServiceTest {
         final Pageable pageable = createPageable(0);
 
         // when
-        List<VoteFriendResponse> result =
+        VoteFriendResponse result =
             voteService.findAllFriendVotes(userId, pageable); // 다시 확인 !!
 
         // then
-        assertThat(result.size()).isEqualTo(4);
-        assertThat(result.get(0).id()).isEqualTo(1L);
-
+        assertThat(result.totalCount()).isEqualTo(4);
+        assertThat(result.friendVotes().size()).isEqualTo(4);
+        assertThat(result.friendVotes().get(0).id()).isEqualTo(1L);
     }
 
     @Test
