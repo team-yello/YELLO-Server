@@ -55,6 +55,7 @@ import org.springframework.transaction.annotation.Transactional;
 @Builder
 @Service
 @RequiredArgsConstructor
+@Transactional(readOnly = true)
 public class AuthService {
 
     private final UserRepository userRepository;
@@ -66,7 +67,7 @@ public class AuthService {
 
     // TODO softDelete 우아하게 처리하는 방법으로 바꾸기
     public Boolean renewUserInformation(User currentUser) {
-        if (currentUser.getDeletedAt()!=null) {
+        if (currentUser.getDeletedAt() != null) {
             currentUser.renew();
 
             friendRepository.findAllByUserIdNotFiltered(currentUser.getId())
@@ -83,15 +84,17 @@ public class AuthService {
 
     // TODO 응답을 주입 받을 수 있도록 설계
     // TODO 테스트 코드 작성
+    @Transactional
     public OAuthResponse oauthLogin(OAuthRequest oAuthRequest) {
         final ResponseEntity<KakaoTokenInfo> response = RestUtil.getKakaoTokenInfo(
             oAuthRequest.accessToken());
 
-        if (response.getStatusCode()==BAD_REQUEST || response.getStatusCode()==UNAUTHORIZED) {
+        if (response.getStatusCode() == BAD_REQUEST || response.getStatusCode() == UNAUTHORIZED) {
             throw new OAuthException(OAUTH_TOKEN_EXCEPTION);
         }
 
-        final Optional<User> target = userRepository.findByUuid(String.valueOf(response.getBody().id()));
+        final Optional<User> target =
+            userRepository.findByUuid(String.valueOf(response.getBody().id()));
         if (target.isEmpty()) {
             throw new NotSignedInException(NOT_SIGNIN_USER_EXCEPTION);
         }
@@ -117,7 +120,8 @@ public class AuthService {
     public SignUpResponse signUp(SignUpRequest signUpRequest) {
         final User signUpUser = this.signUpUser(signUpRequest);
         this.recommendUser(signUpRequest.recommendId());
-        final ServiceTokenVO signUpToken = this.registerToken(signUpUser.getId(), signUpUser.getUuid());
+        final ServiceTokenVO signUpToken =
+            this.registerToken(signUpUser.getId(), signUpUser.getUuid());
         this.makeFriend(signUpUser, signUpRequest.friends());
 
         return SignUpResponse.of(signUpUser.getYelloId(), signUpToken);
@@ -143,7 +147,7 @@ public class AuthService {
     }
 
     public void recommendUser(String recommendYelloId) {
-        if (recommendYelloId!=null && !recommendYelloId.isEmpty()) {
+        if (recommendYelloId != null && !recommendYelloId.isEmpty()) {
             User recommendedUser = userRepository.getByYelloId(recommendYelloId);
             recommendedUser.increaseRecommendCount();
 
