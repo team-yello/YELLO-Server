@@ -43,12 +43,12 @@ import com.yello.server.domain.vote.entity.Vote;
 import com.yello.server.domain.vote.exception.VoteForbiddenException;
 import com.yello.server.domain.vote.exception.VoteNotFoundException;
 import com.yello.server.domain.vote.repository.VoteRepository;
+import com.yello.server.infrastructure.rabbitmq.service.ProducerService;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
-import java.util.Optional;
 import java.util.stream.IntStream;
 import lombok.Builder;
 import lombok.RequiredArgsConstructor;
@@ -68,6 +68,8 @@ public class VoteService {
     private final CooldownRepository cooldownRepository;
     private final VoteRepository voteRepository;
     private final KeywordRepository keywordRepository;
+
+    private final ProducerService producerService;
 
     public VoteListResponse findAllVotes(Long userId, Pageable pageable) {
         final Integer count = voteRepository.countAllByReceiverUserId(userId);
@@ -171,13 +173,12 @@ public class VoteService {
                 votes.add(savedVote);
             });
 
-        final Optional<Cooldown> cooldown = cooldownRepository.findByUserId(sender.getId());
-        if (cooldown.isEmpty()) {
-            cooldownRepository.save(Cooldown.of(sender, LocalDateTime.now()));
-        } else {
-            cooldown.get().updateDate(LocalDateTime.now());
-        }
+        Cooldown cooldown = cooldownRepository.findByUserId(sender.getId())
+            .orElseGet(() -> cooldownRepository.save(Cooldown.of(sender, LocalDateTime.now())));
 
+        cooldown.updateDate(LocalDateTime.now());
+        producerService.produceVoteAvailableNotification(cooldown);
+        
         sender.plusPoint(request.totalPoint());
         return VoteCreateVO.of(sender.getPoint(), votes);
     }
@@ -191,7 +192,7 @@ public class VoteService {
         }
 
         final Vote vote = voteRepository.getById(voteId);
-        if (vote.getNameHint() != NAME_HINT_DEFAULT) {
+        if (vote.getNameHint()!=NAME_HINT_DEFAULT) {
             throw new VoteNotFoundException(INVALID_VOTE_EXCEPTION);
         }
 
