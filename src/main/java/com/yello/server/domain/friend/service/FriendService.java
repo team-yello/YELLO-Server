@@ -114,8 +114,8 @@ public class FriendService {
         final User target = userRepository.getById(targetId);
         final User user = userRepository.getById(userId);
 
-        friendRepository.getByUserAndTarget(userId, targetId).delete();
-        friendRepository.getByUserAndTarget(targetId, userId).delete();
+        friendRepository.delete(friendRepository.getByUserAndTarget(userId, targetId));
+        friendRepository.delete(friendRepository.getByUserAndTarget(targetId, userId));
     }
 
     public RecommendFriendResponse findAllRecommendKakaoFriends(Pageable pageable, Long userId,

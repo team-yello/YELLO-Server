@@ -7,20 +7,29 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Index;
 import javax.persistence.Table;
+import javax.persistence.UniqueConstraint;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
-@Table(indexes = {
-    @Index(name = "idx__school_name", columnList = "schoolName")
-})
 @Getter
 @Entity
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
+@Table(
+    indexes = {
+        @Index(name = "idx__school_name", columnList = "schoolName")
+    },
+    uniqueConstraints = {
+        @UniqueConstraint(
+            name = "school_department_name_unique",
+            columnNames = {"schoolName", "departmentName"}
+        ),
+    }
+)
 public class School {
 
     @Id
