@@ -15,7 +15,7 @@ public class ProducerRabbitmqService implements ProducerService {
     private final MessageQueueRepository messageQueueRepository;
 
     @Override
-    public void voteAvailableNotificationProducer(Vote vote) {
+    public void produceVoteAvailableNotification(Vote vote) {
         LocalDateTime notificationTime = vote.getCreatedAt().plusMinutes(1);
         String expiration = String.valueOf(Duration.between(LocalDateTime.now(), notificationTime).toMillis());
 

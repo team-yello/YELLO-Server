@@ -5,5 +5,5 @@ import org.springframework.amqp.core.Message;
 
 public interface ConsumerService {
 
-    void voteAvailableNotificationConsumer(final Message message) throws IOException;
+    void consumeVoteAvailableNotification(final Message message) throws IOException;
 }

@@ -19,13 +19,13 @@ public class ConsumerRabbitmqService implements ConsumerService {
 
     @Override
     @RabbitListener(queues = "vote-available-notification-queue", concurrency = "6")
-    public void voteAvailableNotificationConsumer(final Message message) throws IOException {
+    public void consumeVoteAvailableNotification(final Message message) throws IOException {
         ObjectMapper objectMapper = new ObjectMapper();
         final VoteAvailableQueueResponse voteAvailableQueueResponse = objectMapper.readValue(
             message.getBody(),
             VoteAvailableQueueResponse.class
         );
-    
+
         notificationService.sendVoteAvailableNotification(voteAvailableQueueResponse.receiverId());
     }
 }
