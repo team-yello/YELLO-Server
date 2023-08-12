@@ -1,6 +1,7 @@
 package com.yello.server.small.domain.friend;
 
 import static com.yello.server.global.common.factory.PaginationFactory.createPageable;
+import static com.yello.server.global.common.factory.PaginationFactory.createPageableLimitTen;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
@@ -8,6 +9,7 @@ import com.yello.server.domain.friend.dto.request.KakaoRecommendRequest;
 import com.yello.server.domain.friend.dto.response.FriendShuffleResponse;
 import com.yello.server.domain.friend.dto.response.FriendsResponse;
 import com.yello.server.domain.friend.dto.response.RecommendFriendResponse;
+import com.yello.server.domain.friend.dto.response.SearchFriendResponse;
 import com.yello.server.domain.friend.entity.Friend;
 import com.yello.server.domain.friend.exception.FriendException;
 import com.yello.server.domain.friend.exception.FriendNotFoundException;
@@ -51,6 +53,11 @@ class FriendServiceTest {
             .schoolName("Test School")
             .departmentName("Testing")
             .build();
+        School school2 = School.builder()
+            .id(2L)
+            .schoolName("Test School")
+            .departmentName("Testing")
+            .build();
         user1 = userRepository.save(User.builder()
             .id(1L)
             .recommendCount(0L).name("test")
@@ -66,7 +73,7 @@ class FriendServiceTest {
             .yelloId("helloworld").gender(Gender.MALE)
             .point(200).social(Social.KAKAO)
             .profileImage("test image 2").uuid("5678")
-            .deletedAt(null).group(school)
+            .deletedAt(null).group(school2)
             .groupAdmissionYear(17).email("hello@test.com")
             .build());
         user3 = userRepository.save(User.builder()
@@ -81,7 +88,7 @@ class FriendServiceTest {
         user4 = userRepository.save(User.builder()
             .id(4L)
             .recommendCount(0L).name("aaa")
-            .yelloId("aaa").gender(Gender.MALE)
+            .yelloId("aaaworld").gender(Gender.MALE)
             .point(200).social(Social.KAKAO)
             .profileImage("test image 4").uuid("aaa")
             .deletedAt(null).group(school)
@@ -207,10 +214,11 @@ class FriendServiceTest {
         final Pageable pageable = createPageable(page);
 
         // when
-        final RecommendFriendResponse recommendSchoolFriends = friendService.findAllRecommendSchoolFriends(
-            pageable,
-            userId
-        );
+        final RecommendFriendResponse recommendSchoolFriends =
+            friendService.findAllRecommendSchoolFriends(
+                pageable,
+                userId
+            );
 
         // then
         assertThat(recommendSchoolFriends.totalCount()).isEqualTo(3);
@@ -268,13 +276,32 @@ class FriendServiceTest {
             .build();
 
         // when
-        final RecommendFriendResponse allRecommendKakaoFriends = friendService.findAllRecommendKakaoFriends(
-            pageable,
-            userId,
-            request
-        );
+        final RecommendFriendResponse allRecommendKakaoFriends =
+            friendService.findAllRecommendKakaoFriends(
+                pageable,
+                userId,
+                request
+            );
 
         // then
         assertThat(allRecommendKakaoFriends.totalCount()).isEqualTo(3);
+    }
+
+    @Test
+    void 친구_검색에_성공합니다() {
+        // given
+        final Long userId = 1L;
+        final Integer page = 0;
+        final Pageable pageable = createPageableLimitTen(page);
+        final String keyword = "world";
+
+        // when
+        SearchFriendResponse searchFriendResponse =
+            friendService.searchFriend(userId, pageable, keyword);
+        final int totalCount = searchFriendResponse.totalCount();
+
+        // then
+        assertThat(totalCount).isEqualTo(3);
+        assertThat(searchFriendResponse.friendList().get(totalCount - 1).id()).isEqualTo(2);
     }
 }

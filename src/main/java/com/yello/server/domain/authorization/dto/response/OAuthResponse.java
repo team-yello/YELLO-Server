@@ -5,12 +5,14 @@ import lombok.Builder;
 
 @Builder
 public record OAuthResponse(
+    Boolean isResigned,
     String accessToken,
     String refreshToken
 ) {
 
-    public static OAuthResponse of(ServiceTokenVO tokens) {
+    public static OAuthResponse of(Boolean isResigned, ServiceTokenVO tokens) {
         return OAuthResponse.builder()
+            .isResigned(isResigned)
             .accessToken(tokens.accessToken())
             .refreshToken(tokens.refreshToken())
             .build();
