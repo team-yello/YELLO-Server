@@ -1,6 +1,7 @@
 package com.yello.server.infrastructure.rabbitmq.service;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.yello.server.domain.cooldown.repository.CooldownRepository;
 import com.yello.server.infrastructure.firebase.service.NotificationService;
 import com.yello.server.infrastructure.rabbitmq.dto.response.VoteAvailableQueueResponse;
 import java.io.IOException;
@@ -15,17 +16,23 @@ import org.springframework.stereotype.Service;
 @Log4j2
 public class ConsumerRabbitmqService implements ConsumerService {
 
+    private final CooldownRepository cooldownRepository;
+
     private final NotificationService notificationService;
 
     @Override
     @RabbitListener(queues = "vote-available-notification-queue", concurrency = "6")
     public void consumeVoteAvailableNotification(final Message message) throws IOException {
         ObjectMapper objectMapper = new ObjectMapper();
+
         final VoteAvailableQueueResponse voteAvailableQueueResponse = objectMapper.readValue(
             message.getBody(),
             VoteAvailableQueueResponse.class
         );
 
-        notificationService.sendVoteAvailableNotification(voteAvailableQueueResponse.receiverId());
+        boolean exists = cooldownRepository.existsByUserId(voteAvailableQueueResponse.receiverId());
+        if (exists) {
+            notificationService.sendVoteAvailableNotification(voteAvailableQueueResponse.receiverId());
+        }
     }
 }

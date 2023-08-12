@@ -1,9 +1,9 @@
 package com.yello.server.infrastructure.rabbitmq.service;
 
-import com.yello.server.domain.vote.entity.Vote;
+import com.yello.server.domain.cooldown.entity.Cooldown;
 
 public interface ProducerService {
 
-    void produceVoteAvailableNotification(Vote vote);
+    void produceVoteAvailableNotification(Cooldown cooldown);
 
 }
