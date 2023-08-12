@@ -25,6 +25,12 @@ public class FriendRepositoryImpl implements FriendRepository {
         return friendJpaRepository.save(friend);
     }
 
+    @Transactional
+    @Override
+    public void delete(Friend friend) {
+        friendJpaRepository.delete(friend);
+    }
+
     @Override
     public Integer countAllByUserId(Long userId) {
         return friendJpaRepository.countAllByUserId(userId);
