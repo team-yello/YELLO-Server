@@ -248,7 +248,7 @@ public class VoteServiceTest {
         final Vote vote = voteRepository.getById(voteId);
 
         // when
-        final VoteDetailResponse result = voteService.findVoteById(voteId);
+        final VoteDetailResponse result = voteService.findVoteById(voteId, 1L);
 
         // then
         assertThat(result.senderName()).isEqualTo("yello2");

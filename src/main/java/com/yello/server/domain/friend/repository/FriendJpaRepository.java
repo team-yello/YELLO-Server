@@ -60,5 +60,4 @@ public interface FriendJpaRepository extends JpaRepository<Friend, Long> {
         "where f.target.id = :targetId")
     List<Friend> findAllByTargetIdNotFiltered(Long targetId);
 
-
 }
