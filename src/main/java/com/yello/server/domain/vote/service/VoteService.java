@@ -73,11 +73,12 @@ public class VoteService {
 
     public VoteListResponse findAllVotes(Long userId, Pageable pageable) {
         final Integer count = voteRepository.countAllByReceiverUserId(userId);
+        final User user = userRepository.getById(userId);
         final List<VoteResponse> votes = voteRepository.findAllByReceiverUserId(userId, pageable)
             .stream()
             .map(VoteResponse::of)
             .toList();
-        return VoteListResponse.of(count, votes);
+        return VoteListResponse.of(count, votes, user);
     }
 
     public VoteUnreadCountResponse getUnreadVoteCount(Long userId) {
@@ -86,10 +87,11 @@ public class VoteService {
     }
 
     @Transactional
-    public VoteDetailResponse findVoteById(Long voteId) {
+    public VoteDetailResponse findVoteById(Long voteId, Long userId) {
         final Vote vote = voteRepository.getById(voteId);
+        final User user = userRepository.getById(userId);
         vote.read();
-        return VoteDetailResponse.of(vote);
+        return VoteDetailResponse.of(vote, user);
     }
 
     public VoteFriendResponse findAllFriendVotes(Long userId, Pageable pageable) {
@@ -160,7 +162,8 @@ public class VoteService {
             .forEach(index -> {
                 VoteAnswer answer = voteAnswerList.get(index);
 
-                if (index > 0 && voteAnswerList.get(index - 1).questionId().equals(answer.questionId())) {
+                if (index > 0 && voteAnswerList.get(index - 1).questionId()
+                    .equals(answer.questionId())) {
                     throw new VoteForbiddenException(DUPLICATE_VOTE_EXCEPTION);
                 }
 
@@ -178,7 +181,7 @@ public class VoteService {
 
         cooldown.updateDate(LocalDateTime.now());
         producerService.produceVoteAvailableNotification(cooldown);
-        
+
         sender.plusPoint(request.totalPoint());
         return VoteCreateVO.of(sender.getPoint(), votes);
     }
@@ -192,7 +195,7 @@ public class VoteService {
         }
 
         final Vote vote = voteRepository.getById(voteId);
-        if (vote.getNameHint()!=NAME_HINT_DEFAULT) {
+        if (vote.getNameHint() != NAME_HINT_DEFAULT) {
             throw new VoteNotFoundException(INVALID_VOTE_EXCEPTION);
         }
 

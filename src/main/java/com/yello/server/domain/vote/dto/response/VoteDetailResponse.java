@@ -1,5 +1,6 @@
 package com.yello.server.domain.vote.dto.response;
 
+import com.yello.server.domain.user.entity.User;
 import com.yello.server.domain.vote.entity.Vote;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Builder;
@@ -28,10 +29,13 @@ public record VoteDetailResponse(
     String senderGender,
 
     @Schema(description = "투표 내용")
-    VoteContentVO vote
+    VoteContentVO vote,
+
+    @Schema(description = "열람권 개수")
+    Integer ticketCount
 ) {
 
-    public static VoteDetailResponse of(Vote vote) {
+    public static VoteDetailResponse of(Vote vote, User user) {
         return VoteDetailResponse.builder()
             .colorIndex(vote.getColorIndex())
             .currentPoint(vote.getReceiver().getPoint())
@@ -40,6 +44,7 @@ public record VoteDetailResponse(
             .senderName(vote.getSender().getName())
             .senderGender(vote.getSender().getGender().name())
             .vote(VoteContentVO.of(vote))
+            .ticketCount(user.getTicketCount())
             .build();
     }
 }
