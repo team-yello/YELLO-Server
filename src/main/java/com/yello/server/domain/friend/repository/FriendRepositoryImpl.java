@@ -42,6 +42,11 @@ public class FriendRepositoryImpl implements FriendRepository {
     }
 
     @Override
+    public Optional<Friend> findByUserAndTargetNotFiltered(Long userId, Long targetId) {
+        return friendJpaRepository.findByUserAndTargetNotFiltered(userId, targetId);
+    }
+
+    @Override
     public Friend getByUserAndTarget(Long userId, Long targetId) {
         return friendJpaRepository.findByUserAndTarget(userId, targetId)
             .orElseThrow(() -> new FriendNotFoundException(NOT_FOUND_FRIEND_EXCEPTION));
