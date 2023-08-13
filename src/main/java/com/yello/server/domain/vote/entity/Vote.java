@@ -83,7 +83,7 @@ public class Vote extends AuditingTimeEntity {
 
         return Vote.builder()
             .answer(answer)
-            .nameHint(3)
+            .nameHint(-3)
             .isAnswerRevealed(true)
             .isRead(false)
             .sender(sender)
