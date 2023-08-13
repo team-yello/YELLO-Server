@@ -52,6 +52,15 @@ public class Question {
         return slashIndex!=-1 ? target.substring(slashIndex + 1) : target;
     }
 
+    public static Question of(String nameHead, String nameFoot, String keywordHead, String keywordFoot) {
+        return Question.builder()
+            .nameHead(nameHead)
+            .nameFoot(nameFoot)
+            .keywordHead(keywordHead)
+            .keywordFoot(keywordFoot)
+            .build();
+    }
+
     public void addKeyword(Keyword keyword) {
         this.keywordList.add(keyword);
     }
