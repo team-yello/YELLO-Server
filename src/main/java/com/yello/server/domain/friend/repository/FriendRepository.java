@@ -16,6 +16,8 @@ public interface FriendRepository {
 
     Optional<Friend> findByUserAndTarget(Long userId, Long targetId);
 
+    Optional<Friend> findByUserAndTargetNotFiltered(Long userId, Long targetId);
+
     Friend getByUserAndTarget(Long userId, Long targetId);
 
     boolean existsByUserAndTarget(Long userId, Long targetId);
