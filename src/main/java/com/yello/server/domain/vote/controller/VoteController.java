@@ -100,8 +100,10 @@ public class VoteController {
             content = @Content(mediaType = "application/json", schema = @Schema(implementation = VoteDetailResponse.class))),
     })
     @GetMapping("/{voteId}")
-    public BaseResponse<VoteDetailResponse> findVote(@PathVariable Long voteId) {
-        val data = voteService.findVoteById(voteId);
+    public BaseResponse<VoteDetailResponse> findVote(
+        @PathVariable Long voteId,
+        @AccessTokenUser User user) {
+        val data = voteService.findVoteById(voteId, user.getId());
         return BaseResponse.success(READ_VOTE_SUCCESS, data);
     }
 
