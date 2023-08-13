@@ -39,5 +39,6 @@ public interface VoteJpaRepository extends JpaRepository<Vote, Long> {
         + "and v.receiver.deletedAt is null "
         + "order by v.createdAt desc")
     Integer countAllReceivedByFriends(@Param("userId") Long userId);
+
 }
  

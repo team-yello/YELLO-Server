@@ -28,11 +28,14 @@ import com.yello.server.domain.vote.dto.response.VoteUnreadCountResponse;
 import com.yello.server.domain.vote.entity.Vote;
 import com.yello.server.domain.vote.repository.VoteRepository;
 import com.yello.server.domain.vote.service.VoteService;
+import com.yello.server.infrastructure.rabbitmq.service.ProducerService;
 import com.yello.server.small.domain.cooldown.FakeCooldownRepository;
 import com.yello.server.small.domain.friend.FakeFriendRepository;
 import com.yello.server.small.domain.keyword.FakeKeywordRepository;
 import com.yello.server.small.domain.question.FakeQuestionRepository;
 import com.yello.server.small.domain.user.FakeUserRepository;
+import com.yello.server.small.global.rabbitmq.FakeMessageQueueRepository;
+import com.yello.server.small.global.rabbitmq.FakeProducerService;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -48,6 +51,7 @@ public class VoteServiceTest {
     private final CooldownRepository cooldownRepository = new FakeCooldownRepository();
     private final QuestionRepository questionRepository = new FakeQuestionRepository();
     private final KeywordRepository keywordRepository = new FakeKeywordRepository();
+    private final ProducerService producerService = new FakeProducerService(new FakeMessageQueueRepository());
     private VoteService voteService;
     private Question question1;
     private Question question2;
@@ -70,6 +74,7 @@ public class VoteServiceTest {
             .userRepository(userRepository)
             .questionRepository(questionRepository)
             .keywordRepository(keywordRepository)
+            .producerService(producerService)
             .build();
 
         School school = School.builder()

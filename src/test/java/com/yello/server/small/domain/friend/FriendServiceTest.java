@@ -25,6 +25,7 @@ import com.yello.server.domain.vote.repository.VoteRepository;
 import com.yello.server.small.domain.user.FakeUserRepository;
 import com.yello.server.small.domain.vote.FakeVoteRepository;
 import java.util.List;
+import java.util.Optional;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.data.domain.Pageable;
@@ -232,10 +233,10 @@ class FriendServiceTest {
 
         // when
         friendService.deleteFriend(userId, targetId);
-        final List<Friend> friends = friendRepository.findAllByUserIdNotFiltered(userId);
+        final Optional<Friend> friends = friendRepository.findByUserAndTargetNotFiltered(userId, targetId);
 
         // then
-        assertThat(friends.get(0).getDeletedAt()).isNotNull();
+        assertThat(friends.isEmpty()).isEqualTo(true);
     }
 
     @Test

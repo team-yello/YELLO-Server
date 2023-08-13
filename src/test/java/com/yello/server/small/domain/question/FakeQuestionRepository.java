@@ -10,6 +10,8 @@ import com.yello.server.domain.question.repository.QuestionRepository;
 import com.yello.server.small.domain.keyword.FakeKeywordRepository;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
+import java.util.Optional;
 
 public class FakeQuestionRepository implements QuestionRepository {
 
@@ -54,5 +56,16 @@ public class FakeQuestionRepository implements QuestionRepository {
 
         data.add(newQuestion);
         return newQuestion;
+    }
+
+    @Override
+    public Optional<Question> findByQuestionContent(String nameHead, String nameFoot, String keywordHead,
+        String keywordFoot) {
+        return data.stream()
+            .filter(question -> Objects.equals(question.getNameHead(), nameHead)
+                && Objects.equals(question.getNameFoot(), nameFoot)
+                && Objects.equals(question.getKeywordHead(), keywordHead)
+                && Objects.equals(question.getKeywordFoot(), keywordFoot))
+            .findFirst();
     }
 }

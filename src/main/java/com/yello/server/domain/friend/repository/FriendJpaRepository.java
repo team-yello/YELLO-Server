@@ -26,6 +26,11 @@ public interface FriendJpaRepository extends JpaRepository<Friend, Long> {
     Optional<Friend> findByUserAndTarget(@Param("userId") Long userId,
         @Param("targetId") Long targetId);
 
+    @Query("select f from Friend f " +
+        "where f.target.id = :targetId " +
+        "and f.user.id = :userId")
+    Optional<Friend> findByUserAndTargetNotFiltered(Long userId, Long targetId);
+
     @Query("select case when count(f) > 0 then true else false end from Friend f " +
         "where f.target.id = :targetId " +
         "and f.user.id = :userId " +
@@ -59,5 +64,4 @@ public interface FriendJpaRepository extends JpaRepository<Friend, Long> {
     @Query("select f from Friend f " +
         "where f.target.id = :targetId")
     List<Friend> findAllByTargetIdNotFiltered(Long targetId);
-
 }
