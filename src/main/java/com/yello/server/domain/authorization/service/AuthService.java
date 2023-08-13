@@ -74,7 +74,7 @@ public class AuthService {
 
     // TODO softDelete 우아하게 처리하는 방법으로 바꾸기
     public Boolean renewUserInformation(User currentUser) {
-        if (currentUser.getDeletedAt()!=null) {
+        if (currentUser.getDeletedAt() != null) {
             currentUser.renew();
 
             friendRepository.findAllByUserIdNotFiltered(currentUser.getId())
@@ -96,7 +96,7 @@ public class AuthService {
         final ResponseEntity<KakaoTokenInfo> response = RestUtil.getKakaoTokenInfo(
             oAuthRequest.accessToken());
 
-        if (response.getStatusCode()==BAD_REQUEST || response.getStatusCode()==UNAUTHORIZED) {
+        if (response.getStatusCode() == BAD_REQUEST || response.getStatusCode() == UNAUTHORIZED) {
             throw new OAuthException(OAUTH_TOKEN_EXCEPTION);
         }
 
@@ -160,7 +160,7 @@ public class AuthService {
     }
 
     public void recommendUser(String recommendYelloId) {
-        if (recommendYelloId!=null && !recommendYelloId.isEmpty()) {
+        if (recommendYelloId != null && !recommendYelloId.isEmpty()) {
             User recommendedUser = userRepository.getByYelloId(recommendYelloId);
             recommendedUser.increaseRecommendCount();
 
@@ -194,19 +194,20 @@ public class AuthService {
 
     public void makeGreetingVote(User user, String greetingNameHead, String greetingNameFoot,
         String greetingKeywordHead, String greetingKeywordFoot) {
+        String yelloName = "옐로팀";
         String yelloMaleId = "yello_male";
         String yelloFemaleId = "yello_female";
 
         final User yelloGreetingMale = userRepository.findByUuid(yelloMaleId)
             .orElseGet(() ->
-                userRepository.save(User.yelloGreeting(yelloMaleId, Gender.MALE))
+                userRepository.save(User.yelloGreeting(yelloName, yelloMaleId, Gender.MALE))
             );
         final User yelloGreetingFemale = userRepository.findByUuid(yelloFemaleId)
             .orElseGet(() ->
-                userRepository.save(User.yelloGreeting(yelloFemaleId, Gender.FEMALE))
+                userRepository.save(User.yelloGreeting(yelloName, yelloFemaleId, Gender.FEMALE))
             );
 
-        final User sender = (user.getGender()==Gender.MALE) ? yelloGreetingFemale : yelloGreetingMale;
+        final User sender = (user.getGender() == Gender.MALE) ? yelloGreetingFemale : yelloGreetingMale;
 
         final Question greetingQuestion = questionRepository.findByQuestionContent(greetingNameHead, greetingNameFoot,
                 greetingKeywordHead, greetingKeywordFoot)

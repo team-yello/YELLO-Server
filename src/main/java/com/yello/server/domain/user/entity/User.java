@@ -124,10 +124,10 @@ public class User extends AuditingTimeEntity {
             .build();
     }
 
-    public static User yelloGreeting(String yelloId, Gender gender) {
+    public static User yelloGreeting(String name, String yelloId, Gender gender) {
         return User.builder()
             .recommendCount(0L)
-            .name(yelloId)
+            .name(name)
             .yelloId(yelloId)
             .gender(gender)
             .point(0)
