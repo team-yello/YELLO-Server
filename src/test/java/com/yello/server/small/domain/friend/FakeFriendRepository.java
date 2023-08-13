@@ -35,6 +35,11 @@ public class FakeFriendRepository implements FriendRepository {
     }
 
     @Override
+    public void delete(Friend friend) {
+        data.remove(friend);
+    }
+
+    @Override
     public Integer countAllByUserId(Long userId) {
         return data.stream()
             .filter(friend -> friend.getUser().getId().equals(userId) && friend.getDeletedAt()==null)

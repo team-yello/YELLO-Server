@@ -21,17 +21,22 @@ import com.yello.server.domain.friend.repository.FriendRepository;
 import com.yello.server.domain.group.entity.School;
 import com.yello.server.domain.group.exception.GroupNotFoundException;
 import com.yello.server.domain.group.repository.SchoolRepository;
+import com.yello.server.domain.question.entity.Question;
+import com.yello.server.domain.question.repository.QuestionRepository;
 import com.yello.server.domain.user.entity.Gender;
 import com.yello.server.domain.user.entity.Social;
 import com.yello.server.domain.user.entity.User;
 import com.yello.server.domain.user.exception.UserConflictException;
 import com.yello.server.domain.user.repository.UserRepository;
+import com.yello.server.domain.vote.repository.VoteRepository;
 import com.yello.server.global.common.factory.PaginationFactory;
 import com.yello.server.infrastructure.redis.repository.TokenRepository;
 import com.yello.server.small.domain.cooldown.FakeCooldownRepository;
 import com.yello.server.small.domain.friend.FakeFriendRepository;
 import com.yello.server.small.domain.group.FakeSchoolRepository;
+import com.yello.server.small.domain.question.FakeQuestionRepository;
 import com.yello.server.small.domain.user.FakeUserRepository;
+import com.yello.server.small.domain.vote.FakeVoteRepository;
 import com.yello.server.small.global.redis.FakeTokenRepository;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -51,6 +56,8 @@ public class AuthServiceTest {
     private final SchoolRepository schoolRepository = new FakeSchoolRepository();
     private final FriendRepository friendRepository = new FakeFriendRepository();
     private final CooldownRepository cooldownRepository = new FakeCooldownRepository();
+    private final QuestionRepository questionRepository = new FakeQuestionRepository();
+    private final VoteRepository voteRepository = new FakeVoteRepository();
     private final JwtTokenProvider jwtTokenProvider = new JwtTokenProvider(secretKey);
     private final TokenRepository tokenRepository = new FakeTokenRepository();
     private AuthService authService;
@@ -62,6 +69,8 @@ public class AuthServiceTest {
             .schoolRepository(schoolRepository)
             .friendRepository(friendRepository)
             .cooldownRepository(cooldownRepository)
+            .questionRepository(questionRepository)
+            .voteRepository(voteRepository)
             .jwtTokenProvider(jwtTokenProvider)
             .tokenValueOperations(tokenRepository)
             .build();
@@ -402,5 +411,29 @@ public class AuthServiceTest {
                 .map(OnBoardingFriend::id)
                 .sorted()
                 .toList());
+    }
+
+    @Test
+    void 회원가입_첫쪽지_생성에_성공합니다() {
+        // given
+        Long userId = 1L;
+        String greetingNameHead = null;
+        String greetingNameFoot = "에게 옐로가 전할 말은";
+        String greetingKeywordHead = null;
+        String greetingKeywordFoot = "라는 말이야";
+
+        // when
+        final User user = userRepository.getById(userId);
+        authService.makeGreetingVote(user, greetingNameHead, greetingNameFoot, greetingKeywordHead,
+            greetingKeywordFoot);
+        final Optional<Question> question = questionRepository.findByQuestionContent(greetingNameHead,
+            greetingNameFoot, greetingKeywordHead, greetingKeywordFoot);
+
+        // then
+        assertThat(question.isPresent()).isEqualTo(true);
+        assertThat(question.get().getNameHead()).isEqualTo(greetingNameHead);
+        assertThat(question.get().getNameFoot()).isEqualTo(greetingNameFoot);
+        assertThat(question.get().getKeywordHead()).isEqualTo(greetingKeywordHead);
+        assertThat(question.get().getKeywordFoot()).isEqualTo(greetingKeywordFoot);
     }
 }
