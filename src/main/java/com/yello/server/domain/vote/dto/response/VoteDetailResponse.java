@@ -37,8 +37,8 @@ public record VoteDetailResponse(
     @Schema(description = "열람권 개수")
     Integer ticketCount,
 
-    @Schema(description = "구독권 여부", example = "NORMAL | ACTIVE | CANCELED")
-    Subscribe subscribe
+    @Schema(description = "구독권 여부", example = "true | false")
+    Boolean isSubscribe
 ) {
 
     public static VoteDetailResponse of(Vote vote, User user) {
@@ -51,7 +51,7 @@ public record VoteDetailResponse(
             .senderGender(vote.getSender().getGender().name())
             .vote(VoteContentVO.of(vote))
             .ticketCount(user.getTicketCount())
-            .subscribe(user.getSubscribe())
+            .isSubscribe(user.getSubscribe() != Subscribe.NORMAL)
             .build();
     }
 }
