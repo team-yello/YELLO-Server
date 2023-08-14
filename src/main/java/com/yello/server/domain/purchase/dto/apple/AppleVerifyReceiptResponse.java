@@ -8,7 +8,8 @@ public record AppleVerifyReceiptResponse(
     boolean isRetryable,
     @JsonAlias("latest_receipt")
     String latestReceipt,
-    int status
+    int status,
+    ReceiptVO receipt
 ) {
 
 }
