@@ -22,6 +22,8 @@ public interface UserRepository {
 
     User getByYelloId(String yelloId);
 
+    Optional<User> findByDeviceToken(String deviceToken);
+
     List<User> findAllByGroupId(Long groupId);
 
     List<User> findAllByGroupContainingName(Long groupId, String keyword);

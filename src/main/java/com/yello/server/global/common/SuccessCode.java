@@ -24,6 +24,7 @@ public enum SuccessCode {
     CHECK_KEYWORD_SUCCESS(OK, "키워드 확인에 성공했습니다."),
     READ_YELLO_VOTE_SUCCESS(OK, "투표 질문 리스트 조회에 성공했습니다."),
     READ_YELLO_START_SUCCESS(OK, "투표 시작하기에 성공했습니다."),
+    UPDATE_DEVICE_TOKEN_USER_SUCCESS(OK, "deviceToken 업데이트에 성공하였습니다"),
     DELETE_USER_SUCCESS(OK, "유저 탈퇴에 성공했습니다."),
     DELETE_FRIEND_SUCCESS(OK, "친구 삭제에 성공했습니다."),
     ONBOARDING_FRIENDS_SUCCESS(OK, "추천 친구 조회에 성공했습니다."),
