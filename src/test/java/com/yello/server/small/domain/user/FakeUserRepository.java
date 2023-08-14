@@ -95,6 +95,13 @@ public class FakeUserRepository implements UserRepository {
     }
 
     @Override
+    public Optional<User> findByDeviceToken(String deviceToken) {
+        return data.stream()
+            .filter(user -> user.getDeviceToken().equals(deviceToken))
+            .findFirst();
+    }
+
+    @Override
     public List<User> findAllByGroupId(Long groupId) {
         return data.stream()
             .filter(user -> user.getGroup().getId().equals(groupId))
