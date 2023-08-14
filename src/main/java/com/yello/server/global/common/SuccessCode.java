@@ -30,6 +30,7 @@ public enum SuccessCode {
     DEPARTMENT_NAME_SEARCH_BY_SCHOOL_NAME_SCHOOL_SUCCESS(OK, "학과 검색에 성공했습니다."),
     REVEAL_NAME_HINT_SUCCESS(OK, "이름 초성 확인하는데 성공했습니다."),
     FRIEND_SEARCH_SUCCESS(OK, "친구 검색하기에 성공했습니다."),
+    VERIFY_RECEIPT_SUCCESS(OK, "인앱결제 검증에 성공했습니다."),
 
     /**
      * 201 CREATED

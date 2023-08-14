@@ -182,4 +182,5 @@ public class User extends AuditingTimeEntity {
         this.deviceToken = deviceToken;
     }
 
+
 }
