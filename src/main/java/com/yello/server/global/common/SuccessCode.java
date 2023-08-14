@@ -18,6 +18,7 @@ public enum SuccessCode {
     YELLOID_VALIDATION_SUCCESS(OK, "옐로 아이디 중복 여부 조회에 성공했습니다."),
     READ_FRIEND_SUCCESS(OK, "친구 조회에 성공했습니다."),
     READ_USER_SUCCESS(OK, "유저 조회에 성공했습니다."),
+    USER_SUBSCRIBE_NEEDED_READ_SUCCESS(OK, "유저 구독 연장 유도 필요 여부 확인 조회에 성공하였습니다."),
     ADD_FRIEND_SUCCESS(OK, "친구 추가에 성공했습니다."),
     SHUFFLE_FRIEND_SUCCESS(OK, "친구 셔플에 성공했습니다."),
     CHECK_KEYWORD_SUCCESS(OK, "키워드 확인에 성공했습니다."),
