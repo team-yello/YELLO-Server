@@ -4,20 +4,13 @@ import com.yello.server.domain.cooldown.entity.Cooldown;
 import com.yello.server.domain.cooldown.repository.CooldownRepository;
 import com.yello.server.domain.friend.entity.Friend;
 import com.yello.server.domain.friend.repository.FriendRepository;
-import com.yello.server.domain.purchase.entity.ProductType;
-import com.yello.server.domain.purchase.entity.Purchase;
 import com.yello.server.domain.purchase.repository.PurchaseRepository;
 import com.yello.server.domain.user.dto.response.UserDetailResponse;
 import com.yello.server.domain.user.dto.response.UserResponse;
-import com.yello.server.domain.user.dto.response.UserSubscribeNeededResponse;
-import com.yello.server.domain.user.entity.Subscribe;
 import com.yello.server.domain.user.entity.User;
 import com.yello.server.domain.user.repository.UserRepository;
 import com.yello.server.domain.vote.repository.VoteRepository;
 import com.yello.server.infrastructure.redis.repository.TokenRepository;
-import java.time.Duration;
-import java.time.LocalDateTime;
-import java.util.Optional;
 import lombok.Builder;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -42,16 +35,6 @@ public class UserService {
         final Integer friendCount = friendRepository.findAllByUserId(user.getId()).size();
 
         return UserDetailResponse.of(user, yelloCount, friendCount);
-    }
-
-    public UserSubscribeNeededResponse getUserSubscribe(User user, LocalDateTime time) {
-        final Optional<Purchase> mostRecentPurchase = purchaseRepository.findTopByUserAndProductTypeOrderByCreatedAtDesc(
-            user, ProductType.YELLO_PLUS);
-        final Boolean isSubscribeNeeded = user.getSubscribe() == Subscribe.CANCELED
-            && mostRecentPurchase.isPresent()
-            && Duration.between(mostRecentPurchase.get().getCreatedAt(), time).getSeconds() < 1 * 24 * 60 * 60;
-
-        return UserSubscribeNeededResponse.of(user, isSubscribeNeeded);
     }
 
     public UserResponse findUserById(Long userId) {

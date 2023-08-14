@@ -2,11 +2,9 @@ package com.yello.server.domain.user.controller;
 
 import static com.yello.server.global.common.SuccessCode.DELETE_USER_SUCCESS;
 import static com.yello.server.global.common.SuccessCode.READ_USER_SUCCESS;
-import static com.yello.server.global.common.SuccessCode.USER_SUBSCRIBE_NEEDED_READ_SUCCESS;
 
 import com.yello.server.domain.user.dto.response.UserDetailResponse;
 import com.yello.server.domain.user.dto.response.UserResponse;
-import com.yello.server.domain.user.dto.response.UserSubscribeNeededResponse;
 import com.yello.server.domain.user.entity.User;
 import com.yello.server.domain.user.service.UserService;
 import com.yello.server.global.common.annotation.AccessTokenUser;
@@ -16,7 +14,6 @@ import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
-import java.time.LocalDateTime;
 import lombok.RequiredArgsConstructor;
 import lombok.val;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -42,18 +39,6 @@ public class UserController {
     public BaseResponse<UserDetailResponse> findUser(@AccessTokenUser User user) {
         val data = userService.findMyProfile(user.getId());
         return BaseResponse.success(READ_USER_SUCCESS, data);
-    }
-
-    @Operation(summary = "구독 연장 유도 필요 여부 확인 API", responses = {
-        @ApiResponse(
-            responseCode = "200",
-            content = @Content(mediaType = "application/json", schema = @Schema(implementation = UserSubscribeNeededResponse.class))
-        )
-    })
-    @GetMapping("/subscribe_need")
-    public BaseResponse<UserSubscribeNeededResponse> getUserSubscribe(@AccessTokenUser User user) {
-        val data = userService.getUserSubscribe(user, LocalDateTime.now());
-        return BaseResponse.success(USER_SUBSCRIBE_NEEDED_READ_SUCCESS, data);
     }
 
     @Operation(summary = "유저 정보 조회 API", responses = {
