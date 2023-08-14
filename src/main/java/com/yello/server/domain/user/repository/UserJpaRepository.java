@@ -66,4 +66,5 @@ public interface UserJpaRepository extends JpaRepository<User, Long> {
     List<User> findAllByOtherGroupContainingYelloId(@Param("groupId") Long groupId,
         @Param("keyword") String keyword);
 
+    Optional<User> findByDeviceToken(String deviceToken);
 }

@@ -64,6 +64,11 @@ public class UserRepositoryImpl implements UserRepository {
     }
 
     @Override
+    public Optional<User> findByDeviceToken(String deviceToken) {
+        return userJpaRepository.findByDeviceToken(deviceToken);
+    }
+
+    @Override
     public List<User> findAllByGroupId(Long groupId) {
         return userJpaRepository.findAllByGroupId(groupId);
     }
