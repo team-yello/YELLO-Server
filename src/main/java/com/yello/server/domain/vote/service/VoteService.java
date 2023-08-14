@@ -215,6 +215,7 @@ public class VoteService {
             .keywordList(getShuffledKeywords(question))
             .question(QuestionVO.of(question))
             .questionPoint(randomPoint())
+            .subscribe(user.getSubscribe().toString())
             .build();
     }
 

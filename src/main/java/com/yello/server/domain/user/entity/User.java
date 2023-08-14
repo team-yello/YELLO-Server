@@ -163,7 +163,11 @@ public class User extends AuditingTimeEntity {
     }
 
     public void plusPoint(Integer point) {
-        this.point += point;
+        if (this.getSubscribe() == Subscribe.NORMAL) {
+            this.point += point;
+            return;
+        }
+        this.point += point * 2;
     }
 
     public void minusPoint(Integer point) {
