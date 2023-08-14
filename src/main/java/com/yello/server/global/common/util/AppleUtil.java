@@ -1,18 +1,17 @@
 package com.yello.server.global.common.util;
 
+import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
+
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.yello.server.domain.purchase.dto.apple.AppleVerifyReceipt;
 import com.yello.server.domain.purchase.dto.apple.AppleVerifyReceiptResponse;
-import java.util.HashMap;
-import java.util.Map;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.boot.web.client.RestTemplateBuilder;
-import org.springframework.http.ResponseEntity;
+import org.springframework.http.HttpHeaders;
 import org.springframework.stereotype.Component;
-import org.springframework.web.client.RestTemplate;
+import org.springframework.web.reactive.function.client.WebClient;
 
 @Component
 @RequiredArgsConstructor
@@ -28,27 +27,31 @@ public class AppleUtil {
     private String PASSWORD;
 
     public AppleVerifyReceiptResponse appleVerifyReceipt(AppleVerifyReceipt appleVerifyReceipt) {
-        Map<String, String> appStoreRequest = new HashMap<>();
-        appStoreRequest.put("receipt-data", appleVerifyReceipt.receiptData());
-        appStoreRequest.put("password", PASSWORD);
 
-        RestTemplate restTemplate = new RestTemplateBuilder().build();
-        ResponseEntity<AppleVerifyReceiptResponse>
-            responseEntity = restTemplate.postForEntity(APPLE_PRODUCTION_URL, appStoreRequest,
-            AppleVerifyReceiptResponse.class);
+        WebClient webClient = WebClient.builder()
+            .defaultHeader(HttpHeaders.CONTENT_TYPE, APPLICATION_JSON_VALUE)
+            .build();
 
-        AppleVerifyReceiptResponse purchaseResponse = responseEntity.getBody();
+        AppleVerifyReceiptResponse receiptResponse = webClient.post()
+            .uri(APPLE_PRODUCTION_URL)
+            .bodyValue(appleVerifyReceipt)
+            .retrieve()
+            .bodyToMono(AppleVerifyReceiptResponse.class)
+            .block();
 
-        int statusCode = purchaseResponse.status();
+        int statusCode = receiptResponse.status();
         if (statusCode == 21007) {
-            responseEntity = restTemplate.postForEntity(APPLE_PRODUCTION_URL, appStoreRequest,
-                AppleVerifyReceiptResponse.class);
+            receiptResponse = webClient.post()
+                .uri(APPLE_SANDBOX_URL)
+                .body(appleVerifyReceipt, AppleVerifyReceipt.class)
+                .retrieve()
+                .bodyToMono(AppleVerifyReceiptResponse.class)
+                .block();
         } else if (statusCode != 0) {
             verifyStatusCode(statusCode);
         }
 
-        return purchaseResponse;
-
+        return receiptResponse;
     }
 
     private void verifyStatusCode(int statusCode) {
@@ -100,7 +103,7 @@ public class AppleUtil {
         }
 
         throw new IllegalStateException(
-            "[/verifyReceipt] The receipt for the App Store is incorrect.");
+            "[verifyReceipt] The receipt for the App Store is incorrect.");
     }
 
 }

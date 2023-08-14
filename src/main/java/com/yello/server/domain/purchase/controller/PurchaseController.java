@@ -1,7 +1,10 @@
 package com.yello.server.domain.purchase.controller;
 
 import static com.yello.server.global.common.SuccessCode.USER_SUBSCRIBE_NEEDED_READ_SUCCESS;
+import static com.yello.server.global.common.SuccessCode.VERIFY_RECEIPT_SUCCESS;
 
+import com.yello.server.domain.purchase.dto.apple.AppleVerifyReceipt;
+import com.yello.server.domain.purchase.dto.apple.AppleVerifyReceiptResponse;
 import com.yello.server.domain.purchase.dto.response.UserSubscribeNeededResponse;
 import com.yello.server.domain.purchase.service.PurchaseService;
 import com.yello.server.domain.user.entity.User;
@@ -16,6 +19,8 @@ import java.time.LocalDateTime;
 import lombok.RequiredArgsConstructor;
 import lombok.val;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -27,6 +32,16 @@ public class PurchaseController {
 
     private final PurchaseService purchaseService;
 
+    @PostMapping("/verify")
+    public BaseResponse<AppleVerifyReceiptResponse> verifyReceipt(
+        @RequestBody AppleVerifyReceipt appleVerifyReceipt,
+        @AccessTokenUser User user
+    ) {
+        val data = purchaseService.verifyReceipt(user.getId(), appleVerifyReceipt);
+
+        return BaseResponse.success(VERIFY_RECEIPT_SUCCESS, data);
+    }
+
     @Operation(summary = "구독 연장 유도 필요 여부 확인 API", responses = {
         @ApiResponse(
             responseCode = "200",
@@ -34,8 +49,10 @@ public class PurchaseController {
         )
     })
     @GetMapping("/subscribe_need")
-    public BaseResponse<UserSubscribeNeededResponse> getUserSubscribeNeeded(@AccessTokenUser User user) {
+    public BaseResponse<UserSubscribeNeededResponse> getUserSubscribeNeeded(
+        @AccessTokenUser User user) {
         val data = purchaseService.getUserSubscribe(user, LocalDateTime.now());
         return BaseResponse.success(USER_SUBSCRIBE_NEEDED_READ_SUCCESS, data);
     }
+
 }
