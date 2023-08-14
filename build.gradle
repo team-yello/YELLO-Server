@@ -57,7 +57,7 @@ dependencies {
     // Swagger
     implementation 'org.springdoc:springdoc-openapi-ui:1.5.4'
 
-    //
+    // p6spy
     implementation 'com.github.gavlyukovskiy:p6spy-spring-boot-starter:1.5.7'
 
     // Http
@@ -81,6 +81,8 @@ dependencies {
     // rabbitmq
     implementation 'org.springframework.amqp:spring-rabbit:2.3.12'
 
+    // slack-webhook
+    implementation "net.gpedro.integrations.slack:slack-webhook:1.4.0"
 }
 
 tasks.named('test') {
