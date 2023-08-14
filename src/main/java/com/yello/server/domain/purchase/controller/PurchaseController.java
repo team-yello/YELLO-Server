@@ -48,11 +48,10 @@ public class PurchaseController {
             content = @Content(mediaType = "application/json", schema = @Schema(implementation = UserSubscribeNeededResponse.class))
         )
     })
-    @GetMapping("/subscribe_need")
+    @GetMapping("/subscribeNeed")
     public BaseResponse<UserSubscribeNeededResponse> getUserSubscribeNeeded(
         @AccessTokenUser User user) {
         val data = purchaseService.getUserSubscribe(user, LocalDateTime.now());
         return BaseResponse.success(USER_SUBSCRIBE_NEEDED_READ_SUCCESS, data);
     }
-
 }
