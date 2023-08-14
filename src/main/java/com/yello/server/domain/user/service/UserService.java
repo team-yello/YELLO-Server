@@ -1,14 +1,20 @@
 package com.yello.server.domain.user.service;
 
+import static com.yello.server.global.common.ErrorCode.DEVICE_TOKEN_CONFLICT_USER_EXCEPTION;
+
 import com.yello.server.domain.cooldown.entity.Cooldown;
 import com.yello.server.domain.cooldown.repository.CooldownRepository;
 import com.yello.server.domain.friend.entity.Friend;
 import com.yello.server.domain.friend.repository.FriendRepository;
+import com.yello.server.domain.purchase.repository.PurchaseRepository;
+import com.yello.server.domain.user.dto.request.UserDeviceTokenRequest;
 import com.yello.server.domain.user.dto.response.UserDetailResponse;
 import com.yello.server.domain.user.dto.response.UserResponse;
 import com.yello.server.domain.user.entity.User;
+import com.yello.server.domain.user.exception.UserConflictException;
 import com.yello.server.domain.user.repository.UserRepository;
 import com.yello.server.domain.vote.repository.VoteRepository;
+import com.yello.server.global.common.dto.EmptyObject;
 import com.yello.server.infrastructure.redis.repository.TokenRepository;
 import lombok.Builder;
 import lombok.RequiredArgsConstructor;
@@ -26,6 +32,7 @@ public class UserService {
     private final VoteRepository voteRepository;
     private final CooldownRepository cooldownRepository;
     private final TokenRepository tokenRepository;
+    private final PurchaseRepository purchaseRepository;
 
     public UserDetailResponse findMyProfile(Long userId) {
         final User user = userRepository.getById(userId);
@@ -41,6 +48,18 @@ public class UserService {
         final Integer friendCount = friendRepository.findAllByUserId(user.getId()).size();
 
         return UserResponse.of(user, yelloCount, friendCount);
+    }
+
+    @Transactional
+    public EmptyObject updateUserDeviceToken(User user, UserDeviceTokenRequest request) {
+        final User updateUser = userRepository.getById(user.getId());
+        userRepository.findByDeviceToken(request.deviceToken())
+            .ifPresent(action -> {
+                throw new UserConflictException(DEVICE_TOKEN_CONFLICT_USER_EXCEPTION);
+            });
+        updateUser.setDeviceToken(request.deviceToken());
+
+        return EmptyObject.builder().build();
     }
 
     @Transactional

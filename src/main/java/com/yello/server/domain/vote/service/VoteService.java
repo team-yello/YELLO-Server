@@ -98,6 +98,7 @@ public class VoteService {
         final Integer totalCount = voteRepository.countAllReceivedByFriends(userId);
         final List<VoteFriendVO> list = voteRepository.findAllReceivedByFriends(userId, pageable)
             .stream()
+            .filter(vote -> vote.getNameHint() != -3)
             .map(VoteFriendVO::of)
             .toList();
         return VoteFriendResponse.of(totalCount, list);
