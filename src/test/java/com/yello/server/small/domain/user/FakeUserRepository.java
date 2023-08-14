@@ -36,6 +36,7 @@ public class FakeUserRepository implements UserRepository {
             .group(user.getGroup())
             .groupAdmissionYear(user.getGroupAdmissionYear())
             .email(user.getEmail())
+            .subscribe(user.getSubscribe())
             .build();
 
         data.add(newUser);

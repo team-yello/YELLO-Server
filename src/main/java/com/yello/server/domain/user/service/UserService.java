@@ -4,6 +4,7 @@ import com.yello.server.domain.cooldown.entity.Cooldown;
 import com.yello.server.domain.cooldown.repository.CooldownRepository;
 import com.yello.server.domain.friend.entity.Friend;
 import com.yello.server.domain.friend.repository.FriendRepository;
+import com.yello.server.domain.purchase.repository.PurchaseRepository;
 import com.yello.server.domain.user.dto.response.UserDetailResponse;
 import com.yello.server.domain.user.dto.response.UserResponse;
 import com.yello.server.domain.user.entity.User;
@@ -26,6 +27,7 @@ public class UserService {
     private final VoteRepository voteRepository;
     private final CooldownRepository cooldownRepository;
     private final TokenRepository tokenRepository;
+    private final PurchaseRepository purchaseRepository;
 
     public UserDetailResponse findMyProfile(Long userId) {
         final User user = userRepository.getById(userId);
