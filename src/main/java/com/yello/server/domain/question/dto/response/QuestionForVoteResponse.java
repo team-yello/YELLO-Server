@@ -9,7 +9,8 @@ public record QuestionForVoteResponse(
     QuestionVO question,
     List<FriendShuffleResponse> friendList,
     List<String> keywordList,
-    Integer questionPoint
+    Integer questionPoint,
+    String subscribe
 ) {
 
 }
