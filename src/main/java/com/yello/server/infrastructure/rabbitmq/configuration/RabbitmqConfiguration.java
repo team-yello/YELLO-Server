@@ -33,7 +33,7 @@ public class RabbitmqConfiguration {
     private int port;
 
     @Bean
-    Queue VotAvailableNotificationQueue() {
+    Queue votAvailableNotificationQueue() {
         return new Queue(VoteAvailableNotificationQueueName, false);
     }
 
@@ -43,7 +43,8 @@ public class RabbitmqConfiguration {
     }
 
     @Bean
-    Binding keywordQueueBinding(Queue voteAvailableNotificationQueue, TopicExchange topicExchange) {
+    Binding votAvailableNotificationQueueQueueBinding(Queue voteAvailableNotificationQueue,
+        TopicExchange topicExchange) {
         return BindingBuilder.bind(voteAvailableNotificationQueue)
             .to(topicExchange)
             .with("push.available");
@@ -78,3 +79,4 @@ public class RabbitmqConfiguration {
         return new RabbitAdmin(factory);
     }
 }
+

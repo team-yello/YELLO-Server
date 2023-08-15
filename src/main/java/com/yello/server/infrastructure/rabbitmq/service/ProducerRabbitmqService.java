@@ -6,10 +6,12 @@ import com.yello.server.infrastructure.rabbitmq.repository.MessageQueueRepositor
 import java.time.Duration;
 import java.time.LocalDateTime;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.log4j.Log4j2;
 import org.springframework.stereotype.Service;
 
 @Service
 @RequiredArgsConstructor
+@Log4j2
 public class ProducerRabbitmqService implements ProducerService {
 
     private final MessageQueueRepository messageQueueRepository;
@@ -23,15 +25,21 @@ public class ProducerRabbitmqService implements ProducerService {
             .receiverId(cooldown.getUser().getId())
             .build();
 
-        messageQueueRepository.convertAndSend(
-            "notification-exchange",
-            "push.available",
-            voteAvailableQueueResponse,
-            message -> {
-                message.getMessageProperties()
-                    .setExpiration(expiration);
-                return message;
-            }
-        );
+        try {
+            messageQueueRepository.convertAndSend(
+                "notification-exchange",
+                "push.available",
+                voteAvailableQueueResponse,
+                message -> {
+                    message.getMessageProperties()
+                        .setExpiration(expiration);
+                    return message;
+                }
+            );
+        } catch (Exception exception) {
+            log.error(exception.getMessage());
+        }
+
+        log.info("produced message in queue");
     }
 }
