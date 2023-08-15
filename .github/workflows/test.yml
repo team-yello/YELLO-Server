@@ -9,9 +9,9 @@ name: 📊 YELL:O Test
 
 on:
   push:
-    branches: [ "develop", "staging", "main" ]
+    branches: [ "develop", "staging" ]
   pull_request:
-    branches: [ "develop", "staging", "main" ]
+    branches: [ "develop", "staging" ]
 
 permissions:
   contents: read
@@ -43,7 +43,7 @@ jobs:
           touch ./application.yml
           echo "$APPLICATION" > ./application.yml
         env:
-          APPLICATION: ${{ secrets.APPLICATION }}
+          APPLICATION: ${{ secrets.APPLICATION_TEST }}
         shell: bash
 
       - name: 📊 Gradle로 테스트 실행

@@ -14,6 +14,7 @@ import com.yello.server.domain.question.entity.Question;
 import com.yello.server.domain.question.repository.QuestionRepository;
 import com.yello.server.domain.user.entity.Gender;
 import com.yello.server.domain.user.entity.Social;
+import com.yello.server.domain.user.entity.Subscribe;
 import com.yello.server.domain.user.entity.User;
 import com.yello.server.domain.user.repository.UserRepository;
 import com.yello.server.domain.vote.dto.request.CreateVoteRequest;
@@ -51,7 +52,8 @@ public class VoteServiceTest {
     private final CooldownRepository cooldownRepository = new FakeCooldownRepository();
     private final QuestionRepository questionRepository = new FakeQuestionRepository();
     private final KeywordRepository keywordRepository = new FakeKeywordRepository();
-    private final ProducerService producerService = new FakeProducerService(new FakeMessageQueueRepository());
+    private final ProducerService producerService =
+        new FakeProducerService(new FakeMessageQueueRepository());
     private VoteService voteService;
     private Question question1;
     private Question question2;
@@ -61,8 +63,6 @@ public class VoteServiceTest {
     private Question question6;
     private Question question7;
     private Question question8;
-    private Question question9;
-    private Question question10;
 
 
     @BeforeEach
@@ -136,6 +136,7 @@ public class VoteServiceTest {
             .recommendCount(0L).name("yello")
             .yelloId("yelloId").gender(Gender.FEMALE)
             .social(Social.KAKAO)
+            .subscribe(Subscribe.NORMAL)
             .profileImage("yello image").group(school)
             .deletedAt(null).uuid("123")
             .groupAdmissionYear(20).email("yello@gmail.com")
@@ -148,6 +149,7 @@ public class VoteServiceTest {
             .profileImage("yello image2").group(school)
             .deletedAt(null).uuid("456")
             .groupAdmissionYear(20).email("yello2@gmail.com")
+            .subscribe(Subscribe.NORMAL)
             .build());
         User user3 = userRepository.save(User.builder()
             .id(3L)
@@ -157,6 +159,7 @@ public class VoteServiceTest {
             .profileImage("yello image3").group(school)
             .deletedAt(null).uuid("4567")
             .groupAdmissionYear(20).email("yello3@gmail.com")
+            .subscribe(Subscribe.NORMAL)
             .build());
         User user4 = userRepository.save(User.builder()
             .id(4L)
@@ -166,6 +169,7 @@ public class VoteServiceTest {
             .profileImage("yello image4").group(school)
             .deletedAt(null).uuid("45678")
             .groupAdmissionYear(20).email("yello4@gmail.com")
+            .subscribe(Subscribe.NORMAL)
             .build());
         User user5 = userRepository.save(User.builder()
             .id(5L)
@@ -175,6 +179,7 @@ public class VoteServiceTest {
             .profileImage("yello image5").group(school)
             .deletedAt(null).uuid("456789")
             .groupAdmissionYear(20).email("yello5@gmail.com")
+            .subscribe(Subscribe.NORMAL)
             .build());
 
         friendRepository.save(Friend.createFriend(user2, user1));
@@ -325,6 +330,8 @@ public class VoteServiceTest {
     void 투표_생성에_성공합니다() {
         // given
         final Long userId = 1L;
+        final User user = userRepository.getById(userId);
+
         final List<VoteAnswer> voteAnswerList = new ArrayList<>();
         VoteAnswer answer1 = VoteAnswer.builder()
             .friendId(1L)
@@ -342,6 +349,7 @@ public class VoteServiceTest {
         // when
         VoteCreateVO result = voteService.createVote(userId, request);
 
+        System.out.println(user.getSubscribe() + " 입니다" + user.getYelloId());
         // then
         assertThat(result.point()).isEqualTo(2003);
 

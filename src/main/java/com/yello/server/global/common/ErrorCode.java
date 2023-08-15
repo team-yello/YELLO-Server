@@ -72,6 +72,7 @@ public enum ErrorCode {
     ALREADY_EXIST_USER_EXCEPTION(CONFLICT, "이미 존재하는 유저입니다"),
     YELLOID_CONFLICT_USER_EXCEPTION(CONFLICT, "이미 존재하는 yelloId 입니다."),
     UUID_CONFLICT_USER_EXCEPTION(CONFLICT, "이미 존재하는 소셜 유저입니다."),
+    DEVICE_TOKEN_CONFLICT_USER_EXCEPTION(CONFLICT, "이미 존재하는 deviceToken 입니다."),
 
     /**
      * 500 INTERNAL SERVER ERROR
