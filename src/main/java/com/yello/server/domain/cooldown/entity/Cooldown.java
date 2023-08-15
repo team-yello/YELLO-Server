@@ -13,6 +13,8 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.OneToOne;
+import javax.persistence.Table;
+import javax.persistence.UniqueConstraint;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -27,6 +29,14 @@ import org.springframework.data.annotation.CreatedDate;
 @AllArgsConstructor
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Where(clause = "deleted_at IS NULL")
+@Table(
+    uniqueConstraints = {
+        @UniqueConstraint(
+            name = "userId_unique",
+            columnNames = {"userId"}
+        ),
+    }
+)
 public class Cooldown {
 
     @Id
@@ -34,7 +44,7 @@ public class Cooldown {
     private Long id;
 
     @OneToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "userId")
+    @JoinColumn(nullable = false, name = "userId")
     private User user;
 
     @Column(nullable = false)

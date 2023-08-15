@@ -10,9 +10,13 @@ public interface FriendRepository {
 
     Friend save(Friend friend);
 
+    void delete(Friend friend);
+
     Integer countAllByUserId(Long userId);
 
     Optional<Friend> findByUserAndTarget(Long userId, Long targetId);
+
+    Optional<Friend> findByUserAndTargetNotFiltered(Long userId, Long targetId);
 
     Friend getByUserAndTarget(Long userId, Long targetId);
 

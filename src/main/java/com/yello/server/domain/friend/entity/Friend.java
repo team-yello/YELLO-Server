@@ -11,6 +11,8 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.Table;
+import javax.persistence.UniqueConstraint;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -24,6 +26,14 @@ import org.hibernate.annotations.Where;
 @AllArgsConstructor
 @Where(clause = "deleted_at IS NULL")
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
+@Table(
+    uniqueConstraints = {
+        @UniqueConstraint(
+            name = "friend_relationship_unique",
+            columnNames = {"user", "target"}
+        ),
+    }
+)
 public class Friend extends AuditingTimeEntity {
 
     @Id
@@ -31,11 +41,11 @@ public class Friend extends AuditingTimeEntity {
     private Long id;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "user")
+    @JoinColumn(nullable = false, name = "user")
     private User user;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "target")
+    @JoinColumn(nullable = false, name = "target")
     private User target;
 
     @Column

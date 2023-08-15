@@ -8,7 +8,6 @@ import com.yello.server.domain.vote.entity.Vote;
 import com.yello.server.infrastructure.firebase.dto.request.NotificationMessage;
 import com.yello.server.infrastructure.firebase.manager.FCMManager;
 import com.yello.server.infrastructure.redis.repository.TokenRepository;
-import java.text.MessageFormat;
 import lombok.Builder;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -28,7 +27,7 @@ public class NotificationFcmService implements NotificationService {
 
         NotificationMessage notificationMessage = NotificationMessage.toYelloNotificationContent(vote);
 
-        final String path = MessageFormat.format("/api/v1/vote/{0}", vote.getId());
+        final String path = "/api/v1/vote/" + vote.getId().toString();
         final Message message = fcmManager.createMessage(receiver.getDeviceToken(), notificationMessage, path);
 
         fcmManager.send(message);

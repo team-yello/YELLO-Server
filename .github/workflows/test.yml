@@ -9,9 +9,9 @@ name: 📊 YELL:O Test
 
 on:
   push:
-    branches: [ "develop" ]
+    branches: [ "develop", "staging" ]
   pull_request:
-    branches: [ "develop" ]
+    branches: [ "develop", "staging" ]
 
 permissions:
   contents: read
@@ -22,14 +22,41 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-    - name: Junit Test 결과를 Slack으로 전송합니다 📊
-      # You may pin to the exact commit or the version.
-      # uses: qafficient/junit-report-slack@120a2bdaa43befe8d9b6cb471ccb0d51301a9daf
-      uses: qafficient/junit-report-slack@v1.0.0
-      with:
-        # Name of the test run
-        testRunName: YELLO - TEST 결과지📊
-        # Slack Conversation ID ie: C12355667
-        slackChannelId: C05E6PLQEMQ
-        # Secret Slack Token
-        slackToken: ${{ secrets.SLACK_ACCESS_TOKEN }}
+      - name: Checkout
+        uses: actions/checkout@v3
+
+      - name: 👉 JDK 17 zulu 버전을 세팅합니다.
+        uses: actions/setup-java@v3
+        with:
+          java-version: '17'
+          distribution: 'zulu'
+          cache: gradle
+
+      - name: 🐘 Gradle에 권한을 부여합니다.
+        run: chmod +x gradlew
+        shell: bash
+
+      ## 시크릿 키 설정
+      - name: 🔐 application.yml 등 환경 변수를 세팅합니다.
+        run: |
+          cd ./src/main/resources
+          touch ./application.yml
+          echo "$APPLICATION" > ./application.yml
+        env:
+          APPLICATION: ${{ secrets.APPLICATION_TEST }}
+        shell: bash
+
+      - name: 📊 Gradle로 테스트 실행
+        run: ./gradlew test
+
+      - name: 💡 배포 상태를 Slack을 통해 전송합니다.
+        uses: rtCamp/action-slack-notify@v2
+        env:
+          SLACK_CHANNEL: general
+          SLACK_COLOR: ${{ job.status }}
+          SLACK_ICON: https://github.com/rtCamp.png?size=48
+          SLACK_MESSAGE: 빌드에 ${{ job.status }} 했습니다.
+          SLACK_TITLE: 📊 YELL:O 테스트 결과 📊
+          SLACK_USERNAME: Notification-Bot
+          SLACK_WEBHOOK: ${{ secrets.SLACK_URL }}
+        if: always()

@@ -36,6 +36,7 @@ public class FakeUserRepository implements UserRepository {
             .group(user.getGroup())
             .groupAdmissionYear(user.getGroupAdmissionYear())
             .email(user.getEmail())
+            .subscribe(user.getSubscribe())
             .build();
 
         data.add(newUser);
@@ -91,6 +92,13 @@ public class FakeUserRepository implements UserRepository {
             .filter(user -> user.getYelloId().equals(yelloId))
             .findFirst()
             .orElseThrow(() -> new UserNotFoundException(YELLOID_NOT_FOUND_USER_EXCEPTION));
+    }
+
+    @Override
+    public Optional<User> findByDeviceToken(String deviceToken) {
+        return data.stream()
+            .filter(user -> user.getDeviceToken().equals(deviceToken))
+            .findFirst();
     }
 
     @Override

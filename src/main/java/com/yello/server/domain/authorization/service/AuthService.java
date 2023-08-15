@@ -31,9 +31,14 @@ import com.yello.server.domain.friend.entity.Friend;
 import com.yello.server.domain.friend.repository.FriendRepository;
 import com.yello.server.domain.group.entity.School;
 import com.yello.server.domain.group.repository.SchoolRepository;
+import com.yello.server.domain.question.entity.Question;
+import com.yello.server.domain.question.repository.QuestionRepository;
+import com.yello.server.domain.user.entity.Gender;
 import com.yello.server.domain.user.entity.User;
 import com.yello.server.domain.user.exception.UserConflictException;
 import com.yello.server.domain.user.repository.UserRepository;
+import com.yello.server.domain.vote.entity.Vote;
+import com.yello.server.domain.vote.repository.VoteRepository;
 import com.yello.server.global.common.factory.ListFactory;
 import com.yello.server.global.common.factory.PaginationFactory;
 import com.yello.server.global.common.util.RestUtil;
@@ -62,6 +67,8 @@ public class AuthService {
     private final SchoolRepository schoolRepository;
     private final FriendRepository friendRepository;
     private final CooldownRepository cooldownRepository;
+    private final QuestionRepository questionRepository;
+    private final VoteRepository voteRepository;
     private final JwtTokenProvider jwtTokenProvider;
     private final TokenRepository tokenValueOperations;
 
@@ -118,11 +125,17 @@ public class AuthService {
 
     @Transactional
     public SignUpResponse signUp(SignUpRequest signUpRequest) {
+        String greetingNameHead = null;
+        String greetingNameFoot = "에게 옐로가 전할 말은";
+        String greetingKeywordHead = null;
+        String greetingKeywordFoot = "라는 말이야";
+
         final User signUpUser = this.signUpUser(signUpRequest);
         this.recommendUser(signUpRequest.recommendId());
         final ServiceTokenVO signUpToken =
             this.registerToken(signUpUser.getId(), signUpUser.getUuid());
         this.makeFriend(signUpUser, signUpRequest.friends());
+        this.makeGreetingVote(signUpUser, greetingNameHead, greetingNameFoot, greetingKeywordHead, greetingKeywordFoot);
 
         return SignUpResponse.of(signUpUser.getYelloId(), signUpToken);
     }
@@ -178,6 +191,34 @@ public class AuthService {
                 }
             });
     }
+
+    public void makeGreetingVote(User user, String greetingNameHead, String greetingNameFoot,
+        String greetingKeywordHead, String greetingKeywordFoot) {
+        String yelloName = "옐로팀";
+        String yelloMaleId = "yello_male";
+        String yelloFemaleId = "yello_female";
+
+        final User yelloGreetingMale = userRepository.findByUuid(yelloMaleId)
+            .orElseGet(() ->
+                userRepository.save(User.yelloGreeting(yelloName, yelloMaleId, Gender.MALE))
+            );
+        final User yelloGreetingFemale = userRepository.findByUuid(yelloFemaleId)
+            .orElseGet(() ->
+                userRepository.save(User.yelloGreeting(yelloName, yelloFemaleId, Gender.FEMALE))
+            );
+
+        final User sender = (user.getGender() == Gender.MALE) ? yelloGreetingFemale : yelloGreetingMale;
+
+        final Question greetingQuestion = questionRepository.findByQuestionContent(greetingNameHead, greetingNameFoot,
+                greetingKeywordHead, greetingKeywordFoot)
+            .orElseGet(() ->
+                questionRepository.save(
+                    Question.of(greetingNameHead, greetingNameFoot, greetingKeywordHead, greetingKeywordFoot))
+            );
+
+        voteRepository.save(Vote.createFirstVote("널 기다렸어", sender, user, greetingQuestion));
+    }
+
 
     public OnBoardingFriendResponse findOnBoardingFriends(OnBoardingFriendRequest friendRequest,
         Pageable pageable) {

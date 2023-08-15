@@ -13,6 +13,8 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.Table;
+import javax.persistence.UniqueConstraint;
 import javax.validation.constraints.Email;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
@@ -26,6 +28,22 @@ import org.hibernate.annotations.ColumnDefault;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
+@Table(
+    uniqueConstraints = {
+        @UniqueConstraint(
+            name = "yelloId_unique",
+            columnNames = {"yello_id"}
+        ),
+        @UniqueConstraint(
+            name = "uuid_unique",
+            columnNames = {"uuid"}
+        ),
+        @UniqueConstraint(
+            name = "deviceToken_unique",
+            columnNames = {"device_token"}
+        )
+    }
+)
 public class User extends AuditingTimeEntity {
 
     @Id
@@ -39,7 +57,7 @@ public class User extends AuditingTimeEntity {
     @Column(nullable = false)
     private String name;
 
-    @Column(nullable = false)
+    @Column(name = "yello_id", nullable = false)
     private String yelloId;
 
     @Column(nullable = false)
@@ -57,7 +75,7 @@ public class User extends AuditingTimeEntity {
     @Column
     private String profileImage;
 
-    @Column(nullable = false)
+    @Column(name = "uuid", nullable = false)
     private String uuid;
 
     @Column
@@ -78,6 +96,7 @@ public class User extends AuditingTimeEntity {
     @Column(nullable = false)
     private Integer ticketCount;
 
+    @Column(name = "device_token", nullable = false)
     private String deviceToken;
 
     @Column(nullable = false)
@@ -105,6 +124,26 @@ public class User extends AuditingTimeEntity {
             .build();
     }
 
+    public static User yelloGreeting(String name, String yelloId, Gender gender) {
+        return User.builder()
+            .recommendCount(0L)
+            .name(name)
+            .yelloId(yelloId)
+            .gender(gender)
+            .point(0)
+            .social(Social.KAKAO)
+            .profileImage("")
+            .uuid(yelloId)
+            .deletedAt(null)
+            .group(null)
+            .groupAdmissionYear(0)
+            .email("")
+            .deviceToken(yelloId)
+            .subscribe(Subscribe.NORMAL)
+            .ticketCount(0)
+            .build();
+    }
+
     public void delete() {
         this.deletedAt = LocalDateTime.now();
         this.point = 0;
@@ -124,7 +163,11 @@ public class User extends AuditingTimeEntity {
     }
 
     public void plusPoint(Integer point) {
-        this.point += point;
+        if (this.getSubscribe() == Subscribe.NORMAL) {
+            this.point += point;
+            return;
+        }
+        this.point += point * 2;
     }
 
     public void minusPoint(Integer point) {
@@ -138,5 +181,6 @@ public class User extends AuditingTimeEntity {
     public void setDeviceToken(String deviceToken) {
         this.deviceToken = deviceToken;
     }
+
 
 }

@@ -5,6 +5,7 @@ import static com.yello.server.global.common.ErrorCode.NOT_FOUND_QUESTION_EXCEPT
 import com.yello.server.domain.question.entity.Question;
 import com.yello.server.domain.question.exception.QuestionException;
 import java.util.List;
+import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
@@ -30,5 +31,11 @@ public class QuestionRepositoryImpl implements QuestionRepository {
     @Override
     public Question save(Question question) {
         return questionJpaRepository.save(question);
+    }
+
+    @Override
+    public Optional<Question> findByQuestionContent(String nameHead, String nameFoot, String keywordHead,
+        String keywordFoot) {
+        return questionJpaRepository.findByQuestionContent(nameHead, nameFoot, keywordHead, keywordFoot);
     }
 }
