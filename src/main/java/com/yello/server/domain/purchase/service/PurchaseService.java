@@ -29,7 +29,9 @@ public class PurchaseService {
     private final AppleUtil appleUtil;
 
     public AppleVerifyReceiptResponse verifyReceipt(Long userId, AppleVerifyReceipt request) {
-        return appleUtil.appleVerifyReceipt(request);
+        AppleVerifyReceiptResponse verifyReceiptResponse = appleUtil.appleVerifyReceipt(request);
+
+        return verifyReceiptResponse;
 
     }
 
