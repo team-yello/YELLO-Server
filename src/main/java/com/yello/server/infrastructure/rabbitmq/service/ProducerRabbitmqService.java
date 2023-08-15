@@ -40,6 +40,6 @@ public class ProducerRabbitmqService implements ProducerService {
             log.error(exception.getMessage());
         }
 
-        log.info("produced message in queue");
+        log.info("[rabbitmq] produced message in queue");
     }
 }
