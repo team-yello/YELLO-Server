@@ -31,8 +31,11 @@ public class NotificationFcmService implements NotificationService {
 
         final String path = "/api/v1/vote/" + vote.getId().toString();
         final Message message = fcmManager.createMessage(receiver.getDeviceToken(), notificationMessage, path);
+        final Message messageWithOption = fcmManager.createMessageWithOptions(receiver.getDeviceToken(),
+            notificationMessage, path);
 
         fcmManager.send(message);
+        fcmManager.send(messageWithOption);
     }
 
     @Override
