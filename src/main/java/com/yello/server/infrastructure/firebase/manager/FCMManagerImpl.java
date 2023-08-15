@@ -53,9 +53,6 @@ public class FCMManagerImpl implements FCMManager {
 
         return Message.builder()
             .setToken(deviceToken)
-            .setNotification(notificationMessage.toNotification())
-            .putData("type", notificationMessage.type().name())
-            .putData("path", path)
             .setAndroidConfig(androidConfig)
             .setApnsConfig(apnsConfig)
             .build();
