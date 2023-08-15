@@ -10,8 +10,10 @@ import com.yello.server.infrastructure.firebase.manager.FCMManager;
 import com.yello.server.infrastructure.redis.repository.TokenRepository;
 import lombok.Builder;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.log4j.Log4j2;
 import org.springframework.stereotype.Service;
 
+@Log4j2
 @Builder
 @Service
 @RequiredArgsConstructor
@@ -54,5 +56,6 @@ public class NotificationFcmService implements NotificationService {
         final Message message = fcmManager.createMessage(receiveUser.getDeviceToken(), notificationMessage);
 
         fcmManager.send(message);
+        log.info("[rabbitmq] successfully send notification!");
     }
 }
