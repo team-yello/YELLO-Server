@@ -18,12 +18,8 @@ public class ProducerRabbitmqService implements ProducerService {
 
     @Override
     public void produceVoteAvailableNotification(Cooldown cooldown) {
-        LocalDateTime end = cooldown.getCreatedAt().plusMinutes(2);
-
-        log.info("[rabbitmq] end = " + end.toString());
+        LocalDateTime end = cooldown.getCreatedAt().plusMinutes(1);
         final long expiration = Duration.between(cooldown.getCreatedAt(), end).toMillis();
-        log.info("[rabbitmq] expiration sec = " + Duration.between(cooldown.getCreatedAt(), end).getSeconds());
-        log.info("[rabbitmq] expiration = " + expiration);
 
         VoteAvailableQueueResponse voteAvailableQueueResponse = VoteAvailableQueueResponse.builder()
             .receiverId(cooldown.getUser().getId())
@@ -40,8 +36,7 @@ public class ProducerRabbitmqService implements ProducerService {
                 }
             );
         } catch (Exception exception) {
-            log.error(exception.getMessage());
+            log.error("[rabbitmq] %s".formatted(exception.getMessage()));
         }
-        log.info("[rabbitmq] produced message in queue");
     }
 }

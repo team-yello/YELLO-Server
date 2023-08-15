@@ -31,14 +31,13 @@ public class ConsumerRabbitmqService implements ConsumerService {
         );
 
         try {
-            log.info("[rabbitmq] sending notification in consumer");
-            notificationService.sendVoteAvailableNotification(voteAvailableQueueResponse.receiverId());
+            boolean exists = cooldownRepository.existsByUserId(voteAvailableQueueResponse.receiverId());
+            if (exists) {
+                notificationService.sendVoteAvailableNotification(voteAvailableQueueResponse.receiverId());
+            }
         } catch (Exception exception) {
-            log.error(exception.getMessage());
+            log.error("[rabbitmq] %s".formatted(exception.getMessage()));
         }
-        log.info("[rabbitmq] consumed message in queue");
     }
 }
-//            boolean exists = cooldownRepository.existsByUserId(voteAvailableQueueResponse.receiverId());
-//            if (exists) {
-//            }
+
