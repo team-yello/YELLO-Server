@@ -19,7 +19,11 @@ public class ProducerRabbitmqService implements ProducerService {
     @Override
     public void produceVoteAvailableNotification(Cooldown cooldown) {
         LocalDateTime end = cooldown.getCreatedAt().plusMinutes(2);
+
+        log.info("[rabbitmq] end = " + end.toString());
         final long expiration = Duration.between(cooldown.getCreatedAt(), end).toMillis();
+        log.info("[rabbitmq] expiration sec = " + Duration.between(cooldown.getCreatedAt(), end).getSeconds());
+        log.info("[rabbitmq] expiration = " + expiration);
 
         VoteAvailableQueueResponse voteAvailableQueueResponse = VoteAvailableQueueResponse.builder()
             .receiverId(cooldown.getUser().getId())
