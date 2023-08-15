@@ -1,9 +1,11 @@
 package com.yello.server.infrastructure.rabbitmq.configuration;
 
+import java.util.HashMap;
+import java.util.Map;
 import org.springframework.amqp.core.Binding;
 import org.springframework.amqp.core.BindingBuilder;
+import org.springframework.amqp.core.CustomExchange;
 import org.springframework.amqp.core.Queue;
-import org.springframework.amqp.core.TopicExchange;
 import org.springframework.amqp.rabbit.connection.CachingConnectionFactory;
 import org.springframework.amqp.rabbit.connection.ConnectionFactory;
 import org.springframework.amqp.rabbit.core.RabbitAdmin;
@@ -38,16 +40,19 @@ public class RabbitmqConfiguration {
     }
 
     @Bean
-    TopicExchange topicExchange() {
-        return new TopicExchange(ExchangeName);
+    public CustomExchange delayedMessageExchange() {
+        Map<String, Object> args = new HashMap<>();
+        args.put("x-delayed-type", "direct");
+        return new CustomExchange(ExchangeName, "x-delayed-message", true, false, args);
     }
 
     @Bean
     Binding votAvailableNotificationQueueQueueBinding(Queue voteAvailableNotificationQueue,
-        TopicExchange topicExchange) {
+        CustomExchange delayedMessageExchange) {
         return BindingBuilder.bind(voteAvailableNotificationQueue)
-            .to(topicExchange)
-            .with("push.available");
+            .to(delayedMessageExchange)
+            .with("push.available")
+            .noargs();
     }
 
     @Bean

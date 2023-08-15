@@ -31,15 +31,13 @@ public class ProducerRabbitmqService implements ProducerService {
                 "push.available",
                 voteAvailableQueueResponse,
                 message -> {
-                    message.getMessageProperties()
-                        .setHeader("x-delay", expiration);
+                    message.getMessageProperties().setHeader("x-delay", expiration);
                     return message;
                 }
             );
         } catch (Exception exception) {
             log.error(exception.getMessage());
         }
-
         log.info("[rabbitmq] produced message in queue");
     }
 }
