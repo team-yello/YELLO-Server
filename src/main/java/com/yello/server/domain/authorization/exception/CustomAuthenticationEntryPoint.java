@@ -25,7 +25,8 @@ public class CustomAuthenticationEntryPoint implements AuthenticationEntryPoint 
         ObjectMapper objectMapper = new ObjectMapper();
         log.error("인증에 실패했습니다.");
 
-        CustomAuthenticationException exception = new CustomAuthenticationException(AUTHENTICATION_ERROR);
+        CustomAuthenticationException exception =
+            new CustomAuthenticationException(AUTHENTICATION_ERROR);
         response.setStatus(exception.getHttpStatus());
         response.setContentType(APPLICATION_JSON_VALUE);
         response.setCharacterEncoding("UTF-8");

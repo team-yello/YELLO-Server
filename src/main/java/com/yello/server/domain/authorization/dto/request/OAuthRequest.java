@@ -5,7 +5,8 @@ import lombok.Builder;
 @Builder
 public record OAuthRequest(
     String accessToken,
-    String social
+    String social,
+    String deviceToken
 ) {
 
 }

@@ -41,7 +41,8 @@ public class BaseResponse<T> {
         return new BaseResponse<>(error.getHttpStatusCode(), message);
     }
 
-    public static <T> BaseResponse<T> error(ErrorCode error, @Nullable String message, @Nullable T data) {
+    public static <T> BaseResponse<T> error(ErrorCode error, @Nullable String message,
+        @Nullable T data) {
         return new BaseResponse<>(error.getHttpStatusCode(), message, data);
     }
 } 

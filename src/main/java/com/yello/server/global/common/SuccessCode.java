@@ -1,12 +1,12 @@
 package com.yello.server.global.common;
 
+import static org.springframework.http.HttpStatus.CREATED;
+import static org.springframework.http.HttpStatus.OK;
+
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import org.springframework.http.HttpStatus;
-
-import static org.springframework.http.HttpStatus.CREATED;
-import static org.springframework.http.HttpStatus.OK;
 
 @Getter
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
@@ -18,17 +18,21 @@ public enum SuccessCode {
     YELLOID_VALIDATION_SUCCESS(OK, "옐로 아이디 중복 여부 조회에 성공했습니다."),
     READ_FRIEND_SUCCESS(OK, "친구 조회에 성공했습니다."),
     READ_USER_SUCCESS(OK, "유저 조회에 성공했습니다."),
+    USER_SUBSCRIBE_NEEDED_READ_SUCCESS(OK, "유저 구독 연장 유도 필요 여부 확인 조회에 성공하였습니다."),
     ADD_FRIEND_SUCCESS(OK, "친구 추가에 성공했습니다."),
     SHUFFLE_FRIEND_SUCCESS(OK, "친구 셔플에 성공했습니다."),
     CHECK_KEYWORD_SUCCESS(OK, "키워드 확인에 성공했습니다."),
     READ_YELLO_VOTE_SUCCESS(OK, "투표 질문 리스트 조회에 성공했습니다."),
     READ_YELLO_START_SUCCESS(OK, "투표 시작하기에 성공했습니다."),
+    UPDATE_DEVICE_TOKEN_USER_SUCCESS(OK, "deviceToken 업데이트에 성공하였습니다"),
     DELETE_USER_SUCCESS(OK, "유저 탈퇴에 성공했습니다."),
     DELETE_FRIEND_SUCCESS(OK, "친구 삭제에 성공했습니다."),
     ONBOARDING_FRIENDS_SUCCESS(OK, "추천 친구 조회에 성공했습니다."),
     SCHOOL_NAME_SEARCH_SCHOOL_SUCCESS(OK, "학교 검색에 성공했습니다."),
     DEPARTMENT_NAME_SEARCH_BY_SCHOOL_NAME_SCHOOL_SUCCESS(OK, "학과 검색에 성공했습니다."),
     REVEAL_NAME_HINT_SUCCESS(OK, "이름 초성 확인하는데 성공했습니다."),
+    FRIEND_SEARCH_SUCCESS(OK, "친구 검색하기에 성공했습니다."),
+    VERIFY_RECEIPT_SUCCESS(OK, "인앱결제 검증에 성공했습니다."),
 
     /**
      * 201 CREATED

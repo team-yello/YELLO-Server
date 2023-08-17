@@ -13,6 +13,8 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.Table;
+import javax.persistence.UniqueConstraint;
 import javax.validation.constraints.Email;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
@@ -26,6 +28,22 @@ import org.hibernate.annotations.ColumnDefault;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
+@Table(
+    uniqueConstraints = {
+        @UniqueConstraint(
+            name = "yelloId_unique",
+            columnNames = {"yello_id"}
+        ),
+        @UniqueConstraint(
+            name = "uuid_unique",
+            columnNames = {"uuid"}
+        ),
+        @UniqueConstraint(
+            name = "deviceToken_unique",
+            columnNames = {"device_token"}
+        )
+    }
+)
 public class User extends AuditingTimeEntity {
 
     @Id
@@ -39,7 +57,7 @@ public class User extends AuditingTimeEntity {
     @Column(nullable = false)
     private String name;
 
-    @Column(nullable = false)
+    @Column(name = "yello_id", nullable = false)
     private String yelloId;
 
     @Column(nullable = false)
@@ -57,7 +75,7 @@ public class User extends AuditingTimeEntity {
     @Column
     private String profileImage;
 
-    @Column(nullable = false)
+    @Column(name = "uuid", nullable = false)
     private String uuid;
 
     @Column
@@ -68,13 +86,25 @@ public class User extends AuditingTimeEntity {
     private School group;
 
     @Column(nullable = false)
-    private Integer groupAdmissionYear;
+    private int groupAdmissionYear;
 
     @Email
     @Column(nullable = false)
     private String email;
 
-    public static User of(SignUpRequest signUpRequest, String uuid, School group) {
+    @ColumnDefault("0")
+    @Column(nullable = false)
+    private Integer ticketCount;
+
+    @Column(name = "device_token", nullable = false)
+    private String deviceToken;
+
+    @Column(nullable = false)
+    @ColumnDefault("normal")
+    @Convert(converter = SubscribeConverter.class)
+    private Subscribe subscribe;
+
+    public static User of(SignUpRequest signUpRequest, School group) {
         return User.builder()
             .recommendCount(0L)
             .name(signUpRequest.name())
@@ -83,17 +113,21 @@ public class User extends AuditingTimeEntity {
             .point(200)
             .social(signUpRequest.social())
             .profileImage(signUpRequest.profileImage())
-            .uuid(uuid)
+            .uuid(signUpRequest.uuid())
             .deletedAt(null)
             .group(group)
             .groupAdmissionYear(signUpRequest.groupAdmissionYear())
             .email(signUpRequest.email())
+            .deviceToken(signUpRequest.deviceToken())
+            .subscribe(Subscribe.NORMAL)
+            .ticketCount(0)
             .build();
     }
 
     public void delete() {
         this.deletedAt = LocalDateTime.now();
         this.point = 0;
+        this.deviceToken = null;
     }
 
     public void renew() {
@@ -109,11 +143,31 @@ public class User extends AuditingTimeEntity {
     }
 
     public void plusPoint(Integer point) {
-        this.point += point;
+        if (this.getSubscribe()==Subscribe.NORMAL) {
+            this.point += point;
+            return;
+        }
+        this.point += point * 2;
     }
 
     public void minusPoint(Integer point) {
         this.point -= point;
+    }
+
+    public String getDeviceToken() {
+        return this.deviceToken;
+    }
+
+    public void setDeviceToken(String deviceToken) {
+        this.deviceToken = deviceToken;
+    }
+
+    public void setSubscribe() {
+        this.subscribe = Subscribe.ACTIVE;
+    }
+
+    public void changeTicketCount(int ticketCount) {
+        this.ticketCount += ticketCount;
     }
 
 }

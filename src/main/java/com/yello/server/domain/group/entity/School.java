@@ -1,17 +1,35 @@
 package com.yello.server.domain.group.entity;
 
-import lombok.*;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.Index;
+import javax.persistence.Table;
+import javax.persistence.UniqueConstraint;
+import lombok.AccessLevel;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
 
-import javax.persistence.*;
-
-@Table(indexes = {
-        @Index(name = "idx__school_name", columnList = "schoolName")
-})
 @Getter
 @Entity
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
+@Table(
+    indexes = {
+        @Index(name = "idx__school_name", columnList = "schoolName")
+    },
+    uniqueConstraints = {
+        @UniqueConstraint(
+            name = "school_department_name_unique",
+            columnNames = {"schoolName", "departmentName"}
+        ),
+    }
+)
 public class School {
 
     @Id
@@ -26,9 +44,9 @@ public class School {
 
     public static School of(String schoolName, String departmentName) {
         return School.builder()
-                .schoolName(schoolName)
-                .departmentName(departmentName)
-                .build();
+            .schoolName(schoolName)
+            .departmentName(departmentName)
+            .build();
     }
 
     @Override

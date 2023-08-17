@@ -5,22 +5,25 @@ import static com.yello.server.global.common.SuccessCode.CREATE_VOTE_SUCCESS;
 import static com.yello.server.global.common.SuccessCode.READ_VOTE_SUCCESS;
 import static com.yello.server.global.common.SuccessCode.READ_YELLO_START_SUCCESS;
 import static com.yello.server.global.common.SuccessCode.READ_YELLO_VOTE_SUCCESS;
-import static com.yello.server.global.common.factory.PaginationFactory.createPageable;
+import static com.yello.server.global.common.factory.PaginationFactory.createPageableLimitTen;
 
 import com.yello.server.domain.keyword.dto.response.KeywordCheckResponse;
 import com.yello.server.domain.question.dto.response.QuestionForVoteResponse;
 import com.yello.server.domain.user.entity.User;
 import com.yello.server.domain.vote.dto.request.CreateVoteRequest;
+import com.yello.server.domain.vote.dto.response.RevealFullNameResponse;
 import com.yello.server.domain.vote.dto.response.RevealNameResponse;
 import com.yello.server.domain.vote.dto.response.VoteAvailableResponse;
 import com.yello.server.domain.vote.dto.response.VoteCreateResponse;
 import com.yello.server.domain.vote.dto.response.VoteDetailResponse;
 import com.yello.server.domain.vote.dto.response.VoteFriendResponse;
 import com.yello.server.domain.vote.dto.response.VoteListResponse;
+import com.yello.server.domain.vote.dto.response.VoteUnreadCountResponse;
 import com.yello.server.domain.vote.service.VoteService;
 import com.yello.server.global.common.SuccessCode;
 import com.yello.server.global.common.annotation.AccessTokenUser;
 import com.yello.server.global.common.dto.BaseResponse;
+import com.yello.server.infrastructure.firebase.service.NotificationService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.ArraySchema;
@@ -47,6 +50,7 @@ import org.springframework.web.bind.annotation.RestController;
 public class VoteController {
 
     private final VoteService voteService;
+    private final NotificationService notificationService;
 
     @Operation(summary = "내 투표 전체 조회 API", responses = {
         @ApiResponse(
@@ -59,22 +63,35 @@ public class VoteController {
         @RequestParam Integer page,
         @AccessTokenUser User user
     ) {
-        val data = voteService.findAllVotes(user.getId(), createPageable(page));
+        val data = voteService.findAllVotes(user.getId(), createPageableLimitTen(page));
+        return BaseResponse.success(READ_VOTE_SUCCESS, data);
+    }
+
+    @Operation(summary = "읽지 않은 쪽지 개수 조회 API", responses = {
+        @ApiResponse(
+            responseCode = "200",
+            content = @Content(mediaType = "application/json", schema = @Schema(implementation = VoteUnreadCountResponse.class))),
+    })
+    @GetMapping("/count")
+    public BaseResponse<VoteUnreadCountResponse> getUnreadVoteCount(
+        @AccessTokenUser User user
+    ) {
+        val data = voteService.getUnreadVoteCount(user.getId());
         return BaseResponse.success(READ_VOTE_SUCCESS, data);
     }
 
     @Operation(summary = "친구 투표 조회 API", responses = {
         @ApiResponse(
             responseCode = "200",
-            content = @Content(mediaType = "application/json", array = @ArraySchema(schema = @Schema(implementation = VoteFriendResponse.class)))),
+            content = @Content(mediaType = "application/json", schema = @Schema(implementation = VoteFriendResponse.class))),
     })
     @GetMapping("/friend")
-    public BaseResponse<List<VoteFriendResponse>> findAllFriendVotes(
+    public BaseResponse<VoteFriendResponse> findAllFriendVotes(
         @Parameter(name = "page", description = "페이지네이션 페이지 번호입니다.", example = "1")
         @RequestParam Integer page,
         @AccessTokenUser User user
     ) {
-        val data = voteService.findAllFriendVotes(user.getId(), createPageable(page));
+        val data = voteService.findAllFriendVotes(user.getId(), createPageableLimitTen(page));
         return BaseResponse.success(READ_VOTE_SUCCESS, data);
     }
 
@@ -84,8 +101,10 @@ public class VoteController {
             content = @Content(mediaType = "application/json", schema = @Schema(implementation = VoteDetailResponse.class))),
     })
     @GetMapping("/{voteId}")
-    public BaseResponse<VoteDetailResponse> findVote(@PathVariable Long voteId) {
-        val data = voteService.findVoteById(voteId);
+    public BaseResponse<VoteDetailResponse> findVote(
+        @PathVariable Long voteId,
+        @AccessTokenUser User user) {
+        val data = voteService.findVoteById(voteId, user.getId());
         return BaseResponse.success(READ_VOTE_SUCCESS, data);
     }
 
@@ -104,7 +123,7 @@ public class VoteController {
         return BaseResponse.success(CHECK_KEYWORD_SUCCESS, keywordCheckResponse);
     }
 
-    @Operation(summary = "투표 10개 조회 API", responses = {
+    @Operation(summary = "투표 8개 조회 API", responses = {
         @ApiResponse(
             responseCode = "200",
             content = @Content(mediaType = "application/json", array = @ArraySchema(schema = @Schema(implementation = QuestionForVoteResponse.class)))),
@@ -133,7 +152,7 @@ public class VoteController {
     @Operation(summary = "투표 생성 API", responses = {
         @ApiResponse(
             responseCode = "201",
-            content = @Content(mediaType = "application/json", schema = @Schema(implementation = VoteAvailableResponse.class))),
+            content = @Content(mediaType = "application/json", schema = @Schema(implementation = VoteCreateResponse.class))),
     })
     @PostMapping
     public BaseResponse<VoteCreateResponse> createVote(
@@ -141,7 +160,10 @@ public class VoteController {
         @RequestBody CreateVoteRequest request
     ) {
         val data = voteService.createVote(user.getId(), request);
-        return BaseResponse.success(CREATE_VOTE_SUCCESS, data);
+        data.votes().forEach(notificationService::sendYelloNotification);
+
+        val response = VoteCreateResponse.of(data.point());
+        return BaseResponse.success(CREATE_VOTE_SUCCESS, response);
     }
 
     @Operation(summary = "투표 이름 부분 조회 API", responses = {
@@ -155,6 +177,22 @@ public class VoteController {
         @PathVariable Long voteId
     ) {
         val data = voteService.revealNameHint(user.getId(), voteId);
+
         return BaseResponse.success(SuccessCode.REVEAL_NAME_HINT_SUCCESS, data);
     }
+
+    @Operation(summary = "투표 이름 전체 조회 API", responses = {
+        @ApiResponse(
+            responseCode = "200",
+            content = @Content(mediaType = "application/json", schema = @Schema(implementation = RevealNameResponse.class))),
+    })
+    @PostMapping("/{voteId}/fullname")
+    public BaseResponse<RevealFullNameResponse> revealFullName(
+        @AccessTokenUser User user,
+        @PathVariable Long voteId
+    ) {
+        val data = voteService.revealFullName(user.getId(), voteId);
+        return BaseResponse.success(SuccessCode.REVEAL_NAME_HINT_SUCCESS, data);
+    }
+
 }

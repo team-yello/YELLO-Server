@@ -11,10 +11,11 @@ import lombok.Builder;
 public record SignUpRequest(
     @NotNull Social social,
     @NotNull String uuid,
+    @NotNull String deviceToken,
     @NotNull @Email String email,
     @NotNull String profileImage,
     @NotNull Long groupId,
-    @NotNull Integer groupAdmissionYear,
+    @NotNull int groupAdmissionYear,
     @NotNull String name,
     @NotNull String yelloId,
     @NotNull Gender gender,

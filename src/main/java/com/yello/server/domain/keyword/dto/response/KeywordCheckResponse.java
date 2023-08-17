@@ -5,13 +5,13 @@ import lombok.Builder;
 
 @Builder
 public record KeywordCheckResponse(
-        String answer
+    String answer
 ) {
 
     public static KeywordCheckResponse of(Vote vote) {
         return KeywordCheckResponse.builder()
-                .answer(vote.getAnswer())
-                .build();
+            .answer(vote.getAnswer())
+            .build();
     }
 
 }

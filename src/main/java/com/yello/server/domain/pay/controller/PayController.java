@@ -3,7 +3,7 @@ package com.yello.server.domain.pay.controller;
 import static com.yello.server.global.common.SuccessCode.CREATE_PAY_COUNT;
 
 import com.yello.server.domain.pay.dto.request.PayCountRequest;
-import com.yello.server.domain.pay.sevice.PayService;
+import com.yello.server.domain.pay.service.PayService;
 import com.yello.server.domain.user.entity.User;
 import com.yello.server.global.common.annotation.AccessTokenUser;
 import com.yello.server.global.common.dto.BaseResponse;

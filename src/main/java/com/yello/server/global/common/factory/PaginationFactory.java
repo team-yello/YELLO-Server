@@ -10,7 +10,8 @@ import org.springframework.data.domain.Sort;
 
 public class PaginationFactory {
 
-    private static final int PAGE_LIMIT = 10;
+    private static final int PAGE_LIMIT = 100;
+    private static final int PAGE_LIMIT_TEN = 10;
 
     private PaginationFactory() {
         throw new IllegalStateException();
@@ -23,6 +24,11 @@ public class PaginationFactory {
     public static Pageable createPageableByNameSort(Integer page) {
         return PageRequest.of(page, PAGE_LIMIT, Sort.by(Sort.Direction.ASC, "name"));
     }
+
+    public static Pageable createPageableLimitTen(Integer page) {
+        return PageRequest.of(page, PAGE_LIMIT_TEN);
+    }
+
 
     public static <T> Page<T> getPage(List<T> list, Pageable pageable) {
         int start = (int) pageable.getOffset();

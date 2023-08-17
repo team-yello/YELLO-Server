@@ -18,7 +18,8 @@ public class ServiceTokenResolver implements HandlerMethodArgumentResolver {
     @Override
     public boolean supportsParameter(MethodParameter parameter) {
         boolean hasServiceToken = parameter.hasParameterAnnotation(ServiceToken.class);
-        boolean isServiceTokenVOType = ServiceTokenVO.class.isAssignableFrom(parameter.getParameterType());
+        boolean isServiceTokenVOType =
+            ServiceTokenVO.class.isAssignableFrom(parameter.getParameterType());
         return hasServiceToken && isServiceTokenVOType;
     }
 
@@ -27,8 +28,8 @@ public class ServiceTokenResolver implements HandlerMethodArgumentResolver {
         NativeWebRequest webRequest, WebDataBinderFactory binderFactory) throws Exception {
         String accessTokenHeader = webRequest.getHeader("X-ACCESS-AUTH");
         String refreshTokenHeader = webRequest.getHeader("X-REFRESH-AUTH");
-        
-        if (accessTokenHeader==null || refreshTokenHeader==null
+
+        if (accessTokenHeader == null || refreshTokenHeader == null
             || !refreshTokenHeader.startsWith(BEARER)
             || !accessTokenHeader.startsWith(BEARER)) {
             throw new CustomAuthenticationException(AUTHENTICATION_ERROR);

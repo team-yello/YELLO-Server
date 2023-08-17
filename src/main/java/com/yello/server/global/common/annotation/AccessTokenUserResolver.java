@@ -22,9 +22,9 @@ public class AccessTokenUserResolver implements HandlerMethodArgumentResolver {
 
     @Override
     public Object resolveArgument(MethodParameter parameter, ModelAndViewContainer mavContainer,
-                                  NativeWebRequest webRequest, WebDataBinderFactory binderFactory) throws Exception {
+        NativeWebRequest webRequest, WebDataBinderFactory binderFactory) throws Exception {
         return SecurityContextHolder.getContext()
-                .getAuthentication()
-                .getDetails();
+            .getAuthentication()
+            .getDetails();
     }
 }

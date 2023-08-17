@@ -1,6 +1,11 @@
 package com.yello.server.domain.authorization.service;
 
+import static com.yello.server.global.common.ErrorCode.TOKEN_ALL_EXPIRED_AUTH_EXCEPTION;
+import static com.yello.server.global.common.ErrorCode.TOKEN_NOT_EXPIRED_AUTH_EXCEPTION;
+import static com.yello.server.global.common.ErrorCode.YELLOID_REQUIRED_EXCEPTION;
+
 import com.yello.server.domain.authorization.dto.ServiceTokenVO;
+import com.yello.server.domain.authorization.dto.kakao.KakaoTokenInfo;
 import com.yello.server.domain.authorization.dto.request.OAuthRequest;
 import com.yello.server.domain.authorization.dto.request.OnBoardingFriendRequest;
 import com.yello.server.domain.authorization.dto.request.SignUpRequest;
@@ -9,21 +14,158 @@ import com.yello.server.domain.authorization.dto.response.GroupNameSearchRespons
 import com.yello.server.domain.authorization.dto.response.OAuthResponse;
 import com.yello.server.domain.authorization.dto.response.OnBoardingFriendResponse;
 import com.yello.server.domain.authorization.dto.response.SignUpResponse;
+import com.yello.server.domain.authorization.exception.AuthBadRequestException;
+import com.yello.server.domain.authorization.exception.NotExpiredTokenForbiddenException;
+import com.yello.server.domain.cooldown.entity.Cooldown;
+import com.yello.server.domain.cooldown.repository.CooldownRepository;
+import com.yello.server.domain.friend.entity.Friend;
+import com.yello.server.domain.friend.repository.FriendRepository;
+import com.yello.server.domain.friend.service.FriendManager;
+import com.yello.server.domain.group.entity.School;
+import com.yello.server.domain.group.repository.SchoolRepository;
+import com.yello.server.domain.user.entity.User;
+import com.yello.server.domain.user.repository.UserRepository;
+import com.yello.server.domain.vote.service.VoteManager;
+import com.yello.server.global.common.factory.PaginationFactory;
+import com.yello.server.global.common.manager.ConnectionManager;
+import com.yello.server.infrastructure.firebase.service.NotificationService;
+import java.util.List;
+import java.util.Objects;
+import java.util.Optional;
+import javax.validation.constraints.NotNull;
+import lombok.Builder;
+import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
+import org.springframework.http.ResponseEntity;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
-public interface AuthService {
 
-    OAuthResponse oauthLogin(OAuthRequest oAuthRequest);
+@Builder
+@Service
+@RequiredArgsConstructor
+@Transactional(readOnly = true)
+public class AuthService {
 
-    Boolean isYelloIdDuplicated(String yelloId);
+    private final UserRepository userRepository;
+    private final SchoolRepository schoolRepository;
+    private final FriendRepository friendRepository;
+    private final CooldownRepository cooldownRepository;
 
-    SignUpResponse signUp(SignUpRequest signUpRequest);
+    private final AuthManager authManager;
+    private final FriendManager friendManager;
+    private final ConnectionManager connectionManager;
+    private final VoteManager voteManager;
+    private final TokenProvider tokenProvider;
 
-    GroupNameSearchResponse findSchoolsBySearch(String keyword, Pageable pageable);
+    private final NotificationService notificationService;
 
-    DepartmentSearchResponse findDepartmentsBySearch(String schoolName, String keyword, Pageable pageable);
+    @Transactional
+    public OAuthResponse oauthLogin(OAuthRequest oAuthRequest) {
+        final ResponseEntity<KakaoTokenInfo> response = connectionManager.getKakaoTokenInfo(oAuthRequest.accessToken());
 
-    OnBoardingFriendResponse findOnBoardingFriends(OnBoardingFriendRequest friendRequest, Pageable pageable);
+        final User user = authManager.getSignedInUserByUuid(response.getBody().id().toString());
+        final ServiceTokenVO serviceTokenVO = authManager.registerToken(user);
 
-    ServiceTokenVO reIssueToken(ServiceTokenVO token);
+        final Boolean isResigned = authManager.renewUserData(user);
+        user.setDeviceToken(oAuthRequest.deviceToken());
+        return OAuthResponse.of(isResigned, serviceTokenVO);
+    }
+
+    public Boolean isYelloIdDuplicated(String yelloId) {
+        if (Objects.isNull(yelloId)) {
+            throw new AuthBadRequestException(YELLOID_REQUIRED_EXCEPTION);
+        }
+
+        return userRepository.findByYelloId(yelloId).isPresent();
+    }
+
+    @Transactional
+    public SignUpResponse signUp(SignUpRequest signUpRequest) {
+        authManager.validateSignupRequest(signUpRequest);
+        final School group = schoolRepository.getById(signUpRequest.groupId());
+
+        final User newUser = userRepository.save(User.of(signUpRequest, group));
+        newUser.setDeviceToken(signUpRequest.deviceToken());
+
+        this.recommendUser(signUpRequest.recommendId());
+
+        final ServiceTokenVO signUpToken = authManager.registerToken(newUser);
+
+        this.makeFriend(newUser, signUpRequest.friends());
+
+        voteManager.makeGreetingVote(newUser);
+        return SignUpResponse.of(newUser.getYelloId(), signUpToken);
+    }
+
+    @Transactional
+    public void recommendUser(String recommendYelloId) {
+        if (recommendYelloId!=null && !recommendYelloId.isEmpty()) {
+            User recommendedUser = userRepository.getByYelloId(recommendYelloId);
+            recommendedUser.increaseRecommendCount();
+
+            final Optional<Cooldown> cooldown =
+                cooldownRepository.findByUserId(recommendedUser.getId());
+            cooldown.ifPresent(cooldownRepository::delete);
+        }
+    }
+
+    @Transactional
+    public void makeFriend(User user, List<Long> friendIds) {
+        friendIds
+            .stream()
+            .map(userRepository::findById)
+            .forEach(friend -> {
+                if (friend.isPresent()) {
+                    Friend savedFriend = friendRepository.save(Friend.createFriend(user, friend.get()));
+                    friendRepository.save(Friend.createFriend(friend.get(), user));
+
+                    notificationService.sendFriendNotification(savedFriend);
+                }
+            });
+    }
+
+    public OnBoardingFriendResponse findOnBoardingFriends(OnBoardingFriendRequest friendRequest,
+        Pageable pageable) {
+        final List<User> kakaoFriends = friendManager.getRecommendedFriendsForOnBoarding(friendRequest.friendKakaoId());
+
+        final List<User> pageList = PaginationFactory.getPage(kakaoFriends, pageable)
+            .stream()
+            .toList();
+
+        return OnBoardingFriendResponse.of(kakaoFriends.size(), pageList);
+    }
+
+    public GroupNameSearchResponse findSchoolsBySearch(String keyword, Pageable pageable) {
+        int totalCount = schoolRepository.countDistinctSchoolNameContaining(keyword);
+        final List<String> nameList = schoolRepository.findDistinctSchoolNameContaining(keyword,
+            pageable);
+        return GroupNameSearchResponse.of(totalCount, nameList);
+    }
+
+    public DepartmentSearchResponse findDepartmentsBySearch(String schoolName, String keyword,
+        Pageable pageable) {
+        int totalCount = schoolRepository.countAllBySchoolNameContaining(schoolName, keyword);
+        final List<School> schoolResult = schoolRepository.findAllBySchoolNameContaining(schoolName,
+            keyword, pageable);
+        return DepartmentSearchResponse.of(totalCount, schoolResult);
+    }
+
+    @Transactional
+    public ServiceTokenVO reIssueToken(@NotNull ServiceTokenVO tokens) {
+        boolean isAccessTokenExpired = tokenProvider.isExpired(tokens.accessToken());
+        boolean isRefreshTokenExpired = tokenProvider.isExpired(tokens.refreshToken());
+
+        if (isAccessTokenExpired) {
+
+            if (isRefreshTokenExpired) {
+                throw new NotExpiredTokenForbiddenException(TOKEN_ALL_EXPIRED_AUTH_EXCEPTION);
+            }
+
+            final String refreshToken = tokens.refreshToken();
+            return authManager.setNewAccessToken(refreshToken);
+        }
+
+        throw new NotExpiredTokenForbiddenException(TOKEN_NOT_EXPIRED_AUTH_EXCEPTION);
+    }
 }

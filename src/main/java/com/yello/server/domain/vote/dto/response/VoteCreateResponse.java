@@ -4,12 +4,12 @@ import lombok.Builder;
 
 @Builder
 public record VoteCreateResponse(
-        Integer point
+    Integer point
 ) {
 
     public static VoteCreateResponse of(Integer point) {
         return VoteCreateResponse.builder()
-                .point(point)
-                .build();
+            .point(point)
+            .build();
     }
 }

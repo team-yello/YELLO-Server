@@ -1,9 +1,7 @@
 package com.yello.server.domain.authorization.filter;
 
-import static com.yello.server.global.common.ErrorCode.AUTH_NOT_FOUND_USER_EXCEPTION;
-
-import com.yello.server.domain.authorization.exception.AuthNotFoundException;
-import com.yello.server.domain.user.entity.UserRepository;
+import com.yello.server.domain.user.entity.User;
+import com.yello.server.domain.user.repository.UserRepository;
 import java.io.IOException;
 import java.util.List;
 import javax.servlet.FilterChain;
@@ -26,14 +24,14 @@ import org.springframework.web.filter.OncePerRequestFilter;
 public class JwtFilter extends OncePerRequestFilter {
 
     public static final String BEARER = "Bearer ";
-    public static final String X_ACCESS_AUTH = "X-ACCESS-AUTH";
-    public static final String X_REFRESH_AUTH = "X-REFRESH-AUTH";
     private final UserRepository userRepository;
 
     @Override
-    protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
+    protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response,
+        FilterChain filterChain)
         throws ServletException, IOException {
-        val requestPath = request.getServletPath();
+
+        final String requestPath = request.getServletPath();
 
         if (requestPath.equals("/")
             || requestPath.startsWith("/swagger-ui") || requestPath.startsWith("/v3/api-docs")
@@ -43,21 +41,22 @@ public class JwtFilter extends OncePerRequestFilter {
             return;
         }
 
-        val userId = (Long) request.getAttribute("userId");
+        final Long userId = (Long) request.getAttribute("userId");
         log.info("Current user's id: {}", userId);
 
-        val tokenUser = userRepository.findById(userId)
-            .orElseThrow(() -> new AuthNotFoundException(AUTH_NOT_FOUND_USER_EXCEPTION));
+        final User user = userRepository.getById(userId);
 
         try {
             val authenticationToken = new UsernamePasswordAuthenticationToken(
-                tokenUser.getYelloId(),
+                user.getYelloId(),
                 null,
                 List.of(new SimpleGrantedAuthority("USER"))
             );
 
-            authenticationToken.setDetails(tokenUser);
-            SecurityContextHolder.getContext().setAuthentication(authenticationToken);
+            authenticationToken.setDetails(user);
+
+            SecurityContextHolder.getContext()
+                .setAuthentication(authenticationToken);
 
             log.info("[+] Token in SecurityContextHolder");
         } catch (AuthenticationException exception) {

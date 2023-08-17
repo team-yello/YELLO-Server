@@ -1,0 +1,88 @@
+name: 🚀 YELL:O Deploy for staging server
+
+on:
+  push:
+    branches: [ "staging" ]
+
+permissions:
+  contents: read
+
+jobs:
+  build:
+
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+
+      - name: 👉 JDK 17 zulu 버전을 세팅합니다.
+        uses: actions/setup-java@v3
+        with:
+          java-version: '17'
+          distribution: 'zulu'
+          cache: gradle
+
+      - name: 🐘 Gradle에 권한을 부여합니다.
+        run: chmod +x gradlew
+        shell: bash
+
+      ## 시크릿 키 설정
+      - name: 🔐 application.yml 등 환경 변수를 세팅합니다.
+        run: |
+          cd ./src/main/resources
+          touch ./application.yml
+          echo "$APPLICATION" > ./application.yml
+          touch ./firebase_key.json
+          echo "$FIREBASE_JSON" > ./firebase_key.json
+          sed -i 's/#/"/g' ./firebase_key.json
+        env:
+          APPLICATION: ${{ secrets.APPLICATION_TEST }}
+          FIREBASE_JSON: ${{ secrets.FIREBASE_JSON }}
+        shell: bash
+
+      - name: 🐘 Gradle로 빌드 실행
+        run: ./gradlew build -x test
+
+      - name: 📦 배포를 진행하기 위한 .zip 파일을 생성합니다.
+        run: |
+          mkdir deploy
+          cp ./docker/docker-compose.blue.yml ./deploy/
+          cp ./docker/docker-compose.green.yml ./deploy/
+          cp ./appspec.yml ./deploy/
+          cp ./docker/Dockerfile ./deploy/
+          cp ./scripts/*.sh ./deploy/
+          cp ./build/libs/*.jar ./deploy/
+          zip -r -qq -j ./yello-build.zip ./deploy
+        shell: bash
+
+      - name: ⏳ AWS에 연결을 진행합니다.
+        uses: aws-actions/configure-aws-credentials@v1
+        with:
+          aws-access-key-id: ${{ secrets.AWS_TEST_ACCESS_KEY }}
+          aws-secret-access-key: ${{ secrets.AWS_TEST_SECRET_KEY }}
+          aws-region: ${{ secrets.AWS_REGION }}
+
+      - name: 🪣 배포를 위해 S3에 프로젝트를 업로드합니다.
+        run: |
+          aws s3 cp \
+          --region ap-northeast-2 \
+          ./yello-build.zip s3://yello-test-application-bucket
+
+      - name: 📡 CodeDeploy에 배포를 요청합니다.
+        run: aws deploy create-deployment --application-name yello-deploy-application
+          --deployment-config-name CodeDeployDefault.OneAtATime
+          --deployment-group-name yello-testing
+          --s3-location bucket=yello-test-application-bucket,bundleType=zip,key=yello-build.zip
+
+      - name: 💡 배포 상태를 Slack을 통해 전송합니다.
+        uses: rtCamp/action-slack-notify@v2
+        env:
+          SLACK_CHANNEL: general
+          SLACK_COLOR: ${{ job.status }}
+          SLACK_ICON: https://github.com/rtCamp.png?size=48
+          SLACK_MESSAGE: 개발 서버 배포에 ${{ job.status }} 했습니다.
+          SLACK_TITLE: 🚀 YELL:O 개발 서버 배포 결과 🚀
+          SLACK_USERNAME: Notification-Bot
+          SLACK_WEBHOOK: ${{ secrets.SLACK_URL }}
+        if: always()

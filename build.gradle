@@ -33,6 +33,7 @@ dependencies {
     compileOnly 'org.projectlombok:lombok'
     annotationProcessor 'org.projectlombok:lombok'
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
+    testImplementation 'org.junit.jupiter:junit-jupiter-params:5.4.2'
 
     // JPA & Database
     implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
@@ -56,7 +57,7 @@ dependencies {
     // Swagger
     implementation 'org.springdoc:springdoc-openapi-ui:1.5.4'
 
-    //
+    // p6spy
     implementation 'com.github.gavlyukovskiy:p6spy-spring-boot-starter:1.5.7'
 
     // Http
@@ -73,6 +74,22 @@ dependencies {
 
     runtimeOnly 'com.h2database:h2'
     runtimeOnly 'com.mysql:mysql-connector-j:8.0.31'
+
+    // FCM
+    implementation 'com.google.firebase:firebase-admin:9.2.0'
+
+    // rabbitmq
+    implementation 'org.springframework.amqp:spring-rabbit:2.3.12'
+
+    // slack-webhook
+    implementation "net.gpedro.integrations.slack:slack-webhook:1.4.0"
+
+    // google play android developer api
+    implementation 'com.google.apis:google-api-services-androidpublisher:v3-rev20211125-1.32.1'
+    implementation "com.google.api-client:google-api-client:1.33.0"
+
+    // gson
+    implementation 'com.google.code.gson:gson:2.10.1'
 }
 
 tasks.named('test') {

@@ -10,7 +10,7 @@ public class GenderConverter implements AttributeConverter<Gender, String> {
 
     @Override
     public String convertToDatabaseColumn(Gender gender) {
-        if (gender==null) {
+        if (gender == null) {
             return null;
         }
         return gender.getIntial();
@@ -18,7 +18,7 @@ public class GenderConverter implements AttributeConverter<Gender, String> {
 
     @Override
     public Gender convertToEntityAttribute(String dbData) {
-        if (dbData==null) {
+        if (dbData == null) {
             return null;
         }
         try {

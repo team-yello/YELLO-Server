@@ -2,11 +2,11 @@ package com.yello.server.domain.authorization.configuration;
 
 import static org.springframework.security.config.http.SessionCreationPolicy.STATELESS;
 
-import com.yello.server.domain.authorization.JwtTokenProvider;
 import com.yello.server.domain.authorization.exception.CustomAuthenticationEntryPoint;
 import com.yello.server.domain.authorization.filter.JwtExceptionFilter;
 import com.yello.server.domain.authorization.filter.JwtFilter;
-import com.yello.server.domain.user.entity.UserRepository;
+import com.yello.server.domain.authorization.service.TokenProvider;
+import com.yello.server.domain.user.repository.UserRepository;
 import com.yello.server.global.exception.ExceptionHandlerFilter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
@@ -25,7 +25,7 @@ public class SecurityConfiguration {
 
     private final CustomAuthenticationEntryPoint customAuthenticationEntryPoint;
     private final UserRepository userRepository;
-    private final JwtTokenProvider jwtTokenProvider;
+    private final TokenProvider tokenProvider;
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity httpSecurity) throws Exception {
@@ -44,8 +44,9 @@ public class SecurityConfiguration {
             .exceptionHandling()
             .authenticationEntryPoint(customAuthenticationEntryPoint)
             .and()
-            .addFilterBefore(new JwtFilter(userRepository), UsernamePasswordAuthenticationFilter.class)
-            .addFilterBefore(new JwtExceptionFilter(jwtTokenProvider), JwtFilter.class)
+            .addFilterBefore(new JwtFilter(userRepository),
+                UsernamePasswordAuthenticationFilter.class)
+            .addFilterBefore(new JwtExceptionFilter(tokenProvider), JwtFilter.class)
             .addFilterBefore(new ExceptionHandlerFilter(), JwtExceptionFilter.class)
             .build();
     }
