@@ -46,6 +46,11 @@ public class VoteRepositoryImpl implements VoteRepository {
     }
 
     @Override
+    public Integer countUnreadByReceiverDeviceToken(String deviceToken) {
+        return voteJpaRepository.countUnreadByReceiverDeviceToken(deviceToken);
+    }
+
+    @Override
     public List<Vote> findAllByReceiverUserId(Long userId, Pageable pageable) {
         return voteJpaRepository.findAllByReceiverUserId(userId, pageable);
     }
