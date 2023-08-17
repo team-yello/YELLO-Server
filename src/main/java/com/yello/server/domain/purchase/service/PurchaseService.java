@@ -61,12 +61,11 @@ public class PurchaseService {
         }
 
         if (!request.productId().equals(YELLO_PLUS_ID)) {
-            System.out.println("sfsdfjsdfsdsss" + request.productId());
             throw new PurchaseException(NOT_FOUND_TRANSACTION_EXCEPTION);
         }
 
         createSubscribe(user);
-        user.ticketPlus(3);
+        user.changeTicketCount(3);
     }
 
     @Transactional
@@ -78,15 +77,15 @@ public class PurchaseService {
         switch (request.productId()) {
             case ONE_TICKET_ID:
                 createTicket(user, ProductType.ONE_TICKET);
-                user.ticketPlus(1);
+                user.changeTicketCount(1);
                 break;
             case TWO_TICKET_ID:
                 createTicket(user, ProductType.TWO_TICKET);
-                user.ticketPlus(2);
+                user.changeTicketCount(2);
                 break;
             case FIVE_TICKET_ID:
                 createTicket(user, ProductType.FIVE_TICKET);
-                user.ticketPlus(5);
+                user.changeTicketCount(5);
                 break;
             default:
                 throw new PurchaseException(NOT_FOUND_TRANSACTION_EXCEPTION);
