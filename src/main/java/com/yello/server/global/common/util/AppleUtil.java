@@ -34,7 +34,6 @@ public class AppleUtil {
         if (environment == "Sandbox") {
             transactionResponse = getTransactionByWebClient(appleTransaction, APPLE_SANDBOX_URL);
         }
-
         return transactionResponse;
     }
 
