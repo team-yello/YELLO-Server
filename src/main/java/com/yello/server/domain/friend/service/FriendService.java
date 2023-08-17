@@ -19,7 +19,6 @@ import com.yello.server.domain.user.entity.User;
 import com.yello.server.domain.user.repository.UserRepository;
 import com.yello.server.domain.vote.repository.VoteRepository;
 import com.yello.server.global.common.factory.PaginationFactory;
-import com.yello.server.infrastructure.firebase.service.NotificationService;
 import java.lang.Character.UnicodeBlock;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -42,7 +41,6 @@ public class FriendService {
     private final FriendRepository friendRepository;
     private final UserRepository userRepository;
     private final VoteRepository voteRepository;
-    private final NotificationService notificationService;
 
     public FriendsResponse findAllFriends(Pageable pageable, Long userId) {
         final Page<Friend> friendsData = friendRepository.findAllFriendsByUserId(pageable, userId);
@@ -164,7 +162,7 @@ public class FriendService {
 
     public boolean isEnglish(String keyword) {
         for (char c : keyword.toCharArray()) {
-            if (Character.UnicodeBlock.of(c) != UnicodeBlock.BASIC_LATIN) {
+            if (Character.UnicodeBlock.of(c)!=UnicodeBlock.BASIC_LATIN) {
                 return false;
             }
         }

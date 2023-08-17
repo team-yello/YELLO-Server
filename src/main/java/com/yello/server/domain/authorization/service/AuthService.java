@@ -42,6 +42,7 @@ import com.yello.server.domain.vote.repository.VoteRepository;
 import com.yello.server.global.common.factory.ListFactory;
 import com.yello.server.global.common.factory.PaginationFactory;
 import com.yello.server.global.common.util.RestUtil;
+import com.yello.server.infrastructure.firebase.service.NotificationService;
 import com.yello.server.infrastructure.redis.repository.TokenRepository;
 import java.util.Comparator;
 import java.util.List;
@@ -72,9 +73,11 @@ public class AuthService {
     private final JwtTokenProvider jwtTokenProvider;
     private final TokenRepository tokenValueOperations;
 
+    private final NotificationService notificationService;
+
     // TODO softDelete 우아하게 처리하는 방법으로 바꾸기
     public Boolean renewUserInformation(User currentUser) {
-        if (currentUser.getDeletedAt() != null) {
+        if (currentUser.getDeletedAt()!=null) {
             currentUser.renew();
 
             friendRepository.findAllByUserIdNotFiltered(currentUser.getId())
@@ -96,7 +99,7 @@ public class AuthService {
         final ResponseEntity<KakaoTokenInfo> response = RestUtil.getKakaoTokenInfo(
             oAuthRequest.accessToken());
 
-        if (response.getStatusCode() == BAD_REQUEST || response.getStatusCode() == UNAUTHORIZED) {
+        if (response.getStatusCode()==BAD_REQUEST || response.getStatusCode()==UNAUTHORIZED) {
             throw new OAuthException(OAUTH_TOKEN_EXCEPTION);
         }
 
@@ -160,7 +163,7 @@ public class AuthService {
     }
 
     public void recommendUser(String recommendYelloId) {
-        if (recommendYelloId != null && !recommendYelloId.isEmpty()) {
+        if (recommendYelloId!=null && !recommendYelloId.isEmpty()) {
             User recommendedUser = userRepository.getByYelloId(recommendYelloId);
             recommendedUser.increaseRecommendCount();
 
@@ -186,8 +189,10 @@ public class AuthService {
             .map(userRepository::findById)
             .forEach(friend -> {
                 if (friend.isPresent()) {
-                    friendRepository.save(Friend.createFriend(user, friend.get()));
+                    Friend savedFriend = friendRepository.save(Friend.createFriend(user, friend.get()));
                     friendRepository.save(Friend.createFriend(friend.get(), user));
+
+                    notificationService.sendFriendNotification(savedFriend);
                 }
             });
     }
@@ -207,7 +212,7 @@ public class AuthService {
                 userRepository.save(User.yelloGreeting(yelloName, yelloFemaleId, Gender.FEMALE))
             );
 
-        final User sender = (user.getGender() == Gender.MALE) ? yelloGreetingFemale : yelloGreetingMale;
+        final User sender = (user.getGender()==Gender.MALE) ? yelloGreetingFemale : yelloGreetingMale;
 
         final Question greetingQuestion = questionRepository.findByQuestionContent(greetingNameHead, greetingNameFoot,
                 greetingKeywordHead, greetingKeywordFoot)
