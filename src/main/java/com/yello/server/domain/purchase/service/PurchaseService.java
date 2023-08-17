@@ -60,12 +60,13 @@ public class PurchaseService {
             throw new SubscriptionConflictException(SUBSCRIBE_ACTIVE_EXCEPTION);
         }
 
-        if (request.productId() == YELLO_PLUS_ID) {
-            createSubscribe(user);
-            user.ticketPlus(3);
+        if (!request.productId().equals(YELLO_PLUS_ID)) {
+            System.out.println("sfsdfjsdfsdsss" + request.productId());
+            throw new PurchaseException(NOT_FOUND_TRANSACTION_EXCEPTION);
         }
 
-        throw new PurchaseException(NOT_FOUND_TRANSACTION_EXCEPTION);
+        createSubscribe(user);
+        user.ticketPlus(3);
     }
 
     @Transactional
