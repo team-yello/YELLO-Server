@@ -124,26 +124,6 @@ public class User extends AuditingTimeEntity {
             .build();
     }
 
-    public static User yelloGreeting(String name, String yelloId, Gender gender) {
-        return User.builder()
-            .recommendCount(0L)
-            .name(name)
-            .yelloId(yelloId)
-            .gender(gender)
-            .point(0)
-            .social(Social.KAKAO)
-            .profileImage("")
-            .uuid(yelloId)
-            .deletedAt(null)
-            .group(null)
-            .groupAdmissionYear(0)
-            .email("")
-            .deviceToken(yelloId)
-            .subscribe(Subscribe.NORMAL)
-            .ticketCount(0)
-            .build();
-    }
-
     public void delete() {
         this.deletedAt = LocalDateTime.now();
         this.point = 0;
@@ -163,7 +143,7 @@ public class User extends AuditingTimeEntity {
     }
 
     public void plusPoint(Integer point) {
-        if (this.getSubscribe() == Subscribe.NORMAL) {
+        if (this.getSubscribe()==Subscribe.NORMAL) {
             this.point += point;
             return;
         }
