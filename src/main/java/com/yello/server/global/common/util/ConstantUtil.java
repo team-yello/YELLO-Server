@@ -19,6 +19,15 @@ public class ConstantUtil {
     public static final int TIMER_MAX_TIME = 40;
     public static final int COOL_DOWN_TIME = 40;
     public static final int KEYWORD_HINT_POINT = 100;
+    public static final String YELLO_PLUS_ID = "YELLO.iOS.yelloPlus.monthly";
+    public static final String ONE_TICKET_ID = "YELLO.iOS.nameKey.one";
+    public static final String TWO_TICKET_ID = "YELLO.iOS.nameKey.two";
+    public static final String FIVE_TICKET_ID = "YELLO.iOS.nameKey.five";
+    public static final int ONE_TICKET = 1400;
+    public static final int TWO_TICKET = 2800;
+    public static final int FIVE_TICKET = 5900;
+    public static final int YELLO_PLUS = 3900;
+
 
     private ConstantUtil() {
         throw new IllegalStateException();

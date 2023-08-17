@@ -182,5 +182,12 @@ public class User extends AuditingTimeEntity {
         this.deviceToken = deviceToken;
     }
 
+    public void setSubscribe() {
+        this.subscribe = Subscribe.ACTIVE;
+    }
+
+    public void ticketPlus(int ticketCount) {
+        this.ticketCount += ticketCount;
+    }
 
 }

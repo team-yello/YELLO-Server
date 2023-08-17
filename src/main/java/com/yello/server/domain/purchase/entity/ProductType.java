@@ -10,6 +10,7 @@ import lombok.RequiredArgsConstructor;
 public enum ProductType {
     YELLO_PLUS("yello_plus"),
     ONE_TICKET("one_ticket"),
+    TWO_TICKET("two_ticket"),
     FIVE_TICKET("five_ticket");
 
     private final String intial;
