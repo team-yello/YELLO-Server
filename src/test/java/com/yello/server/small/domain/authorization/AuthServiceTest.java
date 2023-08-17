@@ -7,36 +7,48 @@ import static com.yello.server.global.common.ErrorCode.YELLOID_REQUIRED_EXCEPTIO
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
-import com.yello.server.domain.authorization.JwtTokenProvider;
-import com.yello.server.domain.authorization.dto.ServiceTokenVO;
 import com.yello.server.domain.authorization.dto.request.OnBoardingFriendRequest;
 import com.yello.server.domain.authorization.dto.request.SignUpRequest;
 import com.yello.server.domain.authorization.dto.response.OnBoardingFriend;
 import com.yello.server.domain.authorization.dto.response.OnBoardingFriendResponse;
+import com.yello.server.domain.authorization.dto.response.SignUpResponse;
 import com.yello.server.domain.authorization.exception.AuthBadRequestException;
+import com.yello.server.domain.authorization.service.AuthManager;
 import com.yello.server.domain.authorization.service.AuthService;
+import com.yello.server.domain.authorization.service.TokenJwtProvider;
+import com.yello.server.domain.authorization.service.TokenProvider;
 import com.yello.server.domain.cooldown.entity.Cooldown;
 import com.yello.server.domain.cooldown.repository.CooldownRepository;
 import com.yello.server.domain.friend.repository.FriendRepository;
+import com.yello.server.domain.friend.service.FriendManager;
 import com.yello.server.domain.group.entity.School;
 import com.yello.server.domain.group.exception.GroupNotFoundException;
 import com.yello.server.domain.group.repository.SchoolRepository;
-import com.yello.server.domain.question.entity.Question;
 import com.yello.server.domain.question.repository.QuestionRepository;
 import com.yello.server.domain.user.entity.Gender;
 import com.yello.server.domain.user.entity.Social;
 import com.yello.server.domain.user.entity.User;
 import com.yello.server.domain.user.exception.UserConflictException;
 import com.yello.server.domain.user.repository.UserRepository;
+import com.yello.server.domain.user.service.UserManager;
 import com.yello.server.domain.vote.repository.VoteRepository;
+import com.yello.server.domain.vote.service.VoteManager;
 import com.yello.server.global.common.factory.PaginationFactory;
+import com.yello.server.global.common.manager.ConnectionManager;
+import com.yello.server.infrastructure.firebase.manager.FCMManager;
+import com.yello.server.infrastructure.firebase.service.NotificationFcmService;
+import com.yello.server.infrastructure.firebase.service.NotificationService;
 import com.yello.server.infrastructure.redis.repository.TokenRepository;
 import com.yello.server.small.domain.cooldown.FakeCooldownRepository;
+import com.yello.server.small.domain.friend.FakeFriendManager;
 import com.yello.server.small.domain.friend.FakeFriendRepository;
 import com.yello.server.small.domain.group.FakeSchoolRepository;
 import com.yello.server.small.domain.question.FakeQuestionRepository;
+import com.yello.server.small.domain.user.FakeUserManager;
 import com.yello.server.small.domain.user.FakeUserRepository;
+import com.yello.server.small.domain.vote.FakeVoteManager;
 import com.yello.server.small.domain.vote.FakeVoteRepository;
+import com.yello.server.small.global.firebase.FakeFcmManger;
 import com.yello.server.small.global.redis.FakeTokenRepository;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -52,14 +64,32 @@ public class AuthServiceTest {
 
     private final String secretKey = Base64.getEncoder().encodeToString(
         "keyForTestkeyForTestkeyForTestkeyForTestkeyForTestkeyForTestkeyForTestkeyForTestkeyForTest".getBytes());
+
     private final UserRepository userRepository = new FakeUserRepository();
     private final SchoolRepository schoolRepository = new FakeSchoolRepository();
     private final FriendRepository friendRepository = new FakeFriendRepository();
     private final CooldownRepository cooldownRepository = new FakeCooldownRepository();
+    private final TokenRepository tokenRepository = new FakeTokenRepository();
     private final QuestionRepository questionRepository = new FakeQuestionRepository();
     private final VoteRepository voteRepository = new FakeVoteRepository();
-    private final JwtTokenProvider jwtTokenProvider = new JwtTokenProvider(secretKey);
-    private final TokenRepository tokenRepository = new FakeTokenRepository();
+
+    private final TokenProvider tokenProvider = new TokenJwtProvider(secretKey);
+    private final AuthManager authManager = new FakeAuthManager(
+        friendRepository, cooldownRepository, userRepository, tokenRepository, tokenProvider
+    );
+    private final UserManager userManager = new FakeUserManager(userRepository);
+    private final VoteManager voteManager = new FakeVoteManager(
+        userRepository, questionRepository, voteRepository, friendRepository,
+        userManager);
+    private final FriendManager friendManager = new FakeFriendManager(userRepository);
+    private final ConnectionManager connectionManager = new FakeConnectionManager();
+    private final FCMManager fcmManager = new FakeFcmManger();
+
+    private final NotificationService notificationService = NotificationFcmService.builder()
+        .userRepository(userRepository)
+        .tokenRepository(tokenRepository)
+        .fcmManager(fcmManager)
+        .build();
     private AuthService authService;
 
     @BeforeEach
@@ -69,10 +99,12 @@ public class AuthServiceTest {
             .schoolRepository(schoolRepository)
             .friendRepository(friendRepository)
             .cooldownRepository(cooldownRepository)
-            .questionRepository(questionRepository)
-            .voteRepository(voteRepository)
-            .jwtTokenProvider(jwtTokenProvider)
-            .tokenValueOperations(tokenRepository)
+            .authManager(authManager)
+            .friendManager(friendManager)
+            .connectionManager(connectionManager)
+            .voteManager(voteManager)
+            .tokenProvider(tokenProvider)
+            .notificationService(notificationService)
             .build();
 
         School school = School.builder()
@@ -92,6 +124,7 @@ public class AuthServiceTest {
             .profileImage("NO_IMAGE").uuid("123")
             .deletedAt(LocalDateTime.now()).group(school)
             .groupAdmissionYear(23).email("gm@yello.com")
+            .deviceToken("12345")
             .build());
 
         userRepository.save(User.builder()
@@ -102,6 +135,7 @@ public class AuthServiceTest {
             .profileImage("NO_IMAGE").uuid("1234")
             .deletedAt(null).group(school)
             .groupAdmissionYear(23).email("hj_p__@yello.com")
+            .deviceToken("12345")
             .build());
 
         userRepository.save(User.builder()
@@ -112,6 +146,7 @@ public class AuthServiceTest {
             .profileImage("NO_IMAGE").uuid("12345")
             .deletedAt(null).group(school)
             .groupAdmissionYear(23).email("sh@yello.com")
+            .deviceToken("12345")
             .build());
 
         userRepository.save(User.builder()
@@ -122,35 +157,8 @@ public class AuthServiceTest {
             .profileImage("NO_IMAGE").uuid("123456")
             .deletedAt(null).group(school)
             .groupAdmissionYear(23).email("ej@yello.com")
+            .deviceToken("12345")
             .build());
-    }
-
-    @Test
-    void 유저_삭제정보_초기화에_성공합니다() {
-        // given
-        Long userId = 0L;
-
-        // when
-        final User softDeletedUser = userRepository.getById(userId);
-        authService.renewUserInformation(softDeletedUser);
-
-        final List<LocalDateTime> targetIds =
-            friendRepository.findAllByUserIdNotFiltered(softDeletedUser.getId())
-                .stream()
-                .map((friend) -> friend.getTarget().getDeletedAt())
-                .toList();
-        final List<LocalDateTime> userIds =
-            friendRepository.findAllByTargetIdNotFiltered(softDeletedUser.getId())
-                .stream()
-                .map((friend) -> friend.getUser().getDeletedAt())
-                .toList();
-        final Optional<Cooldown> cooldown = cooldownRepository.findByUserId(userId);
-
-        // then
-        assertThat(softDeletedUser.getDeletedAt()).isNull();
-        targetIds.forEach((deletedTime) -> assertThat(deletedTime).isNull());
-        userIds.forEach((deletedTime) -> assertThat(deletedTime).isNull());
-        cooldown.ifPresent((cooldown1) -> assertThat(cooldown1.getDeletedAt()).isNull());
     }
 
     @Test
@@ -207,11 +215,11 @@ public class AuthServiceTest {
             .build();
 
         // when
-        final User signUpUser = authService.signUpUser(request);
-        final User expectedUser = userRepository.getById(signUpUser.getId());
+        SignUpResponse signUpUser = authService.signUp(request);
+        final User expectedUser = userRepository.getByYelloId(signUpUser.yelloId());
 
         // then
-        assertThat(signUpUser).isEqualTo(expectedUser);
+        assertThat(signUpUser.yelloId()).isEqualTo(expectedUser.getYelloId());
     }
 
     @Test
@@ -234,7 +242,7 @@ public class AuthServiceTest {
         // when
 
         // then
-        assertThatThrownBy(() -> authService.signUpUser(request))
+        assertThatThrownBy(() -> authService.signUp(request))
             .isInstanceOf(UserConflictException.class)
             .hasMessageContaining(UUID_CONFLICT_USER_EXCEPTION.getMessage());
     }
@@ -259,7 +267,7 @@ public class AuthServiceTest {
         // when
 
         // then
-        assertThatThrownBy(() -> authService.signUpUser(request))
+        assertThatThrownBy(() -> authService.signUp(request))
             .isInstanceOf(UserConflictException.class)
             .hasMessageContaining(YELLOID_CONFLICT_USER_EXCEPTION.getMessage());
     }
@@ -284,7 +292,7 @@ public class AuthServiceTest {
         // when
 
         // then
-        assertThatThrownBy(() -> authService.signUpUser(request))
+        assertThatThrownBy(() -> authService.signUp(request))
             .isInstanceOf(GroupNotFoundException.class)
             .hasMessageContaining(GROUPID_NOT_FOUND_GROUP_EXCEPTION.getMessage());
     }
@@ -322,33 +330,16 @@ public class AuthServiceTest {
     }
 
     @Test
-    void 회원가입_토큰_등록에_성공합니다() {
-        // given
-        Long id = 1L;
-        String uuid = "1234";
-
-        // when
-        final ServiceTokenVO token = authService.registerToken(id, uuid);
-        final ServiceTokenVO registeredToken = tokenRepository.get(id);
-
-        // then
-//    assertThat(jwtTokenProvider.getUserId(token.accessToken())).isEqualTo(id);
-//    assertThat(jwtTokenProvider.getUserId(token.refreshToken())).isEqualTo(id);
-//    assertThat(jwtTokenProvider.getUserUuid(token.accessToken())).isEqualTo(uuid);
-//    assertThat(jwtTokenProvider.getUserUuid(token.refreshToken())).isEqualTo(uuid);
-        assertThat(registeredToken).isEqualTo(token);
-    }
-
-    @Test
     void 회원가입_친구_등록에_성공합니다() {
         // given
-        Long id = 1L;
+        final Long id = 1L;
+        final User user = userRepository.getById(id);
         List<Long> friendList = new ArrayList<>();
         friendList.add(2L);
         friendList.add(3L);
 
         // when
-        final User user = userRepository.getById(id);
+
         authService.makeFriend(user, friendList);
 
         final List<Long> targetId = friendRepository.findAllByUserId(user.getId())
@@ -411,29 +402,5 @@ public class AuthServiceTest {
                 .map(OnBoardingFriend::id)
                 .sorted()
                 .toList());
-    }
-
-    @Test
-    void 회원가입_첫쪽지_생성에_성공합니다() {
-        // given
-        Long userId = 1L;
-        String greetingNameHead = null;
-        String greetingNameFoot = "에게 옐로가 전할 말은";
-        String greetingKeywordHead = null;
-        String greetingKeywordFoot = "라는 말이야";
-
-        // when
-        final User user = userRepository.getById(userId);
-        authService.makeGreetingVote(user, greetingNameHead, greetingNameFoot, greetingKeywordHead,
-            greetingKeywordFoot);
-        final Optional<Question> question = questionRepository.findByQuestionContent(greetingNameHead,
-            greetingNameFoot, greetingKeywordHead, greetingKeywordFoot);
-
-        // then
-        assertThat(question.isPresent()).isEqualTo(true);
-        assertThat(question.get().getNameHead()).isEqualTo(greetingNameHead);
-        assertThat(question.get().getNameFoot()).isEqualTo(greetingNameFoot);
-        assertThat(question.get().getKeywordHead()).isEqualTo(greetingKeywordHead);
-        assertThat(question.get().getKeywordFoot()).isEqualTo(greetingKeywordFoot);
     }
 }

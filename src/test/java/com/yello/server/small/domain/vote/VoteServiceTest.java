@@ -17,6 +17,7 @@ import com.yello.server.domain.user.entity.Social;
 import com.yello.server.domain.user.entity.Subscribe;
 import com.yello.server.domain.user.entity.User;
 import com.yello.server.domain.user.repository.UserRepository;
+import com.yello.server.domain.user.service.UserManager;
 import com.yello.server.domain.vote.dto.request.CreateVoteRequest;
 import com.yello.server.domain.vote.dto.request.VoteAnswer;
 import com.yello.server.domain.vote.dto.response.RevealNameResponse;
@@ -28,12 +29,14 @@ import com.yello.server.domain.vote.dto.response.VoteListResponse;
 import com.yello.server.domain.vote.dto.response.VoteUnreadCountResponse;
 import com.yello.server.domain.vote.entity.Vote;
 import com.yello.server.domain.vote.repository.VoteRepository;
+import com.yello.server.domain.vote.service.VoteManager;
 import com.yello.server.domain.vote.service.VoteService;
 import com.yello.server.infrastructure.rabbitmq.service.ProducerService;
 import com.yello.server.small.domain.cooldown.FakeCooldownRepository;
 import com.yello.server.small.domain.friend.FakeFriendRepository;
 import com.yello.server.small.domain.keyword.FakeKeywordRepository;
 import com.yello.server.small.domain.question.FakeQuestionRepository;
+import com.yello.server.small.domain.user.FakeUserManager;
 import com.yello.server.small.domain.user.FakeUserRepository;
 import com.yello.server.small.global.rabbitmq.FakeMessageQueueRepository;
 import com.yello.server.small.global.rabbitmq.FakeProducerService;
@@ -52,6 +55,10 @@ public class VoteServiceTest {
     private final CooldownRepository cooldownRepository = new FakeCooldownRepository();
     private final QuestionRepository questionRepository = new FakeQuestionRepository();
     private final KeywordRepository keywordRepository = new FakeKeywordRepository();
+    private final UserManager userManager = new FakeUserManager(userRepository);
+    private final VoteManager voteManager = new FakeVoteManager(
+        userRepository, questionRepository, voteRepository, friendRepository,
+        userManager);
     private final ProducerService producerService =
         new FakeProducerService(new FakeMessageQueueRepository());
     private VoteService voteService;
@@ -75,6 +82,7 @@ public class VoteServiceTest {
             .questionRepository(questionRepository)
             .keywordRepository(keywordRepository)
             .producerService(producerService)
+            .voteManager(voteManager)
             .build();
 
         School school = School.builder()
@@ -330,11 +338,10 @@ public class VoteServiceTest {
     void 투표_생성에_성공합니다() {
         // given
         final Long userId = 1L;
-        final User user = userRepository.getById(userId);
 
         final List<VoteAnswer> voteAnswerList = new ArrayList<>();
         VoteAnswer answer1 = VoteAnswer.builder()
-            .friendId(1L)
+            .friendId(2L)
             .questionId(1L)
             .keywordName("test")
             .colorIndex(0)
@@ -349,10 +356,9 @@ public class VoteServiceTest {
         // when
         VoteCreateVO result = voteService.createVote(userId, request);
 
-        System.out.println(user.getSubscribe() + " 입니다" + user.getYelloId());
         // then
         assertThat(result.point()).isEqualTo(2003);
-
+        assertThat(result.votes().size()).isEqualTo(1);
     }
 
     @Test
