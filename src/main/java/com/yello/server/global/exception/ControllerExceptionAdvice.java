@@ -9,7 +9,6 @@ import static org.springframework.http.HttpStatus.INTERNAL_SERVER_ERROR;
 import static org.springframework.http.HttpStatus.NOT_FOUND;
 import static org.springframework.http.HttpStatus.UNAUTHORIZED;
 
-import com.yello.server.domain.authorization.JwtTokenProvider;
 import com.yello.server.domain.authorization.exception.AuthBadRequestException;
 import com.yello.server.domain.authorization.exception.CustomAuthenticationException;
 import com.yello.server.domain.authorization.exception.ExpiredTokenException;
@@ -18,6 +17,7 @@ import com.yello.server.domain.authorization.exception.NotExpiredTokenForbiddenE
 import com.yello.server.domain.authorization.exception.NotSignedInException;
 import com.yello.server.domain.authorization.exception.NotValidTokenForbiddenException;
 import com.yello.server.domain.authorization.exception.OAuthException;
+import com.yello.server.domain.authorization.service.TokenProvider;
 import com.yello.server.domain.friend.exception.FriendException;
 import com.yello.server.domain.friend.exception.FriendNotFoundException;
 import com.yello.server.domain.group.exception.GroupNotFoundException;
@@ -68,7 +68,7 @@ public class ControllerExceptionAdvice {
     private final TaskExecutor taskExecutor;
     private final SlackApi slackApi;
     private final UserRepository userRepository;
-    private final JwtTokenProvider jwtTokenProvider;
+    private final TokenProvider tokenProvider;
 
     @ExceptionHandler(Exception.class)
     void handleException(HttpServletRequest request, Exception exception) throws Exception {
@@ -98,8 +98,8 @@ public class ControllerExceptionAdvice {
                 .setValue(request.getHeader(HttpHeaders.AUTHORIZATION)));
 
         final String token =
-            request.getHeader(HttpHeaders.AUTHORIZATION).substring("Bearer " .length());
-        final Long userId = jwtTokenProvider.getUserId(token);
+            request.getHeader(HttpHeaders.AUTHORIZATION).substring("Bearer ".length());
+        final Long userId = tokenProvider.getUserId(token);
         final Optional<User> user = userRepository.findById(userId);
         String userInfo = "";
         userInfo = user.map(value -> "userId : " + userId
