@@ -19,6 +19,13 @@ public interface VoteJpaRepository extends JpaRepository<Vote, Long> {
         + "and v.isRead is false")
     Integer countUnreadByReceiverUserId(@Param("userId") Long userId);
 
+    @Query("select count(v) from Vote v "
+        + "where v.receiver.deviceToken = :deviceToken "
+        + "and v.receiver.deletedAt is null "
+        + "and v.sender.deletedAt is null "
+        + "and v.isRead is false")
+    Integer countUnreadByReceiverDeviceToken(@Param("deviceToken") String deviceToken);
+
     @Query("select v from Vote v "
         + "where v.receiver.id = :userId "
         + "and v.receiver.deletedAt is null "

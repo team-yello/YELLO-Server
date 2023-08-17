@@ -18,7 +18,7 @@ public class FakeVoteRepository implements VoteRepository {
     @Override
     public Vote save(Vote vote) {
         Vote newVote = Vote.builder()
-            .id(vote.getId() == null ? id++ : vote.getId())
+            .id(vote.getId()==null ? id++ : vote.getId())
             .answer(vote.getAnswer())
             .nameHint(vote.getNameHint())
             .isAnswerRevealed(vote.getIsAnswerRevealed())
@@ -60,6 +60,15 @@ public class FakeVoteRepository implements VoteRepository {
     public Integer countUnreadByReceiverUserId(Long userId) {
         return data.stream()
             .filter(vote -> vote.getReceiver().getId().equals(userId))
+            .filter(vote -> !vote.getIsRead())
+            .toList()
+            .size();
+    }
+
+    @Override
+    public Integer countUnreadByReceiverDeviceToken(String deviceToken) {
+        return data.stream()
+            .filter(vote -> vote.getReceiver().getDeviceToken().equals(deviceToken))
             .filter(vote -> !vote.getIsRead())
             .toList()
             .size();
