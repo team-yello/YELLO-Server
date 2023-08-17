@@ -28,7 +28,7 @@ public enum ErrorCode {
     INVALID_VOTE_EXCEPTION(BAD_REQUEST, "이미 공개한 투표입니다"),
     QUERY_STRING_REQUIRED_EXCEPTION(BAD_REQUEST, "쿼리 스트링이 없습니다."),
     EXIST_FRIEND_EXCEPTION(BAD_REQUEST, "이미 존재하는 친구입니다."),
-
+    REVEAL_FULL_NAME_VOTE_EXCEPTION(BAD_REQUEST, "이미 공개한 이름입니다"),
     /**
      * 401 UNAUTHORIZED
      */
@@ -50,7 +50,7 @@ public enum ErrorCode {
     TOKEN_ALL_EXPIRED_AUTH_EXCEPTION(FORBIDDEN, "토큰이 모두 만료됐습니다."),
     TOKEN_INFO_NOT_SAME_AUTH_EXCEPTION(FORBIDDEN, "동일하지 않은 액세스 토큰과 리프레시 토큰입니다."),
     DUPLICATE_VOTE_EXCEPTION(FORBIDDEN, "중복된 투표가 전달되었습니다."),
-
+    LACK_TICKET_COUNT_EXCEPTION(FORBIDDEN, "열람권 수가 부족합니다."),
     /**
      * 404 NOT FOUND
      */
