@@ -40,6 +40,7 @@ out/
 ### config ###
 application.yml
 application-dev.yml
+application-apple.yml
 firebase*.json
 
 ### monitoring ###

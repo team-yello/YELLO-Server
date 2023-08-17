@@ -23,6 +23,7 @@ import com.yello.server.domain.friend.exception.FriendNotFoundException;
 import com.yello.server.domain.group.exception.GroupNotFoundException;
 import com.yello.server.domain.purchase.exception.PurchaseException;
 import com.yello.server.domain.purchase.exception.PurchaseNotFoundException;
+import com.yello.server.domain.purchase.exception.SubscriptionConflictException;
 import com.yello.server.domain.question.exception.QuestionException;
 import com.yello.server.domain.question.exception.QuestionNotFoundException;
 import com.yello.server.domain.user.entity.User;
@@ -97,7 +98,7 @@ public class ControllerExceptionAdvice {
                 .setValue(request.getHeader(HttpHeaders.AUTHORIZATION)));
 
         final String token =
-            request.getHeader(HttpHeaders.AUTHORIZATION).substring("Bearer ".length());
+            request.getHeader(HttpHeaders.AUTHORIZATION).substring("Bearer " .length());
         final Long userId = jwtTokenProvider.getUserId(token);
         final Optional<User> user = userRepository.findById(userId);
         String userInfo = "";
@@ -216,7 +217,8 @@ public class ControllerExceptionAdvice {
      * 409 CONFLICT
      */
     @ExceptionHandler({
-        UserConflictException.class
+        UserConflictException.class,
+        SubscriptionConflictException.class
     })
     public ResponseEntity<BaseResponse> ConflictException(CustomException exception) {
         return ResponseEntity.status(CONFLICT)
