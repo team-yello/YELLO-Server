@@ -1,10 +1,12 @@
 package com.yello.server.domain.vote.service;
 
+import static com.yello.server.global.common.ErrorCode.LACK_TICKET_COUNT_EXCEPTION;
 import static com.yello.server.global.common.ErrorCode.LACK_USER_EXCEPTION;
 import static com.yello.server.global.common.ErrorCode.REVEAL_FULL_NAME_VOTE_EXCEPTION;
 import static com.yello.server.global.common.factory.TimeFactory.minusTime;
 import static com.yello.server.global.common.util.ConstantUtil.CHECK_FULL_NAME;
 import static com.yello.server.global.common.util.ConstantUtil.COOL_DOWN_TIME;
+import static com.yello.server.global.common.util.ConstantUtil.MINUS_TICKET_COUNT;
 import static com.yello.server.global.common.util.ConstantUtil.RANDOM_COUNT;
 
 import com.yello.server.domain.cooldown.entity.Cooldown;
@@ -20,6 +22,7 @@ import com.yello.server.domain.question.repository.QuestionRepository;
 import com.yello.server.domain.user.entity.User;
 import com.yello.server.domain.user.repository.UserRepository;
 import com.yello.server.domain.vote.dto.request.CreateVoteRequest;
+import com.yello.server.domain.vote.dto.response.RevealFullNameResponse;
 import com.yello.server.domain.vote.dto.response.RevealNameResponse;
 import com.yello.server.domain.vote.dto.response.VoteAvailableResponse;
 import com.yello.server.domain.vote.dto.response.VoteCreateVO;
@@ -30,6 +33,8 @@ import com.yello.server.domain.vote.dto.response.VoteListResponse;
 import com.yello.server.domain.vote.dto.response.VoteResponse;
 import com.yello.server.domain.vote.dto.response.VoteUnreadCountResponse;
 import com.yello.server.domain.vote.entity.Vote;
+import com.yello.server.domain.vote.exception.VoteForbiddenException;
+import com.yello.server.domain.vote.exception.VoteNotFoundException;
 import com.yello.server.domain.vote.repository.VoteRepository;
 import com.yello.server.infrastructure.rabbitmq.service.ProducerService;
 import java.time.LocalDateTime;
@@ -146,5 +151,25 @@ public class VoteService {
 
         int randomIndex = voteManager.useNameHint(sender, vote);
         return RevealNameResponse.of(vote.getSender(), randomIndex);
+    }
+
+    @Transactional
+    public RevealFullNameResponse revealFullName(Long userId, Long voteId) {
+        final User sender = userRepository.getById(userId);
+
+        if (sender.getTicketCount() < 1) {
+            throw new VoteForbiddenException(LACK_TICKET_COUNT_EXCEPTION);
+        }
+
+        final Vote vote = voteRepository.getById(voteId);
+
+        if (vote.getNameHint() <= CHECK_FULL_NAME) {
+            throw new VoteNotFoundException(REVEAL_FULL_NAME_VOTE_EXCEPTION);
+        }
+
+        vote.checkNameIndexOf(CHECK_FULL_NAME);
+        sender.changeTicketCount(MINUS_TICKET_COUNT);
+
+        return RevealFullNameResponse.of(vote.getSender());
     }
 }
