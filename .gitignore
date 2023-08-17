@@ -42,6 +42,7 @@ application.yml
 application-dev.yml
 application-apple.yml
 firebase*.json
+*client_secret*.json
 
 ### monitoring ###
 monitoring/prometheus/volume

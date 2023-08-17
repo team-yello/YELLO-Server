@@ -83,6 +83,13 @@ dependencies {
 
     // slack-webhook
     implementation "net.gpedro.integrations.slack:slack-webhook:1.4.0"
+
+    // google play android developer api
+    implementation 'com.google.apis:google-api-services-androidpublisher:v3-rev20211125-1.32.1'
+    implementation "com.google.api-client:google-api-client:1.33.0"
+
+    // gson
+    implementation 'com.google.code.gson:gson:2.10.1'
 }
 
 tasks.named('test') {
