@@ -11,6 +11,7 @@ import com.yello.server.domain.keyword.dto.response.KeywordCheckResponse;
 import com.yello.server.domain.question.dto.response.QuestionForVoteResponse;
 import com.yello.server.domain.user.entity.User;
 import com.yello.server.domain.vote.dto.request.CreateVoteRequest;
+import com.yello.server.domain.vote.dto.response.RevealFullNameResponse;
 import com.yello.server.domain.vote.dto.response.RevealNameResponse;
 import com.yello.server.domain.vote.dto.response.VoteAvailableResponse;
 import com.yello.server.domain.vote.dto.response.VoteCreateResponse;
@@ -122,7 +123,7 @@ public class VoteController {
         return BaseResponse.success(CHECK_KEYWORD_SUCCESS, keywordCheckResponse);
     }
 
-    @Operation(summary = "투표 10개 조회 API", responses = {
+    @Operation(summary = "투표 8개 조회 API", responses = {
         @ApiResponse(
             responseCode = "200",
             content = @Content(mediaType = "application/json", array = @ArraySchema(schema = @Schema(implementation = QuestionForVoteResponse.class)))),
@@ -179,4 +180,20 @@ public class VoteController {
 
         return BaseResponse.success(SuccessCode.REVEAL_NAME_HINT_SUCCESS, data);
     }
+
+    @Operation(summary = "투표 이름 전체 조회 API", responses = {
+        @ApiResponse(
+            responseCode = "200",
+            content = @Content(mediaType = "application/json", schema = @Schema(implementation = RevealNameResponse.class))),
+    })
+    @PostMapping("/{voteId}/fullname")
+    public BaseResponse<RevealFullNameResponse> revealFullName(
+        @AccessTokenUser User user,
+        @PathVariable Long voteId
+    ) {
+        val data = voteService.revealFullName(user.getId(), voteId);
+
+        return BaseResponse.success(SuccessCode.REVEAL_NAME_HINT_SUCCESS, data);
+    }
+
 }

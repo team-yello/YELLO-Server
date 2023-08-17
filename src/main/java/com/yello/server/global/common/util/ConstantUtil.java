@@ -16,6 +16,8 @@ public class ConstantUtil {
     public static final int REMINDER_NUMBER = 13;
     public static final int NAME_HINT_POINT = 300;
     public static final int NAME_HINT_DEFAULT = -1;
+    public static final int CHECK_FULL_NAME = -2;
+    public static final int MINUS_TICKET_COUNT = -1;
     public static final int TIMER_MAX_TIME = 40;
     public static final int COOL_DOWN_TIME = 40;
     public static final int KEYWORD_HINT_POINT = 100;

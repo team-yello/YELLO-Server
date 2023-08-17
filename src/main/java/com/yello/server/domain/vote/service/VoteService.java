@@ -1,7 +1,9 @@
 package com.yello.server.domain.vote.service;
 
 import static com.yello.server.global.common.ErrorCode.LACK_USER_EXCEPTION;
+import static com.yello.server.global.common.ErrorCode.REVEAL_FULL_NAME_VOTE_EXCEPTION;
 import static com.yello.server.global.common.factory.TimeFactory.minusTime;
+import static com.yello.server.global.common.util.ConstantUtil.CHECK_FULL_NAME;
 import static com.yello.server.global.common.util.ConstantUtil.COOL_DOWN_TIME;
 import static com.yello.server.global.common.util.ConstantUtil.RANDOM_COUNT;
 
