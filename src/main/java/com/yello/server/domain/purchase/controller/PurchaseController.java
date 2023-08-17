@@ -3,8 +3,8 @@ package com.yello.server.domain.purchase.controller;
 import static com.yello.server.global.common.SuccessCode.USER_SUBSCRIBE_NEEDED_READ_SUCCESS;
 import static com.yello.server.global.common.SuccessCode.VERIFY_RECEIPT_SUCCESS;
 
-import com.yello.server.domain.purchase.dto.apple.AppleVerifyReceipt;
-import com.yello.server.domain.purchase.dto.apple.AppleVerifyReceiptResponse;
+import com.yello.server.domain.purchase.dto.apple.AppleOrderResponse;
+import com.yello.server.domain.purchase.dto.apple.AppleTransaction;
 import com.yello.server.domain.purchase.dto.response.UserSubscribeNeededResponse;
 import com.yello.server.domain.purchase.service.PurchaseService;
 import com.yello.server.domain.user.entity.User;
@@ -32,14 +32,36 @@ public class PurchaseController {
 
     private final PurchaseService purchaseService;
 
-    @PostMapping("/verify")
-    public BaseResponse<AppleVerifyReceiptResponse> verifyReceipt(
-        @RequestBody AppleVerifyReceipt appleVerifyReceipt,
+    @Operation(summary = "Apple 구독 구매 검증 API", responses = {
+        @ApiResponse(
+            responseCode = "200",
+            content = @Content(mediaType = "application/json", schema = @Schema(implementation = AppleOrderResponse.class))
+        )
+    })
+    @PostMapping("/apple/verify/subscribe")
+    public BaseResponse verifyAppleSubscriptionTransaction(
+        @RequestBody AppleTransaction appleTransaction,
         @AccessTokenUser User user
     ) {
-        val data = purchaseService.verifyReceipt(user.getId(), appleVerifyReceipt);
+        purchaseService.verifyAppleSubscriptionTransaction(user.getId(), appleTransaction);
 
-        return BaseResponse.success(VERIFY_RECEIPT_SUCCESS, data);
+        return BaseResponse.success(VERIFY_RECEIPT_SUCCESS);
+    }
+
+    @Operation(summary = "Apple 열람권 구매 검증 API", responses = {
+        @ApiResponse(
+            responseCode = "200",
+            content = @Content(mediaType = "application/json", schema = @Schema(implementation = AppleOrderResponse.class))
+        )
+    })
+    @PostMapping("/apple/verify/ticket")
+    public BaseResponse verifyAppleTicketTransaction(
+        @RequestBody AppleTransaction appleTransaction,
+        @AccessTokenUser User user
+    ) {
+        purchaseService.verifyAppleTicketTransaction(user.getId(), appleTransaction);
+
+        return BaseResponse.success(VERIFY_RECEIPT_SUCCESS);
     }
 
     @Operation(summary = "구독 연장 유도 필요 여부 확인 API", responses = {
@@ -54,4 +76,5 @@ public class PurchaseController {
         val data = purchaseService.getUserSubscribe(user, LocalDateTime.now());
         return BaseResponse.success(USER_SUBSCRIBE_NEEDED_READ_SUCCESS, data);
     }
+
 }

@@ -65,6 +65,8 @@ public enum ErrorCode {
     NOT_FOUND_QUESTION_EXCEPTION(NOT_FOUND, "존재하지 않는 질문입니다."),
     NOT_FOUND_FRIEND_EXCEPTION(NOT_FOUND, "존재하지 않는 친구이거나 친구 관계가 아닙니다."),
     REDIS_NOT_FOUND_UUID(NOT_FOUND, "uuid에 해당하는 디바이스 토큰 정보를 찾을 수 없습니다."),
+    NOT_FOUND_TRANSACTION_EXCEPTION(NOT_FOUND, "존재하지 않는 거래입니다"),
+    NOT_FOUND_PRODUCT_ID_EXCEPTION(NOT_FOUND, "존재하지 않는 상품 아이디 입니다"),
 
     /**
      * 409 CONFLICT
@@ -73,6 +75,7 @@ public enum ErrorCode {
     YELLOID_CONFLICT_USER_EXCEPTION(CONFLICT, "이미 존재하는 yelloId 입니다."),
     UUID_CONFLICT_USER_EXCEPTION(CONFLICT, "이미 존재하는 소셜 유저입니다."),
     DEVICE_TOKEN_CONFLICT_USER_EXCEPTION(CONFLICT, "이미 존재하는 deviceToken 입니다."),
+    SUBSCRIBE_ACTIVE_EXCEPTION(CONFLICT, "이미 옐로플러스 구독한 유저입니다."),
 
     /**
      * 500 INTERNAL SERVER ERROR
