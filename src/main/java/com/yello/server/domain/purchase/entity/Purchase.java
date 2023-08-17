@@ -2,6 +2,7 @@ package com.yello.server.domain.purchase.entity;
 
 import com.yello.server.domain.user.entity.User;
 import com.yello.server.global.common.dto.AuditingTimeEntity;
+import com.yello.server.global.common.util.ConstantUtil;
 import javax.persistence.Column;
 import javax.persistence.Convert;
 import javax.persistence.Entity;
@@ -43,5 +44,33 @@ public class Purchase extends AuditingTimeEntity {
     @Column(nullable = false)
     @Convert(converter = ProductTypeConverter.class)
     private ProductType productType;
+
+    public static Purchase of(User user, ProductType productType, Gateway gateway) {
+        return Purchase.builder()
+            .price(setPrice(productType.toString()))
+            .user(user)
+            .gateway(gateway)
+            .productType(productType)
+            .build();
+    }
+
+    public static int setPrice(String productType) {
+        switch (productType) {
+            case "YELLO_PLUS":
+                return ConstantUtil.YELLO_PLUS;
+            case "ONE_TICKET":
+                return ConstantUtil.ONE_TICKET;
+            case "TWO_TICKET":
+                return ConstantUtil.TWO_TICKET;
+            case "FIVE_TICKET":
+                return ConstantUtil.FIVE_TICKET;
+            default:
+                return 0;
+        }
+    }
+
+    public static Purchase createPurchase(User user, ProductType productType, Gateway gateway) {
+        return Purchase.of(user, productType, gateway);
+    }
 
 }

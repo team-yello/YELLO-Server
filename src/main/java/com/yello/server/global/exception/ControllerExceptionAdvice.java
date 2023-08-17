@@ -21,6 +21,10 @@ import com.yello.server.domain.authorization.exception.OAuthException;
 import com.yello.server.domain.friend.exception.FriendException;
 import com.yello.server.domain.friend.exception.FriendNotFoundException;
 import com.yello.server.domain.group.exception.GroupNotFoundException;
+import com.yello.server.domain.purchase.exception.PurchaseException;
+import com.yello.server.domain.purchase.exception.PurchaseNotFoundException;
+import com.yello.server.domain.purchase.exception.SubscriptionConflictException;
+import com.yello.server.domain.question.exception.QuestionException;
 import com.yello.server.domain.question.exception.QuestionNotFoundException;
 import com.yello.server.domain.user.entity.User;
 import com.yello.server.domain.user.exception.UserBadRequestException;
@@ -78,18 +82,23 @@ public class ControllerExceptionAdvice {
         slackAttachment.setColor("danger");
 
         List<SlackField> slackFieldList = new ArrayList<>();
-        slackFieldList.add(new SlackField().setTitle("Request URL").setValue(request.getRequestURL().toString()));
-        slackFieldList.add(new SlackField().setTitle("Request Method").setValue(request.getMethod()));
+        slackFieldList.add(
+            new SlackField().setTitle("Request URL").setValue(request.getRequestURL().toString()));
+        slackFieldList.add(
+            new SlackField().setTitle("Request Method").setValue(request.getMethod()));
         slackFieldList.add(new SlackField().setTitle("Request Time").setValue(
             DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss").format(LocalDateTime.now())));
-        slackFieldList.add(new SlackField().setTitle("Request IP").setValue(request.getRemoteAddr()));
         slackFieldList.add(
-            new SlackField().setTitle("Request User-Agent").setValue(request.getHeader(HttpHeaders.USER_AGENT)));
+            new SlackField().setTitle("Request IP").setValue(request.getRemoteAddr()));
+        slackFieldList.add(
+            new SlackField().setTitle("Request User-Agent")
+                .setValue(request.getHeader(HttpHeaders.USER_AGENT)));
         slackFieldList.add(
             new SlackField().setTitle("인증/인가 정보 - Authorization")
                 .setValue(request.getHeader(HttpHeaders.AUTHORIZATION)));
 
-        final String token = request.getHeader(HttpHeaders.AUTHORIZATION).substring("Bearer ".length());
+        final String token =
+            request.getHeader(HttpHeaders.AUTHORIZATION).substring("Bearer " .length());
         final Long userId = jwtTokenProvider.getUserId(token);
         final Optional<User> user = userRepository.findById(userId);
         String userInfo = "";
@@ -118,7 +127,9 @@ public class ControllerExceptionAdvice {
         FriendException.class,
         UserException.class,
         AuthBadRequestException.class,
-        UserBadRequestException.class
+        UserBadRequestException.class,
+        QuestionException.class,
+        PurchaseException.class
     })
     public ResponseEntity<BaseResponse> BadRequestException(CustomException exception) {
         return ResponseEntity.status(BAD_REQUEST)
@@ -131,7 +142,8 @@ public class ControllerExceptionAdvice {
     })
     public ResponseEntity<BaseResponse> BadRequestException(BindException exception) {
         return ResponseEntity.status(BAD_REQUEST)
-            .body(BaseResponse.error(FIELD_REQUIRED_EXCEPTION, FIELD_REQUIRED_EXCEPTION.getMessage()));
+            .body(BaseResponse.error(FIELD_REQUIRED_EXCEPTION,
+                FIELD_REQUIRED_EXCEPTION.getMessage()));
     }
 
     @ExceptionHandler({
@@ -141,7 +153,8 @@ public class ControllerExceptionAdvice {
     public ResponseEntity<BaseResponse> BadRequestException(
         HttpMessageConversionException exception) {
         return ResponseEntity.status(BAD_REQUEST)
-            .body(BaseResponse.error(FIELD_REQUIRED_EXCEPTION, FIELD_REQUIRED_EXCEPTION.getMessage()));
+            .body(BaseResponse.error(FIELD_REQUIRED_EXCEPTION,
+                FIELD_REQUIRED_EXCEPTION.getMessage()));
     }
 
     @ExceptionHandler({
@@ -151,7 +164,8 @@ public class ControllerExceptionAdvice {
     public ResponseEntity<BaseResponse> BadRequestException(
         MissingServletRequestParameterException exception) {
         return ResponseEntity.status(BAD_REQUEST)
-            .body(BaseResponse.error(QUERY_STRING_REQUIRED_EXCEPTION, QUERY_STRING_REQUIRED_EXCEPTION.getMessage()));
+            .body(BaseResponse.error(QUERY_STRING_REQUIRED_EXCEPTION,
+                QUERY_STRING_REQUIRED_EXCEPTION.getMessage()));
     }
 
     /**
@@ -191,7 +205,8 @@ public class ControllerExceptionAdvice {
         GroupNotFoundException.class,
         FriendNotFoundException.class,
         QuestionNotFoundException.class,
-        RedisNotFoundException.class
+        RedisNotFoundException.class,
+        PurchaseNotFoundException.class
     })
     public ResponseEntity<BaseResponse> NotFoundException(CustomException exception) {
         return ResponseEntity.status(NOT_FOUND)
@@ -202,7 +217,8 @@ public class ControllerExceptionAdvice {
      * 409 CONFLICT
      */
     @ExceptionHandler({
-        UserConflictException.class
+        UserConflictException.class,
+        SubscriptionConflictException.class
     })
     public ResponseEntity<BaseResponse> ConflictException(CustomException exception) {
         return ResponseEntity.status(CONFLICT)
