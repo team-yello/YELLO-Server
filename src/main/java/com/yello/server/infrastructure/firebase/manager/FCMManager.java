@@ -11,6 +11,4 @@ public interface FCMManager {
 
     Message createMessage(String deviceToken, NotificationMessage notificationMessage, String path);
 
-    Message createMessageWithOptions(String deviceToken, NotificationMessage notificationMessage, String path);
-
 }

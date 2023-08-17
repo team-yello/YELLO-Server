@@ -17,6 +17,8 @@ public interface VoteRepository {
 
     Integer countUnreadByReceiverUserId(Long userId);
 
+    Integer countUnreadByReceiverDeviceToken(String deviceToken);
+
     List<Vote> findAllByReceiverUserId(Long userId, Pageable pageable);
 
     List<Vote> findAllReceivedByFriends(Long userId, Pageable pageable);
