@@ -152,7 +152,7 @@ public class VoteController {
     @Operation(summary = "투표 생성 API", responses = {
         @ApiResponse(
             responseCode = "201",
-            content = @Content(mediaType = "application/json", schema = @Schema(implementation = VoteAvailableResponse.class))),
+            content = @Content(mediaType = "application/json", schema = @Schema(implementation = VoteCreateResponse.class))),
     })
     @PostMapping
     public BaseResponse<VoteCreateResponse> createVote(
