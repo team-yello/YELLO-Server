@@ -49,6 +49,8 @@ public class FCMManagerImpl implements FCMManager {
             )
             .putData("type", notificationMessage.type().name())
             .putData("path", path)
+            .putData("badge", String.valueOf(unreadVoteCounts))
+            .putData("sound", "default")
             .build();
     }
 }
