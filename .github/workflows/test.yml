@@ -55,7 +55,7 @@ jobs:
           SLACK_CHANNEL: general
           SLACK_COLOR: ${{ job.status }}
           SLACK_ICON: https://github.com/rtCamp.png?size=48
-          SLACK_MESSAGE: 빌드에 ${{ job.status }} 했습니다.
+          SLACK_MESSAGE: 테스트에 ${{ job.status }} 했습니다.
           SLACK_TITLE: 📊 YELL:O 테스트 결과 📊
           SLACK_USERNAME: Notification-Bot
           SLACK_WEBHOOK: ${{ secrets.SLACK_URL }}

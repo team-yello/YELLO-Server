@@ -35,6 +35,8 @@ jobs:
           echo "$APPLICATION" > ./application.yml
           touch ./firebase_key.json
           echo "$FIREBASE_JSON" > ./firebase_key.json
+          touch ./google_client_secret.json
+          echo "$GOOGLE_CLIENT_SECRET" > ./google_client_secret.json
           sed -i 's/#/"/g' ./firebase_key.json
         env:
           APPLICATION: ${{ secrets.APPLICATION }}
