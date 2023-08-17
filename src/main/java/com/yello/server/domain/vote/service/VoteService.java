@@ -1,39 +1,27 @@
 package com.yello.server.domain.vote.service;
 
-import static com.yello.server.domain.vote.common.WeightedRandomFactory.randomPoint;
-import static com.yello.server.global.common.ErrorCode.DUPLICATE_VOTE_EXCEPTION;
-import static com.yello.server.global.common.ErrorCode.INVALID_VOTE_EXCEPTION;
-import static com.yello.server.global.common.ErrorCode.LACK_POINT_EXCEPTION;
 import static com.yello.server.global.common.ErrorCode.LACK_TICKET_COUNT_EXCEPTION;
 import static com.yello.server.global.common.ErrorCode.LACK_USER_EXCEPTION;
 import static com.yello.server.global.common.ErrorCode.REVEAL_FULL_NAME_VOTE_EXCEPTION;
 import static com.yello.server.global.common.factory.TimeFactory.minusTime;
 import static com.yello.server.global.common.util.ConstantUtil.CHECK_FULL_NAME;
 import static com.yello.server.global.common.util.ConstantUtil.COOL_DOWN_TIME;
-import static com.yello.server.global.common.util.ConstantUtil.KEYWORD_HINT_POINT;
 import static com.yello.server.global.common.util.ConstantUtil.MINUS_TICKET_COUNT;
-import static com.yello.server.global.common.util.ConstantUtil.NAME_HINT_DEFAULT;
-import static com.yello.server.global.common.util.ConstantUtil.NAME_HINT_POINT;
 import static com.yello.server.global.common.util.ConstantUtil.RANDOM_COUNT;
-import static com.yello.server.global.common.util.ConstantUtil.VOTE_COUNT;
 
 import com.yello.server.domain.cooldown.entity.Cooldown;
 import com.yello.server.domain.cooldown.repository.CooldownRepository;
-import com.yello.server.domain.friend.dto.response.FriendShuffleResponse;
 import com.yello.server.domain.friend.entity.Friend;
 import com.yello.server.domain.friend.exception.FriendException;
 import com.yello.server.domain.friend.repository.FriendRepository;
 import com.yello.server.domain.keyword.dto.response.KeywordCheckResponse;
-import com.yello.server.domain.keyword.entity.Keyword;
 import com.yello.server.domain.keyword.repository.KeywordRepository;
 import com.yello.server.domain.question.dto.response.QuestionForVoteResponse;
-import com.yello.server.domain.question.dto.response.QuestionVO;
 import com.yello.server.domain.question.entity.Question;
 import com.yello.server.domain.question.repository.QuestionRepository;
 import com.yello.server.domain.user.entity.User;
 import com.yello.server.domain.user.repository.UserRepository;
 import com.yello.server.domain.vote.dto.request.CreateVoteRequest;
-import com.yello.server.domain.vote.dto.request.VoteAnswer;
 import com.yello.server.domain.vote.dto.response.RevealFullNameResponse;
 import com.yello.server.domain.vote.dto.response.RevealNameResponse;
 import com.yello.server.domain.vote.dto.response.VoteAvailableResponse;
@@ -50,11 +38,7 @@ import com.yello.server.domain.vote.exception.VoteNotFoundException;
 import com.yello.server.domain.vote.repository.VoteRepository;
 import com.yello.server.infrastructure.rabbitmq.service.ProducerService;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
 import java.util.List;
-import java.util.stream.IntStream;
 import lombok.Builder;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
@@ -74,6 +58,7 @@ public class VoteService {
     private final VoteRepository voteRepository;
     private final KeywordRepository keywordRepository;
 
+    private final VoteManager voteManager;
     private final ProducerService producerService;
 
     public VoteListResponse findAllVotes(Long userId, Pageable pageable) {
@@ -95,6 +80,7 @@ public class VoteService {
     public VoteDetailResponse findVoteById(Long voteId, Long userId) {
         final Vote vote = voteRepository.getById(voteId);
         final User user = userRepository.getById(userId);
+
         vote.read();
         return VoteDetailResponse.of(vote, user);
     }
@@ -103,7 +89,7 @@ public class VoteService {
         final Integer totalCount = voteRepository.countAllReceivedByFriends(userId);
         final List<VoteFriendVO> list = voteRepository.findAllReceivedByFriends(userId, pageable)
             .stream()
-            .filter(vote -> vote.getNameHint() != -3)
+            .filter(vote -> vote.getNameHint()!=-3)
             .map(VoteFriendVO::of)
             .toList();
         return VoteFriendResponse.of(totalCount, list);
@@ -114,14 +100,7 @@ public class VoteService {
         final Vote vote = voteRepository.getById(voteId);
         final User user = userRepository.getById(userId);
 
-        vote.checkKeyword();
-
-        if (user.getPoint() < KEYWORD_HINT_POINT) {
-            throw new VoteForbiddenException(LACK_POINT_EXCEPTION);
-        }
-
-        user.minusPoint(KEYWORD_HINT_POINT);
-        return KeywordCheckResponse.of(vote);
+        return voteManager.useKeywordHint(user, vote);
     }
 
     public List<QuestionForVoteResponse> findVoteQuestionList(Long userId) {
@@ -133,15 +112,7 @@ public class VoteService {
         }
 
         final List<Question> questions = questionRepository.findAll();
-        Collections.shuffle(Arrays.asList(questions));
-
-        final List<Question> questionList = questions.stream()
-            .limit(VOTE_COUNT)
-            .toList();
-
-        return questionList.stream()
-            .map(question -> generateVoteQuestion(user, question))
-            .toList();
+        return voteManager.generateVoteQuestion(user, questions);
     }
 
     public VoteAvailableResponse checkVoteAvailable(Long userId) {
@@ -160,27 +131,8 @@ public class VoteService {
 
     @Transactional
     public VoteCreateVO createVote(Long userId, CreateVoteRequest request) {
-        List<Vote> votes = new ArrayList<>();
         final User sender = userRepository.getById(userId);
-
-        final List<VoteAnswer> voteAnswerList = request.voteAnswerList();
-        IntStream.range(0, voteAnswerList.size())
-            .forEach(index -> {
-                VoteAnswer answer = voteAnswerList.get(index);
-
-                if (index > 0 && voteAnswerList.get(index - 1).questionId()
-                    .equals(answer.questionId())) {
-                    throw new VoteForbiddenException(DUPLICATE_VOTE_EXCEPTION);
-                }
-
-                User receiver = userRepository.getById(answer.friendId());
-                Question question = questionRepository.findById(answer.questionId());
-                Vote newVote = Vote.createVote(answer.keywordName(), sender, receiver,
-                    question, answer.colorIndex());
-
-                Vote savedVote = voteRepository.save(newVote);
-                votes.add(savedVote);
-            });
+        List<Vote> votes = voteManager.createVotes(userId, request.voteAnswerList());
 
         Cooldown cooldown = cooldownRepository.findByUserId(sender.getId())
             .orElseGet(() -> cooldownRepository.save(Cooldown.of(sender, LocalDateTime.now())));
@@ -195,20 +147,9 @@ public class VoteService {
     @Transactional
     public RevealNameResponse revealNameHint(Long userId, Long voteId) {
         final User sender = userRepository.getById(userId);
-
-        if (sender.getPoint() < NAME_HINT_POINT) {
-            throw new VoteForbiddenException(LACK_POINT_EXCEPTION);
-        }
-
         final Vote vote = voteRepository.getById(voteId);
-        if (vote.getNameHint() != NAME_HINT_DEFAULT) {
-            throw new VoteNotFoundException(INVALID_VOTE_EXCEPTION);
-        }
 
-        int randomIndex = (int) (Math.random() * 2);
-        vote.checkNameIndexOf(randomIndex);
-        sender.minusPoint(NAME_HINT_POINT);
-
+        int randomIndex = voteManager.useNameHint(sender, vote);
         return RevealNameResponse.of(vote.getSender(), randomIndex);
     }
 
@@ -230,38 +171,5 @@ public class VoteService {
         sender.changeTicketCount(MINUS_TICKET_COUNT);
 
         return RevealFullNameResponse.of(vote.getSender());
-    }
-
-    private QuestionForVoteResponse generateVoteQuestion(User user, Question question) {
-        final List<Keyword> keywordList = question.getKeywordList();
-        Collections.shuffle(Arrays.asList(keywordList));
-
-        return QuestionForVoteResponse.builder()
-            .friendList(getShuffledFriends(user))
-            .keywordList(getShuffledKeywords(question))
-            .question(QuestionVO.of(question))
-            .questionPoint(randomPoint())
-            .subscribe(user.getSubscribe().toString())
-            .build();
-    }
-
-    private List<FriendShuffleResponse> getShuffledFriends(User user) {
-        final List<Friend> allFriend = friendRepository.findAllByUserId(user.getId());
-        Collections.shuffle(Arrays.asList(allFriend));
-
-        return allFriend.stream()
-            .map(FriendShuffleResponse::of)
-            .limit(RANDOM_COUNT)
-            .toList();
-    }
-
-    private List<String> getShuffledKeywords(Question question) {
-        final List<Keyword> keywordList = question.getKeywordList();
-        Collections.shuffle(keywordList);
-
-        return keywordList.stream()
-            .map(Keyword::getKeywordName)
-            .limit(RANDOM_COUNT)
-            .toList();
     }
 }

@@ -8,9 +8,9 @@ import static com.yello.server.global.common.ErrorCode.MALFORMED_TOKEN;
 import static com.yello.server.global.common.ErrorCode.SIGNATURE_TOKEN;
 import static org.springframework.http.HttpHeaders.AUTHORIZATION;
 
-import com.yello.server.domain.authorization.JwtTokenProvider;
 import com.yello.server.domain.authorization.exception.CustomAuthenticationException;
 import com.yello.server.domain.authorization.exception.InvalidTokenException;
+import com.yello.server.domain.authorization.service.TokenProvider;
 import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.MalformedJwtException;
 import io.jsonwebtoken.security.SignatureException;
@@ -30,7 +30,7 @@ import org.springframework.web.filter.OncePerRequestFilter;
 @RequiredArgsConstructor
 public class JwtExceptionFilter extends OncePerRequestFilter {
 
-    private final JwtTokenProvider jwtTokenProvider;
+    private final TokenProvider tokenProvider;
 
     @Override
     protected void doFilterInternal(
@@ -51,13 +51,13 @@ public class JwtExceptionFilter extends OncePerRequestFilter {
         val accessHeader = request.getHeader(AUTHORIZATION);
         log.info("Authorization : {}", accessHeader);
 
-        if (accessHeader == null || !accessHeader.startsWith(BEARER)) {
+        if (accessHeader==null || !accessHeader.startsWith(BEARER)) {
             throw new CustomAuthenticationException(AUTHENTICATION_ERROR);
         }
 
         val token = accessHeader.substring(BEARER.length());
         try {
-            Long userId = jwtTokenProvider.getUserId(token);
+            Long userId = tokenProvider.getUserId(token);
             request.setAttribute("userId", userId);
         } catch (ExpiredJwtException e) {
             log.info("토큰이 만료되었습니다. 토큰 재발급 API 호출이 필요합니다.");

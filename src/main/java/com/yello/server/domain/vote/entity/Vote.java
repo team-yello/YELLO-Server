@@ -3,7 +3,6 @@ package com.yello.server.domain.vote.entity;
 import com.yello.server.domain.question.entity.Question;
 import com.yello.server.domain.user.entity.User;
 import com.yello.server.global.common.dto.AuditingTimeEntity;
-import java.util.Random;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -76,21 +75,6 @@ public class Vote extends AuditingTimeEntity {
     public static Vote createVote(String answer, User sender, User receiver, Question question,
         Integer colorIndex) {
         return Vote.of(answer, sender, receiver, question, colorIndex);
-    }
-
-    public static Vote createFirstVote(String answer, User sender, User receiver, Question question) {
-        Random random = new Random();
-
-        return Vote.builder()
-            .answer(answer)
-            .nameHint(-3)
-            .isAnswerRevealed(true)
-            .isRead(false)
-            .sender(sender)
-            .receiver(receiver)
-            .question(question)
-            .colorIndex(random.nextInt(12) + 1)
-            .build();
     }
 
     public void checkKeyword() {

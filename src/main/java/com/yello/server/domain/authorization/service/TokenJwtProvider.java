@@ -1,4 +1,4 @@
-package com.yello.server.domain.authorization;
+package com.yello.server.domain.authorization.service;
 
 import static io.jsonwebtoken.SignatureAlgorithm.HS256;
 import static java.time.Duration.ofDays;
@@ -13,13 +13,12 @@ import io.jsonwebtoken.MalformedJwtException;
 import io.jsonwebtoken.security.SignatureException;
 import java.util.Date;
 import lombok.extern.log4j.Log4j2;
-import lombok.val;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 @Log4j2
 @Component
-public class JwtTokenProvider {
+public class TokenJwtProvider implements TokenProvider {
 
     public static final String ACCESS_TOKEN = "accessToken";
     public static final String REFRESH_TOKEN = "refreshToken";
@@ -29,10 +28,11 @@ public class JwtTokenProvider {
 
     public String secretKey;
 
-    public JwtTokenProvider(@Value("${spring.jwt.secret}") String secretKey) {
+    public TokenJwtProvider(@Value("${spring.jwt.secret}") String secretKey) {
         this.secretKey = secretKey;
     }
 
+    @Override
     public Long getUserId(String token)
         throws ExpiredJwtException, MalformedJwtException, SignatureException,
         IllegalArgumentException {
@@ -48,6 +48,7 @@ public class JwtTokenProvider {
         return Long.valueOf(userId);
     }
 
+    @Override
     public String getUserUuid(String token)
         throws ExpiredJwtException, MalformedJwtException, SignatureException,
         IllegalArgumentException {
@@ -59,6 +60,7 @@ public class JwtTokenProvider {
             .getSubject();
     }
 
+    @Override
     public boolean isExpired(String token) {
         try {
             Jwts.parserBuilder()
@@ -73,34 +75,17 @@ public class JwtTokenProvider {
         return false;
     }
 
-    public boolean isRefreshToken(String token) {
-        val header = Jwts.parserBuilder()
-            .setSigningKey(secretKey)
-            .build()
-            .parseClaimsJws(token)
-            .getBody();
-
-        return REFRESH_TOKEN.equals(header.get("type").toString());
-    }
-
-    public boolean isAccessToken(String token) {
-        val header = Jwts.parserBuilder()
-            .setSigningKey(secretKey)
-            .build()
-            .parseClaimsJws(token)
-            .getBody();
-
-        return ACCESS_TOKEN.equals(header.get("type").toString());
-    }
-
+    @Override
     public String createAccessToken(Long userId, String uuid) {
         return createJwt(userId, uuid, ACCESS_TOKEN_VALID_TIME, ACCESS_TOKEN);
     }
 
+    @Override
     public String createRefreshToken(Long userId, String uuid) {
         return createJwt(userId, uuid, REFRESH_TOKEN_VALID_TIME, REFRESH_TOKEN);
     }
 
+    @Override
     public ServiceTokenVO createServiceToken(Long userId, String uuid) {
         return ServiceTokenVO.of(
             createAccessToken(userId, uuid),
@@ -108,6 +93,7 @@ public class JwtTokenProvider {
         );
     }
 
+    @Override
     public String createJwt(Long userId, String uuid, Long tokenValidTime, String tokenType) {
         Claims claims = Jwts.claims()
             .setSubject(uuid)
@@ -120,15 +106,5 @@ public class JwtTokenProvider {
             .setExpiration(new Date(System.currentTimeMillis() + tokenValidTime))
             .signWith(HS256, secretKey)
             .compact();
-    }
-
-    public void tryParse(String token)
-        throws ExpiredJwtException, MalformedJwtException, SignatureException,
-        IllegalArgumentException {
-        JwtParser parser = Jwts.parserBuilder()
-            .setSigningKey(secretKey)
-            .build();
-
-        parser.parse(token);
     }
 }

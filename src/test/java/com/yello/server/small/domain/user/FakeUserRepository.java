@@ -18,12 +18,12 @@ public class FakeUserRepository implements UserRepository {
 
     @Override
     public User save(User user) {
-        if (user.getId() != null && user.getId() > id) {
+        if (user.getId()!=null && user.getId() > id) {
             id = user.getId();
         }
 
         User newUser = User.builder()
-            .id(user.getId() == null ? ++id : user.getId())
+            .id(user.getId()==null ? ++id : user.getId())
             .recommendCount(0L)
             .name(user.getName())
             .yelloId(user.getYelloId())
@@ -37,6 +37,7 @@ public class FakeUserRepository implements UserRepository {
             .groupAdmissionYear(user.getGroupAdmissionYear())
             .email(user.getEmail())
             .subscribe(user.getSubscribe())
+            .deviceToken(user.getDeviceToken())
             .build();
 
         data.add(newUser);
@@ -52,6 +53,7 @@ public class FakeUserRepository implements UserRepository {
 
     @Override
     public User getById(Long id) {
+        System.out.println(id);
         return data.stream()
             .filter(user -> user.getId().equals(id))
             .findFirst()
