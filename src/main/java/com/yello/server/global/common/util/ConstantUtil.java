@@ -25,6 +25,10 @@ public class ConstantUtil {
     public static final String ONE_TICKET_ID = "YELLO.iOS.nameKey.one";
     public static final String TWO_TICKET_ID = "YELLO.iOS.nameKey.two";
     public static final String FIVE_TICKET_ID = "YELLO.iOS.nameKey.five";
+    public static final String GOOGLE_YELLO_PLUS_ID = "yello_plus_subscribe";
+    public static final String GOOGLE_ONE_TICKET_ID = "yello_ticket_one";
+    public static final String GOOGLE_TWO_TICKET_ID = "yello_ticket_two";
+    public static final String GOOGLE_FIVE_TICKET_ID = "yello_ticket_five";
     public static final int ONE_TICKET = 1400;
     public static final int TWO_TICKET = 2800;
     public static final int FIVE_TICKET = 5900;
