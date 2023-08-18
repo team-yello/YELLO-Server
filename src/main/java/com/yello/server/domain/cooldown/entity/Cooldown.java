@@ -47,6 +47,8 @@ public class Cooldown {
     @JoinColumn(nullable = false, name = "userId")
     private User user;
 
+    private String messageId;
+
     @Column(nullable = false)
     @CreatedDate
     private LocalDateTime createdAt;
@@ -54,9 +56,10 @@ public class Cooldown {
     @Column
     private LocalDateTime deletedAt;
 
-    public static Cooldown of(User user, LocalDateTime createdAt) {
+    public static Cooldown of(User user, String messageId, LocalDateTime createdAt) {
         return Cooldown.builder()
             .user(user)
+            .messageId(messageId)
             .createdAt(createdAt)
             .build();
     }

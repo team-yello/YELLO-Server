@@ -34,6 +34,9 @@ public class ConsumerRabbitmqService implements ConsumerService {
             boolean exists = cooldownRepository.existsByUserId(voteAvailableQueueResponse.receiverId());
             if (exists) {
                 notificationService.sendVoteAvailableNotification(voteAvailableQueueResponse.receiverId());
+                log.info("[rabbitmq] Successfully consume message %d".formatted(
+                    message.getMessageProperties().getDeliveryTag())
+                );
             }
         } catch (Exception exception) {
             log.error("[rabbitmq] %s".formatted(exception.getMessage()));

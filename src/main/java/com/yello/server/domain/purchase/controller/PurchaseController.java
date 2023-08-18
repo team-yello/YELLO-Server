@@ -1,11 +1,16 @@
 package com.yello.server.domain.purchase.controller;
 
+import static com.yello.server.global.common.SuccessCode.USER_PURCHASE_INFO_READ_SUCCESS;
 import static com.yello.server.global.common.SuccessCode.USER_SUBSCRIBE_NEEDED_READ_SUCCESS;
 import static com.yello.server.global.common.SuccessCode.VERIFY_RECEIPT_SUCCESS;
 
 import com.yello.server.domain.purchase.dto.apple.AppleOrderResponse;
 import com.yello.server.domain.purchase.dto.apple.AppleTransaction;
+<<<<<<< HEAD
 import com.yello.server.domain.purchase.dto.request.AppleInAppRefundRequest;
+=======
+import com.yello.server.domain.purchase.dto.response.UserPurchaseInfoResponse;
+>>>>>>> 43f43d9360c7975e13881f7c87e88062cf528e8d
 import com.yello.server.domain.purchase.dto.response.UserSubscribeNeededResponse;
 import com.yello.server.domain.purchase.service.PurchaseService;
 import com.yello.server.domain.user.entity.User;
@@ -93,6 +98,18 @@ public class PurchaseController {
         purchaseService.refundInAppApple(user.getId(), request);
 
         return BaseResponse.success(VERIFY_RECEIPT_SUCCESS);
+    }
+
+    @Operation(summary = "구독 상태 및 구독권 갯수 조회 API", responses = {
+        @ApiResponse(
+            responseCode = "200",
+            content = @Content(mediaType = "application/json", schema = @Schema(implementation = UserPurchaseInfoResponse.class))
+        )
+    })
+    @GetMapping("/purchaseInfo")
+    public BaseResponse<UserPurchaseInfoResponse> getUserPurchaseInfo(@AccessTokenUser User user) {
+        val data = UserPurchaseInfoResponse.of(user);
+        return BaseResponse.success(USER_PURCHASE_INFO_READ_SUCCESS, data);
     }
 
 }

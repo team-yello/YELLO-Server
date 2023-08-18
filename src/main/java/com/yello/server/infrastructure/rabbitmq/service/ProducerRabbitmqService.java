@@ -23,6 +23,7 @@ public class ProducerRabbitmqService implements ProducerService {
 
         VoteAvailableQueueResponse voteAvailableQueueResponse = VoteAvailableQueueResponse.builder()
             .receiverId(cooldown.getUser().getId())
+            .messageId(cooldown.getMessageId())
             .build();
 
         try {
@@ -35,6 +36,7 @@ public class ProducerRabbitmqService implements ProducerService {
                     return message;
                 }
             );
+            log.info("[rabbitmq] Successfully produce message. Cooldown [%s]".formatted(cooldown.getMessageId()));
         } catch (Exception exception) {
             log.error("[rabbitmq] %s".formatted(exception.getMessage()));
         }
