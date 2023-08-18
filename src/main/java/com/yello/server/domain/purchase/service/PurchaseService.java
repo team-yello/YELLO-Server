@@ -1,6 +1,5 @@
 package com.yello.server.domain.purchase.service;
 
-import static com.yello.server.global.common.ErrorCode.APPLE_TOKEN_SERVER_EXCEPTION;
 import static com.yello.server.global.common.ErrorCode.GOOGLE_SUBSCRIPTIONS_FORBIDDEN_EXCEPTION;
 import static com.yello.server.global.common.ErrorCode.GOOGLE_SUBSCRIPTIONS_SUBSCRIPTION_EXCEPTION;
 import static com.yello.server.global.common.ErrorCode.GOOGLE_SUBSCRIPTION_DUPLICATED_CANCEL_EXCEPTION;
@@ -26,7 +25,6 @@ import com.yello.server.domain.purchase.dto.response.UserSubscribeNeededResponse
 import com.yello.server.domain.purchase.entity.Gateway;
 import com.yello.server.domain.purchase.entity.ProductType;
 import com.yello.server.domain.purchase.entity.Purchase;
-import com.yello.server.domain.purchase.exception.AppleTokenServerErrorException;
 import com.yello.server.domain.purchase.exception.GoogleBadRequestException;
 import com.yello.server.domain.purchase.exception.GoogleTokenNotFoundException;
 import com.yello.server.domain.purchase.exception.GoogleTokenServerErrorException;
@@ -87,9 +85,7 @@ public class PurchaseService {
             appleUtil.appleGetTransaction(request);
         final User user = userRepository.getById(userId);
 
-        if (!verifyReceiptResponse.getStatusCode().is2xxSuccessful()) {
-            throw new AppleTokenServerErrorException(APPLE_TOKEN_SERVER_EXCEPTION);
-        }
+        purchaseManager.handleAppleTransactionError(verifyReceiptResponse, request.transactionId());
 
         if (user.getSubscribe() == Subscribe.ACTIVE) {
             throw new SubscriptionConflictException(SUBSCRIBE_ACTIVE_EXCEPTION);
@@ -98,11 +94,6 @@ public class PurchaseService {
         if (!request.productId().equals(YELLO_PLUS_ID)) {
             throw new PurchaseException(NOT_FOUND_TRANSACTION_EXCEPTION);
         }
-
-        purchaseRepository.findByTransactionId(request.transactionId())
-            .ifPresent(action -> {
-                throw new SubscriptionConflictException(SUBSCRIBE_ACTIVE_EXCEPTION);
-            });
 
         purchaseManager.createSubscribe(user, Gateway.APPLE, request.transactionId());
 
@@ -115,11 +106,8 @@ public class PurchaseService {
             appleUtil.appleGetTransaction(request);
         final User user = userRepository.getById(userId);
 
-        if (!verifyReceiptResponse.getStatusCode().is2xxSuccessful()) {
-            throw new AppleTokenServerErrorException(APPLE_TOKEN_SERVER_EXCEPTION);
-        }
+        purchaseManager.handleAppleTransactionError(verifyReceiptResponse, request.transactionId());
 
-        // 정상적인 구매일 경우
         switch (request.productId()) {
             case ONE_TICKET_ID:
                 purchaseManager.createTicket(user, ProductType.ONE_TICKET, request.transactionId());
