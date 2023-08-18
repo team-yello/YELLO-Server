@@ -168,8 +168,8 @@ public class User extends AuditingTimeEntity {
         this.deviceToken = deviceToken;
     }
 
-    public void setSubscribe() {
-        this.subscribe = Subscribe.ACTIVE;
+    public void setSubscribe(Subscribe subscribe) {
+        this.subscribe = subscribe;
     }
 
     public void changeTicketCount(int ticketCount) {

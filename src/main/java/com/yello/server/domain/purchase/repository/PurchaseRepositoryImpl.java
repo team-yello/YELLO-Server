@@ -25,17 +25,24 @@ public class PurchaseRepositoryImpl implements PurchaseRepository {
     }
 
     @Override
-    public Optional<Purchase> findByTransactionId(String transactionId) {
-        return purchaseJpaRepository.findByTransactionId(transactionId);
-    }
-
-    @Override
     public List<Purchase> findAllByUser(User user) {
         return purchaseJpaRepository.findAllByUser(user);
     }
 
     @Override
-    public Optional<Purchase> findTopByUserAndProductTypeOrderByCreatedAtDesc(User user, ProductType productType) {
-        return purchaseJpaRepository.findTopByUserAndProductTypeOrderByCreatedAtDesc(user, productType);
+    public Optional<Purchase> findTopByUserAndProductTypeOrderByCreatedAtDesc(User user,
+        ProductType productType) {
+        return purchaseJpaRepository.findTopByUserAndProductTypeOrderByCreatedAtDesc(user,
+            productType);
+    }
+
+    @Override
+    public Optional<Purchase> findByTransactionId(String transactionId) {
+        return purchaseJpaRepository.findByTransactionId(transactionId);
+    }
+
+    @Override
+    public void delete(Purchase purchase) {
+        purchaseJpaRepository.delete(purchase);
     }
 }

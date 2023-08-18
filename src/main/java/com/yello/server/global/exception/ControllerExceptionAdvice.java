@@ -21,6 +21,7 @@ import com.yello.server.domain.authorization.service.TokenProvider;
 import com.yello.server.domain.friend.exception.FriendException;
 import com.yello.server.domain.friend.exception.FriendNotFoundException;
 import com.yello.server.domain.group.exception.GroupNotFoundException;
+import com.yello.server.domain.purchase.exception.AppleTokenServerErrorException;
 import com.yello.server.domain.purchase.exception.GoogleBadRequestException;
 import com.yello.server.domain.purchase.exception.GoogleTokenNotFoundException;
 import com.yello.server.domain.purchase.exception.GoogleTokenServerErrorException;
@@ -109,7 +110,8 @@ public class ControllerExceptionAdvice {
                 .setValue(request.getHeader(HttpHeaders.AUTHORIZATION)));
         slackFieldList.add(
             new SlackField().setTitle("Request Body")
-                .setValue(StreamUtils.copyToString(request.getInputStream(), StandardCharsets.UTF_8)));
+                .setValue(
+                    StreamUtils.copyToString(request.getInputStream(), StandardCharsets.UTF_8)));
 
         final String token =
             request.getHeader(HttpHeaders.AUTHORIZATION).substring("Bearer ".length());
@@ -134,7 +136,8 @@ public class ControllerExceptionAdvice {
     }
 
     @ExceptionHandler(CustomException.class)
-    public void handlePurchase(HttpServletRequest request, CustomException exception) throws IOException {
+    public void handlePurchase(HttpServletRequest request, CustomException exception)
+        throws IOException {
         if (request.getRequestURL().toString().contains("purchase")) {
             SlackAttachment slackAttachment = new SlackAttachment();
 
@@ -146,7 +149,8 @@ public class ControllerExceptionAdvice {
 
             List<SlackField> slackFieldList = new ArrayList<>();
             slackFieldList.add(
-                new SlackField().setTitle("Request URL").setValue(request.getRequestURL().toString()));
+                new SlackField().setTitle("Request URL")
+                    .setValue(request.getRequestURL().toString()));
             slackFieldList.add(
                 new SlackField().setTitle("Request Method").setValue(request.getMethod()));
             slackFieldList.add(new SlackField().setTitle("Request Time").setValue(
@@ -161,7 +165,8 @@ public class ControllerExceptionAdvice {
                     .setValue(request.getHeader(HttpHeaders.AUTHORIZATION)));
             slackFieldList.add(
                 new SlackField().setTitle("Request Body")
-                    .setValue(StreamUtils.copyToString(request.getInputStream(), StandardCharsets.UTF_8)));
+                    .setValue(StreamUtils.copyToString(request.getInputStream(),
+                        StandardCharsets.UTF_8)));
 
             final String token =
                 request.getHeader(HttpHeaders.AUTHORIZATION).substring("Bearer ".length());
@@ -299,7 +304,8 @@ public class ControllerExceptionAdvice {
      */
     @ExceptionHandler({
         RedisException.class,
-        GoogleTokenServerErrorException.class
+        GoogleTokenServerErrorException.class,
+        AppleTokenServerErrorException.class
     })
     public ResponseEntity<BaseResponse> InternalServerException(CustomException exception) {
         return ResponseEntity.status(INTERNAL_SERVER_ERROR)

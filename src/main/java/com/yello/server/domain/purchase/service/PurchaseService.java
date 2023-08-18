@@ -18,6 +18,7 @@ import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 import com.yello.server.domain.purchase.dto.apple.AppleOrderResponse;
 import com.yello.server.domain.purchase.dto.apple.AppleTransaction;
+import com.yello.server.domain.purchase.dto.request.AppleInAppRefundRequest;
 import com.yello.server.domain.purchase.dto.request.GoogleSubscriptionV2GetRequest;
 import com.yello.server.domain.purchase.dto.response.GoogleSubscriptionV2GetResponse;
 import com.yello.server.domain.purchase.dto.response.UserSubscribeNeededResponse;
@@ -29,6 +30,7 @@ import com.yello.server.domain.purchase.exception.GoogleTokenNotFoundException;
 import com.yello.server.domain.purchase.exception.GoogleTokenServerErrorException;
 import com.yello.server.domain.purchase.exception.PurchaseConflictException;
 import com.yello.server.domain.purchase.exception.PurchaseException;
+import com.yello.server.domain.purchase.exception.PurchaseNotFoundException;
 import com.yello.server.domain.purchase.exception.SubscriptionConflictException;
 import com.yello.server.domain.purchase.repository.PurchaseRepository;
 import com.yello.server.domain.user.entity.Subscribe;
@@ -79,8 +81,11 @@ public class PurchaseService {
     @Transactional
     public void verifyAppleSubscriptionTransaction(Long userId,
         AppleTransaction request) {
-        final AppleOrderResponse verifyReceiptResponse = appleUtil.appleGetTransaction(request);
+        ResponseEntity<AppleOrderResponse> verifyReceiptResponse =
+            appleUtil.appleGetTransaction(request);
         final User user = userRepository.getById(userId);
+
+        purchaseManager.handleAppleTransactionError(verifyReceiptResponse, request.transactionId());
 
         if (user.getSubscribe() == Subscribe.ACTIVE) {
             throw new SubscriptionConflictException(SUBSCRIBE_ACTIVE_EXCEPTION);
@@ -90,27 +95,31 @@ public class PurchaseService {
             throw new PurchaseException(NOT_FOUND_TRANSACTION_EXCEPTION);
         }
 
-        purchaseManager.createSubscribe(user, Gateway.APPLE);
+        purchaseManager.createSubscribe(user, Gateway.APPLE, request.transactionId());
+
         user.changeTicketCount(3);
     }
 
     @Transactional
     public void verifyAppleTicketTransaction(Long userId, AppleTransaction request) {
-        final AppleOrderResponse verifyReceiptResponse = appleUtil.appleGetTransaction(request);
+        final ResponseEntity<AppleOrderResponse> verifyReceiptResponse =
+            appleUtil.appleGetTransaction(request);
         final User user = userRepository.getById(userId);
 
-        // 정상적인 구매일 경우
+        purchaseManager.handleAppleTransactionError(verifyReceiptResponse, request.transactionId());
+
         switch (request.productId()) {
             case ONE_TICKET_ID:
-                purchaseManager.createTicket(user, ProductType.ONE_TICKET);
+                purchaseManager.createTicket(user, ProductType.ONE_TICKET, request.transactionId());
                 user.changeTicketCount(1);
                 break;
             case TWO_TICKET_ID:
-                purchaseManager.createTicket(user, ProductType.TWO_TICKET);
+                purchaseManager.createTicket(user, ProductType.TWO_TICKET, request.transactionId());
                 user.changeTicketCount(2);
                 break;
             case FIVE_TICKET_ID:
-                purchaseManager.createTicket(user, ProductType.FIVE_TICKET);
+                purchaseManager.createTicket(user, ProductType.FIVE_TICKET,
+                    request.transactionId());
                 user.changeTicketCount(5);
                 break;
             default:
@@ -118,7 +127,6 @@ public class PurchaseService {
         }
     }
 
-    @Transactional
     public GoogleSubscriptionV2GetResponse verifyGoogleSubscriptionTransaction(Long userId,
         GoogleSubscriptionV2GetRequest request) throws IOException {
         User user = userRepository.getById(userId);
@@ -133,7 +141,8 @@ public class PurchaseService {
                 throw new PurchaseConflictException(GOOGLE_SUBSCRIPTIONS_SUBSCRIPTION_EXCEPTION);
             });
 
-        final GoogleToken googleToken = googleTokenRepository.getById(googleTokenRepository.tokenId);
+        final GoogleToken googleToken =
+            googleTokenRepository.getById(googleTokenRepository.tokenId);
         if (googleToken.getAccessToken().isEmpty() || googleToken.getRefreshToken().isEmpty()) {
             throw new GoogleTokenNotFoundException(GOOGLE_TOKEN_FIELD_NOT_FOUND_EXCEPTION);
         }
@@ -165,10 +174,12 @@ public class PurchaseService {
             throw new GoogleBadRequestException(GOOGLE_SUBSCRIPTION_USED_EXCEPTION);
         } else if (subscriptionState.equals(ConstantUtil.GOOGLE_PURCHASE_SUBSCRIPTION_CANCELED)) {
             if (user.getSubscribe() == Subscribe.CANCELED) {
-                throw new GoogleBadRequestException(GOOGLE_SUBSCRIPTION_DUPLICATED_CANCEL_EXCEPTION);
+                throw new GoogleBadRequestException(
+                    GOOGLE_SUBSCRIPTION_DUPLICATED_CANCEL_EXCEPTION);
             }
         } else if (subscriptionState.equals(ConstantUtil.GOOGLE_PURCHASE_SUBSCRIPTION_ACTIVE)) {
-            final Purchase subscribe = purchaseManager.createSubscribe(user, Gateway.GOOGLE);
+            final Purchase subscribe =
+                purchaseManager.createSubscribe(user, Gateway.GOOGLE, request.orderId());
             user.changeTicketCount(3);
             subscribe.setTransactionId(request.orderId());
         }
@@ -177,12 +188,26 @@ public class PurchaseService {
     }
 
     public String reissueGoogleAccessToken(String refreshToken) throws IOException {
-        final ResponseEntity<GoogleTokenIssueResponse> reissueResponse = RestUtil.postGoogleTokenReissue(
-            refreshToken);
+        final ResponseEntity<GoogleTokenIssueResponse> reissueResponse =
+            RestUtil.postGoogleTokenReissue(
+                refreshToken);
         if (!reissueResponse.getStatusCode().is2xxSuccessful()) {
             throw new GoogleTokenNotFoundException(GOOGLE_TOKEN_FORBIDDEN_EXCEPTION);
         }
 
         return reissueResponse.getBody().access_token();
+    }
+
+    @Transactional
+    public void refundInAppApple(Long userId, AppleInAppRefundRequest request) {
+        final User user = userRepository.getById(userId);
+
+        // 에러 코드 수정
+        Purchase purchase = purchaseRepository.findByTransactionId(request.transactionId())
+            .orElseThrow(() -> new PurchaseNotFoundException(NOT_FOUND_TRANSACTION_EXCEPTION));
+
+        purchaseRepository.delete(purchase);
+        user.setSubscribe(Subscribe.NORMAL);
+
     }
 }

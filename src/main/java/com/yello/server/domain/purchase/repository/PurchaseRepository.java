@@ -12,9 +12,12 @@ public interface PurchaseRepository {
 
     Optional<Purchase> findById(Long purchaseId);
 
-    Optional<Purchase> findByTransactionId(String transactionId);
-
     List<Purchase> findAllByUser(User user);
 
-    Optional<Purchase> findTopByUserAndProductTypeOrderByCreatedAtDesc(User user, ProductType productType);
+    Optional<Purchase> findTopByUserAndProductTypeOrderByCreatedAtDesc(User user,
+        ProductType productType);
+
+    Optional<Purchase> findByTransactionId(String transactionId);
+
+    void delete(Purchase purchase);
 }

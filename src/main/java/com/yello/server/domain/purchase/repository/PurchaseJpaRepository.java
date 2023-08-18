@@ -13,5 +13,6 @@ public interface PurchaseJpaRepository extends JpaRepository<Purchase, Long> {
 
     List<Purchase> findAllByUser(User user);
 
-    Optional<Purchase> findTopByUserAndProductTypeOrderByCreatedAtDesc(User user, ProductType productType);
+    Optional<Purchase> findTopByUserAndProductTypeOrderByCreatedAtDesc(User user,
+        ProductType productType);
 }
