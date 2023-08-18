@@ -30,7 +30,8 @@ public enum ErrorCode {
     EXIST_FRIEND_EXCEPTION(BAD_REQUEST, "이미 존재하는 친구입니다."),
     REVEAL_FULL_NAME_VOTE_EXCEPTION(BAD_REQUEST, "이미 공개한 이름입니다"),
     GOOGLE_SUBSCRIPTION_USED_EXCEPTION(BAD_REQUEST, "이미 처리된 Google 영수증입니다."),
-    GOOGLE_SUBSCRIPTION_DUPLICATED_CANCEL_EXCEPTION(BAD_REQUEST, "이미 CANCELED한 유저에게 CANCELED 요청을 보내어 중복됩니다"),
+    GOOGLE_SUBSCRIPTION_DUPLICATED_CANCEL_EXCEPTION(BAD_REQUEST,
+        "이미 CANCELED한 유저에게 CANCELED 요청을 보내어 중복됩니다"),
     GOOGLE_INAPP_BAD_REQUEST_EXCEPTION(BAD_REQUEST, "해당 영수증은 취소되었거나, 대기 중인 결제입니다."),
 
     /**
@@ -76,7 +77,8 @@ public enum ErrorCode {
     NOT_FOUND_TRANSACTION_EXCEPTION(NOT_FOUND, "존재하지 않는 거래입니다"),
     NOT_FOUND_PRODUCT_ID_EXCEPTION(NOT_FOUND, "존재하지 않는 상품 아이디 입니다"),
     GOOGLE_TOKEN_NOT_FOUND_EXCEPTION(NOT_FOUND, "Google OAuth 2.0 토큰 튜플이 DB에 없습니다. DBA에게 문의해주세요."),
-    GOOGLE_TOKEN_FIELD_NOT_FOUND_EXCEPTION(NOT_FOUND, "Google OAuth 2.0 특정 토큰이 DB에 없습니다. DBA에게 문의해주세요."),
+    GOOGLE_TOKEN_FIELD_NOT_FOUND_EXCEPTION(NOT_FOUND,
+        "Google OAuth 2.0 특정 토큰이 DB에 없습니다. DBA에게 문의해주세요."),
 
     /**
      * 409 CONFLICT
@@ -93,7 +95,7 @@ public enum ErrorCode {
      */
     INTERNAL_SERVER_ERROR(HttpStatus.INTERNAL_SERVER_ERROR, "알 수 없는 서버 에러가 발생했습니다"),
     REDIS_ERROR(HttpStatus.INTERNAL_SERVER_ERROR, "Redis에 에러가 발생했습니다."),
-    APPLE_TOKEN_SERVER_EXCEPTION(HttpStatus.INTERNAL_SERVER_ERROR, "Apple과의 통신에 실패하였습니다.");
+    APPLE_TOKEN_SERVER_EXCEPTION(HttpStatus.INTERNAL_SERVER_ERROR, "Apple과의 통신에 실패하였습니다."),
     GOOGLE_TOKEN_SERVER_EXCEPTION(HttpStatus.INTERNAL_SERVER_ERROR, "Google과의 통신에 실패하였습니다.");
 
     private final HttpStatus httpStatus;
