@@ -24,6 +24,15 @@ public class NotificationFcmService implements NotificationService {
     private final FCMManager fcmManager;
 
     @Override
+    public void sendRecommendNotification(User user, User target) {
+        NotificationMessage notificationMessage = NotificationMessage.toRecommendNotificationContent(user);
+
+        final Message message = fcmManager.createMessage(target.getDeviceToken(), notificationMessage);
+
+        fcmManager.send(message);
+    }
+
+    @Override
     public void sendYelloNotification(Vote vote) {
         final User receiver = vote.getReceiver();
 

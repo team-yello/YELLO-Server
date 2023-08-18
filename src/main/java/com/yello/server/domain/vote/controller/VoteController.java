@@ -184,9 +184,9 @@ public class VoteController {
     @Operation(summary = "투표 이름 전체 조회 API", responses = {
         @ApiResponse(
             responseCode = "200",
-            content = @Content(mediaType = "application/json", schema = @Schema(implementation = RevealNameResponse.class))),
+            content = @Content(mediaType = "application/json", schema = @Schema(implementation = RevealFullNameResponse.class))),
     })
-    @PostMapping("/{voteId}/fullname")
+    @PatchMapping("/{voteId}/fullname")
     public BaseResponse<RevealFullNameResponse> revealFullName(
         @AccessTokenUser User user,
         @PathVariable Long voteId

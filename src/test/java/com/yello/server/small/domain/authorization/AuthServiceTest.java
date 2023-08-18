@@ -38,6 +38,7 @@ import com.yello.server.global.common.manager.ConnectionManager;
 import com.yello.server.infrastructure.firebase.manager.FCMManager;
 import com.yello.server.infrastructure.firebase.service.NotificationFcmService;
 import com.yello.server.infrastructure.firebase.service.NotificationService;
+import com.yello.server.infrastructure.rabbitmq.repository.MessageQueueRepository;
 import com.yello.server.infrastructure.redis.repository.TokenRepository;
 import com.yello.server.small.domain.cooldown.FakeCooldownRepository;
 import com.yello.server.small.domain.friend.FakeFriendManager;
@@ -49,12 +50,15 @@ import com.yello.server.small.domain.user.FakeUserRepository;
 import com.yello.server.small.domain.vote.FakeVoteManager;
 import com.yello.server.small.domain.vote.FakeVoteRepository;
 import com.yello.server.small.global.firebase.FakeFcmManger;
+import com.yello.server.small.global.rabbitmq.FakeMessageQueueRepository;
 import com.yello.server.small.global.redis.FakeTokenRepository;
+import java.io.IOException;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Base64;
 import java.util.List;
 import java.util.Optional;
+import java.util.concurrent.TimeoutException;
 import java.util.stream.Stream;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -72,6 +76,7 @@ public class AuthServiceTest {
     private final TokenRepository tokenRepository = new FakeTokenRepository();
     private final QuestionRepository questionRepository = new FakeQuestionRepository();
     private final VoteRepository voteRepository = new FakeVoteRepository();
+    private final MessageQueueRepository messageQueueRepository = new FakeMessageQueueRepository();
 
     private final TokenProvider tokenProvider = new TokenJwtProvider(secretKey);
     private final AuthManager authManager = new FakeAuthManager(
@@ -99,6 +104,7 @@ public class AuthServiceTest {
             .schoolRepository(schoolRepository)
             .friendRepository(friendRepository)
             .cooldownRepository(cooldownRepository)
+            .messageQueueRepository(messageQueueRepository)
             .authManager(authManager)
             .friendManager(friendManager)
             .connectionManager(connectionManager)
@@ -198,7 +204,7 @@ public class AuthServiceTest {
     }
 
     @Test
-    void 회원가입_신규_유저_등록에_성공합니다() {
+    void 회원가입_신규_유저_등록에_성공합니다() throws IOException, TimeoutException {
         // given
         final SignUpRequest request = SignUpRequest.builder()
             .social(Social.KAKAO)
@@ -298,7 +304,7 @@ public class AuthServiceTest {
     }
 
     @Test
-    void 회원가입_친구_추천에_성공합니다_추천수() {
+    void 회원가입_친구_추천에_성공합니다_추천수() throws IOException, TimeoutException {
         // given
         String recommendYelloId = "hj_p__";
         String userYelloId = "gm";
@@ -313,7 +319,7 @@ public class AuthServiceTest {
     }
 
     @Test
-    void 회원가입_친구_추천에_성공합니다_쿨다운삭제() {
+    void 회원가입_친구_추천에_성공합니다_쿨다운삭제() throws IOException, TimeoutException {
         // given
         String recommendYelloId = "hj_p__";
         String userYelloId = "gm";

@@ -15,6 +15,14 @@ public record NotificationMessage(
     NotificationType type
 ) {
 
+    public static NotificationMessage toRecommendNotificationContent(User user) {
+        return NotificationMessage.builder()
+            .title("40분 대기 초기화 + 100포인트 적립")
+            .message(MessageFormat.format("{0}님이 나를 추천인으로 가입해 옐로하기 대기 초기화 + 100포인트가 적립되었어요!", user.getName()))
+            .type(NotificationType.RECOMMEND)
+            .build();
+    }
+
     public static NotificationMessage toVoteAvailableNotificationContent() {
         return NotificationMessage.builder()
             .title("친구에게 쪽지 보내고 포인트 받기")
