@@ -77,8 +77,10 @@ public class ControllerExceptionAdvice {
     private final UserRepository userRepository;
     private final TaskExecutor taskExecutor;
     private final TokenProvider tokenProvider;
+
     @Qualifier("ambulance")
     private SlackApi slackTokenAmbulance;
+
     @Qualifier("bank")
     private SlackApi slackTokenBank;
 
@@ -136,8 +138,7 @@ public class ControllerExceptionAdvice {
     }
 
     @ExceptionHandler(CustomException.class)
-    public void handlePurchase(HttpServletRequest request, CustomException exception)
-        throws IOException {
+    public void handlePurchase(HttpServletRequest request, CustomException exception) throws IOException {
         if (request.getRequestURL().toString().contains("purchase")) {
             SlackAttachment slackAttachment = new SlackAttachment();
 
@@ -149,8 +150,7 @@ public class ControllerExceptionAdvice {
 
             List<SlackField> slackFieldList = new ArrayList<>();
             slackFieldList.add(
-                new SlackField().setTitle("Request URL")
-                    .setValue(request.getRequestURL().toString()));
+                new SlackField().setTitle("Request URL").setValue(request.getRequestURL().toString()));
             slackFieldList.add(
                 new SlackField().setTitle("Request Method").setValue(request.getMethod()));
             slackFieldList.add(new SlackField().setTitle("Request Time").setValue(

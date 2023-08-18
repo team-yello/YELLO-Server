@@ -12,6 +12,8 @@ public interface PurchaseRepository {
 
     Optional<Purchase> findById(Long purchaseId);
 
+    Optional<Purchase> findByTransactionId(String transactionId);
+
     List<Purchase> findAllByUser(User user);
 
     Optional<Purchase> findTopByUserAndProductTypeOrderByCreatedAtDesc(User user,

@@ -25,6 +25,7 @@ import com.yello.server.domain.purchase.dto.request.AppleInAppRefundRequest;
 import com.yello.server.domain.purchase.dto.request.GoogleInAppGetRequest;
 import com.yello.server.domain.purchase.dto.request.GoogleSubscriptionV2GetRequest;
 import com.yello.server.domain.purchase.dto.response.GoogleInAppV1GetResponse;
+import com.yello.server.domain.purchase.dto.request.GoogleSubscriptionV2GetRequest;
 import com.yello.server.domain.purchase.dto.response.GoogleSubscriptionV2GetResponse;
 import com.yello.server.domain.purchase.dto.response.UserSubscribeNeededResponse;
 import com.yello.server.domain.purchase.entity.Gateway;
@@ -102,7 +103,6 @@ public class PurchaseService {
         }
 
         purchaseManager.createSubscribe(user, Gateway.APPLE, request.transactionId());
-
         user.changeTicketCount(3);
     }
 

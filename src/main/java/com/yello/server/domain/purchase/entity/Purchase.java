@@ -41,8 +41,9 @@ public class Purchase extends AuditingTimeEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @Column
     private String transactionId;
-    
+
     @Column
     private Integer price;
 

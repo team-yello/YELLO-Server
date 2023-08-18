@@ -12,6 +12,7 @@ import com.yello.server.domain.purchase.dto.request.AppleInAppRefundRequest;
 import com.yello.server.domain.purchase.dto.request.GoogleInAppGetRequest;
 import com.yello.server.domain.purchase.dto.request.GoogleSubscriptionV2GetRequest;
 import com.yello.server.domain.purchase.dto.response.GoogleInAppV1GetResponse;
+import com.yello.server.domain.purchase.dto.request.GoogleSubscriptionV2GetRequest;
 import com.yello.server.domain.purchase.dto.response.GoogleSubscriptionV2GetResponse;
 import com.yello.server.domain.purchase.dto.response.UserPurchaseInfoResponse;
 import com.yello.server.domain.purchase.dto.response.UserSubscribeNeededResponse;
@@ -105,7 +106,6 @@ public class PurchaseController {
         val data = purchaseService.verifyGoogleInAppTransaction(user.getId(), request);
         return BaseResponse.success(GOOGLE_PURCHASE_INAPP_VERIFY_SUCCESS, data);
     }
-
 
     @Operation(summary = "구독 연장 유도 필요 여부 확인 API", responses = {
         @ApiResponse(

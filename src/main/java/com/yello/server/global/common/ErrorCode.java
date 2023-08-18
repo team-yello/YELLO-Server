@@ -76,8 +76,7 @@ public enum ErrorCode {
     NOT_FOUND_TRANSACTION_EXCEPTION(NOT_FOUND, "존재하지 않는 거래입니다"),
     NOT_FOUND_PRODUCT_ID_EXCEPTION(NOT_FOUND, "존재하지 않는 상품 아이디 입니다"),
     GOOGLE_TOKEN_NOT_FOUND_EXCEPTION(NOT_FOUND, "Google OAuth 2.0 토큰 튜플이 DB에 없습니다. DBA에게 문의해주세요."),
-    GOOGLE_TOKEN_FIELD_NOT_FOUND_EXCEPTION(NOT_FOUND,
-        "Google OAuth 2.0 특정 토큰이 DB에 없습니다. DBA에게 문의해주세요."),
+    GOOGLE_TOKEN_FIELD_NOT_FOUND_EXCEPTION(NOT_FOUND, "Google OAuth 2.0 특정 토큰이 DB에 없습니다. DBA에게 문의해주세요."),
 
     /**
      * 409 CONFLICT
@@ -94,8 +93,8 @@ public enum ErrorCode {
      */
     INTERNAL_SERVER_ERROR(HttpStatus.INTERNAL_SERVER_ERROR, "알 수 없는 서버 에러가 발생했습니다"),
     REDIS_ERROR(HttpStatus.INTERNAL_SERVER_ERROR, "Redis에 에러가 발생했습니다."),
-    GOOGLE_TOKEN_SERVER_EXCEPTION(HttpStatus.INTERNAL_SERVER_ERROR, "Google과의 통신에 실패하였습니다."),
     APPLE_TOKEN_SERVER_EXCEPTION(HttpStatus.INTERNAL_SERVER_ERROR, "Apple과의 통신에 실패하였습니다.");
+    GOOGLE_TOKEN_SERVER_EXCEPTION(HttpStatus.INTERNAL_SERVER_ERROR, "Google과의 통신에 실패하였습니다.");
 
     private final HttpStatus httpStatus;
     private final String message;
