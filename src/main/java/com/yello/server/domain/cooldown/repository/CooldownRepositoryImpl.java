@@ -29,6 +29,11 @@ public class CooldownRepositoryImpl implements CooldownRepository {
     }
 
     @Override
+    public boolean existsByMessageId(String messageId) {
+        return cooldownJpaRepository.existsByMessageId(messageId);
+    }
+
+    @Override
     public Optional<Cooldown> findByUserIdNotFiltered(Long userId) {
         return cooldownJpaRepository.findByUserIdNotFiltered(userId);
     }

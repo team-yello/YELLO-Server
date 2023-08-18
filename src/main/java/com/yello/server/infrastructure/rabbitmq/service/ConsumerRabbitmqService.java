@@ -31,13 +31,16 @@ public class ConsumerRabbitmqService implements ConsumerService {
         );
 
         try {
-            boolean exists = cooldownRepository.existsByUserId(voteAvailableQueueResponse.receiverId());
+            boolean exists = cooldownRepository.existsByMessageId(voteAvailableQueueResponse.messageId());
             if (exists) {
                 notificationService.sendVoteAvailableNotification(voteAvailableQueueResponse.receiverId());
-                log.info("[rabbitmq] Successfully consume message %d".formatted(
-                    message.getMessageProperties().getDeliveryTag())
+                log.info("[rabbitmq] Successfully consume message %s".formatted(
+                    voteAvailableQueueResponse.messageId())
                 );
             }
+            log.info("[rabbitmq] Already removed message %s".formatted(
+                voteAvailableQueueResponse.messageId())
+            );
         } catch (Exception exception) {
             log.error("[rabbitmq] %s".formatted(exception.getMessage()));
         }

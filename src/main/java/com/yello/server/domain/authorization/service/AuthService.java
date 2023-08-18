@@ -30,11 +30,9 @@ import com.yello.server.global.common.factory.PaginationFactory;
 import com.yello.server.global.common.manager.ConnectionManager;
 import com.yello.server.infrastructure.firebase.service.NotificationService;
 import com.yello.server.infrastructure.rabbitmq.repository.MessageQueueRepository;
-import java.io.IOException;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
-import java.util.concurrent.TimeoutException;
 import javax.validation.constraints.NotNull;
 import lombok.Builder;
 import lombok.RequiredArgsConstructor;
@@ -86,7 +84,7 @@ public class AuthService {
     }
 
     @Transactional
-    public SignUpResponse signUp(SignUpRequest signUpRequest) throws IOException, TimeoutException {
+    public SignUpResponse signUp(SignUpRequest signUpRequest) {
         authManager.validateSignupRequest(signUpRequest);
         final School group = schoolRepository.getById(signUpRequest.groupId());
 
@@ -104,7 +102,7 @@ public class AuthService {
     }
 
     @Transactional
-    public void recommendUser(String recommendYelloId, String userYelloId) throws IOException, TimeoutException {
+    public void recommendUser(String recommendYelloId, String userYelloId) {
         if (recommendYelloId!=null && !recommendYelloId.isEmpty()) {
             User recommendedUser = userRepository.getByYelloId(recommendYelloId);
             User user = userRepository.getByYelloId(userYelloId);
@@ -117,11 +115,7 @@ public class AuthService {
 
             final Optional<Cooldown> cooldown =
                 cooldownRepository.findByUserId(recommendedUser.getId());
-
-            if (cooldown.isPresent()) {
-                cooldownRepository.delete(cooldown.get());
-                messageQueueRepository.deleteMessageByMessageId(cooldown.get().getMessageId());
-            }
+            cooldown.ifPresent(cooldownRepository::delete);
         }
     }
 
