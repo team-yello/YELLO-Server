@@ -11,6 +11,8 @@ public interface CooldownRepository {
 
     boolean existsByUserId(Long userId);
 
+    boolean existsByMessageId(String messageId);
+
     Optional<Cooldown> findByUserIdNotFiltered(Long userId);
 
     void delete(Cooldown cooldown);

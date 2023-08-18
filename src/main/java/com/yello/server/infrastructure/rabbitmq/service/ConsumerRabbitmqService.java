@@ -23,6 +23,7 @@ public class ConsumerRabbitmqService implements ConsumerService {
     @Override
     @RabbitListener(queues = "vote-available-notification-queue", concurrency = "6")
     public void consumeVoteAvailableNotification(final Message message) throws IOException {
+        log.info("[rabbitmq] start consume message. [%s]".formatted(message.getMessageProperties().getMessageId()));
         ObjectMapper objectMapper = new ObjectMapper();
 
         final VoteAvailableQueueResponse voteAvailableQueueResponse = objectMapper.readValue(
@@ -31,11 +32,15 @@ public class ConsumerRabbitmqService implements ConsumerService {
         );
 
         try {
-            boolean exists = cooldownRepository.existsByUserId(voteAvailableQueueResponse.receiverId());
+            boolean exists = cooldownRepository.existsByMessageId(voteAvailableQueueResponse.messageId());
             if (exists) {
                 notificationService.sendVoteAvailableNotification(voteAvailableQueueResponse.receiverId());
-                log.info("[rabbitmq] Successfully consume message %d".formatted(
-                    message.getMessageProperties().getDeliveryTag())
+                log.info("[rabbitmq] Successfully consume message %s".formatted(
+                    voteAvailableQueueResponse.messageId())
+                );
+            } else {
+                log.info("[rabbitmq] Already removed message %s".formatted(
+                    voteAvailableQueueResponse.messageId())
                 );
             }
         } catch (Exception exception) {
