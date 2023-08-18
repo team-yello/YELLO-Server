@@ -1,9 +1,6 @@
 package com.yello.server.small.domain.cooldown;
 
-import static com.yello.server.global.common.ErrorCode.ID_NOT_FOUND_COOLDOWN_EXCEPTION;
-
 import com.yello.server.domain.cooldown.entity.Cooldown;
-import com.yello.server.domain.cooldown.exception.CooldownNotFoundException;
 import com.yello.server.domain.cooldown.repository.CooldownRepository;
 import java.util.ArrayList;
 import java.util.List;
@@ -29,14 +26,6 @@ public class FakeCooldownRepository implements CooldownRepository {
 
         data.add(newCooldown);
         return newCooldown;
-    }
-
-    @Override
-    public Cooldown getByUserid(Long userId) {
-        return data.stream()
-            .filter(user -> user.getId().equals(id))
-            .findFirst()
-            .orElseThrow(() -> new CooldownNotFoundException(ID_NOT_FOUND_COOLDOWN_EXCEPTION));
     }
 
     @Override
