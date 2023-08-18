@@ -11,6 +11,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.amqp.core.MessagePostProcessor;
 import org.springframework.amqp.rabbit.connection.Connection;
+import org.springframework.amqp.rabbit.connection.ConnectionFactory;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.stereotype.Repository;
 
@@ -20,6 +21,7 @@ import org.springframework.stereotype.Repository;
 public class MessageQueueRabbitRepository implements MessageQueueRepository {
 
     private final RabbitTemplate rabbitTemplate;
+    private final ConnectionFactory connectionFactory;
 
     @Override
     public void convertAndSend(
@@ -33,16 +35,13 @@ public class MessageQueueRabbitRepository implements MessageQueueRepository {
 
     @Override
     public void deleteMessageByMessageId(String messageId) throws IOException, TimeoutException {
-        Connection connection = rabbitTemplate.getConnectionFactory()
-            .createConnection();
-
+        Connection connection = connectionFactory.createConnection();
         log.info("[rabbitmq] connected %s".formatted(connection.toString()));
 
         try (Channel channel = connection.createChannel(true)) {
             log.info("[rabbitmq] channel is %s".formatted(channel.toString()));
             long deliveryTag = getDeliveryTagByMessageId(channel, messageId);
 
-            log.info("[rabbitmq] response = " + channel.basicGet("vote-available-notification-queue", false));
             if (deliveryTag!=-1) {
                 channel.basicAck(deliveryTag, false);
                 log.info("[rabbitmq] Successfully delete message %d !".formatted(deliveryTag));
