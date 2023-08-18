@@ -36,7 +36,10 @@ public class MessageQueueRabbitRepository implements MessageQueueRepository {
         Connection connection = rabbitTemplate.getConnectionFactory()
             .createConnection();
 
+        log.info("[rabbitmq] connected %s".formatted(connection.toString()));
+
         try (Channel channel = connection.createChannel(true)) {
+            log.info("[rabbitmq] channel is %s".formatted(channel.toString()));
             long deliveryTag = getDeliveryTagByMessageId(channel, messageId);
 
             if (deliveryTag!=-1) {
