@@ -65,11 +65,13 @@ public class FakePurchaseRepository implements PurchaseRepository {
 
     @Override
     public Optional<Purchase> findByTransactionId(String transactionId) {
-        return Optional.empty();
+        return data.stream()
+            .filter(purchase -> purchase.getTransactionId().equals(transactionId))
+            .findFirst();
     }
 
     @Override
     public void delete(Purchase purchase) {
-
+        data.remove(purchase);
     }
 }
