@@ -82,7 +82,7 @@ public class VoteManagerImpl implements VoteManager {
 
     @Override
     public List<QuestionForVoteResponse> generateVoteQuestion(User user, List<Question> questions) {
-        Collections.shuffle(Arrays.asList(questions));
+        Collections.shuffle(questions);
 
         return questions.stream()
             .map(question -> {
@@ -107,7 +107,7 @@ public class VoteManagerImpl implements VoteManager {
             throw new VoteForbiddenException(LACK_POINT_EXCEPTION);
         }
 
-        if (vote.getNameHint()!=NAME_HINT_DEFAULT) {
+        if (vote.getNameHint() != NAME_HINT_DEFAULT) {
             throw new VoteNotFoundException(INVALID_VOTE_EXCEPTION);
         }
 
@@ -160,7 +160,7 @@ public class VoteManagerImpl implements VoteManager {
 
     private List<FriendShuffleResponse> getShuffledFriends(User user) {
         final List<Friend> allFriend = friendRepository.findAllByUserId(user.getId());
-        Collections.shuffle(Arrays.asList(allFriend));
+        Collections.shuffle(allFriend);
 
         return allFriend.stream()
             .map(FriendShuffleResponse::of)

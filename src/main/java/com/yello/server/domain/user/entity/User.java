@@ -1,5 +1,7 @@
 package com.yello.server.domain.user.entity;
 
+import static com.yello.server.global.common.util.ConstantUtil.RECOMMEND_POINT;
+
 import com.yello.server.domain.authorization.dto.request.SignUpRequest;
 import com.yello.server.domain.group.entity.School;
 import com.yello.server.global.common.dto.AuditingTimeEntity;
@@ -142,8 +144,12 @@ public class User extends AuditingTimeEntity {
         this.recommendCount += 1;
     }
 
+    public void increaseRecommendPoint() {
+        this.point += RECOMMEND_POINT;
+    }
+
     public void plusPoint(Integer point) {
-        if (this.getSubscribe()==Subscribe.NORMAL) {
+        if (this.getSubscribe() == Subscribe.NORMAL) {
             this.point += point;
             return;
         }

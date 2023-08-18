@@ -1,5 +1,6 @@
 package com.yello.server.domain.vote.common;
 
+import static com.yello.server.global.common.util.ConstantUtil.EIGHT_POINT_WEIGHT;
 import static com.yello.server.global.common.util.ConstantUtil.FIFTH_POINT_WEIGHT;
 import static com.yello.server.global.common.util.ConstantUtil.FIRST_POINT_WEIGHT;
 import static com.yello.server.global.common.util.ConstantUtil.FOURTH_POINT_WEIGHT;
@@ -23,23 +24,24 @@ public class WeightedRandomFactory {
 
     public static Integer randomPoint() {
         weight.put(MIN_POINT, FIRST_POINT_WEIGHT);
-        weight.put(MIN_POINT + 1, SECOND_POINT_WEIGHT);
-        weight.put(MIN_POINT + 2, THIRD_POINT_WEIGHT);
-        weight.put(MIN_POINT + 3, FOURTH_POINT_WEIGHT);
-        weight.put(MIN_POINT + 4, FIFTH_POINT_WEIGHT);
-        weight.put(MIN_POINT + 5, SIXTH_POINT_WEIGHT);
-        weight.put(MIN_POINT + 6, SEVENTH_POINT_WEIGHT);
+        weight.put(MIN_POINT + 5, SECOND_POINT_WEIGHT);
+        weight.put(MIN_POINT + 10, THIRD_POINT_WEIGHT);
+        weight.put(MIN_POINT + 12, FOURTH_POINT_WEIGHT);
+        weight.put(MIN_POINT + 14, FIFTH_POINT_WEIGHT);
+        weight.put(MIN_POINT + 15, SIXTH_POINT_WEIGHT);
+        weight.put(MIN_POINT + 16, SEVENTH_POINT_WEIGHT);
+        weight.put(MIN_POINT + 20, EIGHT_POINT_WEIGHT);
 
         final double pivot = Math.random() % REMINDER_NUMBER;
         double currentWeight = 0;
-        int i = MIN_POINT;
-        for (; i <= REMINDER_NUMBER; i++) {
-            currentWeight += weight.get(i);
+        
+        for (int key : weight.keySet()) {
+            currentWeight += weight.getOrDefault(key, 0.0);
             if (currentWeight >= pivot) {
-                return i;
+                return key;
             }
         }
-        return i - 1;
+        return MIN_POINT + 20;
     }
 
 }
