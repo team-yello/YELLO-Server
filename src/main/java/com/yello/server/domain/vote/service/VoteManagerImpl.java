@@ -19,6 +19,7 @@ import com.yello.server.domain.question.dto.response.QuestionForVoteResponse;
 import com.yello.server.domain.question.dto.response.QuestionVO;
 import com.yello.server.domain.question.entity.Question;
 import com.yello.server.domain.question.repository.QuestionRepository;
+import com.yello.server.domain.user.entity.Subscribe;
 import com.yello.server.domain.user.entity.User;
 import com.yello.server.domain.user.repository.UserRepository;
 import com.yello.server.domain.user.service.UserManager;
@@ -119,12 +120,16 @@ public class VoteManagerImpl implements VoteManager {
 
     @Override
     public KeywordCheckResponse useKeywordHint(User user, Vote vote) {
-        if (user.getPoint() < KEYWORD_HINT_POINT) {
-            throw new VoteForbiddenException(LACK_POINT_EXCEPTION);
-        }
+        if (user.getSubscribe() != Subscribe.NORMAL) {
+            vote.checkKeyword();
+        } else {
+            if (user.getPoint() < KEYWORD_HINT_POINT) {
+                throw new VoteForbiddenException(LACK_POINT_EXCEPTION);
+            }
 
-        user.minusPoint(KEYWORD_HINT_POINT);
-        vote.checkKeyword();
+            user.minusPoint(KEYWORD_HINT_POINT);
+            vote.checkKeyword();
+        }
         return KeywordCheckResponse.of(vote);
     }
 

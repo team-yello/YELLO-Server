@@ -43,7 +43,7 @@ public class Purchase extends AuditingTimeEntity {
 
     @Column(nullable = false)
     private String transactionId;
-
+    
     @Column
     private Integer price;
 
@@ -90,4 +90,7 @@ public class Purchase extends AuditingTimeEntity {
         return Purchase.of(user, productType, gateway, transactionId);
     }
 
+    public void setTransactionId(String transactionId) {
+        this.transactionId = transactionId;
+    }
 }
