@@ -38,10 +38,11 @@ public class ConsumerRabbitmqService implements ConsumerService {
                 log.info("[rabbitmq] Successfully consume message %s".formatted(
                     voteAvailableQueueResponse.messageId())
                 );
+            } else {
+                log.info("[rabbitmq] Already removed message %s".formatted(
+                    voteAvailableQueueResponse.messageId())
+                );
             }
-            log.info("[rabbitmq] Already removed message %s".formatted(
-                voteAvailableQueueResponse.messageId())
-            );
         } catch (Exception exception) {
             log.error("[rabbitmq] %s".formatted(exception.getMessage()));
         }
