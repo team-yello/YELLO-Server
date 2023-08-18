@@ -36,6 +36,7 @@ public class ProducerRabbitmqService implements ProducerService {
                     return message;
                 }
             );
+            log.info("[rabbitmq] Successfully produce message. Cooldown [%s]".formatted(cooldown.getMessageId()));
         } catch (Exception exception) {
             log.error("[rabbitmq] %s".formatted(exception.getMessage()));
         }
