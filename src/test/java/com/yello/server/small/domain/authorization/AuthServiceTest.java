@@ -301,10 +301,11 @@ public class AuthServiceTest {
     void 회원가입_친구_추천에_성공합니다_추천수() {
         // given
         String recommendYelloId = "hj_p__";
+        String userYelloId = "gm";
 
         // when
         final Long before = userRepository.getByYelloId(recommendYelloId).getRecommendCount();
-        authService.recommendUser(recommendYelloId);
+        authService.recommendUser(recommendYelloId, userYelloId);
         final User after = userRepository.getByYelloId(recommendYelloId);
 
         // then
@@ -315,13 +316,14 @@ public class AuthServiceTest {
     void 회원가입_친구_추천에_성공합니다_쿨다운삭제() {
         // given
         String recommendYelloId = "hj_p__";
+        String userYelloId = "gm";
         final User before = userRepository.getByYelloId(recommendYelloId);
         cooldownRepository.save(Cooldown.builder()
             .user(before)
             .build());
 
         // when
-        authService.recommendUser(recommendYelloId);
+        authService.recommendUser(recommendYelloId, userYelloId);
         final User after = userRepository.getByYelloId(recommendYelloId);
         final Optional<Cooldown> cooldown = cooldownRepository.findByUserId(after.getId());
 
