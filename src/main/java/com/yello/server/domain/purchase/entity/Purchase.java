@@ -12,6 +12,8 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.Table;
+import javax.persistence.UniqueConstraint;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -25,11 +27,22 @@ import org.hibernate.annotations.DynamicInsert;
 @DynamicInsert
 @AllArgsConstructor
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
+@Table(
+    uniqueConstraints = {
+        @UniqueConstraint(
+            name = "transactionId_unique",
+            columnNames = {"transactionId"}
+        ),
+    }
+)
 public class Purchase extends AuditingTimeEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+
+    @Column(nullable = false)
+    private String transactionId;
 
     private Integer price;
 
@@ -73,4 +86,7 @@ public class Purchase extends AuditingTimeEntity {
         return Purchase.of(user, productType, gateway);
     }
 
+    public void setTransactionId(String transactionId) {
+        this.transactionId = transactionId;
+    }
 }

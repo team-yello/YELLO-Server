@@ -25,6 +25,11 @@ public class PurchaseRepositoryImpl implements PurchaseRepository {
     }
 
     @Override
+    public Optional<Purchase> findByTransactionId(String transactionId) {
+        return purchaseJpaRepository.findByTransactionId(transactionId);
+    }
+
+    @Override
     public List<Purchase> findAllByUser(User user) {
         return purchaseJpaRepository.findAllByUser(user);
     }
