@@ -39,6 +39,7 @@ import com.yello.server.domain.vote.repository.VoteRepository;
 import com.yello.server.infrastructure.rabbitmq.service.ProducerService;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.UUID;
 import lombok.Builder;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
@@ -117,6 +118,7 @@ public class VoteService {
 
     public VoteAvailableResponse checkVoteAvailable(Long userId) {
         final User user = userRepository.getById(userId);
+        final String messageId = UUID.randomUUID().toString();
         final List<Friend> friends = friendRepository.findAllByUserId(user.getId());
 
         if (friends.size() < RANDOM_COUNT) {
@@ -124,7 +126,7 @@ public class VoteService {
         }
 
         final Cooldown cooldown = cooldownRepository.findByUserId(user.getId())
-            .orElse(Cooldown.of(user, minusTime(LocalDateTime.now(), COOL_DOWN_TIME)));
+            .orElse(Cooldown.of(user, messageId, minusTime(LocalDateTime.now(), COOL_DOWN_TIME)));
 
         return VoteAvailableResponse.of(user, cooldown);
     }
@@ -132,10 +134,11 @@ public class VoteService {
     @Transactional
     public VoteCreateVO createVote(Long userId, CreateVoteRequest request) {
         final User sender = userRepository.getById(userId);
+        final String messageId = UUID.randomUUID().toString();
         List<Vote> votes = voteManager.createVotes(userId, request.voteAnswerList());
 
         Cooldown cooldown = cooldownRepository.findByUserId(sender.getId())
-            .orElseGet(() -> cooldownRepository.save(Cooldown.of(sender, LocalDateTime.now())));
+            .orElseGet(() -> cooldownRepository.save(Cooldown.of(sender, messageId, LocalDateTime.now())));
 
         cooldown.updateDate(LocalDateTime.now());
         producerService.produceVoteAvailableNotification(cooldown);
