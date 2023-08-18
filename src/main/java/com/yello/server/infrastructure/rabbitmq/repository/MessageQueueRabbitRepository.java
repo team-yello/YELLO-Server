@@ -42,6 +42,7 @@ public class MessageQueueRabbitRepository implements MessageQueueRepository {
             log.info("[rabbitmq] channel is %s".formatted(channel.toString()));
             long deliveryTag = getDeliveryTagByMessageId(channel, messageId);
 
+            log.info("[rabbitmq] response = " + channel.basicGet("vote-available-notification-queue", false));
             if (deliveryTag!=-1) {
                 channel.basicAck(deliveryTag, false);
                 log.info("[rabbitmq] Successfully delete message %d !".formatted(deliveryTag));
