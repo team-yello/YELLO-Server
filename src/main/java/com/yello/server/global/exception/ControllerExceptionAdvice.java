@@ -21,6 +21,9 @@ import com.yello.server.domain.authorization.service.TokenProvider;
 import com.yello.server.domain.friend.exception.FriendException;
 import com.yello.server.domain.friend.exception.FriendNotFoundException;
 import com.yello.server.domain.group.exception.GroupNotFoundException;
+import com.yello.server.domain.purchase.exception.GoogleTokenNotFoundException;
+import com.yello.server.domain.purchase.exception.GoogleTokenServerErrorException;
+import com.yello.server.domain.purchase.exception.PurchaseConflictException;
 import com.yello.server.domain.purchase.exception.PurchaseException;
 import com.yello.server.domain.purchase.exception.PurchaseNotFoundException;
 import com.yello.server.domain.purchase.exception.SubscriptionConflictException;
@@ -37,6 +40,7 @@ import com.yello.server.domain.vote.exception.VoteNotFoundException;
 import com.yello.server.global.common.dto.BaseResponse;
 import com.yello.server.infrastructure.redis.exception.RedisException;
 import com.yello.server.infrastructure.redis.exception.RedisNotFoundException;
+import java.nio.charset.StandardCharsets;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
@@ -55,6 +59,7 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.HttpMessageConversionException;
 import org.springframework.http.converter.HttpMessageNotReadableException;
+import org.springframework.util.StreamUtils;
 import org.springframework.validation.BindException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.MissingServletRequestParameterException;
@@ -96,15 +101,17 @@ public class ControllerExceptionAdvice {
         slackFieldList.add(
             new SlackField().setTitle("인증/인가 정보 - Authorization")
                 .setValue(request.getHeader(HttpHeaders.AUTHORIZATION)));
+        slackFieldList.add(
+            new SlackField().setTitle("Request Body")
+                .setValue(StreamUtils.copyToString(request.getInputStream(), StandardCharsets.UTF_8)));
 
         final String token =
             request.getHeader(HttpHeaders.AUTHORIZATION).substring("Bearer ".length());
         final Long userId = tokenProvider.getUserId(token);
         final Optional<User> user = userRepository.findById(userId);
-        String userInfo = "";
-        userInfo = user.map(value -> "userId : " + userId
-            + "\nyelloId : " + value.getYelloId()
-            + "\ndeviceToken : " + value.getDeviceToken()).orElseGet(() -> "userId : " + userId);
+        String userInfo = "userId : " + userId
+            + "\nyelloId : " + (user.isPresent() ? user.get().getYelloId() : "null")
+            + "\ndeviceToken : " + (user.isPresent() ? user.get().getDeviceToken() : "null");
         slackFieldList.add(
             new SlackField().setTitle("인증/인가 정보 - 유저").setValue(userInfo));
 
@@ -206,7 +213,8 @@ public class ControllerExceptionAdvice {
         FriendNotFoundException.class,
         QuestionNotFoundException.class,
         RedisNotFoundException.class,
-        PurchaseNotFoundException.class
+        PurchaseNotFoundException.class,
+        GoogleTokenNotFoundException.class
     })
     public ResponseEntity<BaseResponse> NotFoundException(CustomException exception) {
         return ResponseEntity.status(NOT_FOUND)
@@ -218,7 +226,8 @@ public class ControllerExceptionAdvice {
      */
     @ExceptionHandler({
         UserConflictException.class,
-        SubscriptionConflictException.class
+        SubscriptionConflictException.class,
+        PurchaseConflictException.class
     })
     public ResponseEntity<BaseResponse> ConflictException(CustomException exception) {
         return ResponseEntity.status(CONFLICT)
@@ -230,6 +239,7 @@ public class ControllerExceptionAdvice {
      */
     @ExceptionHandler({
         RedisException.class,
+        GoogleTokenServerErrorException.class
     })
     public ResponseEntity<BaseResponse> InternalServerException(CustomException exception) {
         return ResponseEntity.status(INTERNAL_SERVER_ERROR)

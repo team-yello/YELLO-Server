@@ -82,7 +82,7 @@ public class RestUtil {
             .block();
     }
 
-    public static ResponseEntity<String> getSubscribeCheck(String purchaseToken,
+    public static ResponseEntity<String> getGoogleSubscribeCheck(String purchaseToken,
         String accessToken) {
         WebClient webClient = WebClient.builder()
             .baseUrl(GOOGLE_PLAY_SUBSCRIPTIONS_GET_PATH(ANDROID_PACKAGE_NAME, purchaseToken))
@@ -94,7 +94,7 @@ public class RestUtil {
             .block();
     }
 
-    public static ResponseEntity<GoogleInAppGetResponse> getTicketCheck(String ticketType, String purchaseToken,
+    public static ResponseEntity<GoogleInAppGetResponse> getGoogleTicketCheck(String ticketType, String purchaseToken,
         String accessToken) {
         WebClient webClient = WebClient.builder()
             .baseUrl(GOOGLE_PLAY_INAPP_GET_PATH(ANDROID_PACKAGE_NAME, ticketType, purchaseToken))

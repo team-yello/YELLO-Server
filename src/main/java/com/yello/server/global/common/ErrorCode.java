@@ -51,6 +51,9 @@ public enum ErrorCode {
     TOKEN_INFO_NOT_SAME_AUTH_EXCEPTION(FORBIDDEN, "동일하지 않은 액세스 토큰과 리프레시 토큰입니다."),
     DUPLICATE_VOTE_EXCEPTION(FORBIDDEN, "중복된 투표가 전달되었습니다."),
     LACK_TICKET_COUNT_EXCEPTION(FORBIDDEN, "열람권 수가 부족합니다."),
+    GOOGLE_TOKEN_FORBIDDEN_EXCEPTION(FORBIDDEN, "유효하지 않는 Google OAuth 2.0 refreshToken입니다. DBA에게 문의해주세요."),
+    GOOGLE_SUBSCRIPTIONS_FORBIDDEN_EXCEPTION(FORBIDDEN, "이미 YELLO: PLUS를 구독한 상태입니다."),
+
     /**
      * 404 NOT FOUND
      */
@@ -67,6 +70,8 @@ public enum ErrorCode {
     REDIS_NOT_FOUND_UUID(NOT_FOUND, "uuid에 해당하는 디바이스 토큰 정보를 찾을 수 없습니다."),
     NOT_FOUND_TRANSACTION_EXCEPTION(NOT_FOUND, "존재하지 않는 거래입니다"),
     NOT_FOUND_PRODUCT_ID_EXCEPTION(NOT_FOUND, "존재하지 않는 상품 아이디 입니다"),
+    GOOGLE_TOKEN_NOT_FOUND_EXCEPTION(NOT_FOUND, "Google OAuth 2.0 토큰 튜플이 DB에 없습니다. DBA에게 문의해주세요."),
+    GOOGLE_TOKEN_FIELD_NOT_FOUND_EXCEPTION(NOT_FOUND, "Google OAuth 2.0 특정 토큰이 DB에 없습니다. DBA에게 문의해주세요."),
 
     /**
      * 409 CONFLICT
@@ -81,7 +86,8 @@ public enum ErrorCode {
      * 500 INTERNAL SERVER ERROR
      */
     INTERNAL_SERVER_ERROR(HttpStatus.INTERNAL_SERVER_ERROR, "알 수 없는 서버 에러가 발생했습니다"),
-    REDIS_ERROR(HttpStatus.INTERNAL_SERVER_ERROR, "Redis에 에러가 발생했습니다.");
+    REDIS_ERROR(HttpStatus.INTERNAL_SERVER_ERROR, "Redis에 에러가 발생했습니다."),
+    GOOGLE_TOKEN_SERVER_EXCEPTION(HttpStatus.INTERNAL_SERVER_ERROR, "Google과의 통신에 실패하였습니다.");
 
     private final HttpStatus httpStatus;
     private final String message;
