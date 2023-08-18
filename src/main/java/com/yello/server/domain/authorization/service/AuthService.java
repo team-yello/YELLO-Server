@@ -62,7 +62,8 @@ public class AuthService {
 
     @Transactional
     public OAuthResponse oauthLogin(OAuthRequest oAuthRequest) {
-        final ResponseEntity<KakaoTokenInfo> response = connectionManager.getKakaoTokenInfo(oAuthRequest.accessToken());
+        final ResponseEntity<KakaoTokenInfo> response =
+            connectionManager.getKakaoTokenInfo(oAuthRequest.accessToken());
 
         final User user = authManager.getSignedInUserByUuid(response.getBody().id().toString());
         final ServiceTokenVO serviceTokenVO = authManager.registerToken(user);
@@ -88,7 +89,7 @@ public class AuthService {
         final User newUser = userRepository.save(User.of(signUpRequest, group));
         newUser.setDeviceToken(signUpRequest.deviceToken());
 
-        this.recommendUser(signUpRequest.recommendId());
+        this.recommendUser(signUpRequest.recommendId(), signUpRequest.yelloId());
 
         final ServiceTokenVO signUpToken = authManager.registerToken(newUser);
 
@@ -99,10 +100,14 @@ public class AuthService {
     }
 
     @Transactional
-    public void recommendUser(String recommendYelloId) {
-        if (recommendYelloId!=null && !recommendYelloId.isEmpty()) {
+    public void recommendUser(String recommendYelloId, String userYelloId) {
+        if (recommendYelloId != null && !recommendYelloId.isEmpty()) {
             User recommendedUser = userRepository.getByYelloId(recommendYelloId);
+            User user = userRepository.getByYelloId(userYelloId);
+
             recommendedUser.increaseRecommendCount();
+            recommendedUser.increaseRecommendPoint();
+            user.increaseRecommendPoint();
 
             final Optional<Cooldown> cooldown =
                 cooldownRepository.findByUserId(recommendedUser.getId());
@@ -117,7 +122,8 @@ public class AuthService {
             .map(userRepository::findById)
             .forEach(friend -> {
                 if (friend.isPresent()) {
-                    Friend savedFriend = friendRepository.save(Friend.createFriend(user, friend.get()));
+                    Friend savedFriend =
+                        friendRepository.save(Friend.createFriend(user, friend.get()));
                     friendRepository.save(Friend.createFriend(friend.get(), user));
 
                     notificationService.sendFriendNotification(savedFriend);
@@ -127,7 +133,8 @@ public class AuthService {
 
     public OnBoardingFriendResponse findOnBoardingFriends(OnBoardingFriendRequest friendRequest,
         Pageable pageable) {
-        final List<User> kakaoFriends = friendManager.getRecommendedFriendsForOnBoarding(friendRequest.friendKakaoId());
+        final List<User> kakaoFriends =
+            friendManager.getRecommendedFriendsForOnBoarding(friendRequest.friendKakaoId());
 
         final List<User> pageList = PaginationFactory.getPage(kakaoFriends, pageable)
             .stream()

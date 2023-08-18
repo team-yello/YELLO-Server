@@ -33,6 +33,7 @@ public class ConstantUtil {
     public static final int TWO_TICKET = 2800;
     public static final int FIVE_TICKET = 5900;
     public static final int YELLO_PLUS = 3900;
+    public static final int RECOMMEND_POINT = 100;
 
 
     private ConstantUtil() {
