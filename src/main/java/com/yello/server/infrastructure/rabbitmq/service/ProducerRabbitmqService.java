@@ -23,6 +23,7 @@ public class ProducerRabbitmqService implements ProducerService {
 
         VoteAvailableQueueResponse voteAvailableQueueResponse = VoteAvailableQueueResponse.builder()
             .receiverId(cooldown.getUser().getId())
+            .messageId(cooldown.getMessageId())
             .build();
 
         try {

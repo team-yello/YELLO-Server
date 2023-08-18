@@ -4,7 +4,8 @@ import lombok.Builder;
 
 @Builder
 public record VoteAvailableQueueResponse(
-    Long receiverId
+    Long receiverId,
+    String messageId
 ) {
 
 }
