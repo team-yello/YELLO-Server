@@ -31,6 +31,7 @@ public enum ErrorCode {
     REVEAL_FULL_NAME_VOTE_EXCEPTION(BAD_REQUEST, "이미 공개한 이름입니다"),
     GOOGLE_SUBSCRIPTION_USED_EXCEPTION(BAD_REQUEST, "이미 처리된 Google 영수증입니다."),
     GOOGLE_SUBSCRIPTION_DUPLICATED_CANCEL_EXCEPTION(BAD_REQUEST, "이미 CANCELED한 유저에게 CANCELED 요청을 보내어 중복됩니다"),
+    GOOGLE_INAPP_BAD_REQUEST_EXCEPTION(BAD_REQUEST, "해당 영수증은 취소되었거나, 대기 중인 결제입니다."),
 
     /**
      * 401 UNAUTHORIZED
@@ -54,7 +55,8 @@ public enum ErrorCode {
     TOKEN_INFO_NOT_SAME_AUTH_EXCEPTION(FORBIDDEN, "동일하지 않은 액세스 토큰과 리프레시 토큰입니다."),
     DUPLICATE_VOTE_EXCEPTION(FORBIDDEN, "중복된 투표가 전달되었습니다."),
     LACK_TICKET_COUNT_EXCEPTION(FORBIDDEN, "열람권 수가 부족합니다."),
-    GOOGLE_TOKEN_FORBIDDEN_EXCEPTION(FORBIDDEN, "유효하지 않는 Google OAuth 2.0 refreshToken입니다. DBA에게 문의해주세요."),
+    GOOGLE_TOKEN_FORBIDDEN_EXCEPTION(FORBIDDEN,
+        "유효하지 않는 Google OAuth 2.0 refreshToken입니다. DBA에게 문의해주세요."),
     GOOGLE_SUBSCRIPTIONS_FORBIDDEN_EXCEPTION(FORBIDDEN, "이미 YELLO: PLUS를 구독한 상태입니다."),
 
     /**
@@ -91,6 +93,7 @@ public enum ErrorCode {
      */
     INTERNAL_SERVER_ERROR(HttpStatus.INTERNAL_SERVER_ERROR, "알 수 없는 서버 에러가 발생했습니다"),
     REDIS_ERROR(HttpStatus.INTERNAL_SERVER_ERROR, "Redis에 에러가 발생했습니다."),
+    APPLE_TOKEN_SERVER_EXCEPTION(HttpStatus.INTERNAL_SERVER_ERROR, "Apple과의 통신에 실패하였습니다.");
     GOOGLE_TOKEN_SERVER_EXCEPTION(HttpStatus.INTERNAL_SERVER_ERROR, "Google과의 통신에 실패하였습니다.");
 
     private final HttpStatus httpStatus;

@@ -10,6 +10,7 @@ import com.yello.server.global.common.factory.TokenFactory;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpHeaders;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
 import org.springframework.web.reactive.function.client.WebClient;
 
@@ -23,21 +24,24 @@ public class AppleUtil {
     @Value("${apple.sandbox.uri}")
     private String APPLE_SANDBOX_URL;
 
-    public AppleOrderResponse appleGetTransaction(AppleTransaction appleTransaction) {
-        AppleOrderResponse transactionResponse =
+    public ResponseEntity<AppleOrderResponse> appleGetTransaction(
+        AppleTransaction appleTransaction) {
+
+        ResponseEntity<AppleOrderResponse> transactionResponse =
             getTransactionByWebClient(appleTransaction, APPLE_SANDBOX_URL);
 
-        String environment = transactionResponse.environment();
+        String environment = transactionResponse.getBody().environment();
         if (transactionResponse == null) {
             throw new PurchaseException(NOT_FOUND_TRANSACTION_EXCEPTION);
         }
         if (environment == "Sandbox") {
-            transactionResponse = getTransactionByWebClient(appleTransaction, APPLE_SANDBOX_URL);
+            return getTransactionByWebClient(appleTransaction, APPLE_SANDBOX_URL);
         }
         return transactionResponse;
     }
 
-    public AppleOrderResponse getTransactionByWebClient(AppleTransaction appleTransaction,
+    public ResponseEntity<AppleOrderResponse> getTransactionByWebClient(
+        AppleTransaction appleTransaction,
         String appleUrl) {
 
         String appleToken = tokenFactory.generateAppleToken();
@@ -47,12 +51,10 @@ public class AppleUtil {
             .defaultHeader(HttpHeaders.AUTHORIZATION, appleToken)
             .build();
 
-        AppleOrderResponse transactionResponse = webClient.get()
+        return webClient.get()
             .uri(appleUrl + "/{transactionId}", appleTransaction.transactionId())
-            .retrieve()
-            .bodyToMono(AppleOrderResponse.class)
+            .exchangeToMono(clientResponse -> clientResponse.toEntity(AppleOrderResponse.class))
             .block();
-        return transactionResponse;
     }
 
 }

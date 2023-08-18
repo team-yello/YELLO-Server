@@ -46,7 +46,8 @@ public enum SuccessCode {
     CREATE_PAY_COUNT(CREATED, "이용권 버튼 클릭 횟수가 저장에 성공했습니다."),
     RE_ISSUE_TOKEN_AUTH_SUCCESS(CREATED, "토큰 재발급에 성공했습니다."),
     PURCHASE_SUBSCRIPTION_VERIFY_SUCCESS(CREATED, "애플 결제 검증 및 반영에 성공하였습니다."),
-    GOOGLE_PURCHASE_SUBSCRIPTION_VERIFY_SUCCESS(CREATED, "구글 결제 검증 및 반영에 성공하였습니다.");
+    GOOGLE_PURCHASE_SUBSCRIPTION_VERIFY_SUCCESS(CREATED, "구글 구독 결제 검증 및 반영에 성공하였습니다."),
+    GOOGLE_PURCHASE_INAPP_VERIFY_SUCCESS(CREATED, "구글 인앱 결제 검증 및 반영에 성공하였습니다.");
 
     private final HttpStatus httpStatus;
     private final String message;

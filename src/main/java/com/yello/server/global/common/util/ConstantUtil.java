@@ -39,6 +39,9 @@ public class ConstantUtil {
     public static final String GOOGLE_PURCHASE_SUBSCRIPTION_CANCELED = "SUBSCRIPTION_STATE_CANCELED";
     public static final String GOOGLE_PURCHASE_SUBSCRIPTION_EXPIRED = "SUBSCRIPTION_STATE_EXPIRED";
     public static final String GOOGLE_PURCHASE_SUBSCRIPTION_GRACE_PERIOD = "SUBSCRIPTION_STATE_IN_GRACE_PERIOD";
+    public static final String GOOGLE_PURCHASE_INAPP_PURCHASED = "PURCHASED";
+    public static final String GOOGLE_PURCHASE_INAPP_PENDING = "PENDING";
+    public static final String GOOGLE_PURCHASE_INAPP_CANCELED = "CANCELED";
 
     private ConstantUtil() {
         throw new IllegalStateException();

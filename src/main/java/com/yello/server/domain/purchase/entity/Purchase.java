@@ -41,9 +41,10 @@ public class Purchase extends AuditingTimeEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(nullable = false)
+    @Column
     private String transactionId;
 
+    @Column
     private Integer price;
 
     @ManyToOne(fetch = FetchType.LAZY)
@@ -58,12 +59,14 @@ public class Purchase extends AuditingTimeEntity {
     @Convert(converter = ProductTypeConverter.class)
     private ProductType productType;
 
-    public static Purchase of(User user, ProductType productType, Gateway gateway) {
+    public static Purchase of(User user, ProductType productType, Gateway gateway,
+        String transactionId) {
         return Purchase.builder()
             .price(setPrice(productType.toString()))
             .user(user)
             .gateway(gateway)
             .productType(productType)
+            .transactionId(transactionId)
             .build();
     }
 
@@ -82,8 +85,9 @@ public class Purchase extends AuditingTimeEntity {
         }
     }
 
-    public static Purchase createPurchase(User user, ProductType productType, Gateway gateway) {
-        return Purchase.of(user, productType, gateway);
+    public static Purchase createPurchase(User user, ProductType productType, Gateway gateway,
+        String transactionId) {
+        return Purchase.of(user, productType, gateway, transactionId);
     }
 
     public void setTransactionId(String transactionId) {
