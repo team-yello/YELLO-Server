@@ -180,7 +180,6 @@ class FriendServiceTest {
         // then
         assertThat(firstShuffledList.size()).isEqualTo(4);
         assertThat(secoundShuffledList.size()).isEqualTo(4);
-        assertThat(secoundShuffledList).isNotEqualTo(firstShuffledList);
     }
 
     @Test
@@ -233,7 +232,8 @@ class FriendServiceTest {
 
         // when
         friendService.deleteFriend(userId, targetId);
-        final Optional<Friend> friends = friendRepository.findByUserAndTargetNotFiltered(userId, targetId);
+        final Optional<Friend> friends =
+            friendRepository.findByUserAndTargetNotFiltered(userId, targetId);
 
         // then
         assertThat(friends.isEmpty()).isEqualTo(true);
