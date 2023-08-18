@@ -7,8 +7,6 @@ public interface CooldownRepository {
 
     Cooldown save(Cooldown cooldown);
 
-    Cooldown getByUserid(Long userId);
-    
     Optional<Cooldown> findByUserId(Long userId);
 
     boolean existsByUserId(Long userId);
