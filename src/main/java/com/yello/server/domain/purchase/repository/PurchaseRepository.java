@@ -14,5 +14,10 @@ public interface PurchaseRepository {
 
     List<Purchase> findAllByUser(User user);
 
-    Optional<Purchase> findTopByUserAndProductTypeOrderByCreatedAtDesc(User user, ProductType productType);
+    Optional<Purchase> findTopByUserAndProductTypeOrderByCreatedAtDesc(User user,
+        ProductType productType);
+
+    Optional<Purchase> findByTransactionId(String transactionId);
+
+    void delete(Purchase purchase);
 }

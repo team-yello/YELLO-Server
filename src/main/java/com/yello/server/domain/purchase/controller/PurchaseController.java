@@ -5,6 +5,7 @@ import static com.yello.server.global.common.SuccessCode.VERIFY_RECEIPT_SUCCESS;
 
 import com.yello.server.domain.purchase.dto.apple.AppleOrderResponse;
 import com.yello.server.domain.purchase.dto.apple.AppleTransaction;
+import com.yello.server.domain.purchase.dto.request.AppleInAppRefundRequest;
 import com.yello.server.domain.purchase.dto.response.UserSubscribeNeededResponse;
 import com.yello.server.domain.purchase.service.PurchaseService;
 import com.yello.server.domain.user.entity.User;
@@ -18,6 +19,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import java.time.LocalDateTime;
 import lombok.RequiredArgsConstructor;
 import lombok.val;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -67,7 +69,7 @@ public class PurchaseController {
     @Operation(summary = "구독 연장 유도 필요 여부 확인 API", responses = {
         @ApiResponse(
             responseCode = "200",
-            content = @Content(mediaType = "application/json", schema = @Schema(implementation = UserSubscribeNeededResponse.class))
+            content = @Content(mediaType = "application/json")
         )
     })
     @GetMapping("/subscribeNeed")
@@ -75,6 +77,22 @@ public class PurchaseController {
         @AccessTokenUser User user) {
         val data = purchaseService.getUserSubscribe(user, LocalDateTime.now());
         return BaseResponse.success(USER_SUBSCRIBE_NEEDED_READ_SUCCESS, data);
+    }
+
+    @Operation(summary = "Apple 환불 API", responses = {
+        @ApiResponse(
+            responseCode = "200",
+            content = @Content(mediaType = "application/json", schema = @Schema(implementation = AppleOrderResponse.class))
+        )
+    })
+    @DeleteMapping("/apple/refund")
+    public BaseResponse refundInAppApple(
+        @AccessTokenUser User user,
+        AppleInAppRefundRequest request
+    ) {
+        purchaseService.refundInAppApple(user.getId(), request);
+
+        return BaseResponse.success(VERIFY_RECEIPT_SUCCESS);
     }
 
 }

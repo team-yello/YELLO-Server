@@ -12,6 +12,8 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.Table;
+import javax.persistence.UniqueConstraint;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -25,12 +27,24 @@ import org.hibernate.annotations.DynamicInsert;
 @DynamicInsert
 @AllArgsConstructor
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
+@Table(
+    uniqueConstraints = {
+        @UniqueConstraint(
+            name = "transactionId_unique",
+            columnNames = {"transactionId"}
+        ),
+    }
+)
 public class Purchase extends AuditingTimeEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @Column(nullable = false)
+    private String transactionId;
+
+    @Column
     private Integer price;
 
     @ManyToOne(fetch = FetchType.LAZY)
@@ -45,12 +59,14 @@ public class Purchase extends AuditingTimeEntity {
     @Convert(converter = ProductTypeConverter.class)
     private ProductType productType;
 
-    public static Purchase of(User user, ProductType productType, Gateway gateway) {
+    public static Purchase of(User user, ProductType productType, Gateway gateway,
+        String transactionId) {
         return Purchase.builder()
             .price(setPrice(productType.toString()))
             .user(user)
             .gateway(gateway)
             .productType(productType)
+            .transactionId(transactionId)
             .build();
     }
 
@@ -69,8 +85,9 @@ public class Purchase extends AuditingTimeEntity {
         }
     }
 
-    public static Purchase createPurchase(User user, ProductType productType, Gateway gateway) {
-        return Purchase.of(user, productType, gateway);
+    public static Purchase createPurchase(User user, ProductType productType, Gateway gateway,
+        String transactionId) {
+        return Purchase.of(user, productType, gateway, transactionId);
     }
 
 }

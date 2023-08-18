@@ -9,11 +9,13 @@ import static com.yello.server.global.common.util.ConstantUtil.YELLO_PLUS_ID;
 
 import com.yello.server.domain.purchase.dto.apple.AppleOrderResponse;
 import com.yello.server.domain.purchase.dto.apple.AppleTransaction;
+import com.yello.server.domain.purchase.dto.request.AppleInAppRefundRequest;
 import com.yello.server.domain.purchase.dto.response.UserSubscribeNeededResponse;
 import com.yello.server.domain.purchase.entity.Gateway;
 import com.yello.server.domain.purchase.entity.ProductType;
 import com.yello.server.domain.purchase.entity.Purchase;
 import com.yello.server.domain.purchase.exception.PurchaseException;
+import com.yello.server.domain.purchase.exception.PurchaseNotFoundException;
 import com.yello.server.domain.purchase.exception.SubscriptionConflictException;
 import com.yello.server.domain.purchase.repository.PurchaseRepository;
 import com.yello.server.domain.user.entity.Subscribe;
@@ -64,7 +66,14 @@ public class PurchaseService {
             throw new PurchaseException(NOT_FOUND_TRANSACTION_EXCEPTION);
         }
 
-        createSubscribe(user);
+        Optional<Purchase> purchase =
+            purchaseRepository.findByTransactionId(request.transactionId());
+
+        if (purchase.isPresent()) {
+            throw new PurchaseNotFoundException(NOT_FOUND_TRANSACTION_EXCEPTION);
+        }
+
+        createSubscribe(user, request.transactionId());
         user.changeTicketCount(3);
     }
 
@@ -76,15 +85,15 @@ public class PurchaseService {
         // 정상적인 구매일 경우
         switch (request.productId()) {
             case ONE_TICKET_ID:
-                createTicket(user, ProductType.ONE_TICKET);
+                createTicket(user, ProductType.ONE_TICKET, request.transactionId());
                 user.changeTicketCount(1);
                 break;
             case TWO_TICKET_ID:
-                createTicket(user, ProductType.TWO_TICKET);
+                createTicket(user, ProductType.TWO_TICKET, request.transactionId());
                 user.changeTicketCount(2);
                 break;
             case FIVE_TICKET_ID:
-                createTicket(user, ProductType.FIVE_TICKET);
+                createTicket(user, ProductType.FIVE_TICKET, request.transactionId());
                 user.changeTicketCount(5);
                 break;
             default:
@@ -94,18 +103,33 @@ public class PurchaseService {
     }
 
     @Transactional
-    public void createSubscribe(User user) {
+    public void createSubscribe(User user, String transactionId) {
 
-        user.setSubscribe();
-        Purchase newPurchase = Purchase.createPurchase(user, ProductType.YELLO_PLUS, Gateway.APPLE);
+        user.setSubscribe(Subscribe.ACTIVE);
+        Purchase newPurchase =
+            Purchase.createPurchase(user, ProductType.YELLO_PLUS, Gateway.APPLE, transactionId);
 
         purchaseRepository.save(newPurchase);
     }
 
     @Transactional
-    public void createTicket(User user, ProductType productType) {
+    public void createTicket(User user, ProductType productType, String transactionId) {
 
-        Purchase newPurchase = Purchase.createPurchase(user, productType, Gateway.APPLE);
+        Purchase newPurchase =
+            Purchase.createPurchase(user, productType, Gateway.APPLE, transactionId);
         purchaseRepository.save(newPurchase);
+    }
+
+    @Transactional
+    public void refundInAppApple(Long userId, AppleInAppRefundRequest request) {
+        final User user = userRepository.getById(userId);
+
+        // 에러 코드 수정
+        Purchase purchase = purchaseRepository.findByTransactionId(request.transactionId())
+            .orElseThrow(() -> new PurchaseNotFoundException(NOT_FOUND_TRANSACTION_EXCEPTION));
+
+        purchaseRepository.delete(purchase);
+        user.setSubscribe(Subscribe.NORMAL);
+
     }
 }

@@ -51,7 +51,8 @@ public class FakePurchaseRepository implements PurchaseRepository {
     }
 
     @Override
-    public Optional<Purchase> findTopByUserAndProductTypeOrderByCreatedAtDesc(User user, ProductType productType) {
+    public Optional<Purchase> findTopByUserAndProductTypeOrderByCreatedAtDesc(User user,
+        ProductType productType) {
         return data.stream()
             .filter(purchase -> {
                     return purchase.getUser().getId().equals(user.getId())
@@ -60,5 +61,15 @@ public class FakePurchaseRepository implements PurchaseRepository {
             )
             .sorted(Comparator.comparing(Purchase::getCreatedAt).reversed())
             .findFirst();
+    }
+
+    @Override
+    public Optional<Purchase> findByTransactionId(String transactionId) {
+        return Optional.empty();
+    }
+
+    @Override
+    public void delete(Purchase purchase) {
+
     }
 }
