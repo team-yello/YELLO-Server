@@ -19,6 +19,7 @@ public enum SuccessCode {
     READ_FRIEND_SUCCESS(OK, "친구 조회에 성공했습니다."),
     READ_USER_SUCCESS(OK, "유저 조회에 성공했습니다."),
     USER_SUBSCRIBE_NEEDED_READ_SUCCESS(OK, "유저 구독 연장 유도 필요 여부 확인 조회에 성공하였습니다."),
+    USER_PURCHASE_INFO_READ_SUCCESS(OK, "유저 결제 정보 조회에 성공하였습니다"),
     ADD_FRIEND_SUCCESS(OK, "친구 추가에 성공했습니다."),
     SHUFFLE_FRIEND_SUCCESS(OK, "친구 셔플에 성공했습니다."),
     CHECK_KEYWORD_SUCCESS(OK, "키워드 확인에 성공했습니다."),
@@ -43,7 +44,8 @@ public enum SuccessCode {
     SIGN_UP_SUCCESS(CREATED, "회원 가입에 성공했습니다."),
     CREATE_VOTE_SUCCESS(CREATED, "투표를 성공했습니다."),
     CREATE_PAY_COUNT(CREATED, "이용권 버튼 클릭 횟수가 저장에 성공했습니다."),
-    RE_ISSUE_TOKEN_AUTH_SUCCESS(CREATED, "토큰 재발급에 성공했습니다.");
+    RE_ISSUE_TOKEN_AUTH_SUCCESS(CREATED, "토큰 재발급에 성공했습니다."),
+    PURCHASE_SUBSCRIPTION_VERIFY_SUCCESS(CREATED, "애플 결제 검증 및 반영에 성공하였습니다.");
 
     private final HttpStatus httpStatus;
     private final String message;
