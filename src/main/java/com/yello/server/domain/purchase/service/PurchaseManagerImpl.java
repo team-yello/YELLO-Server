@@ -35,9 +35,9 @@ public class PurchaseManagerImpl implements PurchaseManager {
     }
 
     @Override
-    public Purchase createTicket(User user, ProductType productType, String transactionId) {
+    public Purchase createTicket(User user, ProductType productType, Gateway gateway, String transactionId) {
         Purchase newPurchase =
-            Purchase.createPurchase(user, productType, Gateway.APPLE, transactionId);
+            Purchase.createPurchase(user, productType, gateway, transactionId);
         return purchaseRepository.save(newPurchase);
     }
 

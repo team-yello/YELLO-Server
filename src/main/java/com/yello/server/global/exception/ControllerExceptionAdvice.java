@@ -77,8 +77,8 @@ public class ControllerExceptionAdvice {
     private final UserRepository userRepository;
     private final TaskExecutor taskExecutor;
     private final TokenProvider tokenProvider;
-    @Qualifier("ambulence")
-    private SlackApi slackTokenAmbulence;
+    @Qualifier("ambulance")
+    private SlackApi slackTokenAmbulance;
     @Qualifier("bank")
     private SlackApi slackTokenBank;
 
@@ -130,7 +130,7 @@ public class ControllerExceptionAdvice {
         slackMessage.setText("긴급 환자가 이송되었습니다");
         slackMessage.setUsername("옐로 소방서");
 
-        Runnable runnable = () -> slackTokenAmbulence.call(slackMessage);
+        Runnable runnable = () -> slackTokenAmbulance.call(slackMessage);
         taskExecutor.execute(runnable);
         throw exception;
     }

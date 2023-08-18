@@ -11,7 +11,7 @@ public interface PurchaseManager {
 
     Purchase createSubscribe(User user, Gateway gateway, String transactionId);
 
-    Purchase createTicket(User user, ProductType productType, String transactionId);
+    Purchase createTicket(User user, ProductType productType, Gateway gateway, String transactionId);
 
     void handleAppleTransactionError(ResponseEntity<AppleOrderResponse> response,
         String transactionId);

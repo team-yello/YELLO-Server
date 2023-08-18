@@ -16,7 +16,7 @@ public class SlackConfiguration {
     String slackTokenBank;
 
     @Bean
-    @Qualifier(value = "ambluence")
+    @Qualifier(value = "ambulance")
     SlackApi slackAmbulenceApi() {
         return new SlackApi("https://hooks.slack.com/services/" + slackTokenAmbulence);
     }
