@@ -27,6 +27,8 @@ public class FCMManagerImpl implements FCMManager {
         return Message.builder()
             .setToken(deviceToken)
             .setNotification(notificationMessage.toNotification())
+            .putData("title", notificationMessage.title())
+            .putData("body", notificationMessage.message())
             .putData("type", notificationMessage.type().name())
             .build();
     }

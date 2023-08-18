@@ -41,6 +41,11 @@ public class FakeCooldownRepository implements CooldownRepository {
     }
 
     @Override
+    public boolean existsByMessageId(String messageId) {
+        return false;
+    }
+
+    @Override
     public Optional<Cooldown> findByUserIdNotFiltered(Long userId) {
         return Optional.empty();
     }

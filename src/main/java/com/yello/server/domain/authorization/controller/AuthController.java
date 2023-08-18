@@ -26,8 +26,6 @@ import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
-import java.io.IOException;
-import java.util.concurrent.TimeoutException;
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 import lombok.RequiredArgsConstructor;
@@ -76,7 +74,7 @@ public class AuthController {
     })
     @PostMapping("/signup")
     public BaseResponse<SignUpResponse> postSignUp(
-        @Valid @RequestBody SignUpRequest signUpRequest) throws IOException, TimeoutException {
+        @Valid @RequestBody SignUpRequest signUpRequest) {
         val data = authService.signUp(signUpRequest);
         return BaseResponse.success(SIGN_UP_SUCCESS, data);
     }
