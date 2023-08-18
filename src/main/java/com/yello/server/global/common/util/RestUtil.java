@@ -70,7 +70,7 @@ public class RestUtil {
         formData.add("client_id", clientId.replaceAll("\"", ""));
         formData.add("grant_type", "refresh_token");
         formData.add("refresh_token", refreshToken);
-        System.out.println("formData = " + formData);
+
         WebClient webClient = WebClient.builder()
             .baseUrl(GOOGLE_TOKEN_ISSUE_URL)
             .defaultHeader(HttpHeaders.CONTENT_TYPE, APPLICATION_FORM_URLENCODED_VALUE)

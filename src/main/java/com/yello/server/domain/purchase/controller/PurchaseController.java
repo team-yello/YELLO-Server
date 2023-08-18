@@ -75,7 +75,7 @@ public class PurchaseController {
         @AccessTokenUser User user,
         @RequestBody GoogleSubscriptionV2GetRequest request
     ) throws IOException {
-        val data = purchaseService.verifyGoogleSubscriptionTransaction(user, request);
+        val data = purchaseService.verifyGoogleSubscriptionTransaction(user.getId(), request);
         return BaseResponse.success(GOOGLE_PURCHASE_SUBSCRIPTION_VERIFY_SUCCESS, data);
     }
 

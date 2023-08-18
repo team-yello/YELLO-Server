@@ -29,6 +29,9 @@ public enum ErrorCode {
     QUERY_STRING_REQUIRED_EXCEPTION(BAD_REQUEST, "쿼리 스트링이 없습니다."),
     EXIST_FRIEND_EXCEPTION(BAD_REQUEST, "이미 존재하는 친구입니다."),
     REVEAL_FULL_NAME_VOTE_EXCEPTION(BAD_REQUEST, "이미 공개한 이름입니다"),
+    GOOGLE_SUBSCRIPTION_USED_EXCEPTION(BAD_REQUEST, "이미 처리된 Google 영수증입니다."),
+    GOOGLE_SUBSCRIPTION_DUPLICATED_CANCEL_EXCEPTION(BAD_REQUEST, "이미 CANCELED한 유저에게 CANCELED 요청을 보내어 중복됩니다"),
+
     /**
      * 401 UNAUTHORIZED
      */
@@ -81,6 +84,7 @@ public enum ErrorCode {
     UUID_CONFLICT_USER_EXCEPTION(CONFLICT, "이미 존재하는 소셜 유저입니다."),
     DEVICE_TOKEN_CONFLICT_USER_EXCEPTION(CONFLICT, "이미 존재하는 deviceToken 입니다."),
     SUBSCRIBE_ACTIVE_EXCEPTION(CONFLICT, "이미 옐로플러스 구독한 유저입니다."),
+    GOOGLE_SUBSCRIPTIONS_SUBSCRIPTION_EXCEPTION(CONFLICT, "이미 적용한 영수증입니다."),
 
     /**
      * 500 INTERNAL SERVER ERROR

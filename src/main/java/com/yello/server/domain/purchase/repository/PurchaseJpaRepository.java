@@ -9,6 +9,8 @@ import org.springframework.data.jpa.repository.JpaRepository;
 
 public interface PurchaseJpaRepository extends JpaRepository<Purchase, Long> {
 
+    Optional<Purchase> findByTransactionId(String transactionId);
+
     List<Purchase> findAllByUser(User user);
 
     Optional<Purchase> findTopByUserAndProductTypeOrderByCreatedAtDesc(User user, ProductType productType);
