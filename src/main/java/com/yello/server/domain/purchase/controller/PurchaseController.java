@@ -1,11 +1,14 @@
 package com.yello.server.domain.purchase.controller;
 
+import static com.yello.server.global.common.SuccessCode.GOOGLE_PURCHASE_SUBSCRIPTION_VERIFY_SUCCESS;
 import static com.yello.server.global.common.SuccessCode.USER_PURCHASE_INFO_READ_SUCCESS;
 import static com.yello.server.global.common.SuccessCode.USER_SUBSCRIBE_NEEDED_READ_SUCCESS;
 import static com.yello.server.global.common.SuccessCode.VERIFY_RECEIPT_SUCCESS;
 
 import com.yello.server.domain.purchase.dto.apple.AppleOrderResponse;
 import com.yello.server.domain.purchase.dto.apple.AppleTransaction;
+import com.yello.server.domain.purchase.dto.request.GoogleSubscriptionV2GetRequest;
+import com.yello.server.domain.purchase.dto.response.GoogleSubscriptionV2GetResponse;
 import com.yello.server.domain.purchase.dto.response.UserPurchaseInfoResponse;
 import com.yello.server.domain.purchase.dto.response.UserSubscribeNeededResponse;
 import com.yello.server.domain.purchase.service.PurchaseService;
@@ -17,6 +20,7 @@ import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import java.io.IOException;
 import java.time.LocalDateTime;
 import lombok.RequiredArgsConstructor;
 import lombok.val;
@@ -64,6 +68,15 @@ public class PurchaseController {
         purchaseService.verifyAppleTicketTransaction(user.getId(), appleTransaction);
 
         return BaseResponse.success(VERIFY_RECEIPT_SUCCESS);
+    }
+
+    @PostMapping("/google/subscriptionsv2/verify")
+    public BaseResponse<GoogleSubscriptionV2GetResponse> verifyGoogleSubscriptionTransaction(
+        @AccessTokenUser User user,
+        @RequestBody GoogleSubscriptionV2GetRequest request
+    ) throws IOException {
+        val data = purchaseService.verifyGoogleSubscriptionTransaction(user.getId(), request);
+        return BaseResponse.success(GOOGLE_PURCHASE_SUBSCRIPTION_VERIFY_SUCCESS, data);
     }
 
     @Operation(summary = "구독 연장 유도 필요 여부 확인 API", responses = {

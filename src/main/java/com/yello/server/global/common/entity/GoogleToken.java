@@ -23,4 +23,8 @@ public class GoogleToken extends AuditingTimeEntity {
     String accessToken;
 
     String refreshToken;
+
+    public void updateAccessToken(String newAccessToken) {
+        this.accessToken = newAccessToken;
+    }
 }
