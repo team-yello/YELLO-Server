@@ -44,7 +44,7 @@ public class MessageQueueRabbitRepository implements MessageQueueRepository {
     }
 
     private long getDeliveryTagByMessageId(Channel channel, String messageId) throws IOException {
-        GetResponse response = channel.basicGet("notification-exchange", false);
+        GetResponse response = channel.basicGet("vote-available-notification-queue", false);
 
         while (response!=null) {
             String messageBody = new String(response.getBody(), StandardCharsets.UTF_8);
@@ -57,7 +57,7 @@ public class MessageQueueRabbitRepository implements MessageQueueRepository {
                 return response.getEnvelope().getDeliveryTag();
             }
 
-            response = channel.basicGet("notification-exchange", false);
+            response = channel.basicGet("vote-available-notification-queue", false);
         }
 
         return -1;
