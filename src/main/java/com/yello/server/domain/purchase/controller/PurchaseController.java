@@ -6,11 +6,8 @@ import static com.yello.server.global.common.SuccessCode.VERIFY_RECEIPT_SUCCESS;
 
 import com.yello.server.domain.purchase.dto.apple.AppleOrderResponse;
 import com.yello.server.domain.purchase.dto.apple.AppleTransaction;
-<<<<<<< HEAD
 import com.yello.server.domain.purchase.dto.request.AppleInAppRefundRequest;
-=======
 import com.yello.server.domain.purchase.dto.response.UserPurchaseInfoResponse;
->>>>>>> 43f43d9360c7975e13881f7c87e88062cf528e8d
 import com.yello.server.domain.purchase.dto.response.UserSubscribeNeededResponse;
 import com.yello.server.domain.purchase.service.PurchaseService;
 import com.yello.server.domain.user.entity.User;
