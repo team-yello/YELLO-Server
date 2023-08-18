@@ -50,7 +50,8 @@ public class MessageQueueRabbitRepository implements MessageQueueRepository {
     }
 
     private long getDeliveryTagByMessageId(Channel channel, String messageId) throws IOException {
-        GetResponse response = channel.basicGet("vote-available-notification-queue", false);
+        log.info("[rabbitmq] message count: " + channel.messageCount("vote-available-notification-queue"));
+        GetResponse response = channel.basicGet("vote-available-notification-queue", true);
         log.info("[rabbitmq] Successfully get channel %s".formatted(response.getEnvelope().getExchange()));
 
         while (response!=null) {
