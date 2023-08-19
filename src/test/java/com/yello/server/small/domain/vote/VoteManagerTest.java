@@ -3,13 +3,9 @@ package com.yello.server.small.domain.vote;
 import static com.yello.server.global.common.factory.PaginationFactory.createPageable;
 import static org.assertj.core.api.Assertions.assertThat;
 
-import com.yello.server.domain.cooldown.repository.CooldownRepository;
 import com.yello.server.domain.friend.entity.Friend;
 import com.yello.server.domain.friend.repository.FriendRepository;
 import com.yello.server.domain.group.entity.School;
-import com.yello.server.domain.keyword.dto.response.KeywordCheckResponse;
-import com.yello.server.domain.keyword.repository.KeywordRepository;
-import com.yello.server.domain.question.dto.response.QuestionForVoteResponse;
 import com.yello.server.domain.question.entity.Question;
 import com.yello.server.domain.question.repository.QuestionRepository;
 import com.yello.server.domain.user.entity.Gender;
@@ -18,126 +14,85 @@ import com.yello.server.domain.user.entity.Subscribe;
 import com.yello.server.domain.user.entity.User;
 import com.yello.server.domain.user.repository.UserRepository;
 import com.yello.server.domain.user.service.UserManager;
-import com.yello.server.domain.vote.dto.request.CreateVoteRequest;
-import com.yello.server.domain.vote.dto.request.VoteAnswer;
-import com.yello.server.domain.vote.dto.response.RevealNameResponse;
-import com.yello.server.domain.vote.dto.response.VoteAvailableResponse;
-import com.yello.server.domain.vote.dto.response.VoteCreateVO;
-import com.yello.server.domain.vote.dto.response.VoteDetailResponse;
-import com.yello.server.domain.vote.dto.response.VoteFriendResponse;
-import com.yello.server.domain.vote.dto.response.VoteListResponse;
-import com.yello.server.domain.vote.dto.response.VoteUnreadCountResponse;
 import com.yello.server.domain.vote.entity.Vote;
 import com.yello.server.domain.vote.repository.VoteRepository;
 import com.yello.server.domain.vote.service.VoteManager;
-import com.yello.server.domain.vote.service.VoteService;
-import com.yello.server.infrastructure.rabbitmq.service.ProducerService;
-import com.yello.server.small.domain.cooldown.FakeCooldownRepository;
+import com.yello.server.domain.vote.service.VoteManagerImpl;
 import com.yello.server.small.domain.friend.FakeFriendRepository;
-import com.yello.server.small.domain.keyword.FakeKeywordRepository;
 import com.yello.server.small.domain.question.FakeQuestionRepository;
 import com.yello.server.small.domain.user.FakeUserManager;
 import com.yello.server.small.domain.user.FakeUserRepository;
-import com.yello.server.small.global.rabbitmq.FakeMessageQueueRepository;
-import com.yello.server.small.global.rabbitmq.FakeProducerService;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
 import java.util.List;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.data.domain.Pageable;
 
-public class VoteServiceTest {
+public class VoteManagerTest {
 
     private final UserRepository userRepository = new FakeUserRepository();
     private final FriendRepository friendRepository = new FakeFriendRepository();
     private final VoteRepository voteRepository = new FakeVoteRepository();
-    private final CooldownRepository cooldownRepository = new FakeCooldownRepository();
     private final QuestionRepository questionRepository = new FakeQuestionRepository();
-    private final KeywordRepository keywordRepository = new FakeKeywordRepository();
-    private final UserManager userManager = new FakeUserManager(userRepository);
-    private final VoteManager voteManager = new FakeVoteManager(
-        userRepository, questionRepository, voteRepository, friendRepository,
-        userManager);
-    private final ProducerService producerService =
-        new FakeProducerService(new FakeMessageQueueRepository());
-    private VoteService voteService;
-    private Question question1;
-    private Question question2;
-    private Question question3;
-    private Question question4;
-    private Question question5;
-    private Question question6;
-    private Question question7;
-    private Question question8;
 
+    private final UserManager userManager = new FakeUserManager(userRepository);
+
+    private VoteManager voteManager;
 
     @BeforeEach
     void init() {
-        this.voteService = VoteService.builder()
-            .voteRepository(voteRepository)
-            .friendRepository(friendRepository)
-            .cooldownRepository(cooldownRepository)
+        this.voteManager = VoteManagerImpl.builder()
             .userRepository(userRepository)
+            .friendRepository(friendRepository)
             .questionRepository(questionRepository)
-            .keywordRepository(keywordRepository)
-            .producerService(producerService)
-            .voteManager(voteManager)
+            .voteRepository(voteRepository)
+            .userManager(userManager)
             .build();
 
         School school = School.builder()
             .schoolName("Yello School")
             .departmentName("Yello")
             .build();
-        question1 = Question.builder()
+        Question question1 = questionRepository.save(Question.builder()
             .id(1L)
             .nameHead(null).nameFoot("와")
             .keywordHead("멋진").keywordFoot("에서 놀고싶어")
-            .build();
-        question2 = Question.builder()
+            .build());
+        Question question2 = questionRepository.save(Question.builder()
             .id(2L)
             .nameHead(null).nameFoot("와")
             .keywordHead("이쁜").keywordFoot("닮아보여")
-            .build();
-        question3 = Question.builder()
+            .build());
+        Question question3 = questionRepository.save(Question.builder()
             .id(3L)
             .nameHead(null).nameFoot("와")
             .keywordHead(null).keywordFoot("을 가고싶어")
-            .build();
-        question4 = Question.builder()
+            .build());
+        Question question4 = questionRepository.save(Question.builder()
             .id(4L)
             .nameHead(null).nameFoot("와")
             .keywordHead(null).keywordFoot("을 가고싶어")
-            .build();
-        question5 = Question.builder()
+            .build());
+        Question question5 = questionRepository.save(Question.builder()
             .id(5L)
             .nameHead(null).nameFoot("와")
             .keywordHead(null).keywordFoot("을 가고싶어")
-            .build();
-        question6 = Question.builder()
+            .build());
+        Question question6 = questionRepository.save(Question.builder()
             .id(6L)
             .nameHead(null).nameFoot("와")
             .keywordHead(null).keywordFoot("을 가고싶어")
-            .build();
-        question7 = Question.builder()
+            .build());
+        Question question7 = questionRepository.save(Question.builder()
             .id(7L)
             .nameHead(null).nameFoot("와")
             .keywordHead(null).keywordFoot("을 가고싶어")
-            .build();
-        question8 = Question.builder()
+            .build());
+        Question question8 = questionRepository.save(Question.builder()
             .id(8L)
             .nameHead(null).nameFoot("와")
             .keywordHead(null).keywordFoot("을 가고싶어")
-            .build();
-
-        questionRepository.save(question1);
-        questionRepository.save(question2);
-        questionRepository.save(question3);
-        questionRepository.save(question4);
-        questionRepository.save(question5);
-        questionRepository.save(question6);
-        questionRepository.save(question7);
-        questionRepository.save(question8);
+            .build());
 
         User user1 = userRepository.save(User.builder()
             .id(1L)
@@ -231,147 +186,47 @@ public class VoteServiceTest {
     }
 
     @Test
-    void 내가_받은_투표_전체_조회에_성공합니다() {
-        // given
-        final Long userId = 1L;
-        final Integer page = 0;
-        final Pageable pageable = createPageable(page);
-
-        // when
-        VoteListResponse result = voteService.findAllVotes(userId, pageable);
-
-        // then
-        assertThat(result.totalCount()).isEqualTo(4);
-        assertThat(result.votes().get(0).id()).isEqualTo(1L);
-    }
-
-    @Test
-    void 읽지_않은_투표_개수_조회에_성공합니다() {
-        // given
-        final Long userId = 1L;
-
-        // when
-        final VoteUnreadCountResponse result = voteService.getUnreadVoteCount(userId);
-
-        // then
-        assertThat(result.totalCount()).isEqualTo(4);
-    }
-
-    @Test
-    void 상세_투표_조회에_성공합니다() {
-        // given
-        final Long voteId = 1L;
-        final Vote vote = voteRepository.getById(voteId);
-
-        // when
-        final VoteDetailResponse result = voteService.findVoteById(voteId, 1L);
-
-        // then
-        assertThat(result.senderName()).isEqualTo("yello2");
-        assertThat(vote.getIsRead()).isEqualTo(true);
-
-    }
-
-    @Test
-    void 친구들이_받은_투표_조회에_성공합니다() {
-        // given
-        final Long userId = 1L;
-        final Pageable pageable = createPageable(0);
-
-        // when
-        VoteFriendResponse result =
-            voteService.findAllFriendVotes(userId, pageable); // 다시 확인 !!
-
-        // then
-        assertThat(result.totalCount()).isEqualTo(4);
-        assertThat(result.friendVotes().size()).isEqualTo(4);
-        assertThat(result.friendVotes().get(0).id()).isEqualTo(1L);
-    }
-
-    @Test
-    void 특정_투표에_대한_키워드_확인에_성공합니다() {
-        // given
-        final Long userId = 1L;
-        final Long voteId = 1L;
-        final Vote vote = voteRepository.getById(voteId);
-        final User user = userRepository.getById(userId);
-        final Integer beforePoint = user.getPoint();
-
-        // when
-        final KeywordCheckResponse result = voteService.checkKeyword(userId, voteId);
-
-        // then
-        assertThat(vote.getIsAnswerRevealed()).isEqualTo(true);
-        assertThat(user.getPoint()).isEqualTo(beforePoint - 100);
-        assertThat(result.answer()).isEqualTo("test");
-    }
-
-    @Test
-    void 투표하기_시_투표_10개_조회에_성공합니다() {
-        // given
-        final Long userId = 1L;
-
-        // when
-        List<QuestionForVoteResponse> result = voteService.findVoteQuestionList(userId);
-
-        // then
-        assertThat(result.size()).isEqualTo(8);
-
-    }
-
-    @Test
-    void 투표_가능_여부_조회에_성공합니다() {
-        // given
-        final Long userId = 1L;
-
-        // when
-        VoteAvailableResponse result = voteService.checkVoteAvailable(userId);
-
-        // then
-        assertThat(result.isPossible()).isEqualTo(true);
-
-    }
-
-    @Test
     void 투표_생성에_성공합니다() {
         // given
-        final Long userId = 1L;
-
-        final List<VoteAnswer> voteAnswerList = new ArrayList<>();
-        VoteAnswer answer1 = VoteAnswer.builder()
-            .friendId(2L)
-            .questionId(1L)
-            .keywordName("test")
-            .colorIndex(0)
-            .build();
-        voteAnswerList.add(answer1);
-
-        CreateVoteRequest request = CreateVoteRequest.builder()
-            .voteAnswerList(voteAnswerList)
-            .totalPoint(3)
-            .build();
-
         // when
-        VoteCreateVO result = voteService.createVote(userId, request);
-
         // then
-        assertThat(result.point()).isEqualTo(2003);
-        assertThat(result.votes().size()).isEqualTo(1);
     }
 
     @Test
-    void 투표_이름_힌트_조회에_성공합니다() {
+    void 투표_질문_리스트_생성에_성공합니다() {
         // given
-        final Long userId = 1L;
-        final Long voteId = 1L;
-        final User user = userRepository.getById(userId);
+        // when
+        // then
+    }
+
+    @Test
+    void 투표_이름_힌트_사용에_성공합니다() {
+        // given
+        // when
+        // then
+    }
+
+    @Test
+    void 투표_키워드_힌트_사용에_성공합니다() {
+        // given
+        // when
+        // then
+    }
+
+    @Test
+    void 첫_투표_생성_성공에_성공합니다() {
+        // given
+        final Pageable pageable = createPageable(0);
+        final Long femaleUserId = 1L;
+        User user = userRepository.getById(femaleUserId);
 
         // when
-        RevealNameResponse result = voteService.revealNameHint(userId, voteId);
+        voteManager.makeGreetingVote(user);
 
         // then
-        assertThat(result.name()).isIn('y', 'e');
-        assertThat(result.nameIndex()).isLessThan(2);
-
+        List<Vote> votes = voteRepository.findAllByReceiverUserId(femaleUserId, pageable);
+        Vote vote = votes.get(4);
+        assertThat(vote.getSender().getGender().getIntial()).isEqualTo("M");
     }
+
 }

@@ -53,7 +53,6 @@ public class FakeUserRepository implements UserRepository {
 
     @Override
     public User getById(Long id) {
-        System.out.println(id);
         return data.stream()
             .filter(user -> user.getId().equals(id))
             .findFirst()
