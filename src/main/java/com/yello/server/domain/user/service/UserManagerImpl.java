@@ -21,7 +21,7 @@ public class UserManagerImpl implements UserManager {
     @Override
     public User getOfficialUser(Gender gender) {
         final String uuid =
-            "FEMALE".equals(gender.intial()) ? OFFICIAL_MALE_ID : OFFICIAL_FEMALE_ID;
+            "MALE".equals(gender.intial()) ? OFFICIAL_MALE_ID : OFFICIAL_FEMALE_ID;
 
         return userRepository.findByUuid(uuid)
             .orElseGet(() ->

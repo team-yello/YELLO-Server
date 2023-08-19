@@ -19,6 +19,7 @@ import com.yello.server.domain.question.dto.response.QuestionForVoteResponse;
 import com.yello.server.domain.question.dto.response.QuestionVO;
 import com.yello.server.domain.question.entity.Question;
 import com.yello.server.domain.question.repository.QuestionRepository;
+import com.yello.server.domain.user.entity.Gender;
 import com.yello.server.domain.user.entity.Subscribe;
 import com.yello.server.domain.user.entity.User;
 import com.yello.server.domain.user.repository.UserRepository;
@@ -138,8 +139,9 @@ public class VoteManagerImpl implements VoteManager {
         final String greetingNameFoot = "에게 옐로가 전할 말은";
         final String greetingKeywordFoot = "라는 말이야";
 
-        final User sender = userManager.getOfficialUser(user.getGender());
-
+        Gender senderGender = user.getGender() == Gender.FEMALE ? Gender.MALE : Gender.FEMALE;
+        final User sender = userManager.getOfficialUser(senderGender);
+        
         final Question greetingQuestion = questionRepository.findByQuestionContent(
             null,
             greetingNameFoot,
