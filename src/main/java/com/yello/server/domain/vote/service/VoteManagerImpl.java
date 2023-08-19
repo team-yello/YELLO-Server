@@ -44,6 +44,9 @@ import org.springframework.transaction.annotation.Transactional;
 @Transactional
 public class VoteManagerImpl implements VoteManager {
 
+    public final static String GREETING_NAME_FOOT = "에게 옐로가 전할 말은";
+    public final static String GREETING_KEYWORD_FOOT = "라는 말이야";
+
     private final UserRepository userRepository;
     private final QuestionRepository questionRepository;
     private final VoteRepository voteRepository;
@@ -136,24 +139,21 @@ public class VoteManagerImpl implements VoteManager {
 
     @Override
     public void makeGreetingVote(User user) {
-        final String greetingNameFoot = "에게 옐로가 전할 말은";
-        final String greetingKeywordFoot = "라는 말이야";
-
         Gender senderGender = user.getGender() == Gender.FEMALE ? Gender.MALE : Gender.FEMALE;
         final User sender = userManager.getOfficialUser(senderGender);
-        
+
         final Question greetingQuestion = questionRepository.findByQuestionContent(
             null,
-            greetingNameFoot,
+            GREETING_NAME_FOOT,
             null,
-            greetingKeywordFoot
+            GREETING_KEYWORD_FOOT
         ).orElseGet(() ->
             questionRepository.save(
                 Question.of(
                     null,
-                    greetingNameFoot,
+                    GREETING_NAME_FOOT,
                     null,
-                    greetingKeywordFoot)
+                    GREETING_KEYWORD_FOOT)
             )
         );
 
