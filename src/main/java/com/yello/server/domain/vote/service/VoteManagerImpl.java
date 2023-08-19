@@ -19,7 +19,6 @@ import com.yello.server.domain.question.dto.response.QuestionForVoteResponse;
 import com.yello.server.domain.question.dto.response.QuestionVO;
 import com.yello.server.domain.question.entity.Question;
 import com.yello.server.domain.question.repository.QuestionRepository;
-import com.yello.server.domain.user.entity.Gender;
 import com.yello.server.domain.user.entity.Subscribe;
 import com.yello.server.domain.user.entity.User;
 import com.yello.server.domain.user.repository.UserRepository;
@@ -30,15 +29,16 @@ import com.yello.server.domain.vote.exception.VoteForbiddenException;
 import com.yello.server.domain.vote.exception.VoteNotFoundException;
 import com.yello.server.domain.vote.repository.VoteRepository;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.Random;
 import java.util.stream.IntStream;
+import lombok.Builder;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
+@Builder
 @Component
 @RequiredArgsConstructor
 @Transactional
@@ -87,12 +87,14 @@ public class VoteManagerImpl implements VoteManager {
 
     @Override
     public List<QuestionForVoteResponse> generateVoteQuestion(User user, List<Question> questions) {
-        Collections.shuffle(questions);
+        List<Question> questionList = new ArrayList<>(questions);
+        Collections.shuffle(questionList);
 
         return questions.stream()
             .map(question -> {
-                final List<Keyword> keywordList = question.getKeywordList();
-                Collections.shuffle(Arrays.asList(keywordList));
+                final List<Keyword> keywords = question.getKeywordList();
+                List<Keyword> keywordList = new ArrayList<>(keywords);
+                Collections.shuffle(keywordList);
 
                 return QuestionForVoteResponse.builder()
                     .friendList(getShuffledFriends(user))
@@ -112,7 +114,7 @@ public class VoteManagerImpl implements VoteManager {
             throw new VoteForbiddenException(LACK_POINT_EXCEPTION);
         }
 
-        if (vote.getNameHint() != NAME_HINT_DEFAULT) {
+        if (vote.getNameHint()!=NAME_HINT_DEFAULT) {
             throw new VoteNotFoundException(INVALID_VOTE_EXCEPTION);
         }
 
@@ -124,7 +126,7 @@ public class VoteManagerImpl implements VoteManager {
 
     @Override
     public KeywordCheckResponse useKeywordHint(User user, Vote vote) {
-        if (user.getSubscribe() != Subscribe.NORMAL) {
+        if (user.getSubscribe()!=Subscribe.NORMAL) {
             vote.checkKeyword();
         } else {
             if (user.getPoint() < KEYWORD_HINT_POINT) {
@@ -139,9 +141,7 @@ public class VoteManagerImpl implements VoteManager {
 
     @Override
     public void makeGreetingVote(User user) {
-        Gender senderGender = user.getGender() == Gender.FEMALE ? Gender.MALE : Gender.FEMALE;
-        final User sender = userManager.getOfficialUser(senderGender);
-
+        final User sender = userManager.getOfficialUser(user.getGender());
         final Question greetingQuestion = questionRepository.findByQuestionContent(
             null,
             GREETING_NAME_FOOT,
@@ -166,17 +166,19 @@ public class VoteManagerImpl implements VoteManager {
     }
 
     private List<FriendShuffleResponse> getShuffledFriends(User user) {
-        final List<Friend> allFriend = friendRepository.findAllByUserId(user.getId());
-        Collections.shuffle(allFriend);
+        final List<Friend> friends = friendRepository.findAllByUserId(user.getId());
+        List<Friend> friendList = new ArrayList<>(friends);
+        Collections.shuffle(friendList);
 
-        return allFriend.stream()
+        return friendList.stream()
             .map(FriendShuffleResponse::of)
             .limit(RANDOM_COUNT)
             .toList();
     }
 
     private List<String> getShuffledKeywords(Question question) {
-        final List<Keyword> keywordList = question.getKeywordList();
+        final List<Keyword> keywords = question.getKeywordList();
+        List<Keyword> keywordList = new ArrayList<>(keywords);
         Collections.shuffle(keywordList);
 
         return keywordList.stream()

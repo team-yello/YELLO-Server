@@ -25,4 +25,7 @@ public enum Gender {
         return intial;
     }
 
+    public Gender reverse() {
+        return "M".equals(this.intial) ? FEMALE : MALE;
+    }
 }

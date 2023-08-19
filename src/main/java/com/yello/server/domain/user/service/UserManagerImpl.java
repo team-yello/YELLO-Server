@@ -21,11 +21,11 @@ public class UserManagerImpl implements UserManager {
     @Override
     public User getOfficialUser(Gender gender) {
         final String uuid =
-            "MALE".equals(gender.intial()) ? OFFICIAL_MALE_ID : OFFICIAL_FEMALE_ID;
+            "M".equals(gender.getIntial()) ? OFFICIAL_FEMALE_ID : OFFICIAL_MALE_ID;
 
         return userRepository.findByUuid(uuid)
             .orElseGet(() ->
-                userRepository.save(makeOfficialUser(OFFICIAL_NAME, uuid, gender))
+                userRepository.save(makeOfficialUser(OFFICIAL_NAME, uuid, gender.reverse()))
             );
     }
 

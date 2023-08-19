@@ -29,7 +29,6 @@ import com.yello.server.domain.vote.exception.VoteNotFoundException;
 import com.yello.server.domain.vote.repository.VoteRepository;
 import com.yello.server.domain.vote.service.VoteManager;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.Random;
@@ -85,12 +84,14 @@ public class FakeVoteManager implements VoteManager {
 
     @Override
     public List<QuestionForVoteResponse> generateVoteQuestion(User user, List<Question> questions) {
-        Collections.shuffle(Arrays.asList(questions));
+        List<Question> questionList = new ArrayList<>(questions);
+        Collections.shuffle(questionList);
 
         return questions.stream()
             .map(question -> {
-                final List<Keyword> keywordList = question.getKeywordList();
-                Collections.shuffle(Arrays.asList(keywordList));
+                final List<Keyword> keywords = question.getKeywordList();
+                List<Keyword> keywordList = new ArrayList<>(keywords);
+                Collections.shuffle(keywordList);
 
                 return QuestionForVoteResponse.builder()
                     .friendList(getShuffledFriends(user))
@@ -162,17 +163,19 @@ public class FakeVoteManager implements VoteManager {
     }
 
     private List<FriendShuffleResponse> getShuffledFriends(User user) {
-        final List<Friend> allFriend = friendRepository.findAllByUserId(user.getId());
-        Collections.shuffle(Arrays.asList(allFriend));
+        final List<Friend> friends = friendRepository.findAllByUserId(user.getId());
+        List<Friend> friendList = new ArrayList<>(friends);
+        Collections.shuffle(friendList);
 
-        return allFriend.stream()
+        return friendList.stream()
             .map(FriendShuffleResponse::of)
             .limit(RANDOM_COUNT)
             .toList();
     }
 
     private List<String> getShuffledKeywords(Question question) {
-        final List<Keyword> keywordList = question.getKeywordList();
+        final List<Keyword> keywords = question.getKeywordList();
+        List<Keyword> keywordList = new ArrayList<>(keywords);
         Collections.shuffle(keywordList);
 
         return keywordList.stream()
