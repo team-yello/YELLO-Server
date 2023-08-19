@@ -38,7 +38,7 @@ public class TokenJwtProvider implements TokenProvider {
         IllegalArgumentException {
 
         JwtParser parser = Jwts.parserBuilder()
-            .setSigningKey(secretKey)
+            .setSigningKey(secretKey.getBytes())
             .build();
 
         String userId = parser.parseClaimsJws(token)
@@ -53,7 +53,7 @@ public class TokenJwtProvider implements TokenProvider {
         throws ExpiredJwtException, MalformedJwtException, SignatureException,
         IllegalArgumentException {
         return Jwts.parserBuilder()
-            .setSigningKey(secretKey)
+            .setSigningKey(secretKey.getBytes())
             .build()
             .parseClaimsJws(token)
             .getBody()
@@ -64,7 +64,7 @@ public class TokenJwtProvider implements TokenProvider {
     public boolean isExpired(String token) {
         try {
             Jwts.parserBuilder()
-                .setSigningKey(secretKey)
+                .setSigningKey(secretKey.getBytes())
                 .build()
                 .parseClaimsJws(token)
                 .getBody();
@@ -104,7 +104,7 @@ public class TokenJwtProvider implements TokenProvider {
             .setHeaderParam("type", tokenType)
             .setIssuedAt(new Date(System.currentTimeMillis()))
             .setExpiration(new Date(System.currentTimeMillis() + tokenValidTime))
-            .signWith(HS256, secretKey)
+            .signWith(HS256, secretKey.getBytes())
             .compact();
     }
 }
