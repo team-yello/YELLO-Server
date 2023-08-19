@@ -129,7 +129,7 @@ public class User extends AuditingTimeEntity {
     public void delete() {
         this.deletedAt = LocalDateTime.now();
         this.point = 0;
-        this.deviceToken = "";
+        this.deviceToken = null;
     }
 
     public void renew() {
@@ -149,7 +149,7 @@ public class User extends AuditingTimeEntity {
     }
 
     public void plusPoint(Integer point) {
-        if (this.getSubscribe() == Subscribe.NORMAL) {
+        if (this.getSubscribe()==Subscribe.NORMAL) {
             this.point += point;
             return;
         }

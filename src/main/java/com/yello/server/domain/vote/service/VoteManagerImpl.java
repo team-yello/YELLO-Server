@@ -19,7 +19,6 @@ import com.yello.server.domain.question.dto.response.QuestionForVoteResponse;
 import com.yello.server.domain.question.dto.response.QuestionVO;
 import com.yello.server.domain.question.entity.Question;
 import com.yello.server.domain.question.repository.QuestionRepository;
-import com.yello.server.domain.user.entity.Gender;
 import com.yello.server.domain.user.entity.Subscribe;
 import com.yello.server.domain.user.entity.User;
 import com.yello.server.domain.user.repository.UserRepository;
@@ -35,10 +34,12 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Random;
 import java.util.stream.IntStream;
+import lombok.Builder;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
+@Builder
 @Component
 @RequiredArgsConstructor
 @Transactional
@@ -112,7 +113,7 @@ public class VoteManagerImpl implements VoteManager {
             throw new VoteForbiddenException(LACK_POINT_EXCEPTION);
         }
 
-        if (vote.getNameHint() != NAME_HINT_DEFAULT) {
+        if (vote.getNameHint()!=NAME_HINT_DEFAULT) {
             throw new VoteNotFoundException(INVALID_VOTE_EXCEPTION);
         }
 
@@ -124,7 +125,7 @@ public class VoteManagerImpl implements VoteManager {
 
     @Override
     public KeywordCheckResponse useKeywordHint(User user, Vote vote) {
-        if (user.getSubscribe() != Subscribe.NORMAL) {
+        if (user.getSubscribe()!=Subscribe.NORMAL) {
             vote.checkKeyword();
         } else {
             if (user.getPoint() < KEYWORD_HINT_POINT) {
@@ -139,9 +140,7 @@ public class VoteManagerImpl implements VoteManager {
 
     @Override
     public void makeGreetingVote(User user) {
-        Gender senderGender = user.getGender() == Gender.FEMALE ? Gender.MALE : Gender.FEMALE;
-        final User sender = userManager.getOfficialUser(senderGender);
-
+        final User sender = userManager.getOfficialUser(user.getGender());
         final Question greetingQuestion = questionRepository.findByQuestionContent(
             null,
             GREETING_NAME_FOOT,
