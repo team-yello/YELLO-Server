@@ -4,6 +4,7 @@ import com.yello.server.domain.keyword.entity.Keyword;
 import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -49,7 +50,7 @@ public class Question {
 
     private static String deleteBracket(String target) {
         val slashIndex = target.indexOf('/');
-        return slashIndex!=-1 ? target.substring(slashIndex + 1) : target;
+        return slashIndex != -1 ? target.substring(slashIndex + 1) : target;
     }
 
     public static Question of(String nameHead, String nameFoot, String keywordHead, String keywordFoot) {
@@ -67,9 +68,29 @@ public class Question {
 
     public String toNotificationSentence() {
         val foot = deleteBracket(this.nameFoot);
-        if (this.nameHead==null) {
+        if (this.nameHead == null) {
             return MessageFormat.format("너{0} ... ", foot);
         }
         return MessageFormat.format("{0} 너{1} ... ", this.nameHead, foot);
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
+        Question question = (Question) o;
+        return Objects.equals(nameHead, question.nameHead)
+            && Objects.equals(nameFoot, question.nameFoot)
+            && Objects.equals(keywordHead, question.keywordHead)
+            && Objects.equals(keywordFoot, question.keywordFoot);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(keywordList, id, nameHead, nameFoot, keywordHead, keywordFoot);
     }
 }
