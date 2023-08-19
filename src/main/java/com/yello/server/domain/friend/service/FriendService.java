@@ -75,16 +75,17 @@ public class FriendService {
     public List<FriendShuffleResponse> findShuffledFriend(Long userId) {
         final User user = userRepository.getById(userId);
 
-        final List<Friend> allFriends =
+        final List<Friend> friends =
             new ArrayList<>(friendRepository.findAllByUserId(user.getId()));
+        List<Friend> friendList = new ArrayList<>(friends);
 
-        if (allFriends.size() < RANDOM_COUNT) {
+        if (friendList.size() < RANDOM_COUNT) {
             throw new FriendException(LACK_USER_EXCEPTION);
         }
 
-        Collections.shuffle(allFriends);
+        Collections.shuffle(friendList);
 
-        return allFriends.stream()
+        return friendList.stream()
             .map(FriendShuffleResponse::of)
             .limit(RANDOM_COUNT)
             .toList();
