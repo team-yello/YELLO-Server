@@ -29,7 +29,7 @@ public interface FriendJpaRepository extends JpaRepository<Friend, Long> {
     @Query("select f from Friend f " +
         "where f.target.id = :targetId " +
         "and f.user.id = :userId")
-    Optional<Friend> findByUserAndTargetNotFiltered(Long userId, Long targetId);
+    Optional<Friend> findByUserAndTargetNotFiltered(@Param("userId") Long userId, @Param("targetId") Long targetId);
 
     @Query("select case when count(f) > 0 then true else false end from Friend f " +
         "where f.target.id = :targetId " +
@@ -49,19 +49,19 @@ public interface FriendJpaRepository extends JpaRepository<Friend, Long> {
         "where f.user.id = :userId " +
         "and f.user.deletedAt is null " +
         "and f.target.deletedAt is null")
-    List<Friend> findAllByUserId(Long userId);
+    List<Friend> findAllByUserId(@Param("userId") Long userId);
 
     @Query("select f from Friend f " +
         "where f.target.id = :targetId " +
         "and f.user.deletedAt is null " +
         "and f.target.deletedAt is null")
-    List<Friend> findAllByTargetId(Long targetId);
+    List<Friend> findAllByTargetId(@Param("targetId") Long targetId);
 
     @Query("select f from Friend f " +
         "where f.user.id = :userId")
-    List<Friend> findAllByUserIdNotFiltered(Long userId);
+    List<Friend> findAllByUserIdNotFiltered(@Param("userId") Long userId);
 
     @Query("select f from Friend f " +
         "where f.target.id = :targetId")
-    List<Friend> findAllByTargetIdNotFiltered(Long targetId);
+    List<Friend> findAllByTargetIdNotFiltered(@Param("targetId") Long targetId);
 }

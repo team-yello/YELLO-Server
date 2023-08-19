@@ -1,5 +1,7 @@
 package com.yello.server.domain.vote.service;
 
+import static com.yello.server.domain.vote.service.VoteManagerImpl.GREETING_KEYWORD_FOOT;
+import static com.yello.server.domain.vote.service.VoteManagerImpl.GREETING_NAME_FOOT;
 import static com.yello.server.global.common.ErrorCode.LACK_TICKET_COUNT_EXCEPTION;
 import static com.yello.server.global.common.ErrorCode.LACK_USER_EXCEPTION;
 import static com.yello.server.global.common.ErrorCode.REVEAL_FULL_NAME_VOTE_EXCEPTION;
@@ -39,6 +41,7 @@ import com.yello.server.domain.vote.repository.VoteRepository;
 import com.yello.server.infrastructure.rabbitmq.service.ProducerService;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 import lombok.Builder;
 import lombok.RequiredArgsConstructor;
@@ -90,7 +93,7 @@ public class VoteService {
         final Integer totalCount = voteRepository.countAllReceivedByFriends(userId);
         final List<VoteFriendVO> list = voteRepository.findAllReceivedByFriends(userId, pageable)
             .stream()
-            .filter(vote -> vote.getNameHint()!=-3)
+            .filter(vote -> vote.getNameHint() != -3)
             .map(VoteFriendVO::of)
             .toList();
         return VoteFriendResponse.of(totalCount, list);
@@ -112,7 +115,16 @@ public class VoteService {
             throw new FriendException(LACK_USER_EXCEPTION);
         }
 
-        final List<Question> questions = questionRepository.findAll();
+        final Optional<Question> greetingQuestion = questionRepository.findByQuestionContent(
+            null, GREETING_NAME_FOOT, null, GREETING_KEYWORD_FOOT);
+        final List<Question> questions = questionRepository.findAll().stream()
+            .filter(question -> {
+                if (greetingQuestion.isPresent()) {
+                    return !question.equals(greetingQuestion.get());
+                }
+                return true;
+            })
+            .toList();
         return voteManager.generateVoteQuestion(user, questions);
     }
 

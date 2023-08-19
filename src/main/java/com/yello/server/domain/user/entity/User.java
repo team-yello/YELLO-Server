@@ -129,7 +129,7 @@ public class User extends AuditingTimeEntity {
     public void delete() {
         this.deletedAt = LocalDateTime.now();
         this.point = 0;
-        this.deviceToken = null;
+        this.deviceToken = "";
     }
 
     public void renew() {
