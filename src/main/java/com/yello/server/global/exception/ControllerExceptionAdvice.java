@@ -57,12 +57,12 @@ import net.gpedro.integrations.slack.SlackApi;
 import net.gpedro.integrations.slack.SlackAttachment;
 import net.gpedro.integrations.slack.SlackField;
 import net.gpedro.integrations.slack.SlackMessage;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.core.task.TaskExecutor;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.HttpMessageConversionException;
 import org.springframework.http.converter.HttpMessageNotReadableException;
+import org.springframework.util.ObjectUtils;
 import org.springframework.util.StreamUtils;
 import org.springframework.validation.BindException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
@@ -78,16 +78,11 @@ public class ControllerExceptionAdvice {
     private final TaskExecutor taskExecutor;
     private final TokenProvider tokenProvider;
 
-    @Qualifier("ambulance")
-    private SlackApi slackTokenAmbulance;
-
-    @Qualifier("bank")
-    private SlackApi slackTokenBank;
+    private final List<SlackApi> slackSender;
 
     @ExceptionHandler(Exception.class)
     void handleException(HttpServletRequest request, Exception exception) throws Exception {
         SlackAttachment slackAttachment = new SlackAttachment();
-
         slackAttachment.setFallback("Error");
         slackAttachment.setColor("danger");
         slackAttachment.setTitle("긴급 환자가 이송되었습니다");
@@ -132,7 +127,7 @@ public class ControllerExceptionAdvice {
         slackMessage.setText("긴급 환자가 이송되었습니다");
         slackMessage.setUsername("옐로 소방서");
 
-        Runnable runnable = () -> slackTokenAmbulance.call(slackMessage);
+        Runnable runnable = () -> slackSender.get(0).call(slackMessage);
         taskExecutor.execute(runnable);
         throw exception;
     }
@@ -162,7 +157,8 @@ public class ControllerExceptionAdvice {
                     .setValue(request.getHeader(HttpHeaders.USER_AGENT)));
             slackFieldList.add(
                 new SlackField().setTitle("인증/인가 정보 - Authorization")
-                    .setValue(request.getHeader(HttpHeaders.AUTHORIZATION)));
+                    .setValue(ObjectUtils.isEmpty(request.getHeader(HttpHeaders.AUTHORIZATION)) ?
+                        "없음" : request.getHeader(HttpHeaders.AUTHORIZATION)));
             slackFieldList.add(
                 new SlackField().setTitle("Request Body")
                     .setValue(StreamUtils.copyToString(request.getInputStream(),
@@ -185,7 +181,7 @@ public class ControllerExceptionAdvice {
             slackMessage.setText("돈이 촤라락");
             slackMessage.setUsername("옐로 은행");
 
-            Runnable runnable = () -> slackTokenBank.call(slackMessage);
+            Runnable runnable = () -> slackSender.get(1).call(slackMessage);
             taskExecutor.execute(runnable);
             throw exception;
         }
