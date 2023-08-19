@@ -21,14 +21,14 @@ public class FakeUserManager implements UserManager {
 
     @Override
     public User getOfficialUser(Gender gender) {
-        final String uuid = "F".equals(gender.intial()) ? OFFICIAL_MALE_ID : OFFICIAL_FEMALE_ID;
-
+        final String uuid =
+            "M".equals(gender.getIntial()) ? OFFICIAL_FEMALE_ID : OFFICIAL_MALE_ID;
         return userRepository.findByUuid(uuid)
             .orElseGet(() ->
-                userRepository.save(makeOfficialUser(OFFICIAL_NAME, uuid, gender))
+                userRepository.save(makeOfficialUser(OFFICIAL_NAME, uuid, gender.reverse()))
             );
     }
-    
+
     private User makeOfficialUser(String name, String yelloId, Gender gender) {
         return User.builder()
             .recommendCount(0L)

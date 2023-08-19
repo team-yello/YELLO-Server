@@ -2,7 +2,7 @@ package com.yello.server.domain.authorization.service;
 
 import static io.jsonwebtoken.SignatureAlgorithm.HS256;
 import static java.time.Duration.ofDays;
-import static java.time.Duration.ofHours;
+import static java.time.Duration.ofMinutes;
 
 import com.yello.server.domain.authorization.dto.ServiceTokenVO;
 import io.jsonwebtoken.Claims;
@@ -23,7 +23,7 @@ public class TokenJwtProvider implements TokenProvider {
     public static final String ACCESS_TOKEN = "accessToken";
     public static final String REFRESH_TOKEN = "refreshToken";
 
-    private static final Long ACCESS_TOKEN_VALID_TIME = ofHours(1).toMillis();
+    private static final Long ACCESS_TOKEN_VALID_TIME = ofMinutes(3).toMillis();
     private static final Long REFRESH_TOKEN_VALID_TIME = ofDays(14).toMillis();
 
     public String secretKey;
@@ -38,7 +38,7 @@ public class TokenJwtProvider implements TokenProvider {
         IllegalArgumentException {
 
         JwtParser parser = Jwts.parserBuilder()
-            .setSigningKey(secretKey)
+            .setSigningKey(secretKey.getBytes())
             .build();
 
         String userId = parser.parseClaimsJws(token)
@@ -53,7 +53,7 @@ public class TokenJwtProvider implements TokenProvider {
         throws ExpiredJwtException, MalformedJwtException, SignatureException,
         IllegalArgumentException {
         return Jwts.parserBuilder()
-            .setSigningKey(secretKey)
+            .setSigningKey(secretKey.getBytes())
             .build()
             .parseClaimsJws(token)
             .getBody()
@@ -64,7 +64,7 @@ public class TokenJwtProvider implements TokenProvider {
     public boolean isExpired(String token) {
         try {
             Jwts.parserBuilder()
-                .setSigningKey(secretKey)
+                .setSigningKey(secretKey.getBytes())
                 .build()
                 .parseClaimsJws(token)
                 .getBody();
@@ -104,7 +104,7 @@ public class TokenJwtProvider implements TokenProvider {
             .setHeaderParam("type", tokenType)
             .setIssuedAt(new Date(System.currentTimeMillis()))
             .setExpiration(new Date(System.currentTimeMillis() + tokenValidTime))
-            .signWith(HS256, secretKey)
+            .signWith(HS256, secretKey.getBytes())
             .compact();
     }
 }
