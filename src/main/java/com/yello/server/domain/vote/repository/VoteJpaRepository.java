@@ -47,5 +47,39 @@ public interface VoteJpaRepository extends JpaRepository<Vote, Long> {
         + "order by v.createdAt desc")
     Integer countAllReceivedByFriends(@Param("userId") Long userId);
 
+
+    @Query("select count(v) from Vote v "
+        + "where v.receiver.id = :userId "
+        + "and v.isRead is true "
+        + "and v.receiver.deletedAt is null "
+        + "and v.sender.deletedAt is null")
+    Integer countReadByReceiverUserId(@Param("userId") Long userId);
+
+    @Query("select count(v) from Vote v "
+        + "where v.receiver.id = :userId "
+        + "and v.isRead is true "
+        + "and v.isAnswerRevealed is true "
+        + "and v.receiver.deletedAt is null "
+        + "and v.sender.deletedAt is null")
+    Integer countOpenKeywordByReceiverUserId(@Param("userId") Long userId);
+
+    @Query("select count(v) from Vote v "
+        + "where v.receiver.id = :userId "
+        + "and v.isRead is true "
+        + "and v.nameHint in (0,1) "
+        + "and v.receiver.deletedAt is null "
+        + "and v.sender.deletedAt is null")
+    Integer countOpenNameByReceiverUserId(@Param("userId") Long userId);
+
+
+    @Query("select count(v) from Vote v "
+        + "where v.receiver.id = :userId "
+        + "and v.isRead is true "
+        + "and v.nameHint = -2 "
+        + "and v.receiver.deletedAt is null "
+        + "and v.sender.deletedAt is null")
+    Integer countOpenFullNameByReceiverUserId(@Param("userId") Long userId);
+
+
 }
  

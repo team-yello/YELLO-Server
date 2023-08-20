@@ -27,6 +27,7 @@ import com.yello.server.domain.vote.dto.request.CreateVoteRequest;
 import com.yello.server.domain.vote.dto.response.RevealFullNameResponse;
 import com.yello.server.domain.vote.dto.response.RevealNameResponse;
 import com.yello.server.domain.vote.dto.response.VoteAvailableResponse;
+import com.yello.server.domain.vote.dto.response.VoteCountVO;
 import com.yello.server.domain.vote.dto.response.VoteCreateVO;
 import com.yello.server.domain.vote.dto.response.VoteDetailResponse;
 import com.yello.server.domain.vote.dto.response.VoteFriendResponse;
@@ -66,12 +67,22 @@ public class VoteService {
     private final ProducerService producerService;
 
     public VoteListResponse findAllVotes(Long userId, Pageable pageable) {
-        final Integer count = voteRepository.countAllByReceiverUserId(userId);
+        Integer totalCount = voteRepository.countAllByReceiverUserId(userId);
         final User user = userRepository.getById(userId);
         final List<VoteResponse> votes = voteRepository.findAllByReceiverUserId(userId, pageable)
             .stream()
             .map(VoteResponse::of)
             .toList();
+
+        Integer openCount = voteRepository.countReadByReceiverUserId(userId);
+        Integer openKeywordCount = voteRepository.countOpenKeywordByReceiverUserId(userId);
+        Integer openNameCount = voteRepository.countOpenNameByReceiverUserId(userId);
+        Integer openFullNameCount = voteRepository.countOpenFullNameByReceiverUserId(userId);
+
+        VoteCountVO count =
+            VoteCountVO.of(totalCount, openCount, openKeywordCount, openNameCount,
+                openFullNameCount);
+
         return VoteListResponse.of(count, votes, user);
     }
 
@@ -93,7 +104,7 @@ public class VoteService {
         final Integer totalCount = voteRepository.countAllReceivedByFriends(userId);
         final List<VoteFriendVO> list = voteRepository.findAllReceivedByFriends(userId, pageable)
             .stream()
-            .filter(vote -> vote.getNameHint() != -3)
+            .filter(vote -> vote.getNameHint()!=-3)
             .map(VoteFriendVO::of)
             .toList();
         return VoteFriendResponse.of(totalCount, list);
@@ -150,7 +161,8 @@ public class VoteService {
         List<Vote> votes = voteManager.createVotes(userId, request.voteAnswerList());
 
         Cooldown cooldown = cooldownRepository.findByUserId(sender.getId())
-            .orElseGet(() -> cooldownRepository.save(Cooldown.of(sender, messageId, LocalDateTime.now())));
+            .orElseGet(
+                () -> cooldownRepository.save(Cooldown.of(sender, messageId, LocalDateTime.now())));
 
         cooldown.updateDate(LocalDateTime.now());
         producerService.produceVoteAvailableNotification(cooldown);

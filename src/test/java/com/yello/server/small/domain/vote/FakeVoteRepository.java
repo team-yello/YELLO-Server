@@ -99,4 +99,44 @@ public class FakeVoteRepository implements VoteRepository {
             .toList()
             .size();
     }
+
+    @Override
+    public Integer countReadByReceiverUserId(Long userId) {
+        return data.stream()
+            .filter(vote -> vote.getReceiver().getId().equals(userId))
+            .filter(vote -> vote.getIsRead().equals(true))
+            .toList()
+            .size();
+    }
+
+    @Override
+    public Integer countOpenKeywordByReceiverUserId(Long userId) {
+        return data.stream()
+            .filter(vote -> vote.getReceiver().getId().equals(userId))
+            .filter(vote -> vote.getIsRead().equals(true))
+            .filter(vote -> vote.getIsAnswerRevealed().equals(true))
+            .toList()
+            .size();
+    }
+
+    @Override
+    public Integer countOpenNameByReceiverUserId(Long userId) {
+        return data.stream()
+            .filter(vote -> vote.getReceiver().getId().equals(userId))
+            .filter(vote -> vote.getIsRead().equals(true))
+            .filter(vote -> vote.getIsAnswerRevealed().equals(true))
+            .filter(vote -> vote.getNameHint().equals(0) || vote.getNameHint().equals(1))
+            .toList()
+            .size();
+    }
+
+    @Override
+    public Integer countOpenFullNameByReceiverUserId(Long userId) {
+        return data.stream()
+            .filter(vote -> vote.getReceiver().getId().equals(userId))
+            .filter(vote -> vote.getIsRead().equals(true))
+            .filter(vote -> vote.getNameHint().equals(-2))
+            .toList()
+            .size();
+    }
 }
