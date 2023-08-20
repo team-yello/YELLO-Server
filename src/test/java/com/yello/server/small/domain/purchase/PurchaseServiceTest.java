@@ -19,7 +19,7 @@ import java.time.LocalDateTime;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-public class PurchaseTest {
+public class PurchaseServiceTest {
 
     private final UserRepository userRepository = new FakeUserRepository();
     private final PurchaseRepository purchaseRepository = new FakePurchaseRepository();
