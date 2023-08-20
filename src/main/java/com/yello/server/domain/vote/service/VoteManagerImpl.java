@@ -29,6 +29,7 @@ import com.yello.server.domain.vote.exception.VoteForbiddenException;
 import com.yello.server.domain.vote.exception.VoteNotFoundException;
 import com.yello.server.domain.vote.repository.VoteRepository;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.Random;
@@ -90,20 +91,14 @@ public class VoteManagerImpl implements VoteManager {
         List<Question> questionList = new ArrayList<>(questions);
         Collections.shuffle(questionList);
 
-        return questions.stream()
-            .map(question -> {
-                final List<Keyword> keywords = question.getKeywordList();
-                List<Keyword> keywordList = new ArrayList<>(keywords);
-                Collections.shuffle(keywordList);
-
-                return QuestionForVoteResponse.builder()
-                    .friendList(getShuffledFriends(user))
-                    .keywordList(getShuffledKeywords(question))
-                    .question(QuestionVO.of(question))
-                    .questionPoint(randomPoint())
-                    .subscribe(user.getSubscribe().toString())
-                    .build();
-            })
+        return questionList.stream()
+            .map(question -> QuestionForVoteResponse.builder()
+                .friendList(getShuffledFriends(user))
+                .keywordList(getShuffledKeywords(question))
+                .question(QuestionVO.of(question))
+                .questionPoint(randomPoint())
+                .subscribe(user.getSubscribe().toString())
+                .build())
             .limit(VOTE_COUNT)
             .toList();
     }
@@ -114,7 +109,7 @@ public class VoteManagerImpl implements VoteManager {
             throw new VoteForbiddenException(LACK_POINT_EXCEPTION);
         }
 
-        if (vote.getNameHint()!=NAME_HINT_DEFAULT) {
+        if (vote.getNameHint() != NAME_HINT_DEFAULT) {
             throw new VoteNotFoundException(INVALID_VOTE_EXCEPTION);
         }
 
@@ -126,7 +121,7 @@ public class VoteManagerImpl implements VoteManager {
 
     @Override
     public KeywordCheckResponse useKeywordHint(User user, Vote vote) {
-        if (user.getSubscribe()!=Subscribe.NORMAL) {
+        if (user.getSubscribe() != Subscribe.NORMAL) {
             vote.checkKeyword();
         } else {
             if (user.getPoint() < KEYWORD_HINT_POINT) {
@@ -166,7 +161,9 @@ public class VoteManagerImpl implements VoteManager {
     }
 
     private List<FriendShuffleResponse> getShuffledFriends(User user) {
-        final List<Friend> friends = friendRepository.findAllByUserId(user.getId());
+        List<String> uuidList = Arrays.asList("yello_female", "yello_male");
+        final List<Friend> friends = friendRepository.findAllByUserIdNotIn(user.getId(), uuidList);
+
         List<Friend> friendList = new ArrayList<>(friends);
         Collections.shuffle(friendList);
 
