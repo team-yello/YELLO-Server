@@ -15,15 +15,15 @@ import com.yello.server.domain.friend.exception.FriendException;
 import com.yello.server.domain.friend.exception.FriendNotFoundException;
 import com.yello.server.domain.friend.repository.FriendRepository;
 import com.yello.server.domain.friend.service.FriendService;
-import com.yello.server.domain.group.entity.School;
-import com.yello.server.domain.user.entity.Gender;
-import com.yello.server.domain.user.entity.Social;
+import com.yello.server.domain.question.repository.QuestionRepository;
 import com.yello.server.domain.user.entity.User;
 import com.yello.server.domain.user.exception.UserNotFoundException;
 import com.yello.server.domain.user.repository.UserRepository;
 import com.yello.server.domain.vote.repository.VoteRepository;
+import com.yello.server.small.domain.question.FakeQuestionRepository;
 import com.yello.server.small.domain.user.FakeUserRepository;
 import com.yello.server.small.domain.vote.FakeVoteRepository;
+import com.yello.server.util.TestDataUtil;
 import java.util.List;
 import java.util.Optional;
 import org.junit.jupiter.api.BeforeEach;
@@ -32,9 +32,18 @@ import org.springframework.data.domain.Pageable;
 
 class FriendServiceTest {
 
+
     private final UserRepository userRepository = new FakeUserRepository();
     private final FriendRepository friendRepository = new FakeFriendRepository();
     private final VoteRepository voteRepository = new FakeVoteRepository();
+    private final QuestionRepository questionRepository = new FakeQuestionRepository();
+    private final TestDataUtil testDataUtil = new TestDataUtil(
+        userRepository,
+        voteRepository,
+        questionRepository,
+        friendRepository
+    );
+
     private FriendService friendService;
     private User user1;
     private User user2;
@@ -49,63 +58,15 @@ class FriendServiceTest {
             .friendRepository(friendRepository)
             .voteRepository(voteRepository)
             .build();
-        School school = School.builder()
-            .id(1L)
-            .schoolName("Test School")
-            .departmentName("Testing")
-            .build();
-        School school2 = School.builder()
-            .id(2L)
-            .schoolName("Test School")
-            .departmentName("Testing")
-            .build();
-        user1 = userRepository.save(User.builder()
-            .id(1L)
-            .recommendCount(0L).name("test")
-            .yelloId("yelloworld").gender(Gender.MALE)
-            .point(200).social(Social.KAKAO)
-            .profileImage("test image").uuid("1234")
-            .deletedAt(null).group(school)
-            .groupAdmissionYear(20).email("test@test.com")
-            .build());
-        user2 = userRepository.save(User.builder()
-            .id(2L)
-            .recommendCount(0L).name("hello")
-            .yelloId("helloworld").gender(Gender.MALE)
-            .point(200).social(Social.KAKAO)
-            .profileImage("test image 2").uuid("5678")
-            .deletedAt(null).group(school2)
-            .groupAdmissionYear(17).email("hello@test.com")
-            .build());
-        user3 = userRepository.save(User.builder()
-            .id(3L)
-            .recommendCount(0L).name("yello")
-            .yelloId("yelloworld").gender(Gender.MALE)
-            .point(200).social(Social.KAKAO)
-            .profileImage("test image 3").uuid("91011")
-            .deletedAt(null).group(school)
-            .groupAdmissionYear(19).email("yello@test.com")
-            .build());
-        user4 = userRepository.save(User.builder()
-            .id(4L)
-            .recommendCount(0L).name("aaa")
-            .yelloId("aaaworld").gender(Gender.MALE)
-            .point(200).social(Social.KAKAO)
-            .profileImage("test image 4").uuid("aaa")
-            .deletedAt(null).group(school)
-            .groupAdmissionYear(19).email("aaa@test.com")
-            .build());
-        user5 = userRepository.save(User.builder()
-            .id(5L)
-            .recommendCount(0L).name("bbb")
-            .yelloId("aaa").gender(Gender.MALE)
-            .point(200).social(Social.KAKAO)
-            .profileImage("test image 5").uuid("bbb")
-            .deletedAt(null).group(school)
-            .groupAdmissionYear(19).email("bbb@test.com")
-            .build());
-        friendRepository.save(Friend.createFriend(user1, user2));
-        friendRepository.save(Friend.createFriend(user2, user1));
+
+        user1 = testDataUtil.generateUser(1L, 1L);
+        user2 = testDataUtil.generateUser(2L, 2L);
+        user3 = testDataUtil.generateUser(3L, 1L);
+        user4 = testDataUtil.generateUser(4L, 1L);
+        user5 = testDataUtil.generateUser(5L, 1L);
+
+        testDataUtil.generateFriend(user1, user2);
+        testDataUtil.generateFriend(user2, user1);
     }
 
     @Test
@@ -120,7 +81,7 @@ class FriendServiceTest {
 
         // then
         assertThat(friends.totalCount()).isEqualTo(1);
-        assertThat(friends.friends().get(0).name()).isEqualTo("hello");
+        assertThat(friends.friends().get(0).name()).isEqualTo("name2");
     }
 
     @Test
@@ -134,8 +95,8 @@ class FriendServiceTest {
         final Friend friend = friendRepository.getByUserAndTarget(userId, targetId);
 
         // then
-        assertThat(friend.getUser().getName()).isEqualTo("test");
-        assertThat(friend.getTarget().getName()).isEqualTo("yello");
+        assertThat(friend.getUser().getName()).isEqualTo("name1");
+        assertThat(friend.getTarget().getName()).isEqualTo("name3");
     }
 
     @Test
@@ -271,7 +232,7 @@ class FriendServiceTest {
         final Long userId = 1L;
         final Integer page = 0;
         final Pageable pageable = createPageable(page);
-        final String[] friendKakaoId = {"5678", "91011", "aaa", "bbb"};
+        final String[] friendKakaoId = {"1", "2", "3", "4"};
         final KakaoRecommendRequest request = KakaoRecommendRequest.builder()
             .friendKakaoId(friendKakaoId)
             .build();
@@ -294,7 +255,7 @@ class FriendServiceTest {
         final Long userId = 1L;
         final Integer page = 0;
         final Pageable pageable = createPageableLimitTen(page);
-        final String keyword = "world";
+        final String keyword = "yello";
 
         // when
         SearchFriendResponse searchFriendResponse =
@@ -302,7 +263,7 @@ class FriendServiceTest {
         final int totalCount = searchFriendResponse.totalCount();
 
         // then
-        assertThat(totalCount).isEqualTo(3);
+        assertThat(totalCount).isEqualTo(4);
         assertThat(searchFriendResponse.friendList().get(totalCount - 1).id()).isEqualTo(2);
     }
 }

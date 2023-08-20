@@ -5,11 +5,9 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 import com.yello.server.domain.cooldown.repository.CooldownRepository;
 import com.yello.server.domain.friend.repository.FriendRepository;
-import com.yello.server.domain.group.entity.School;
+import com.yello.server.domain.question.repository.QuestionRepository;
 import com.yello.server.domain.user.dto.response.UserDetailResponse;
 import com.yello.server.domain.user.dto.response.UserResponse;
-import com.yello.server.domain.user.entity.Gender;
-import com.yello.server.domain.user.entity.Social;
 import com.yello.server.domain.user.entity.User;
 import com.yello.server.domain.user.exception.UserNotFoundException;
 import com.yello.server.domain.user.repository.UserRepository;
@@ -18,8 +16,10 @@ import com.yello.server.domain.vote.repository.VoteRepository;
 import com.yello.server.infrastructure.redis.repository.TokenRepository;
 import com.yello.server.small.domain.cooldown.FakeCooldownRepository;
 import com.yello.server.small.domain.friend.FakeFriendRepository;
+import com.yello.server.small.domain.question.FakeQuestionRepository;
 import com.yello.server.small.domain.vote.FakeVoteRepository;
 import com.yello.server.small.global.redis.FakeTokenRepository;
+import com.yello.server.util.TestDataUtil;
 import java.time.LocalDateTime;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -31,6 +31,14 @@ class UserServiceTest {
     private final VoteRepository voteRepository = new FakeVoteRepository();
     private final CooldownRepository cooldownRepository = new FakeCooldownRepository();
     private final TokenRepository tokenRepository = new FakeTokenRepository();
+    private final QuestionRepository questionRepository = new FakeQuestionRepository();
+    private final TestDataUtil testDataUtil = new TestDataUtil(
+        userRepository,
+        voteRepository,
+        questionRepository,
+        friendRepository
+    );
+
     private UserService userService;
 
     @BeforeEach
@@ -43,28 +51,9 @@ class UserServiceTest {
             .tokenRepository(tokenRepository)
             .build();
 
-        School school = School.builder()
-            .schoolName("Test School")
-            .departmentName("Testing")
-            .build();
-        userRepository.save(User.builder()
-            .id(1L)
-            .recommendCount(0L).name("test")
-            .yelloId("yelloworld").gender(Gender.MALE)
-            .point(200).social(Social.KAKAO)
-            .profileImage("test image").uuid("1234")
-            .deletedAt(null).group(school)
-            .groupAdmissionYear(20).email("test@test.com")
-            .build());
-        userRepository.save(User.builder()
-            .id(2L)
-            .recommendCount(0L).name("hello")
-            .yelloId("helloworld").gender(Gender.MALE)
-            .point(200).social(Social.KAKAO)
-            .profileImage("test image 2").uuid("5678")
-            .deletedAt(null).group(school)
-            .groupAdmissionYear(17).email("hello@test.com")
-            .build());
+        for (int i = 1; i <= 2; i++) {
+            testDataUtil.generateUser(i, 1L);
+        }
     }
 
     @Test
@@ -77,7 +66,7 @@ class UserServiceTest {
 
         // then
         assertThat(result.userId()).isEqualTo(userId);
-        assertThat(result.name()).isEqualTo("test");
+        assertThat(result.name()).isEqualTo("name1");
     }
 
     @Test
@@ -90,7 +79,7 @@ class UserServiceTest {
 
         // then
         assertThat(result.userId()).isEqualTo(userId);
-        assertThat(result.name()).isEqualTo("hello");
+        assertThat(result.name()).isEqualTo("name2");
     }
 
     @Test

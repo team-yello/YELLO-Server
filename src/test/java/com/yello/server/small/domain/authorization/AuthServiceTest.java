@@ -21,7 +21,6 @@ import com.yello.server.domain.cooldown.entity.Cooldown;
 import com.yello.server.domain.cooldown.repository.CooldownRepository;
 import com.yello.server.domain.friend.repository.FriendRepository;
 import com.yello.server.domain.friend.service.FriendManager;
-import com.yello.server.domain.group.entity.School;
 import com.yello.server.domain.group.exception.GroupNotFoundException;
 import com.yello.server.domain.group.repository.SchoolRepository;
 import com.yello.server.domain.question.repository.QuestionRepository;
@@ -52,13 +51,11 @@ import com.yello.server.small.domain.vote.FakeVoteRepository;
 import com.yello.server.small.global.firebase.FakeFcmManger;
 import com.yello.server.small.global.rabbitmq.FakeMessageQueueRepository;
 import com.yello.server.small.global.redis.FakeTokenRepository;
-import java.io.IOException;
-import java.time.LocalDateTime;
+import com.yello.server.util.TestDataUtil;
 import java.util.ArrayList;
 import java.util.Base64;
 import java.util.List;
 import java.util.Optional;
-import java.util.concurrent.TimeoutException;
 import java.util.stream.Stream;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -78,6 +75,13 @@ public class AuthServiceTest {
     private final VoteRepository voteRepository = new FakeVoteRepository();
     private final MessageQueueRepository messageQueueRepository = new FakeMessageQueueRepository();
 
+    private final TestDataUtil testDataUtil = new TestDataUtil(
+        userRepository,
+        voteRepository,
+        questionRepository,
+        friendRepository
+    );
+
     private final TokenProvider tokenProvider = new TokenJwtProvider(secretKey);
     private final AuthManager authManager = new FakeAuthManager(
         friendRepository, cooldownRepository, userRepository, tokenRepository, tokenProvider
@@ -95,6 +99,7 @@ public class AuthServiceTest {
         .tokenRepository(tokenRepository)
         .fcmManager(fcmManager)
         .build();
+
     private AuthService authService;
 
     @BeforeEach
@@ -113,64 +118,20 @@ public class AuthServiceTest {
             .notificationService(notificationService)
             .build();
 
-        School school = School.builder()
-            .id(1L)
-            .schoolName("옐로대학교")
-            .departmentName("국정원학과")
-            .build();
-
-        schoolRepository.save(school);
+        schoolRepository.save(testDataUtil.generateSchool(1L));
 
         // soft-deleted User
-        userRepository.save(User.builder()
-            .id(0L)
-            .recommendCount(0L).name("잉강밍")
-            .yelloId("gm").gender(Gender.FEMALE)
-            .point(200).social(Social.KAKAO)
-            .profileImage("NO_IMAGE").uuid("123")
-            .deletedAt(LocalDateTime.now()).group(school)
-            .groupAdmissionYear(23).email("gm@yello.com")
-            .deviceToken("12345")
-            .build());
+        testDataUtil.generateDeletedUser(0L, 1L);
 
-        userRepository.save(User.builder()
-            .id(1L)
-            .recommendCount(0L).name("방형정")
-            .yelloId("hj_p__").gender(Gender.FEMALE)
-            .point(200).social(Social.KAKAO)
-            .profileImage("NO_IMAGE").uuid("1234")
-            .deletedAt(null).group(school)
-            .groupAdmissionYear(23).email("hj_p__@yello.com")
-            .deviceToken("12345")
-            .build());
-
-        userRepository.save(User.builder()
-            .id(2L)
-            .recommendCount(0L).name("궝셍훙")
-            .yelloId("sh").gender(Gender.FEMALE)
-            .point(200).social(Social.KAKAO)
-            .profileImage("NO_IMAGE").uuid("12345")
-            .deletedAt(null).group(school)
-            .groupAdmissionYear(23).email("sh@yello.com")
-            .deviceToken("12345")
-            .build());
-
-        userRepository.save(User.builder()
-            .id(3L)
-            .recommendCount(0L).name("잉응젱")
-            .yelloId("ej").gender(Gender.FEMALE)
-            .point(200).social(Social.KAKAO)
-            .profileImage("NO_IMAGE").uuid("123456")
-            .deletedAt(null).group(school)
-            .groupAdmissionYear(23).email("ej@yello.com")
-            .deviceToken("12345")
-            .build());
+        for (int i = 1; i <= 3; i++) {
+            testDataUtil.generateUser(i, 1L);
+        }
     }
 
     @Test
     void Yello_Id_중복_조회에_성공합니다_중복임() {
         // given
-        String yelloId = "hj_p__";
+        String yelloId = "yelloId1";
 
         // when
         Boolean isDuplicated = authService.isYelloIdDuplicated(yelloId);
@@ -204,7 +165,7 @@ public class AuthServiceTest {
     }
 
     @Test
-    void 회원가입_신규_유저_등록에_성공합니다() throws IOException, TimeoutException {
+    void 회원가입_신규_유저_등록에_성공합니다() {
         // given
         final SignUpRequest request = SignUpRequest.builder()
             .social(Social.KAKAO)
@@ -233,7 +194,7 @@ public class AuthServiceTest {
         // given
         final SignUpRequest request = SignUpRequest.builder()
             .social(Social.KAKAO)
-            .uuid("1234")
+            .uuid("1")
             .email("agenda511@kakao.com")
             .profileImage("NO_IMAGE")
             .groupId(1L)
@@ -264,7 +225,7 @@ public class AuthServiceTest {
             .groupId(1L)
             .groupAdmissionYear(19)
             .name("이의제")
-            .yelloId("hj_p__")
+            .yelloId("yelloId2")
             .gender(Gender.MALE)
             .friends(new ArrayList<>())
             .recommendId("")
@@ -289,7 +250,7 @@ public class AuthServiceTest {
             .groupId(2L)
             .groupAdmissionYear(19)
             .name("이의제")
-            .yelloId("_euije")
+            .yelloId("2")
             .gender(Gender.MALE)
             .friends(new ArrayList<>())
             .recommendId("")
@@ -304,10 +265,10 @@ public class AuthServiceTest {
     }
 
     @Test
-    void 회원가입_친구_추천에_성공합니다_추천수() throws IOException, TimeoutException {
+    void 회원가입_친구_추천에_성공합니다_추천수() {
         // given
-        String recommendYelloId = "hj_p__";
-        String userYelloId = "gm";
+        String recommendYelloId = "yelloId1";
+        String userYelloId = "yelloId2";
 
         // when
         final Long before = userRepository.getByYelloId(recommendYelloId).getRecommendCount();
@@ -319,10 +280,10 @@ public class AuthServiceTest {
     }
 
     @Test
-    void 회원가입_친구_추천에_성공합니다_쿨다운삭제() throws IOException, TimeoutException {
+    void 회원가입_친구_추천에_성공합니다_쿨다운삭제() {
         // given
-        String recommendYelloId = "hj_p__";
-        String userYelloId = "gm";
+        String recommendYelloId = "yelloId1";
+        String userYelloId = "yelloId2";
         final User before = userRepository.getByYelloId(recommendYelloId);
         cooldownRepository.save(Cooldown.builder()
             .user(before)
@@ -365,28 +326,14 @@ public class AuthServiceTest {
     }
 
     @Test
-    void 회원가입_친구_등록에_실패합니다() {
-        // given
-
-        /**
-         * NOTE - 실패 케이스가 없습니다.
-         */
-
-        // when
-
-        // then
-    }
-
-    @Test
     void 회원가입_추천친구목록_조회에_성공합니다() {
         // given
         List<String> kakaoFriendList = new ArrayList<>();
-        kakaoFriendList.add("123"); // soft-deleted user
-        kakaoFriendList.add("1234");
-        kakaoFriendList.add("12345");
-        kakaoFriendList.add("123456");
+        kakaoFriendList.add("0"); // soft-deleted user
+        kakaoFriendList.add("1");
+        kakaoFriendList.add("2");
 
-        final List<Long> expectedList = Stream.of("123", "1234", "12345", "123456")
+        final List<Long> expectedList = Stream.of("0", "1", "2")
             .map(userRepository::getByUuid)
             .map(User::getId)
             .toList();
@@ -401,7 +348,7 @@ public class AuthServiceTest {
             authService.findOnBoardingFriends(request, pageable);
 
         // then
-        assertThat(response.totalCount() - 1).isEqualTo(3);
+        assertThat(response.totalCount() - 1).isEqualTo(2);
         assertThat(expectedList.stream()
             .sorted()
             .toList())
