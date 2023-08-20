@@ -29,6 +29,7 @@ import com.yello.server.domain.vote.exception.VoteForbiddenException;
 import com.yello.server.domain.vote.exception.VoteNotFoundException;
 import com.yello.server.domain.vote.repository.VoteRepository;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.Random;
@@ -160,7 +161,9 @@ public class VoteManagerImpl implements VoteManager {
     }
 
     private List<FriendShuffleResponse> getShuffledFriends(User user) {
-        final List<Friend> friends = friendRepository.findAllByUserId(user.getId());
+        List<String> uuidList = Arrays.asList("yello_female", "yello_male");
+        final List<Friend> friends = friendRepository.findAllByUserIdNotIn(user.getId(), uuidList);
+
         List<Friend> friendList = new ArrayList<>(friends);
         Collections.shuffle(friendList);
 
