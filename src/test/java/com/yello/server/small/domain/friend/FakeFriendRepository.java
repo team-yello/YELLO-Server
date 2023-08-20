@@ -42,7 +42,8 @@ public class FakeFriendRepository implements FriendRepository {
     @Override
     public Integer countAllByUserId(Long userId) {
         return data.stream()
-            .filter(friend -> friend.getUser().getId().equals(userId) && friend.getDeletedAt() == null)
+            .filter(
+                friend -> friend.getUser().getId().equals(userId) && friend.getDeletedAt() == null)
             .toList()
             .size();
     }
@@ -50,7 +51,8 @@ public class FakeFriendRepository implements FriendRepository {
     @Override
     public Optional<Friend> findByUserAndTarget(Long userId, Long targetId) {
         return data.stream()
-            .filter(friend -> friend.getUser().getId().equals(userId) && friend.getTarget().getId().equals(targetId)
+            .filter(friend -> friend.getUser().getId().equals(userId) && friend.getTarget().getId()
+                .equals(targetId)
                 && friend.getDeletedAt() == null)
             .findFirst();
     }
@@ -58,7 +60,8 @@ public class FakeFriendRepository implements FriendRepository {
     @Override
     public Optional<Friend> findByUserAndTargetNotFiltered(Long userId, Long targetId) {
         return data.stream()
-            .filter(friend -> friend.getUser().getId().equals(userId) && friend.getTarget().getId().equals(targetId))
+            .filter(friend -> friend.getUser().getId().equals(userId) && friend.getTarget().getId()
+                .equals(targetId))
             .findFirst();
     }
 
@@ -83,7 +86,8 @@ public class FakeFriendRepository implements FriendRepository {
     @Override
     public Page<Friend> findAllFriendsByUserId(Pageable pageable, Long userId) {
         final List<Friend> friends = data.stream()
-            .filter(friend -> friend.getUser().getId().equals(userId) && friend.getDeletedAt() == null)
+            .filter(
+                friend -> friend.getUser().getId().equals(userId) && friend.getDeletedAt() == null)
             .toList();
 
         final int start = (int) pageable.getOffset();
@@ -94,7 +98,8 @@ public class FakeFriendRepository implements FriendRepository {
     @Override
     public List<Friend> findAllByUserId(Long userId) {
         return data.stream()
-            .filter(friend -> friend.getUser().getId().equals(userId) && friend.getDeletedAt() == null)
+            .filter(
+                friend -> friend.getUser().getId().equals(userId) && friend.getDeletedAt() == null)
             .toList();
     }
 
@@ -102,7 +107,8 @@ public class FakeFriendRepository implements FriendRepository {
     public List<Friend> findAllByTargetId(Long targetId) {
         return data.stream()
             .filter(
-                friend -> friend.getTarget().getId().equals(targetId) && friend.getDeletedAt() == null)
+                friend -> friend.getTarget().getId().equals(targetId)
+                    && friend.getDeletedAt() == null)
             .toList();
     }
 
@@ -117,6 +123,14 @@ public class FakeFriendRepository implements FriendRepository {
     public List<Friend> findAllByTargetIdNotFiltered(Long targetId) {
         return data.stream()
             .filter(friend -> friend.getTarget().getId().equals(targetId))
+            .toList();
+    }
+
+    @Override
+    public List<Friend> findAllByUserIdNotIn(Long userId, List<String> uuidList) {
+        return data.stream()
+            .filter(friend -> friend.getUser().getId().equals(userId))
+            .filter(friend -> !uuidList.contains(friend.getTarget().getYelloId()))
             .toList();
     }
 }

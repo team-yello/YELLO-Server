@@ -31,4 +31,6 @@ public interface FriendRepository {
     List<Friend> findAllByUserIdNotFiltered(Long userId);
 
     List<Friend> findAllByTargetIdNotFiltered(Long targetId);
+
+    List<Friend> findAllByUserIdNotIn(Long userId, List<String> uuidList);
 }

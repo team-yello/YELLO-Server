@@ -81,4 +81,9 @@ public class FriendRepositoryImpl implements FriendRepository {
     public List<Friend> findAllByTargetIdNotFiltered(Long targetId) {
         return friendJpaRepository.findAllByTargetIdNotFiltered(targetId);
     }
+
+    @Override
+    public List<Friend> findAllByUserIdNotIn(Long userId, List<String> uuidList) {
+        return friendJpaRepository.findALlByUserIdAndTargetNotIn(userId, uuidList);
+    }
 }
