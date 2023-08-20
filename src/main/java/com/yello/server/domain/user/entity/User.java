@@ -98,7 +98,7 @@ public class User extends AuditingTimeEntity {
     @Column(nullable = false)
     private Integer ticketCount;
 
-    @Column(name = "device_token", nullable = false)
+    @Column(name = "device_token")
     private String deviceToken;
 
     @Column(nullable = false)
