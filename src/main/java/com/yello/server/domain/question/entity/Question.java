@@ -50,7 +50,7 @@ public class Question {
 
     private static String deleteBracket(String target) {
         val slashIndex = target.indexOf('/');
-        return slashIndex != -1 ? target.substring(slashIndex + 1) : target;
+        return slashIndex!=-1 ? target.substring(slashIndex + 1) : target;
     }
 
     public static Question of(String nameHead, String nameFoot, String keywordHead, String keywordFoot) {
@@ -67,19 +67,19 @@ public class Question {
     }
 
     public String toNotificationSentence() {
-        val foot = deleteBracket(this.nameFoot);
-        if (this.nameHead == null) {
-            return MessageFormat.format("너{0} ... ", foot);
-        }
-        return MessageFormat.format("{0} 너{1} ... ", this.nameHead, foot);
+        final String nameFootPart = deleteBracket(this.nameFoot);
+        final String nameHeadPart = (this.nameHead!=null) ? MessageFormat.format("{0} ", this.nameHead) : "";
+        final String keywordHeadPart = (this.keywordHead!=null) ? MessageFormat.format(" {0}", this.keywordHead) : "";
+
+        return MessageFormat.format("{0}너{1}{2} ...", nameHeadPart, nameFootPart, keywordHeadPart);
     }
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) {
+        if (this==o) {
             return true;
         }
-        if (o == null || getClass() != o.getClass()) {
+        if (o==null || getClass()!=o.getClass()) {
             return false;
         }
         Question question = (Question) o;

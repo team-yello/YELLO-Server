@@ -16,9 +16,11 @@ import com.yello.server.domain.user.exception.UserConflictException;
 import com.yello.server.domain.user.repository.UserRepository;
 import com.yello.server.infrastructure.redis.repository.TokenRepository;
 import java.util.Optional;
+import lombok.Builder;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
+@Builder
 @Component
 @RequiredArgsConstructor
 public class AuthManagerImpl implements AuthManager {
