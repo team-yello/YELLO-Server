@@ -64,4 +64,24 @@ public class VoteRepositoryImpl implements VoteRepository {
     public Integer countAllReceivedByFriends(Long userId) {
         return voteJpaRepository.countAllReceivedByFriends(userId);
     }
+
+    @Override
+    public Integer countReadByReceiverUserId(Long userId) {
+        return voteJpaRepository.countReadByReceiverUserId(userId);
+    }
+
+    @Override
+    public Integer countOpenKeywordByReceiverUserId(Long userId) {
+        return voteJpaRepository.countOpenKeywordByReceiverUserId(userId);
+    }
+
+    @Override
+    public Integer countOpenNameByReceiverUserId(Long userId) {
+        return voteJpaRepository.countOpenNameByReceiverUserId(userId);
+    }
+
+    @Override
+    public Integer countOpenFullNameByReceiverUserId(Long userId) {
+        return voteJpaRepository.countOpenFullNameByReceiverUserId(userId);
+    }
 }
