@@ -36,9 +36,13 @@ jobs:
           touch ./firebase_key.json
           echo "$FIREBASE_JSON" > ./firebase_key.json
           sed -i 's/#/"/g' ./firebase_key.json
+          touch ./google_client_secret.json
+          echo "$GOOGLE_CLIENT_SECRET" > ./google_client_secret.json
+          sed -i 's/#/"/g' ./google_client_secret.json
         env:
           APPLICATION: ${{ secrets.APPLICATION_TEST }}
           FIREBASE_JSON: ${{ secrets.FIREBASE_JSON }}
+          GOOGLE_CLIENT_SECRET: ${{ secrets.GOOGLE_CLIENT_SECRET }}
         shell: bash
 
       - name: 🐘 Gradle로 빌드 실행

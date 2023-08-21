@@ -36,12 +36,17 @@ public class ConstantUtil {
     public static final int YELLO_PLUS = 3900;
     public static final int RECOMMEND_POINT = 100;
     public static final String GOOGLE_PURCHASE_SUBSCRIPTION_ACTIVE = "SUBSCRIPTION_STATE_ACTIVE";
-    public static final String GOOGLE_PURCHASE_SUBSCRIPTION_CANCELED = "SUBSCRIPTION_STATE_CANCELED";
+    public static final String GOOGLE_PURCHASE_SUBSCRIPTION_CANCELED =
+        "SUBSCRIPTION_STATE_CANCELED";
     public static final String GOOGLE_PURCHASE_SUBSCRIPTION_EXPIRED = "SUBSCRIPTION_STATE_EXPIRED";
-    public static final String GOOGLE_PURCHASE_SUBSCRIPTION_GRACE_PERIOD = "SUBSCRIPTION_STATE_IN_GRACE_PERIOD";
+    public static final String GOOGLE_PURCHASE_SUBSCRIPTION_GRACE_PERIOD =
+        "SUBSCRIPTION_STATE_IN_GRACE_PERIOD";
     public static final String GOOGLE_PURCHASE_INAPP_PURCHASED = "PURCHASED";
     public static final String GOOGLE_PURCHASE_INAPP_PENDING = "PENDING";
     public static final String GOOGLE_PURCHASE_INAPP_CANCELED = "CANCELED";
+    public static final String YELLO_FEMALE = "yello_female";
+    public static final String YELLO_MALE = "yello_male";
+
 
     private ConstantUtil() {
         throw new IllegalStateException();

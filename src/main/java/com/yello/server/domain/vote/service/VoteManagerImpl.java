@@ -9,6 +9,8 @@ import static com.yello.server.global.common.util.ConstantUtil.NAME_HINT_DEFAULT
 import static com.yello.server.global.common.util.ConstantUtil.NAME_HINT_POINT;
 import static com.yello.server.global.common.util.ConstantUtil.RANDOM_COUNT;
 import static com.yello.server.global.common.util.ConstantUtil.VOTE_COUNT;
+import static com.yello.server.global.common.util.ConstantUtil.YELLO_FEMALE;
+import static com.yello.server.global.common.util.ConstantUtil.YELLO_MALE;
 
 import com.yello.server.domain.friend.dto.response.FriendShuffleResponse;
 import com.yello.server.domain.friend.entity.Friend;
@@ -109,7 +111,7 @@ public class VoteManagerImpl implements VoteManager {
             throw new VoteForbiddenException(LACK_POINT_EXCEPTION);
         }
 
-        if (vote.getNameHint() != NAME_HINT_DEFAULT) {
+        if (vote.getNameHint()!=NAME_HINT_DEFAULT) {
             throw new VoteNotFoundException(INVALID_VOTE_EXCEPTION);
         }
 
@@ -121,7 +123,7 @@ public class VoteManagerImpl implements VoteManager {
 
     @Override
     public KeywordCheckResponse useKeywordHint(User user, Vote vote) {
-        if (user.getSubscribe() != Subscribe.NORMAL) {
+        if (user.getSubscribe()!=Subscribe.NORMAL) {
             vote.checkKeyword();
         } else {
             if (user.getPoint() < KEYWORD_HINT_POINT) {
@@ -161,7 +163,7 @@ public class VoteManagerImpl implements VoteManager {
     }
 
     private List<FriendShuffleResponse> getShuffledFriends(User user) {
-        List<String> uuidList = Arrays.asList("yello_female", "yello_male");
+        List<String> uuidList = Arrays.asList(YELLO_FEMALE, YELLO_MALE);
         final List<Friend> friends = friendRepository.findAllByUserIdNotIn(user.getId(), uuidList);
 
         List<Friend> friendList = new ArrayList<>(friends);
