@@ -141,6 +141,10 @@ public class FriendService {
         final Long groupId = user.getGroup().getId();
 
         List<User> friendList = new ArrayList<>();
+        
+        if (keyword==null || keyword.trim().isEmpty()) {
+            return SearchFriendResponse.of(0, Collections.emptyList());
+        }
 
         if (!isEnglish(keyword)) {
             friendList.addAll(userRepository.findAllByGroupContainingName(groupId, keyword));

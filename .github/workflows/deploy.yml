@@ -40,7 +40,7 @@ jobs:
           echo "$GOOGLE_CLIENT_SECRET" > ./google_client_secret.json
           sed -i 's/#/"/g' ./google_client_secret.json
         env:
-          APPLICATION: ${{ secrets.APPLICATION }}
+          APPLICATION: ${{ secrets.APPLICATION_TEST }}
           FIREBASE_JSON: ${{ secrets.FIREBASE_JSON }}
           GOOGLE_CLIENT_SECRET: ${{ secrets.GOOGLE_CLIENT_SECRET }}
         shell: bash
