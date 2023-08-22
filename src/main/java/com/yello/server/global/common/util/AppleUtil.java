@@ -10,6 +10,7 @@ import com.yello.server.global.common.factory.TokenFactory;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
 import org.springframework.web.reactive.function.client.WebClient;
@@ -28,15 +29,16 @@ public class AppleUtil {
         AppleTransaction appleTransaction) {
 
         ResponseEntity<AppleOrderResponse> transactionResponse =
-            getTransactionByWebClient(appleTransaction, APPLE_SANDBOX_URL);
+            getTransactionByWebClient(appleTransaction, APPLE_PRODUCTION_URL);
 
-        String environment = transactionResponse.getBody().environment();
-        if (transactionResponse == null) {
+        HttpStatus statusCode = transactionResponse.getStatusCode();
+        if (transactionResponse==null) {
             throw new PurchaseException(NOT_FOUND_TRANSACTION_EXCEPTION);
         }
-        if (environment == "Sandbox") {
+        if (statusCode.equals(HttpStatus.NOT_FOUND)) {
             return getTransactionByWebClient(appleTransaction, APPLE_SANDBOX_URL);
         }
+
         return transactionResponse;
     }
 
