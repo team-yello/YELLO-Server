@@ -23,7 +23,7 @@ public record VoteContentVO(
     String keywordFoot
 ) {
 
-    static VoteContentVO of(Vote vote) {
+    public static VoteContentVO of(Vote vote) {
         return VoteContentVO.builder()
             .nameHead(vote.getQuestion().getNameHead())
             .nameFoot(deleteBracket(vote.getQuestion().getNameFoot()))
@@ -35,6 +35,6 @@ public record VoteContentVO(
 
     private static String deleteBracket(String target) {
         val slashIndex = target.indexOf('/');
-        return slashIndex != -1 ? target.substring(slashIndex + 1) : target;
+        return slashIndex!=-1 ? target.substring(slashIndex + 1) : target;
     }
 }
