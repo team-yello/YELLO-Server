@@ -4,13 +4,13 @@ import java.time.LocalDateTime;
 import lombok.Builder;
 
 @Builder
-public record GoogleSubscriptionV2GetResponse(
+public record GoogleSubscriptionGetResponse(
     String productId,
     String expiredAt
 ) {
 
-    public static GoogleSubscriptionV2GetResponse of(String productId) {
-        return GoogleSubscriptionV2GetResponse.builder()
+    public static GoogleSubscriptionGetResponse of(String productId) {
+        return GoogleSubscriptionGetResponse.builder()
             .productId(productId)
             .expiredAt(LocalDateTime.now().toString())
             .build();

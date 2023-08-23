@@ -1,0 +1,11 @@
+= Friend API
+
+== 친구 추가하기
+
+=== 요청
+
+include::{snippets}/api/v1/pay/postPayCount/http-request.adoc[]
+
+=== 응답
+
+include::{snippets}/api/v1/pay/postPayCount/http-response.adoc[]

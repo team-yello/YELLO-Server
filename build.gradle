@@ -9,6 +9,15 @@ plugins {
     id 'org.springframework.boot' version '2.7.4'
     id 'io.spring.dependency-management' version '1.0.15.RELEASE'
     id 'com.ewerk.gradle.plugins.querydsl' version '1.0.10'
+    id "org.asciidoctor.jvm.convert" version "3.3.2"
+}
+
+ext {
+    snippetsDir = file('build/generated-snippets')
+}
+
+test {
+    outputs.dir snippetsDir
 }
 
 group = 'com.yello'
@@ -19,6 +28,7 @@ java {
 }
 
 configurations {
+    asciidoctorExt
     compileOnly {
         extendsFrom annotationProcessor
     }
@@ -34,6 +44,9 @@ dependencies {
     annotationProcessor 'org.projectlombok:lombok'
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
     testImplementation 'org.junit.jupiter:junit-jupiter-params:5.4.2'
+    asciidoctorExt 'org.springframework.restdocs:spring-restdocs-asciidoctor'
+    testImplementation 'org.springframework.restdocs:spring-restdocs-mockmvc'
+    testImplementation 'org.springframework.security:spring-security-test'
 
     // JPA & Database
     implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
@@ -118,4 +131,18 @@ compileQuerydsl {
 
 jar {
     enabled = false
+}
+
+asciidoctor {
+    inputs.dir snippetsDir
+    configurations 'asciidoctorExt'
+    dependsOn test
+}
+asciidoctor.doFirst {
+    delete file('src/docs/asciidocs')
+}
+task copyDocument(type: Copy) {
+    dependsOn asciidoctor
+    from file("build/docs/asciidoc")
+    into file("src/main/resources/static/docs")
 }

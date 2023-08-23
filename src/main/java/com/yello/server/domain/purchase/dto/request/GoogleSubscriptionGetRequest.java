@@ -3,7 +3,7 @@ package com.yello.server.domain.purchase.dto.request;
 import lombok.Builder;
 
 @Builder
-public record GoogleSubscriptionV2GetRequest(
+public record GoogleSubscriptionGetRequest(
     String orderId,
     String packageName,
     String productId,
