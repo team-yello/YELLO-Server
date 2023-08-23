@@ -21,11 +21,6 @@ import com.yello.server.domain.authorization.dto.response.SignUpResponse;
 import com.yello.server.domain.authorization.service.AuthService;
 import com.yello.server.global.common.annotation.ServiceToken;
 import com.yello.server.global.common.dto.BaseResponse;
-import io.swagger.v3.oas.annotations.Operation;
-import io.swagger.v3.oas.annotations.media.Content;
-import io.swagger.v3.oas.annotations.media.Schema;
-import io.swagger.v3.oas.annotations.responses.ApiResponse;
-import io.swagger.v3.oas.annotations.tags.Tag;
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 import lombok.RequiredArgsConstructor;
@@ -37,7 +32,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-@Tag(name = "03. Authentication")
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api/v1/auth")
@@ -45,45 +39,24 @@ public class AuthController {
 
     private final AuthService authService;
 
-    @Operation(summary = "소셜 로그인 API", responses = {
-        @ApiResponse(
-            responseCode = "201",
-            content = @Content(mediaType = "application/json", schema = @Schema(implementation = OAuthResponse.class))),
-    })
     @PostMapping("/oauth")
     public BaseResponse<OAuthResponse> oauthLogin(@RequestBody OAuthRequest oAuthRequest) {
         val data = authService.oauthLogin(oAuthRequest);
         return BaseResponse.success(LOGIN_SUCCESS, data);
     }
 
-    @Operation(summary = "옐로 아이디 중복 확인 API", responses = {
-        @ApiResponse(
-            responseCode = "200",
-            content = @Content(mediaType = "application/json", schema = @Schema(implementation = Boolean.class))),
-    })
     @GetMapping("/valid")
     public BaseResponse<Boolean> getYelloIdValidation(@RequestParam("yelloId") String yelloId) {
         val data = authService.isYelloIdDuplicated(yelloId);
         return BaseResponse.success(YELLOID_VALIDATION_SUCCESS, data);
     }
 
-    @Operation(summary = "회원가입 API", responses = {
-        @ApiResponse(
-            responseCode = "201",
-            content = @Content(mediaType = "application/json", schema = @Schema(implementation = SignUpResponse.class))),
-    })
     @PostMapping("/signup")
-    public BaseResponse<SignUpResponse> postSignUp(
-        @Valid @RequestBody SignUpRequest signUpRequest) {
+    public BaseResponse<SignUpResponse> postSignUp(@Valid @RequestBody SignUpRequest signUpRequest) {
         val data = authService.signUp(signUpRequest);
         return BaseResponse.success(SIGN_UP_SUCCESS, data);
     }
 
-    @Operation(summary = "가입한 친구 목록 불러오기 API", responses = {
-        @ApiResponse(
-            responseCode = "200",
-            content = @Content(mediaType = "application/json", schema = @Schema(implementation = OnBoardingFriendResponse.class))),
-    })
     @PostMapping("/friend")
     public BaseResponse<OnBoardingFriendResponse> postFriendList(
         @Valid @RequestBody OnBoardingFriendRequest friendRequest,
@@ -93,11 +66,6 @@ public class AuthController {
         return BaseResponse.success(ONBOARDING_FRIENDS_SUCCESS, data);
     }
 
-    @Operation(summary = "대학교 이름 검색하기 API", responses = {
-        @ApiResponse(
-            responseCode = "200",
-            content = @Content(mediaType = "application/json", schema = @Schema(implementation = GroupNameSearchResponse.class))),
-    })
     @GetMapping("/school")
     public BaseResponse<GroupNameSearchResponse> getSchoolList(
         @NotNull @RequestParam("keyword") String keyword,
@@ -107,11 +75,6 @@ public class AuthController {
         return BaseResponse.success(SCHOOL_NAME_SEARCH_SCHOOL_SUCCESS, data);
     }
 
-    @Operation(summary = "대학교 이름으로 학과 이름 검색하기 API", responses = {
-        @ApiResponse(
-            responseCode = "200",
-            content = @Content(mediaType = "application/json", schema = @Schema(implementation = DepartmentSearchResponse.class))),
-    })
     @GetMapping("/school/department")
     public BaseResponse<DepartmentSearchResponse> getDepartmentList(
         @NotNull @RequestParam("school") String schoolName,
@@ -122,11 +85,6 @@ public class AuthController {
         return BaseResponse.success(DEPARTMENT_NAME_SEARCH_BY_SCHOOL_NAME_SCHOOL_SUCCESS, data);
     }
 
-    @Operation(summary = "토큰 재발급 API", responses = {
-        @ApiResponse(
-            responseCode = "201",
-            content = @Content(mediaType = "application/json", schema = @Schema(implementation = ServiceTokenVO.class))),
-    })
     @PostMapping("/token/issue")
     public BaseResponse<ServiceTokenVO> postReIssueToken(@ServiceToken ServiceTokenVO tokens) {
         val data = authService.reIssueToken(tokens);
