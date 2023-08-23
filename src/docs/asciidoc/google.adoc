@@ -1,0 +1,19 @@
+== Google 구독 구매 검증하기
+
+=== 요청
+
+include::{snippets}/api/v1/purchase/verifyGoogleSubscriptionTransaction/http-request.adoc[]
+
+=== 응답
+
+include::{snippets}/api/v1/purchase/verifyGoogleSubscriptionTransaction/http-response.adoc[]
+
+== Google 열람권 구매 검증하기
+
+=== 요청
+
+include::{snippets}/api/v1/friend/findAllRecommendSchoolFriends/http-request.adoc[]
+
+=== 응답
+
+include::{snippets}/api/v1/purchase/verifyAppleTicketTransaction/http-response.adoc[]

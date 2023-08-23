@@ -1,0 +1,13 @@
+== 투표 이름 부분 조회
+
+=== 요청
+
+include::{snippets}/api/v1/vote/revealNameHint/http-request.adoc[]
+
+=== 요청 파라미터
+
+include::{snippets}/api/v1/vote/revealNameHint/path-parameters.adoc[]
+
+=== 응답
+
+include::{snippets}/api/v1/vote/revealNameHint/http-response.adoc[]

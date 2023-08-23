@@ -1,0 +1,9 @@
+== 유저 정보 조회하기
+
+=== 요청
+
+include::{snippets}/api/v1/user/findUserById/http-request.adoc[]
+
+=== 응답
+
+include::{snippets}/api/v1/user/findUserById/http-response.adoc[]

@@ -1,0 +1,9 @@
+== 셔플한 친구 조회하기
+
+=== 요청
+
+include::{snippets}/api/v1/friend/findShuffledFriend/http-request.adoc[]
+
+=== 응답
+
+include::{snippets}/api/v1/friend/findShuffledFriend/http-response.adoc[]

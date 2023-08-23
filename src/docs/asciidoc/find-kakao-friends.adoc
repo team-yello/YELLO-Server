@@ -1,0 +1,13 @@
+== 카카오 추천 친구 조회하기
+
+=== 요청
+
+include::{snippets}/api/v1/friend/findAllRecommendKakaoFriends/http-request.adoc[]
+
+=== 요청 파라미터
+
+include::{snippets}/api/v1/friend/findAllRecommendKakaoFriends/request-parameters.adoc[]
+
+=== 응답
+
+include::{snippets}/api/v1/friend/findAllRecommendKakaoFriends/http-response.adoc[]

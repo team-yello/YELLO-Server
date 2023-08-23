@@ -1,0 +1,14 @@
+
+== 내 친구 전체 조회하기
+
+=== 요청
+
+include::{snippets}/api/v1/friend/findAllFriend/http-request.adoc[]
+
+=== 요청 파라미터
+
+include::{snippets}/api/v1/friend/findAllFriend/request-parameters.adoc[]
+
+=== 응답
+
+include::{snippets}/api/v1/friend/findAllFriend/http-response.adoc[]

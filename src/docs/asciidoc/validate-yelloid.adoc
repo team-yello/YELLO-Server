@@ -1,0 +1,13 @@
+== 옐로 아이디 중복 확인
+
+=== 요청
+
+include::{snippets}/api/v1/auth/getYelloIdValidation/http-request.adoc[]
+
+=== 요청 파라미터
+
+include::{snippets}/api/v1/auth/getYelloIdValidation/request-parameters.adoc[]
+
+=== 응답
+
+include::{snippets}/api/v1/auth/getYelloIdValidation/http-response.adoc[]

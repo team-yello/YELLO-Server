@@ -1,0 +1,13 @@
+== 친구 투표 전체 조회
+
+=== 요청
+
+include::{snippets}/api/v1/vote/findAllFriendVotes/http-request.adoc[]
+
+=== 요청 파라미터
+
+include::{snippets}/api/v1/vote/findAllFriendVotes/request-parameters.adoc[]
+
+=== 응답
+
+include::{snippets}/api/v1/vote/findAllFriendVotes/http-response.adoc[]

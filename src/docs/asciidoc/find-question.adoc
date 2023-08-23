@@ -1,0 +1,9 @@
+== 투표 질문 조회하기
+
+=== 요청
+
+include::{snippets}/api/v1/vote/findVoteQuestions/http-request.adoc[]
+
+=== 응답
+
+include::{snippets}/api/v1/vote/findVoteQuestions/http-response.adoc[]

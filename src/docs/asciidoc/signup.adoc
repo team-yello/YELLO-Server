@@ -1,0 +1,9 @@
+== 회원가입
+
+=== 요청
+
+include::{snippets}/api/v1/auth/postSignUp/http-request.adoc[]
+
+=== 응답
+
+include::{snippets}/api/v1/auth/postSignUp/http-response.adoc[]
