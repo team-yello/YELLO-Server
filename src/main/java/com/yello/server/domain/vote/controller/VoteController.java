@@ -177,7 +177,6 @@ public class VoteController {
         @PathVariable Long voteId
     ) {
         val data = voteService.revealNameHint(user.getId(), voteId);
-
         return BaseResponse.success(SuccessCode.REVEAL_NAME_HINT_SUCCESS, data);
     }
 
@@ -192,7 +191,7 @@ public class VoteController {
         @PathVariable Long voteId
     ) {
         val data = voteService.revealFullName(user.getId(), voteId);
-        return BaseResponse.success(SuccessCode.REVEAL_NAME_HINT_SUCCESS, data);
+        return BaseResponse.success(SuccessCode.REVEAL_NAME_SUCCESS, data);
     }
 
 }

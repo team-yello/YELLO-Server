@@ -98,12 +98,12 @@ public class AuthController {
             responseCode = "200",
             content = @Content(mediaType = "application/json", schema = @Schema(implementation = GroupNameSearchResponse.class))),
     })
-    @GetMapping("/school/school")
+    @GetMapping("/school")
     public BaseResponse<GroupNameSearchResponse> getSchoolList(
-        @NotNull @RequestParam("search") String keyword,
+        @NotNull @RequestParam("keyword") String keyword,
         @NotNull @RequestParam("page") Integer page
     ) {
-        val data = authService.findSchoolsBySearch(keyword, createPageable(page));
+        val data = authService.findSchoolsByKeyword(keyword, createPageable(page));
         return BaseResponse.success(SCHOOL_NAME_SEARCH_SCHOOL_SUCCESS, data);
     }
 
@@ -115,10 +115,10 @@ public class AuthController {
     @GetMapping("/school/department")
     public BaseResponse<DepartmentSearchResponse> getDepartmentList(
         @NotNull @RequestParam("school") String schoolName,
-        @NotNull @RequestParam("search") String keyword,
+        @NotNull @RequestParam("keyword") String keyword,
         @NotNull @RequestParam("page") Integer page
     ) {
-        val data = authService.findDepartmentsBySearch(schoolName, keyword, createPageable(page));
+        val data = authService.findDepartmentsByKeyword(schoolName, keyword, createPageable(page));
         return BaseResponse.success(DEPARTMENT_NAME_SEARCH_BY_SCHOOL_NAME_SCHOOL_SUCCESS, data);
     }
 

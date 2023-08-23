@@ -62,7 +62,7 @@ public class UserController {
             responseCode = "201",
             content = @Content(mediaType = "application/json", schema = @Schema(implementation = EmptyObject.class))),
     })
-    @PutMapping("/deviceToken")
+    @PutMapping("/device")
     public BaseResponse<EmptyObject> putUserDeviceToken(
         @AccessTokenUser User user,
         @RequestBody UserDeviceTokenRequest request) {

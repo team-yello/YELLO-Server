@@ -9,11 +9,10 @@ import static com.yello.server.global.common.SuccessCode.VERIFY_RECEIPT_SUCCESS;
 import com.yello.server.domain.purchase.dto.apple.AppleOrderResponse;
 import com.yello.server.domain.purchase.dto.apple.AppleTransaction;
 import com.yello.server.domain.purchase.dto.request.AppleInAppRefundRequest;
-import com.yello.server.domain.purchase.dto.request.GoogleInAppGetRequest;
-import com.yello.server.domain.purchase.dto.request.GoogleSubscriptionV2GetRequest;
-import com.yello.server.domain.purchase.dto.response.GoogleInAppV1GetResponse;
-import com.yello.server.domain.purchase.dto.request.GoogleSubscriptionV2GetRequest;
-import com.yello.server.domain.purchase.dto.response.GoogleSubscriptionV2GetResponse;
+import com.yello.server.domain.purchase.dto.request.GoogleSubscriptionGetRequest;
+import com.yello.server.domain.purchase.dto.request.GoogleTicketGetRequest;
+import com.yello.server.domain.purchase.dto.response.GoogleSubscriptionGetResponse;
+import com.yello.server.domain.purchase.dto.response.GoogleTicketGetResponse;
 import com.yello.server.domain.purchase.dto.response.UserPurchaseInfoResponse;
 import com.yello.server.domain.purchase.dto.response.UserSubscribeNeededResponse;
 import com.yello.server.domain.purchase.service.PurchaseService;
@@ -57,7 +56,6 @@ public class PurchaseController {
         @AccessTokenUser User user
     ) {
         purchaseService.verifyAppleSubscriptionTransaction(user.getId(), appleTransaction);
-
         return BaseResponse.success(VERIFY_RECEIPT_SUCCESS);
     }
 
@@ -73,20 +71,19 @@ public class PurchaseController {
         @AccessTokenUser User user
     ) {
         purchaseService.verifyAppleTicketTransaction(user.getId(), appleTransaction);
-
         return BaseResponse.success(VERIFY_RECEIPT_SUCCESS);
     }
 
     @Operation(summary = "구글 구독권 결제 정보 검증하기 API", responses = {
         @ApiResponse(
             responseCode = "201",
-            content = @Content(mediaType = "application/json", schema = @Schema(implementation = GoogleSubscriptionV2GetResponse.class))
+            content = @Content(mediaType = "application/json", schema = @Schema(implementation = GoogleSubscriptionGetResponse.class))
         )
     })
-    @PostMapping("/google/subscriptionsv2/verify")
-    public BaseResponse<GoogleSubscriptionV2GetResponse> verifyGoogleSubscriptionTransaction(
+    @PostMapping("/google/verify/subscribe")
+    public BaseResponse<GoogleSubscriptionGetResponse> verifyGoogleSubscriptionTransaction(
         @AccessTokenUser User user,
-        @RequestBody GoogleSubscriptionV2GetRequest request
+        @RequestBody GoogleSubscriptionGetRequest request
     ) throws IOException {
         val data = purchaseService.verifyGoogleSubscriptionTransaction(user.getId(), request);
         return BaseResponse.success(GOOGLE_PURCHASE_SUBSCRIPTION_VERIFY_SUCCESS, data);
@@ -98,12 +95,12 @@ public class PurchaseController {
             content = @Content(mediaType = "application/json", schema = @Schema(implementation = GoogleInAppGetResponse.class))
         )
     })
-    @PostMapping("/google/inapp/verify")
-    public BaseResponse<GoogleInAppV1GetResponse> verifyGoogleInAppTransaction(
+    @PostMapping("/google/verify/ticket")
+    public BaseResponse<GoogleTicketGetResponse> verifyGoogleTicketTransaction(
         @AccessTokenUser User user,
-        @RequestBody GoogleInAppGetRequest request
+        @RequestBody GoogleTicketGetRequest request
     ) throws IOException {
-        val data = purchaseService.verifyGoogleInAppTransaction(user.getId(), request);
+        val data = purchaseService.verifyGoogleTicketTransaction(user.getId(), request);
         return BaseResponse.success(GOOGLE_PURCHASE_INAPP_VERIFY_SUCCESS, data);
     }
 
@@ -113,7 +110,7 @@ public class PurchaseController {
             content = @Content(mediaType = "application/json", schema = @Schema(implementation = UserSubscribeNeededResponse.class))
         )
     })
-    @GetMapping("/subscribeNeed")
+    @GetMapping("/subscribe")
     public BaseResponse<UserSubscribeNeededResponse> getUserSubscribeNeeded(
         @AccessTokenUser User user) {
         val data = purchaseService.getUserSubscribe(user, LocalDateTime.now());
@@ -132,7 +129,6 @@ public class PurchaseController {
         AppleInAppRefundRequest request
     ) {
         purchaseService.refundInAppApple(user.getId(), request);
-
         return BaseResponse.success(VERIFY_RECEIPT_SUCCESS);
     }
 
@@ -142,7 +138,7 @@ public class PurchaseController {
             content = @Content(mediaType = "application/json", schema = @Schema(implementation = UserPurchaseInfoResponse.class))
         )
     })
-    @GetMapping("/purchaseInfo")
+    @GetMapping()
     public BaseResponse<UserPurchaseInfoResponse> getUserPurchaseInfo(@AccessTokenUser User user) {
         val data = UserPurchaseInfoResponse.of(user);
         return BaseResponse.success(USER_PURCHASE_INFO_READ_SUCCESS, data);
