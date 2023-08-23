@@ -4,6 +4,7 @@ buildscript {
     }
 }
 
+
 plugins {
     id 'java'
     id 'org.springframework.boot' version '2.7.4'
@@ -109,6 +110,12 @@ tasks.named('test') {
     useJUnitPlatform()
 }
 
+bootJar {
+    dependsOn asciidoctor
+    from("${asciidoctor.outputDir}") {
+        into 'static/docs'
+    }
+}
 
 def querydslDir = "$buildDir/generated/querydsl"
 
@@ -140,9 +147,4 @@ asciidoctor {
 }
 asciidoctor.doFirst {
     delete file('src/docs/asciidocs')
-}
-task copyDocument(type: Copy) {
-    dependsOn asciidoctor
-    from file("build/docs/asciidoc")
-    into file("src/main/resources/static/docs")
 }
