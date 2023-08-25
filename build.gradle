@@ -108,7 +108,6 @@ configurations {
 }
 
 jar.enabled = false
-bootJar.enabled = false
 
 jacoco.toolVersion = "0.8.7"
 jacocoTestReport {
