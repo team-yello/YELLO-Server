@@ -1,9 +1,9 @@
 package com.yello.server.domain.vote.service;
 
-import static com.yello.server.domain.vote.common.WeightedRandomFactory.randomPoint;
 import static com.yello.server.global.common.ErrorCode.DUPLICATE_VOTE_EXCEPTION;
 import static com.yello.server.global.common.ErrorCode.INVALID_VOTE_EXCEPTION;
 import static com.yello.server.global.common.ErrorCode.LACK_POINT_EXCEPTION;
+import static com.yello.server.global.common.factory.WeightedRandomFactory.randomPoint;
 import static com.yello.server.global.common.util.ConstantUtil.KEYWORD_HINT_POINT;
 import static com.yello.server.global.common.util.ConstantUtil.NAME_HINT_DEFAULT;
 import static com.yello.server.global.common.util.ConstantUtil.NAME_HINT_POINT;
@@ -34,7 +34,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
-import java.util.Random;
+import java.util.concurrent.ThreadLocalRandom;
 import java.util.stream.IntStream;
 import lombok.Builder;
 import lombok.RequiredArgsConstructor;
@@ -107,7 +107,7 @@ public class VoteManagerImpl implements VoteManager {
 
     @Override
     public int useNameHint(User sender, Vote vote) {
-        if (sender.getPoint() < NAME_HINT_POINT) {
+        if (sender.getPoint() < NAME_HINT_POINT && sender.getSubscribe()==Subscribe.NORMAL) {
             throw new VoteForbiddenException(LACK_POINT_EXCEPTION);
         }
 
@@ -115,9 +115,15 @@ public class VoteManagerImpl implements VoteManager {
             throw new VoteNotFoundException(INVALID_VOTE_EXCEPTION);
         }
 
-        int randomIndex = (int) (Math.random() * 2);
+        final ThreadLocalRandom random = ThreadLocalRandom.current();
+        int randomIndex = random.nextInt(2);
         vote.checkNameIndexOf(randomIndex);
-        sender.minusPoint(NAME_HINT_POINT);
+
+        if (sender.getSubscribe()==Subscribe.NORMAL) {
+            sender.minusPoint(NAME_HINT_POINT);
+            return randomIndex;
+        }
+        sender.minusPoint(0);
         return randomIndex;
     }
 
@@ -187,7 +193,7 @@ public class VoteManagerImpl implements VoteManager {
     }
 
     private Vote createFirstVote(User sender, User receiver, Question question) {
-        Random random = new Random();
+        final ThreadLocalRandom random = ThreadLocalRandom.current();
         final String answer = "널 기다렸어";
 
         return Vote.builder()

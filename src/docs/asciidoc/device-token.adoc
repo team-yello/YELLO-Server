@@ -1,0 +1,9 @@
+== 디바이스 토큰 수정하기
+
+=== 요청
+
+include::{snippets}/api/v1/user/updateUserDeviceToken/http-request.adoc[]
+
+=== 응답
+
+include::{snippets}/api/v1/user/updateUserDeviceToken/http-response.adoc[]

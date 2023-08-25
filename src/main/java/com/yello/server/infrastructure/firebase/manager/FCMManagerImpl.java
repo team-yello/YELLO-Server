@@ -7,9 +7,11 @@ import com.google.firebase.messaging.Message;
 import com.google.firebase.messaging.Notification;
 import com.yello.server.domain.vote.repository.VoteRepository;
 import com.yello.server.infrastructure.firebase.dto.request.NotificationMessage;
+import lombok.Builder;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+@Builder
 @Service
 @RequiredArgsConstructor
 public class FCMManagerImpl implements FCMManager {

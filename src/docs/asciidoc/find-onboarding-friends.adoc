@@ -1,0 +1,13 @@
+== 가입한 친구 목록 불러오기
+
+=== 요청
+
+include::{snippets}/api/v1/auth/findOnBoardingFriends/http-request.adoc[]
+
+=== 요청 파라미터
+
+include::{snippets}/api/v1/auth/findOnBoardingFriends/request-parameters.adoc[]
+
+=== 응답
+
+include::{snippets}/api/v1/auth/findOnBoardingFriends/http-response.adoc[]

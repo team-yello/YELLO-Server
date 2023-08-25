@@ -4,10 +4,8 @@ import lombok.Builder;
 
 @Builder
 public record AppleTransaction(
-
     String transactionId,
     String productId
-
 ) {
 
 }
