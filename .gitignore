@@ -47,4 +47,3 @@ firebase*.json
 ### monitoring ###
 monitoring/prometheus/volume
 monitoring/grafana
-*.html

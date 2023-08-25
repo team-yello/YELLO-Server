@@ -6,8 +6,6 @@
 :toclevels: 3
 :sectlinks:
 
-테스트테스트
-
 [[API-List]]
 == APIs
 
