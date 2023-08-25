@@ -9,18 +9,18 @@ import org.springframework.context.annotation.Configuration;
 public class SlackConfiguration {
 
     @Value("${slack.token.ambulence}")
-    String slackTokenAmbulence;
+    String slackTokenForError;
 
     @Value("${slack.token.bank}")
-    String slackTokenBank;
+    String slackTokenForPurchase;
 
     @Bean
-    SlackApi slackAmbulenceApi() {
-        return new SlackApi("https://hooks.slack.com/services/" + slackTokenAmbulence);
+    SlackApi slackErrorApi() {
+        return new SlackApi("https://hooks.slack.com/services/" + slackTokenForError);
     }
 
     @Bean
-    SlackApi slackBankApi() {
-        return new SlackApi("https://hooks.slack.com/services/" + slackTokenBank);
+    SlackApi slackPurchaseApi() {
+        return new SlackApi("https://hooks.slack.com/services/" + slackTokenForPurchase);
     }
 }

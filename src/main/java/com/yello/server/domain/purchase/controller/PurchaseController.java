@@ -18,6 +18,7 @@ import com.yello.server.domain.purchase.service.PurchaseService;
 import com.yello.server.domain.user.entity.User;
 import com.yello.server.global.common.annotation.AccessTokenUser;
 import com.yello.server.global.common.dto.BaseResponse;
+import com.yello.server.infrastructure.slack.annotation.SlackPurchaseNotification;
 import java.io.IOException;
 import java.time.LocalDateTime;
 import lombok.RequiredArgsConstructor;
@@ -37,6 +38,7 @@ public class PurchaseController {
     private final PurchaseService purchaseService;
 
     @PostMapping("/apple/verify/subscribe")
+    @SlackPurchaseNotification
     public BaseResponse verifyAppleSubscriptionTransaction(
         @RequestBody AppleTransaction appleTransaction,
         @AccessTokenUser User user
@@ -46,6 +48,7 @@ public class PurchaseController {
     }
 
     @PostMapping("/apple/verify/ticket")
+    @SlackPurchaseNotification
     public BaseResponse verifyAppleTicketTransaction(
         @RequestBody AppleTransaction appleTransaction,
         @AccessTokenUser User user
@@ -55,6 +58,7 @@ public class PurchaseController {
     }
 
     @PostMapping("/google/verify/subscribe")
+    @SlackPurchaseNotification
     public BaseResponse<GoogleSubscriptionGetResponse> verifyGoogleSubscriptionTransaction(
         @AccessTokenUser User user,
         @RequestBody GoogleSubscriptionGetRequest request
@@ -64,6 +68,7 @@ public class PurchaseController {
     }
 
     @PostMapping("/google/verify/ticket")
+    @SlackPurchaseNotification
     public BaseResponse<GoogleTicketGetResponse> verifyGoogleTicketTransaction(
         @AccessTokenUser User user,
         @RequestBody GoogleTicketGetRequest request
