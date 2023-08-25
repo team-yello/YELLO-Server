@@ -14,7 +14,7 @@ on:
     branches: [ "develop", "staging" ]
 
 permissions:
-  contents: read
+  contents: write
 
 jobs:
   build:
