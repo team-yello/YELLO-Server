@@ -103,7 +103,7 @@ public class PurchaseService {
         }
 
         purchaseManager.createSubscribe(user, Gateway.APPLE, request.transactionId());
-        user.changeTicketCount(3);
+        user.addTicketCount(3);
     }
 
     @Transactional
@@ -117,16 +117,16 @@ public class PurchaseService {
         switch (request.productId()) {
             case ONE_TICKET_ID:
                 purchaseManager.createTicket(user, ProductType.ONE_TICKET, Gateway.APPLE, request.transactionId());
-                user.changeTicketCount(1);
+                user.addTicketCount(1);
                 break;
             case TWO_TICKET_ID:
                 purchaseManager.createTicket(user, ProductType.TWO_TICKET, Gateway.APPLE, request.transactionId());
-                user.changeTicketCount(2);
+                user.addTicketCount(2);
                 break;
             case FIVE_TICKET_ID:
                 purchaseManager.createTicket(user, ProductType.FIVE_TICKET, Gateway.APPLE,
                     request.transactionId());
-                user.changeTicketCount(5);
+                user.addTicketCount(5);
                 break;
             default:
                 throw new PurchaseException(NOT_FOUND_TRANSACTION_EXCEPTION);
@@ -241,7 +241,7 @@ public class PurchaseService {
 
             Purchase ticket = purchaseManager.createTicket(user, getProductType(request.productId()),
                 Gateway.GOOGLE, request.orderId());
-            user.changeTicketCount(getTicketAmount(request.productId()) * request.quantity());
+            user.addTicketCount(getTicketAmount(request.productId()) * request.quantity());
             ticket.setTransactionId(inAppResponse.getBody().orderId());
         } else {
             throw new GoogleBadRequestException(GOOGLE_INAPP_BAD_REQUEST_EXCEPTION);

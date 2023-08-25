@@ -172,7 +172,7 @@ public class User extends AuditingTimeEntity {
         this.subscribe = subscribe;
     }
 
-    public void changeTicketCount(int ticketCount) {
+    public void addTicketCount(int ticketCount) {
         this.ticketCount += ticketCount;
     }
 
