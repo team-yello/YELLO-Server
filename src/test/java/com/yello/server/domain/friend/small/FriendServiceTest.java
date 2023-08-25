@@ -28,11 +28,15 @@ import com.yello.server.util.TestDataRepositoryUtil;
 import java.util.List;
 import java.util.Optional;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.DisplayNameGeneration;
+import org.junit.jupiter.api.DisplayNameGenerator.ReplaceUnderscores;
 import org.junit.jupiter.api.Test;
 import org.springframework.data.domain.Pageable;
 
+@DisplayName("FriendService 에서")
+@DisplayNameGeneration(ReplaceUnderscores.class)
 class FriendServiceTest {
-
 
     private final UserRepository userRepository = new FakeUserRepository();
     private final FriendRepository friendRepository = new FakeFriendRepository();

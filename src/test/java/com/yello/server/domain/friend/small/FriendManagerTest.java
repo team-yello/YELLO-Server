@@ -13,8 +13,13 @@ import com.yello.server.domain.user.repository.UserRepository;
 import java.util.Arrays;
 import java.util.List;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.DisplayNameGeneration;
+import org.junit.jupiter.api.DisplayNameGenerator.ReplaceUnderscores;
 import org.junit.jupiter.api.Test;
 
+@DisplayName("FriendManager 에서")
+@DisplayNameGeneration(ReplaceUnderscores.class)
 public class FriendManagerTest {
 
     private final UserRepository userRepository = new FakeUserRepository();

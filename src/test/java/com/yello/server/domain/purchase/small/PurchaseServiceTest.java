@@ -18,8 +18,13 @@ import com.yello.server.domain.user.entity.User;
 import com.yello.server.domain.user.repository.UserRepository;
 import java.time.LocalDateTime;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.DisplayNameGeneration;
+import org.junit.jupiter.api.DisplayNameGenerator.ReplaceUnderscores;
 import org.junit.jupiter.api.Test;
 
+@DisplayName("PurchaseService 에서")
+@DisplayNameGeneration(ReplaceUnderscores.class)
 public class PurchaseServiceTest {
 
     private final UserRepository userRepository = new FakeUserRepository();

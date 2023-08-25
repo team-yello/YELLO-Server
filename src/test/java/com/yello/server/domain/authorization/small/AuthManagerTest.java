@@ -26,8 +26,13 @@ import com.yello.server.infrastructure.redis.repository.TokenRepository;
 import com.yello.server.util.TestDataRepositoryUtil;
 import java.util.Base64;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.DisplayNameGeneration;
+import org.junit.jupiter.api.DisplayNameGenerator.ReplaceUnderscores;
 import org.junit.jupiter.api.Test;
 
+@DisplayName("AuthManager 에서")
+@DisplayNameGeneration(ReplaceUnderscores.class)
 public class AuthManagerTest {
 
     private final String secretKey = Base64.getEncoder().encodeToString(

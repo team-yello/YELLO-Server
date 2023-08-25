@@ -11,8 +11,13 @@ import com.yello.server.domain.user.repository.UserRepository;
 import com.yello.server.domain.user.service.UserManager;
 import com.yello.server.domain.user.service.UserManagerImpl;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.DisplayNameGeneration;
+import org.junit.jupiter.api.DisplayNameGenerator.ReplaceUnderscores;
 import org.junit.jupiter.api.Test;
 
+@DisplayName("UserManager 에서")
+@DisplayNameGeneration(ReplaceUnderscores.class)
 public class UserManagerTest {
 
     private final static String OFFICIAL_NAME = "옐로팀";

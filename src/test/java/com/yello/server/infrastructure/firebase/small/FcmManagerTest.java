@@ -1,4 +1,4 @@
-package com.yello.server.infrastructure.firebase;
+package com.yello.server.infrastructure.firebase.small;
 
 import com.yello.server.domain.friend.FakeFriendRepository;
 import com.yello.server.domain.friend.repository.FriendRepository;
@@ -15,8 +15,13 @@ import com.yello.server.infrastructure.firebase.manager.FCMManager;
 import com.yello.server.infrastructure.firebase.manager.FCMManagerImpl;
 import com.yello.server.util.TestDataRepositoryUtil;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.DisplayNameGeneration;
+import org.junit.jupiter.api.DisplayNameGenerator.ReplaceUnderscores;
 import org.junit.jupiter.api.Test;
 
+@DisplayName("FcmManager 에서")
+@DisplayNameGeneration(ReplaceUnderscores.class)
 public class FcmManagerTest {
 
     private final UserRepository userRepository = new FakeUserRepository();

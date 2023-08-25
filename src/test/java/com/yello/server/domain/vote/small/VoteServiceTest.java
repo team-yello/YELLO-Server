@@ -42,9 +42,14 @@ import java.util.ArrayList;
 import java.util.List;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.DisplayNameGeneration;
+import org.junit.jupiter.api.DisplayNameGenerator.ReplaceUnderscores;
 import org.junit.jupiter.api.Test;
 import org.springframework.data.domain.Pageable;
 
+@DisplayName("VoteService 에서")
+@DisplayNameGeneration(ReplaceUnderscores.class)
 public class VoteServiceTest {
 
     private final UserRepository userRepository = new FakeUserRepository();

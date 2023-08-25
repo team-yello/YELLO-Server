@@ -37,6 +37,7 @@ import com.yello.server.util.TestDataUtil;
 import com.yello.server.util.WithAccessTokenUser;
 import java.util.Arrays;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.DisplayNameGeneration;
 import org.junit.jupiter.api.DisplayNameGenerator.ReplaceUnderscores;
 import org.junit.jupiter.api.Test;
@@ -63,6 +64,7 @@ import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
     })
 @AutoConfigureRestDocs
 @WithAccessTokenUser
+@DisplayName("FriendController 에서")
 @DisplayNameGeneration(ReplaceUnderscores.class)
 class FriendControllerTest {
 

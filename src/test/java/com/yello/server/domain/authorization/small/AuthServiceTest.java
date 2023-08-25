@@ -60,9 +60,14 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Stream;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.DisplayNameGeneration;
+import org.junit.jupiter.api.DisplayNameGenerator.ReplaceUnderscores;
 import org.junit.jupiter.api.Test;
 import org.springframework.data.domain.Pageable;
 
+@DisplayName("AuthService 에서")
+@DisplayNameGeneration(ReplaceUnderscores.class)
 public class AuthServiceTest {
 
     private final String secretKey = Base64.getEncoder().encodeToString(
