@@ -1,4 +1,4 @@
-package com.yello.server.domain.vote.common;
+package com.yello.server.global.common.factory;
 
 import static com.yello.server.global.common.util.ConstantUtil.EIGHT_POINT_WEIGHT;
 import static com.yello.server.global.common.util.ConstantUtil.FIFTH_POINT_WEIGHT;

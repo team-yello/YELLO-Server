@@ -4,7 +4,6 @@ import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import java.security.KeyFactory;
 import java.security.spec.PKCS8EncodedKeySpec;
-import java.util.Calendar;
 import java.util.Date;
 import lombok.SneakyThrows;
 import org.apache.commons.codec.binary.Base64;
@@ -15,35 +14,34 @@ import org.springframework.stereotype.Component;
 public class TokenFactory {
 
     @Value("${kid}")
-    private String KID;
+    private String kid;
+
     @Value("${iss}")
-    private String ISS;
+    private String iss;
+
     @Value("${aud}")
-    private String AUD;
+    private String aud;
+
     @Value("${bid}")
-    private String BID;
+    private String bid;
+
     @Value("${sig}")
-    private String SIG;
+    private String sig;
 
     @SneakyThrows
     public String generateAppleToken() {
-        String jws = Jwts.builder()
-            // header
-            .setHeaderParam("kid", KID)
-            // payload
-            .setIssuer(ISS)
-            .setIssuedAt(new Date(Calendar.getInstance().getTimeInMillis()))    // 발행 시간 - UNIX 시간
-            .setExpiration(
-                new Date(Calendar.getInstance().getTimeInMillis() + (3 * 60
-                    * 1000)))    // 만료 시간 (발행 시간 + 3분)
-            .setAudience(AUD)
-            .claim("bid", BID)
-            // sign
-            .signWith(SignatureAlgorithm.ES256,
-                KeyFactory.getInstance("EC").generatePrivate(new PKCS8EncodedKeySpec(
-                    Base64.decodeBase64(SIG))))
+        return Jwts.builder()
+            .setHeaderParam("kid", kid)
+            .setIssuer(iss)
+            .setIssuedAt(new Date(System.currentTimeMillis()))
+            .setExpiration(new Date(System.currentTimeMillis() + (3 * 60 * 1000)))
+            .setAudience(aud)
+            .claim("bid", bid)
+            .signWith(
+                SignatureAlgorithm.ES256,
+                KeyFactory.getInstance("EC")
+                    .generatePrivate(new PKCS8EncodedKeySpec(Base64.decodeBase64(sig)))
+            )
             .compact();
-
-        return jws;
     }
 }
