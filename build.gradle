@@ -4,11 +4,23 @@ buildscript {
     }
 }
 
+
 plugins {
     id 'java'
     id 'org.springframework.boot' version '2.7.4'
     id 'io.spring.dependency-management' version '1.0.15.RELEASE'
     id 'com.ewerk.gradle.plugins.querydsl' version '1.0.10'
+    id "org.asciidoctor.jvm.convert" version "3.3.2"
+    id 'jacoco'
+}
+
+ext {
+    snippetsDir = file('build/generated-snippets')
+}
+
+test {
+    finalizedBy 'jacocoTestReport'
+    outputs.dir snippetsDir
 }
 
 group = 'com.yello'
@@ -19,6 +31,7 @@ java {
 }
 
 configurations {
+    asciidoctorExt
     compileOnly {
         extendsFrom annotationProcessor
     }
@@ -34,6 +47,9 @@ dependencies {
     annotationProcessor 'org.projectlombok:lombok'
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
     testImplementation 'org.junit.jupiter:junit-jupiter-params:5.4.2'
+    asciidoctorExt 'org.springframework.restdocs:spring-restdocs-asciidoctor'
+    testImplementation 'org.springframework.restdocs:spring-restdocs-mockmvc'
+    testImplementation 'org.springframework.security:spring-security-test'
 
     // JPA & Database
     implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
@@ -52,10 +68,6 @@ dependencies {
     implementation group: 'io.jsonwebtoken', name: 'jjwt-api', version: '0.11.2'
     implementation group: 'io.jsonwebtoken', name: 'jjwt-impl', version: '0.11.2'
     implementation group: 'io.jsonwebtoken', name: 'jjwt-jackson', version: '0.11.2'
-
-
-    // Swagger
-    implementation 'org.springdoc:springdoc-openapi-ui:1.5.4'
 
     // p6spy
     implementation 'com.github.gavlyukovskiy:p6spy-spring-boot-starter:1.5.7'
@@ -96,6 +108,12 @@ tasks.named('test') {
     useJUnitPlatform()
 }
 
+bootJar {
+    dependsOn asciidoctor
+    from("${asciidoctor.outputDir}") {
+        into 'static/docs'
+    }
+}
 
 def querydslDir = "$buildDir/generated/querydsl"
 
@@ -118,4 +136,27 @@ compileQuerydsl {
 
 jar {
     enabled = false
+}
+
+jacoco {
+    toolVersion = "0.8.7"
+}
+jacocoTestReport {
+    reports {
+        xml.enabled true
+        csv.enabled true
+        html.enabled true
+
+        xml.destination file("${buildDir}/jacoco/index.xml")
+        csv.destination file("${buildDir}/jacoco/index.csv")
+        html.destination file("${buildDir}/jacoco/index.html")
+    }
+}
+asciidoctor {
+    inputs.dir snippetsDir
+    configurations 'asciidoctorExt'
+    dependsOn test
+}
+asciidoctor.doFirst {
+    delete file('src/docs/asciidocs')
 }

@@ -1,0 +1,15 @@
+
+
+== 친구 검색하기
+
+=== 요청
+
+include::{snippets}/api/v1/friend/searchFriend/http-request.adoc[]
+
+=== 요청 파라미터
+
+include::{snippets}/api/v1/friend/searchFriend/request-parameters.adoc[]
+
+=== 응답
+
+include::{snippets}/api/v1/friend/searchFriend/http-response.adoc[]

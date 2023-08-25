@@ -29,7 +29,6 @@ public class PaginationFactory {
         return PageRequest.of(page, PAGE_LIMIT_TEN);
     }
 
-
     public static <T> Page<T> getPage(List<T> list, Pageable pageable) {
         int start = (int) pageable.getOffset();
         int end = Math.min((start + pageable.getPageSize()), list.size());

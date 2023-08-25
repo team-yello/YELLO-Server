@@ -1,0 +1,9 @@
+== 투표 가능 여부 조회
+
+=== 요청
+
+include::{snippets}/api/v1/vote/checkVoteAvailable/http-request.adoc[]
+
+=== 응답
+
+include::{snippets}/api/v1/vote/checkVoteAvailable/http-response.adoc[]

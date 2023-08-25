@@ -1,0 +1,11 @@
+== 소셜 로그인
+
+=== 요청
+
+include::{snippets}/api/v1/auth/oauthLogin/http-request.adoc[]
+
+=== 응답
+
+include::{snippets}/api/v1/auth/oauthLogin/http-response.adoc[]
+
+

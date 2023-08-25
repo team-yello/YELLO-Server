@@ -1,0 +1,29 @@
+== Apple 구독 구매 검증하기
+
+=== 요청
+
+include::{snippets}/api/v1/purchase/verifyAppleSubscriptionTransaction/http-request.adoc[]
+
+=== 응답
+
+include::{snippets}/api/v1/purchase/verifyAppleSubscriptionTransaction/http-response.adoc[]
+
+== Apple 열람권 구매 검증하기
+
+=== 요청
+
+include::{snippets}/api/v1/purchase/verifyAppleTicketTransaction/http-request.adoc[]
+
+=== 응답
+
+include::{snippets}/api/v1/purchase/verifyAppleTicketTransaction/http-response.adoc[]
+
+== Apple 환불하기
+
+=== 요청
+
+include::{snippets}/api/v1/purchase/refundInAppApple/http-request.adoc[]
+
+=== 응답
+
+include::{snippets}/api/v1/purchase/refundInAppApple/http-response.adoc[]

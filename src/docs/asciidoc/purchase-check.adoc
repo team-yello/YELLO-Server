@@ -1,0 +1,9 @@
+== 구독 상태 및 열람권 개수 조회하기
+
+=== 요청
+
+include::{snippets}/api/v1/purchase/getUserPurchaseInfo/http-request.adoc[]
+
+=== 응답
+
+include::{snippets}/api/v1/purchase/getUserPurchaseInfo/http-response.adoc[]
