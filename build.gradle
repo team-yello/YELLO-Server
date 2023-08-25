@@ -11,6 +11,7 @@ plugins {
     id 'io.spring.dependency-management' version '1.0.15.RELEASE'
     id 'com.ewerk.gradle.plugins.querydsl' version '1.0.10'
     id "org.asciidoctor.jvm.convert" version "3.3.2"
+    id 'jacoco'
 }
 
 ext {
@@ -18,6 +19,7 @@ ext {
 }
 
 test {
+    finalizedBy 'jacocoTestReport'
     outputs.dir snippetsDir
 }
 
@@ -136,6 +138,20 @@ jar {
     enabled = false
 }
 
+jacoco {
+    toolVersion = "0.8.7"
+}
+jacocoTestReport {
+    reports {
+        xml.enabled true
+        csv.enabled true
+        html.enabled true
+
+        xml.destination file("${buildDir}/jacoco/index.xml")
+        csv.destination file("${buildDir}/jacoco/index.csv")
+        html.destination file("${buildDir}/jacoco/index.html")
+    }
+}
 asciidoctor {
     inputs.dir snippetsDir
     configurations 'asciidoctorExt'
