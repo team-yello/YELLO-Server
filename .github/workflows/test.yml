@@ -14,7 +14,9 @@ on:
     branches: [ "develop", "staging" ]
 
 permissions:
-  contents: write
+  contents: read
+  checks: write
+  id-token: write
 
 jobs:
   build:
