@@ -14,9 +14,8 @@ on:
     branches: [ "develop", "staging" ]
 
 permissions:
-  contents: write
   checks: write
-  id-token: write
+  pull-requests: write
 
 jobs:
   build:
@@ -52,7 +51,7 @@ jobs:
         run: ./gradlew test
 
       - name: 💬 테스트 결과를 코멘트로 등록합니다.
-        uses: EnricoMi/publish-unit-test-result-action@v1
+        uses: EnricoMi/publish-unit-test-result-action@v2
         if: always()
         with:
           files: '**/build/test-results/test/TEST-*.xml'
