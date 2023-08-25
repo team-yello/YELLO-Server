@@ -13,6 +13,7 @@ import static com.yello.server.global.common.util.ConstantUtil.THIRD_POINT_WEIGH
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.ThreadLocalRandom;
 
 public class WeightedRandomFactory {
 
@@ -32,9 +33,11 @@ public class WeightedRandomFactory {
         weight.put(MIN_POINT + 16, SEVENTH_POINT_WEIGHT);
         weight.put(MIN_POINT + 20, EIGHT_POINT_WEIGHT);
 
-        final double pivot = Math.random() % REMINDER_NUMBER;
+        final ThreadLocalRandom random = ThreadLocalRandom.current();
+
+        final double pivot = random.nextDouble(1) % REMINDER_NUMBER;
         double currentWeight = 0;
-        
+
         for (int key : weight.keySet()) {
             currentWeight += weight.getOrDefault(key, 0.0);
             if (currentWeight >= pivot) {

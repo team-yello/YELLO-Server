@@ -1,9 +1,9 @@
 package com.yello.server.domain.vote;
 
-import static com.yello.server.domain.vote.common.WeightedRandomFactory.randomPoint;
 import static com.yello.server.global.common.ErrorCode.DUPLICATE_VOTE_EXCEPTION;
 import static com.yello.server.global.common.ErrorCode.INVALID_VOTE_EXCEPTION;
 import static com.yello.server.global.common.ErrorCode.LACK_POINT_EXCEPTION;
+import static com.yello.server.global.common.factory.WeightedRandomFactory.randomPoint;
 import static com.yello.server.global.common.util.ConstantUtil.KEYWORD_HINT_POINT;
 import static com.yello.server.global.common.util.ConstantUtil.NAME_HINT_DEFAULT;
 import static com.yello.server.global.common.util.ConstantUtil.NAME_HINT_POINT;
@@ -31,7 +31,7 @@ import com.yello.server.domain.vote.service.VoteManager;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import java.util.Random;
+import java.util.concurrent.ThreadLocalRandom;
 import java.util.stream.IntStream;
 
 public class FakeVoteManager implements VoteManager {
@@ -115,7 +115,8 @@ public class FakeVoteManager implements VoteManager {
             throw new VoteNotFoundException(INVALID_VOTE_EXCEPTION);
         }
 
-        int randomIndex = (int) (Math.random() * 2);
+        final ThreadLocalRandom random = ThreadLocalRandom.current();
+        int randomIndex = random.nextInt(2);
         vote.checkNameIndexOf(randomIndex);
         sender.minusPoint(NAME_HINT_POINT);
         return randomIndex;
@@ -185,7 +186,7 @@ public class FakeVoteManager implements VoteManager {
     }
 
     private Vote createFirstVote(User sender, User receiver, Question question) {
-        Random random = new Random();
+        final ThreadLocalRandom random = ThreadLocalRandom.current();
         final String answer = "널 기다렸어";
 
         return Vote.builder()
