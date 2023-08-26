@@ -58,6 +58,11 @@ public class UserRepositoryImpl implements UserRepository {
     }
 
     @Override
+    public Optional<User> findByYelloIdNotFiltered(String yelloId) {
+        return userJpaRepository.findByYelloIdNotFiltered(yelloId);
+    }
+
+    @Override
     public User getByYelloId(String yelloId) {
         return userJpaRepository.findByYelloId(yelloId)
             .orElseThrow(() -> new UserNotFoundException(YELLOID_NOT_FOUND_USER_EXCEPTION));
