@@ -80,7 +80,7 @@ public class AuthService {
             throw new AuthBadRequestException(YELLOID_REQUIRED_EXCEPTION);
         }
 
-        return userRepository.findByYelloId(yelloId).isPresent();
+        return userRepository.findByYelloIdNotFiltered(yelloId).isPresent();
     }
 
     @Transactional
@@ -103,7 +103,7 @@ public class AuthService {
 
     @Transactional
     public void recommendUser(String recommendYelloId, String userYelloId) {
-        if (recommendYelloId!=null && !recommendYelloId.isEmpty()) {
+        if (recommendYelloId != null && !recommendYelloId.isEmpty()) {
             User recommendedUser = userRepository.getByYelloId(recommendYelloId);
             User user = userRepository.getByYelloId(userYelloId);
 
