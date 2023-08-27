@@ -12,8 +12,8 @@ include::{snippets}/api/v1/purchase/verifyGoogleSubscriptionTransaction/http-res
 
 === 요청
 
-include::{snippets}/api/v1/friend/findAllRecommendSchoolFriends/http-request.adoc[]
+include::{snippets}/api/v1/purchase/verifyGoogleTicketTransaction/http-request.adoc[]
 
 === 응답
 
-include::{snippets}/api/v1/purchase/verifyAppleTicketTransaction/http-response.adoc[]
+include::{snippets}/api/v1/purchase/verifyGoogleTicketTransaction/http-response.adoc[]
