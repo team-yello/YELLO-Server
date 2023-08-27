@@ -110,6 +110,8 @@ public class FriendService {
 
     @Transactional
     public void deleteFriend(Long userId, Long targetId) {
+        final User target = userRepository.getById(targetId);
+        final User user = userRepository.getById(userId);
 
         Friend friendByUser = friendRepository.getByUserAndTarget(userId, targetId);
         Friend friendByTarget = friendRepository.getByUserAndTarget(targetId, userId);
