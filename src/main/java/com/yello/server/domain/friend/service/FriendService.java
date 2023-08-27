@@ -110,11 +110,12 @@ public class FriendService {
 
     @Transactional
     public void deleteFriend(Long userId, Long targetId) {
-        final User target = userRepository.getById(targetId);
-        final User user = userRepository.getById(userId);
 
-        friendRepository.delete(friendRepository.getByUserAndTarget(userId, targetId));
-        friendRepository.delete(friendRepository.getByUserAndTarget(targetId, userId));
+        Friend friendByUser = friendRepository.getByUserAndTarget(userId, targetId);
+        Friend friendByTarget = friendRepository.getByUserAndTarget(targetId, userId);
+
+        friendRepository.delete(friendByUser);
+        friendRepository.delete(friendByTarget);
     }
 
     public RecommendFriendResponse findAllRecommendKakaoFriends(Pageable pageable, Long userId,
@@ -141,7 +142,7 @@ public class FriendService {
         final Long groupId = user.getGroup().getId();
 
         List<User> friendList = new ArrayList<>();
-        
+
         if (keyword==null || keyword.trim().isEmpty()) {
             return SearchFriendResponse.of(0, Collections.emptyList());
         }
