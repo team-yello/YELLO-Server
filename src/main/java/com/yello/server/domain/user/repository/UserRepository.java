@@ -20,6 +20,8 @@ public interface UserRepository {
 
     Optional<User> findByYelloId(String yelloId);
 
+    Optional<User> findByYelloIdNotFiltered(String yelloId);
+
     User getByYelloId(String yelloId);
 
     Optional<User> findByDeviceToken(String deviceToken);

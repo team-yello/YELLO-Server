@@ -5,8 +5,7 @@ import lombok.Builder;
 @Builder
 public record AppleOrderResponse(
     int appAppleId,
-    String environment,
-    String JWSTransaction
+    String environment
 ) {
 
 }

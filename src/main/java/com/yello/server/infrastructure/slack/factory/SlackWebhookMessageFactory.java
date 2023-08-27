@@ -70,11 +70,10 @@ public class SlackWebhookMessageFactory {
         HttpServletRequest request
     ) throws IOException {
         final SlackAttachment slackAttachment = new SlackAttachment()
-            .setColor("green")
+            .setColor("good")
             .setTitle(PURCHASE_TITLE)
             .setTitleLink(request.getContextPath())
             .setText(PURCHASE_TITLE)
-            .setColor("green")
             .setFields(generateSlackFieldList(request));
         return Collections.singletonList(slackAttachment);
     }
@@ -82,23 +81,29 @@ public class SlackWebhookMessageFactory {
     private List<SlackField> generateSlackFieldList(
         HttpServletRequest request
     ) throws IOException {
-        final String token = request.getHeader(HttpHeaders.AUTHORIZATION).substring("Bearer ".length());
+        final String token =
+            request.getHeader(HttpHeaders.AUTHORIZATION).substring("Bearer ".length());
         final Long userId = tokenProvider.getUserId(token);
         final Optional<User> user = userRepository.findById(userId);
         final String yelloId = user.isPresent() ? user.get().getYelloId() : "null";
         final String deviceToken = user.isPresent() ? user.get().getDeviceToken() : "null";
 
-        String userInfo = String.format("userId : %d %nyelloId : %s %ndeviceToken : %s", userId, yelloId, deviceToken);
+        String userInfo =
+            String.format("userId : %d %nyelloId : %s %ndeviceToken : %s", userId, yelloId,
+                deviceToken);
 
         return Arrays.asList(
             new SlackField().setTitle("Request URL").setValue(request.getRequestURL().toString()),
-            new SlackField().setTitle("Request Time").setValue(TimeFactory.toDateFormattedString(LocalDateTime.now())),
+            new SlackField().setTitle("Request Time")
+                .setValue(TimeFactory.toDateFormattedString(LocalDateTime.now())),
             new SlackField().setTitle("Request IP").setValue(request.getRemoteAddr()),
-            new SlackField().setTitle("Request User-Agent").setValue(request.getHeader(HttpHeaders.USER_AGENT)),
+            new SlackField().setTitle("Request User-Agent")
+                .setValue(request.getHeader(HttpHeaders.USER_AGENT)),
             new SlackField().setTitle("인증/인가 정보 - Authorization")
                 .setValue(request.getHeader(HttpHeaders.AUTHORIZATION)),
             new SlackField().setTitle("Request Body")
-                .setValue(StreamUtils.copyToString(request.getInputStream(), StandardCharsets.UTF_8)),
+                .setValue(
+                    StreamUtils.copyToString(request.getInputStream(), StandardCharsets.UTF_8)),
             new SlackField().setTitle("인증/인가 정보 - 유저").setValue(userInfo)
         );
     }
