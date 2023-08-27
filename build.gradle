@@ -1,24 +1,27 @@
-buildscript {
-    ext {
-        queryDslVersion = "5.0.0"
-    }
-}
-
 plugins {
     id 'java'
     id 'org.springframework.boot' version '2.7.4'
     id 'io.spring.dependency-management' version '1.0.15.RELEASE'
-    id 'com.ewerk.gradle.plugins.querydsl' version '1.0.10'
+    id "org.asciidoctor.jvm.convert" version "3.3.2"
+    id 'jacoco'
 }
 
 group = 'com.yello'
 version = '0.0.1-SNAPSHOT'
+sourceCompatibility = '17'
 
-java {
-    sourceCompatibility = '17'
+ext {
+    snippetsDir = file('build/generated-snippets')
+}
+
+test {
+    useJUnitPlatform()
+    finalizedBy 'jacocoTestReport'
+    outputs.dir snippetsDir
 }
 
 configurations {
+    asciidoctorExt
     compileOnly {
         extendsFrom annotationProcessor
     }
@@ -32,30 +35,22 @@ dependencies {
     implementation 'org.springframework.boot:spring-boot-starter-web'
     compileOnly 'org.projectlombok:lombok'
     annotationProcessor 'org.projectlombok:lombok'
-    testImplementation 'org.springframework.boot:spring-boot-starter-test'
-    testImplementation 'org.junit.jupiter:junit-jupiter-params:5.4.2'
 
-    // JPA & Database
+    // Repositories
     implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
-
     implementation 'org.springframework.boot:spring-boot-starter-data-redis'
+    implementation 'org.springframework.amqp:spring-rabbit:2.3.12'
+
+    runtimeOnly 'com.h2database:h2'
+    runtimeOnly 'com.mysql:mysql-connector-j:8.0.31'
 
     // Validations
     implementation 'org.springframework.boot:spring-boot-starter-validation'
-
-    // Health Check
-    implementation 'org.springframework.boot:spring-boot-starter-actuator'
-    runtimeOnly 'io.micrometer:micrometer-registry-prometheus'
-
 
     // JWT
     implementation group: 'io.jsonwebtoken', name: 'jjwt-api', version: '0.11.2'
     implementation group: 'io.jsonwebtoken', name: 'jjwt-impl', version: '0.11.2'
     implementation group: 'io.jsonwebtoken', name: 'jjwt-jackson', version: '0.11.2'
-
-
-    // Swagger
-    implementation 'org.springdoc:springdoc-openapi-ui:1.5.4'
 
     // p6spy
     implementation 'com.github.gavlyukovskiy:p6spy-spring-boot-starter:1.5.7'
@@ -67,19 +62,8 @@ dependencies {
     implementation 'org.springframework.boot:spring-boot-starter-security'
     implementation 'io.netty:netty-resolver-dns-native-macos:4.1.79.Final:osx-aarch_64'
 
-
-    // QueryDSL
-    implementation "com.querydsl:querydsl-jpa:${queryDslVersion}"
-    implementation "com.querydsl:querydsl-apt:${queryDslVersion}"
-
-    runtimeOnly 'com.h2database:h2'
-    runtimeOnly 'com.mysql:mysql-connector-j:8.0.31'
-
     // FCM
     implementation 'com.google.firebase:firebase-admin:9.2.0'
-
-    // rabbitmq
-    implementation 'org.springframework.amqp:spring-rabbit:2.3.12'
 
     // slack-webhook
     implementation "net.gpedro.integrations.slack:slack-webhook:1.4.0"
@@ -90,32 +74,72 @@ dependencies {
 
     // gson
     implementation 'com.google.code.gson:gson:2.10.1'
+
+    // Testing
+    testImplementation 'org.springframework.boot:spring-boot-starter-test'
+    testImplementation 'org.junit.jupiter:junit-jupiter-params:5.4.2'
+    asciidoctorExt 'org.springframework.restdocs:spring-restdocs-asciidoctor'
+    testImplementation 'org.springframework.restdocs:spring-restdocs-mockmvc'
+    testImplementation 'org.springframework.security:spring-security-test'
 }
 
-tasks.named('test') {
-    useJUnitPlatform()
+asciidoctor {
+    inputs.dir snippetsDir
+    configurations 'asciidoctorExt'
+    dependsOn test
 }
 
-
-def querydslDir = "$buildDir/generated/querydsl"
-
-querydsl {
-    jpa = true
-    querydslSourcesDir = querydslDir
+asciidoctor.doFirst {
+    delete file('src/docs/asciidocs')
 }
-sourceSets {
-    main.java.srcDir querydslDir
+
+bootJar {
+    dependsOn asciidoctor
+    copy {
+        from asciidoctor.outputDir
+        into "src/main/resources/static/docs"
+    }
 }
+
 configurations {
     compileOnly {
         extendsFrom annotationProcessor
     }
-    querydsl.extendsFrom compileClasspath
-}
-compileQuerydsl {
-    options.annotationProcessorPath = configurations.querydsl
 }
 
-jar {
-    enabled = false
+jar.enabled = false
+
+jacoco.toolVersion = "0.8.7"
+jacocoTestReport {
+    reports {
+        xml.enabled false
+        csv.enabled true
+        html.enabled true
+
+        csv.destination file("${buildDir}/jacoco/index.csv")
+        html.destination file("${buildDir}/jacoco/index.html")
+    }
+//    finalizedBy 'jacocoTestCoverageVerification'
 }
+//jacocoTestCoverageVerification {
+//    violationRules {
+//        rule {
+//            enabled = true
+//            element = 'CLASS'
+//
+//            limit {
+//                counter = 'METHOD'
+//                value = 'COVEREDRATIO'
+//                minimum = 0.60
+//            }
+//
+//            limit {
+//                counter = 'INSTRUCTION'
+//                value = 'COVEREDRATIO'
+//                minimum = 0.60
+//            }
+//
+//            excludes = ["*.dto", "*.dto.*", "*.ServerApplication", "*.configuration.*", "*.security.*", "*.exception.*", "*.util.*"]
+//        }
+//    }
+//}

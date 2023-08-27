@@ -1,0 +1,84 @@
+= YELL:O API 문서
+:doctype: book
+:icons: font
+:source-highlighter: highlightjs
+:toc: left
+:toclevels: 3
+:sectlinks:
+
+[[API-List]]
+== APIs
+
+=== Auth API
+
+* link:login.html[로그인]
+
+* link:signup.html[회원가입]
+
+* link:find-onboarding-friends.html[가입한 친구 목록 불러오기]
+
+* link:search-school.html[대학교 검색하기]
+
+* link:search-department.html[대학교 학과 검색하기]
+
+* link:reissue-token.html[토큰 재발급]
+
+=== User API
+
+* link:check-user.html[내 정보 조회하기]
+
+* link:check-user-by-id.html[특정 유저 정보 조회하기]
+
+* link:device-token.html[디바이스 토큰 수정하기]
+
+* link:delete-user.html[유저 탈퇴]
+
+=== Vote API
+
+* link:find-votes.html[내 투표 전체 조회하기]
+
+* link:find-friend-votes.html[친구 투표 전체 조회하기]
+
+* link:find-friend-votes.html[읽지 않은 쪽지 개수 조회하기]
+
+* link:find-vote.html[투표 상세 조회하기]
+
+* link:find-question.html[투표 질문 조회하기]
+
+* link:check-vote-available.html[투표 가능 여부 조회하기]
+
+* link:create-vote.html[투표 생성하기]
+
+* link:reveal-name.html[투표 이름 부분 조회하기]
+
+* link:reveal-full-name.html[투표 이름 전체 조회하기]
+
+=== Friend API
+
+* link:add-friend.html[친구 추가하기]
+
+* link:find-friends.html[친구 전체 조회하기]
+
+* link:shuffle-friends.html[셔플된 친구 조회하기]
+
+* link:find-group-friends.html[그룹 추천 친구 조회하기]
+
+* link:find-kakao-friends.html[카카오 추천 친구 조회하기]
+
+* link:delete-friend.html[친구 끊기]
+
+* link:search-friend.html[친구 검색하기]
+
+=== Purchase API
+
+* link:apple.html[Apple 결제 관련 API]
+
+* link:google.html[Google 결제 관련 API]
+
+* link:sub-check.html[구독 연장 유도 필요 여부 확인하기]
+
+* link:purchase-check.html[구독 상태 및 열람권 개수 조회하기]
+
+=== Pay API
+
+* link:pay.html[결제 전환율 체크]

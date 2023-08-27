@@ -1,0 +1,9 @@
+== 구독 연장 유도 필요 여부 확인하기
+
+=== 요청
+
+include::{snippets}/api/v1/purchase/getUserSubscribeNeeded/http-request.adoc[]
+
+=== 응답
+
+include::{snippets}/api/v1/purchase/getUserSubscribeNeeded/http-response.adoc[]

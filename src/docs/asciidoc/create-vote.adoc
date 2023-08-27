@@ -1,0 +1,10 @@
+== 투표 생성하기
+
+=== 요청
+
+include::{snippets}/api/v1/vote/createVote/http-request.adoc[]
+
+=== 응답
+
+include::{snippets}/api/v1/vote/createVote/http-response.adoc[]
+

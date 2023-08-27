@@ -1,0 +1,13 @@
+== 투표 키워드 확인하기
+
+=== 요청
+
+include::{snippets}/api/v1/vote/checkKeyword/http-request.adoc[]
+
+=== 요청 파라미터
+
+include::{snippets}/api/v1/vote/checkKeyword/path-parameters.adoc[]
+
+=== 응답
+
+include::{snippets}/api/v1/vote/checkKeyword/http-response.adoc[]

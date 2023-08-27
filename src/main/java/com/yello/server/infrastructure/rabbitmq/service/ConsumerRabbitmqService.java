@@ -5,12 +5,14 @@ import com.yello.server.domain.cooldown.repository.CooldownRepository;
 import com.yello.server.infrastructure.firebase.service.NotificationService;
 import com.yello.server.infrastructure.rabbitmq.dto.response.VoteAvailableQueueResponse;
 import java.io.IOException;
+import lombok.Builder;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.amqp.core.Message;
 import org.springframework.amqp.rabbit.annotation.RabbitListener;
 import org.springframework.stereotype.Service;
 
+@Builder
 @Service
 @RequiredArgsConstructor
 @Log4j2

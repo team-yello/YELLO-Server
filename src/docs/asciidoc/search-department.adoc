@@ -1,0 +1,13 @@
+== 대학교 학과 검색하기
+
+=== 요청
+
+include::{snippets}/api/v1/auth/findDepartmentsByKeyword/http-request.adoc[]
+
+=== 요청 파라미터
+
+include::{snippets}/api/v1/auth/findDepartmentsByKeyword/request-parameters.adoc[]
+
+=== 응답
+
+include::{snippets}/api/v1/auth/findDepartmentsByKeyword/http-response.adoc[]

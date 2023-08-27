@@ -1,0 +1,13 @@
+== 친구 추가하기
+
+=== 요청
+
+include::{snippets}/api/v1/friend/addFriend/http-request.adoc[]
+
+=== 요청 파라미터
+
+include::{snippets}/api/v1/friend/addFriend/path-parameters.adoc[]
+
+=== 응답
+
+include::{snippets}/api/v1/friend/addFriend/http-response.adoc[]

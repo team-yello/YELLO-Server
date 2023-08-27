@@ -1,0 +1,13 @@
+== 투표 상세 조회
+
+=== 요청
+
+include::{snippets}/api/v1/vote/findVoteById/http-request.adoc[]
+
+=== 요청 파라미터
+
+include::{snippets}/api/v1/vote/findVoteById/path-parameters.adoc[]
+
+=== 응답
+
+include::{snippets}/api/v1/vote/findVoteById/http-response.adoc[]

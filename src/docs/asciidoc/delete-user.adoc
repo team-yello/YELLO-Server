@@ -1,0 +1,9 @@
+== 유저 탈퇴하기
+
+=== 요청
+
+include::{snippets}/api/v1/user/deleteUser/http-request.adoc[]
+
+=== 응답
+
+include::{snippets}/api/v1/user/deleteUser/http-response.adoc[]

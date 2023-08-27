@@ -80,7 +80,7 @@ public class AuthService {
             throw new AuthBadRequestException(YELLOID_REQUIRED_EXCEPTION);
         }
 
-        return userRepository.findByYelloId(yelloId).isPresent();
+        return userRepository.findByYelloIdNotFiltered(yelloId).isPresent();
     }
 
     @Transactional
@@ -103,7 +103,7 @@ public class AuthService {
 
     @Transactional
     public void recommendUser(String recommendYelloId, String userYelloId) {
-        if (recommendYelloId!=null && !recommendYelloId.isEmpty()) {
+        if (recommendYelloId != null && !recommendYelloId.isEmpty()) {
             User recommendedUser = userRepository.getByYelloId(recommendYelloId);
             User user = userRepository.getByYelloId(userYelloId);
 
@@ -147,14 +147,14 @@ public class AuthService {
         return OnBoardingFriendResponse.of(kakaoFriends.size(), pageList);
     }
 
-    public GroupNameSearchResponse findSchoolsBySearch(String keyword, Pageable pageable) {
+    public GroupNameSearchResponse findSchoolsByKeyword(String keyword, Pageable pageable) {
         int totalCount = schoolRepository.countDistinctSchoolNameContaining(keyword);
         final List<String> nameList = schoolRepository.findDistinctSchoolNameContaining(keyword,
             pageable);
         return GroupNameSearchResponse.of(totalCount, nameList);
     }
 
-    public DepartmentSearchResponse findDepartmentsBySearch(String schoolName, String keyword,
+    public DepartmentSearchResponse findDepartmentsByKeyword(String schoolName, String keyword,
         Pageable pageable) {
         int totalCount = schoolRepository.countAllBySchoolNameContaining(schoolName, keyword);
         final List<School> schoolResult = schoolRepository.findAllBySchoolNameContaining(schoolName,
