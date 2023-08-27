@@ -71,7 +71,7 @@ public class AuthManagerImpl implements AuthManager {
                 throw new UserConflictException(UUID_CONFLICT_USER_EXCEPTION);
             });
 
-        userRepository.findByYelloId(signUpRequest.yelloId())
+        userRepository.findByYelloIdNotFiltered(signUpRequest.yelloId())
             .ifPresent(action -> {
                 throw new UserConflictException(YELLOID_CONFLICT_USER_EXCEPTION);
             });
@@ -81,7 +81,7 @@ public class AuthManagerImpl implements AuthManager {
     public Boolean renewUserData(User user) {
         final Long userId = user.getId();
 
-        if (user.getDeletedAt()!=null) {
+        if (user.getDeletedAt() != null) {
             user.renew();
 
             friendRepository.findAllByUserIdNotFiltered(userId)

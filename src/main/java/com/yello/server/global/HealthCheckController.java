@@ -12,4 +12,9 @@ public class HealthCheckController {
     public String healthCheck() {
         return "Yell:o world!";
     }
+
+    @GetMapping("/abc")
+    public void text() throws Exception {
+        throw new Exception("Abc");
+    }
 }

@@ -107,7 +107,7 @@ public class VoteManagerImpl implements VoteManager {
 
     @Override
     public int useNameHint(User sender, Vote vote) {
-        if (sender.getPoint() < NAME_HINT_POINT) {
+        if (sender.getPoint() < NAME_HINT_POINT && sender.getSubscribe()==Subscribe.NORMAL) {
             throw new VoteForbiddenException(LACK_POINT_EXCEPTION);
         }
 
@@ -118,7 +118,12 @@ public class VoteManagerImpl implements VoteManager {
         final ThreadLocalRandom random = ThreadLocalRandom.current();
         int randomIndex = random.nextInt(2);
         vote.checkNameIndexOf(randomIndex);
-        sender.minusPoint(NAME_HINT_POINT);
+
+        if (sender.getSubscribe()==Subscribe.NORMAL) {
+            sender.minusPoint(NAME_HINT_POINT);
+            return randomIndex;
+        }
+        sender.minusPoint(0);
         return randomIndex;
     }
 
