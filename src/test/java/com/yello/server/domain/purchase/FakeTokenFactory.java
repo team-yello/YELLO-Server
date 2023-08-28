@@ -1,5 +1,7 @@
 package com.yello.server.domain.purchase;
 
+import static java.util.Base64.getUrlDecoder;
+
 import com.yello.server.global.common.factory.TokenFactory;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
@@ -12,18 +14,19 @@ import org.apache.commons.codec.binary.Base64;
 
 public class FakeTokenFactory implements TokenFactory {
 
-    private String kid = "8Z4BDBSW35";
+    byte[] kidDecode = getUrlDecoder().decode("OFo0QkRCU1czNQ==");
+    byte[] issDecode = getUrlDecoder().decode("MmRlMTMyMGUtY2JlOC00ZDNmLWFmYTctNTc3ZmY0NDM4NzFk");
+    byte[] audDecode = getUrlDecoder().decode("YXBwc3RvcmVjb25uZWN0LXYx");
+    byte[] bidDecode = getUrlDecoder().decode("WUVMTE8uaU9T");
+    byte[] sigDecode = getUrlDecoder().decode(
+        "TUlHVEFnRUFNQk1HQnlxR1NNNDlBZ0VHQ0NxR1NNNDlBd0VIQkhrd2R3SUJBUVFnOWpYNkJXbndBVGJiaGxkdw0KVElBL2FkTFptUFJTREYwN01GVjJIb1B2Mkw2Z0NnWUlLb1pJemowREFRZWhSQU5DQUFUVU5oQUJVU1ZLYWhDaw0KbGNINWZscDMveG8xem9PbDV6T0FsWXM2dWIveWM1Qm1HV245c0t2cWtwWHd2c0xZTG5qeUlOZmY4QU1HS2UvcQ0Ka3U3bXNUTVI=");
 
-    private String iss = "2de1320e-cbe8-4d3f-afa7-577ff443871d";
+    private String kid = new String(kidDecode);
+    private String iss = new String(issDecode);
+    private String aud = new String(audDecode);
+    private String bid = new String(bidDecode);
+    private String sig = new String(sigDecode);
 
-    private String aud = "appstoreconnect-v1";
-
-    private String bid = "YELLO.iOS";
-
-    private String sig = "MIGTAgEAMBMGByqGSM49AgEGCCqGSM49AwEHBHkwdwIBAQQg9jX6BWnwATbbhldw\n"
-        + "TIA/adLZmPRSDF07MFV2HoPv2L6gCgYIKoZIzj0DAQehRANCAATUNhABUSVKahCk\n"
-        + "lcH5flp3/xo1zoOl5zOAlYs6ub/yc5BmGWn9sKvqkpXwvsLYLnjyINff8AMGKe/q\n"
-        + "ku7msTMR";
 
     @Override
     public String generateAppleToken() {
