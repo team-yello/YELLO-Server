@@ -3,12 +3,17 @@ package com.yello.server.domain.purchase.small;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import com.yello.server.domain.group.entity.School;
+import com.yello.server.domain.purchase.FakeAppleUtil;
+import com.yello.server.domain.purchase.FakePurchaseManager;
 import com.yello.server.domain.purchase.FakePurchaseRepository;
+import com.yello.server.domain.purchase.FakeTokenFactory;
+import com.yello.server.domain.purchase.dto.apple.AppleTransaction;
 import com.yello.server.domain.purchase.dto.response.UserSubscribeNeededResponse;
 import com.yello.server.domain.purchase.entity.Gateway;
 import com.yello.server.domain.purchase.entity.ProductType;
 import com.yello.server.domain.purchase.entity.Purchase;
 import com.yello.server.domain.purchase.repository.PurchaseRepository;
+import com.yello.server.domain.purchase.service.PurchaseManager;
 import com.yello.server.domain.purchase.service.PurchaseService;
 import com.yello.server.domain.user.FakeUserRepository;
 import com.yello.server.domain.user.entity.Gender;
@@ -16,6 +21,8 @@ import com.yello.server.domain.user.entity.Social;
 import com.yello.server.domain.user.entity.Subscribe;
 import com.yello.server.domain.user.entity.User;
 import com.yello.server.domain.user.repository.UserRepository;
+import com.yello.server.global.common.factory.TokenFactory;
+import com.yello.server.global.common.util.AppleUtil;
 import java.time.LocalDateTime;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -29,6 +36,9 @@ public class PurchaseServiceTest {
 
     private final UserRepository userRepository = new FakeUserRepository();
     private final PurchaseRepository purchaseRepository = new FakePurchaseRepository();
+    private final TokenFactory tokenFactory = new FakeTokenFactory();
+    private final AppleUtil appleUtil = new FakeAppleUtil(tokenFactory);
+    private final PurchaseManager purchaseManager = new FakePurchaseManager(purchaseRepository);
     private PurchaseService purchaseService;
 
     @BeforeEach
@@ -36,6 +46,8 @@ public class PurchaseServiceTest {
         this.purchaseService = PurchaseService.builder()
             .userRepository(userRepository)
             .purchaseRepository(purchaseRepository)
+            .appleUtil(appleUtil)
+            .purchaseManager(purchaseManager)
             .build();
 
         School school = School.builder()
@@ -50,7 +62,7 @@ public class PurchaseServiceTest {
             .profileImage("test image").uuid("1234")
             .deletedAt(null).group(school)
             .groupAdmissionYear(20).email("test@test.com")
-            .subscribe(Subscribe.CANCELED)
+            .subscribe(Subscribe.CANCELED).ticketCount(0)
             .build();
         userRepository.save(user);
 
@@ -62,6 +74,7 @@ public class PurchaseServiceTest {
             .createdAt(LocalDateTime.now())
             .updatedAt(LocalDateTime.now())
             .productType(ProductType.YELLO_PLUS)
+            .transactionId("20000003992016699")
             .build());
     }
 
@@ -78,5 +91,39 @@ public class PurchaseServiceTest {
         // then
         assertThat(response.subscribe()).isEqualTo(user.getSubscribe());
         assertThat(response.isSubscribeNeeded()).isEqualTo(true);
+    }
+
+    @Test
+    void apple_구독_구매_검증에_성공합니다() {
+        // given
+        Long userId = 1L;
+        AppleTransaction request = AppleTransaction.builder()
+            .transactionId("2000000399201669")
+            .productId("YELLO.iOS.yelloPlus.monthly")
+            .build();
+
+        // when
+        final User user = userRepository.getById(userId);
+        purchaseService.verifyAppleSubscriptionTransaction(userId, request);
+
+        // then
+        assertThat(user.getSubscribe()).isEqualTo(Subscribe.ACTIVE);
+    }
+
+    @Test
+    void apple_열람권_구매_검증에_성공합니다() {
+        // given
+        Long userId = 1L;
+        AppleTransaction request = AppleTransaction.builder()
+            .transactionId("2000000399201669")
+            .productId("YELLO.iOS.nameKey.one")
+            .build();
+
+        // when
+        final User user = userRepository.getById(userId);
+        purchaseService.verifyAppleTicketTransaction(userId, request);
+
+        // then
+        assertThat(user.getTicketCount()).isEqualTo(1);
     }
 }
