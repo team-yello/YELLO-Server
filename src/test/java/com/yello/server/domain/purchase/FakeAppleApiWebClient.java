@@ -7,13 +7,13 @@ import com.yello.server.domain.purchase.dto.apple.AppleOrderResponse;
 import com.yello.server.domain.purchase.dto.apple.AppleTransaction;
 import com.yello.server.domain.purchase.exception.PurchaseException;
 import com.yello.server.global.common.factory.TokenFactory;
-import com.yello.server.global.common.util.AppleUtil;
+import com.yello.server.infrastructure.client.ApiWebClient;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.reactive.function.client.WebClient;
 
-public class FakeAppleUtil implements AppleUtil {
+public class FakeAppleApiWebClient implements ApiWebClient {
 
     private final TokenFactory tokenFactory;
 
@@ -22,7 +22,7 @@ public class FakeAppleUtil implements AppleUtil {
     private String APPLE_SANDBOX_URL =
         "https://api.storekit-sandbox.itunes.apple.com/inApps/v1/history";
 
-    public FakeAppleUtil(TokenFactory tokenFactory) {
+    public FakeAppleApiWebClient(TokenFactory tokenFactory) {
         this.tokenFactory = tokenFactory;
     }
 

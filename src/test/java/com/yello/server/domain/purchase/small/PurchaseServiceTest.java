@@ -3,7 +3,7 @@ package com.yello.server.domain.purchase.small;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import com.yello.server.domain.group.entity.School;
-import com.yello.server.domain.purchase.FakeAppleUtil;
+import com.yello.server.domain.purchase.FakeAppleApiWebClient;
 import com.yello.server.domain.purchase.FakePurchaseManager;
 import com.yello.server.domain.purchase.FakePurchaseRepository;
 import com.yello.server.domain.purchase.FakeTokenFactory;
@@ -22,7 +22,7 @@ import com.yello.server.domain.user.entity.Subscribe;
 import com.yello.server.domain.user.entity.User;
 import com.yello.server.domain.user.repository.UserRepository;
 import com.yello.server.global.common.factory.TokenFactory;
-import com.yello.server.global.common.util.AppleUtil;
+import com.yello.server.infrastructure.client.ApiWebClient;
 import java.time.LocalDateTime;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -37,7 +37,7 @@ public class PurchaseServiceTest {
     private final UserRepository userRepository = new FakeUserRepository();
     private final PurchaseRepository purchaseRepository = new FakePurchaseRepository();
     private final TokenFactory tokenFactory = new FakeTokenFactory();
-    private final AppleUtil appleUtil = new FakeAppleUtil(tokenFactory);
+    private final ApiWebClient apiWebClient = new FakeAppleApiWebClient(tokenFactory);
     private final PurchaseManager purchaseManager = new FakePurchaseManager(purchaseRepository);
     private PurchaseService purchaseService;
 
@@ -46,7 +46,7 @@ public class PurchaseServiceTest {
         this.purchaseService = PurchaseService.builder()
             .userRepository(userRepository)
             .purchaseRepository(purchaseRepository)
-            .appleUtil(appleUtil)
+            .apiWebClient(apiWebClient)
             .purchaseManager(purchaseManager)
             .build();
 
