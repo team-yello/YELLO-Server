@@ -46,9 +46,9 @@ import com.yello.server.global.common.dto.response.GoogleInAppGetResponse;
 import com.yello.server.global.common.dto.response.GoogleTokenIssueResponse;
 import com.yello.server.global.common.entity.GoogleToken;
 import com.yello.server.global.common.repository.GoogleTokenRepository;
-import com.yello.server.global.common.util.AppleUtil;
 import com.yello.server.global.common.util.ConstantUtil;
 import com.yello.server.global.common.util.RestUtil;
+import com.yello.server.infrastructure.client.ApiWebClient;
 import java.io.IOException;
 import java.time.Duration;
 import java.time.LocalDateTime;
@@ -71,7 +71,7 @@ public class PurchaseService {
     private final PurchaseRepository purchaseRepository;
     private final GoogleTokenRepository googleTokenRepository;
     private final PurchaseManager purchaseManager;
-    private final AppleUtil appleUtil;
+    private final ApiWebClient apiWebClient;
 
     public UserSubscribeNeededResponse getUserSubscribe(User user, LocalDateTime time) {
         final Optional<Purchase> mostRecentPurchase =
@@ -89,7 +89,7 @@ public class PurchaseService {
     public void verifyAppleSubscriptionTransaction(Long userId,
         AppleTransaction request) {
         ResponseEntity<AppleOrderResponse> verifyReceiptResponse =
-            appleUtil.appleGetTransaction(request);
+            apiWebClient.appleGetTransaction(request);
         final User user = userRepository.getById(userId);
 
         purchaseManager.handleAppleTransactionError(verifyReceiptResponse, request.transactionId());
@@ -109,18 +109,20 @@ public class PurchaseService {
     @Transactional
     public void verifyAppleTicketTransaction(Long userId, AppleTransaction request) {
         final ResponseEntity<AppleOrderResponse> verifyReceiptResponse =
-            appleUtil.appleGetTransaction(request);
+            apiWebClient.appleGetTransaction(request);
         final User user = userRepository.getById(userId);
 
         purchaseManager.handleAppleTransactionError(verifyReceiptResponse, request.transactionId());
 
         switch (request.productId()) {
             case ONE_TICKET_ID:
-                purchaseManager.createTicket(user, ProductType.ONE_TICKET, Gateway.APPLE, request.transactionId());
+                purchaseManager.createTicket(user, ProductType.ONE_TICKET, Gateway.APPLE,
+                    request.transactionId());
                 user.addTicketCount(1);
                 break;
             case TWO_TICKET_ID:
-                purchaseManager.createTicket(user, ProductType.TWO_TICKET, Gateway.APPLE, request.transactionId());
+                purchaseManager.createTicket(user, ProductType.TWO_TICKET, Gateway.APPLE,
+                    request.transactionId());
                 user.addTicketCount(2);
                 break;
             case FIVE_TICKET_ID:
@@ -175,16 +177,19 @@ public class PurchaseService {
 
         Gson gson = new Gson();
         JsonObject object = gson.fromJson(subscribeResponse.getBody(), JsonObject.class);
-        final String subscriptionState = object.get("subscriptionState").toString().replaceAll("\"", "");
+        final String subscriptionState =
+            object.get("subscriptionState").toString().replaceAll("\"", "");
 
         switch (subscriptionState) {
             case ConstantUtil.GOOGLE_PURCHASE_SUBSCRIPTION_EXPIRED -> {
                 user.setSubscribe(Subscribe.NORMAL);
-                throw new GoogleBadRequestException(GOOGLE_SUBSCRIPTION_TRANSACTION_EXPIRED_EXCEPTION);
+                throw new GoogleBadRequestException(
+                    GOOGLE_SUBSCRIPTION_TRANSACTION_EXPIRED_EXCEPTION);
             }
             case ConstantUtil.GOOGLE_PURCHASE_SUBSCRIPTION_CANCELED -> {
                 if (user.getSubscribe()==Subscribe.CANCELED) {
-                    throw new GoogleBadRequestException(GOOGLE_SUBSCRIPTION_DUPLICATED_CANCEL_EXCEPTION);
+                    throw new GoogleBadRequestException(
+                        GOOGLE_SUBSCRIPTION_DUPLICATED_CANCEL_EXCEPTION);
                 } else {
                     // TODO messageQueue 를 이용한 결제 만료일 도달 시, 유저 구독 상태 변경하기
                     user.setSubscribe(Subscribe.CANCELED);
@@ -201,7 +206,8 @@ public class PurchaseService {
     }
 
     @Transactional
-    public GoogleTicketGetResponse verifyGoogleTicketTransaction(Long userId, GoogleTicketGetRequest request)
+    public GoogleTicketGetResponse verifyGoogleTicketTransaction(Long userId,
+        GoogleTicketGetRequest request)
         throws IOException {
         final User user = userRepository.getById(userId);
 
@@ -210,7 +216,8 @@ public class PurchaseService {
                 throw new PurchaseConflictException(GOOGLE_SUBSCRIPTIONS_SUBSCRIPTION_EXCEPTION);
             });
 
-        final GoogleToken googleToken = googleTokenRepository.getById(googleTokenRepository.tokenId);
+        final GoogleToken googleToken =
+            googleTokenRepository.getById(googleTokenRepository.tokenId);
         if (googleToken.getAccessToken().isEmpty() || googleToken.getRefreshToken().isEmpty()) {
             throw new GoogleTokenNotFoundException(GOOGLE_TOKEN_FIELD_NOT_FOUND_EXCEPTION);
         }
@@ -236,11 +243,13 @@ public class PurchaseService {
         if (inAppResponse.getBody().purchaseState()==0) {
             purchaseRepository.findByTransactionId(inAppResponse.getBody().orderId())
                 .ifPresent(action -> {
-                    throw new PurchaseConflictException(GOOGLE_SUBSCRIPTIONS_SUBSCRIPTION_EXCEPTION);
+                    throw new PurchaseConflictException(
+                        GOOGLE_SUBSCRIPTIONS_SUBSCRIPTION_EXCEPTION);
                 });
 
-            Purchase ticket = purchaseManager.createTicket(user, getProductType(request.productId()),
-                Gateway.GOOGLE, request.orderId());
+            Purchase ticket =
+                purchaseManager.createTicket(user, getProductType(request.productId()),
+                    Gateway.GOOGLE, request.orderId());
             user.addTicketCount(getTicketAmount(request.productId()) * request.quantity());
             ticket.setTransactionId(inAppResponse.getBody().orderId());
         } else {
