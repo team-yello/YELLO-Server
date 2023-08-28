@@ -30,6 +30,7 @@ public class FakePurchaseRepository implements PurchaseRepository {
             .productType(purchase.getProductType())
             .createdAt(purchase.getCreatedAt())
             .updatedAt(purchase.getUpdatedAt())
+            .transactionId(purchase.getTransactionId())
             .build();
 
         data.add(newPurchase);
