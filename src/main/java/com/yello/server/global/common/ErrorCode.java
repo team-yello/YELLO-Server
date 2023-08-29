@@ -80,6 +80,7 @@ public enum ErrorCode {
     GOOGLE_TOKEN_NOT_FOUND_EXCEPTION(NOT_FOUND, "Google OAuth 2.0 토큰 튜플이 DB에 없습니다. DBA에게 문의해주세요."),
     GOOGLE_TOKEN_FIELD_NOT_FOUND_EXCEPTION(NOT_FOUND,
         "Google OAuth 2.0 특정 토큰이 DB에 없습니다. DBA에게 문의해주세요."),
+    USER_ADMIN_NOT_FOUND_EXCEPTION(NOT_FOUND, "해당 Admin이 존재하지 않습니다."),
 
     /**
      * 409 CONFLICT
