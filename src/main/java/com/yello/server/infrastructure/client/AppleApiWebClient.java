@@ -1,4 +1,4 @@
-package com.yello.server.global.common.util;
+package com.yello.server.infrastructure.client;
 
 import static com.yello.server.global.common.ErrorCode.NOT_FOUND_TRANSACTION_EXCEPTION;
 import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
@@ -17,7 +17,7 @@ import org.springframework.web.reactive.function.client.WebClient;
 
 @Component
 @RequiredArgsConstructor
-public class AppleUtil {
+public class AppleApiWebClient implements ApiWebClient {
 
     private final TokenFactory tokenFactory;
     @Value("${apple.production.uri}")
@@ -25,9 +25,10 @@ public class AppleUtil {
     @Value("${apple.sandbox.uri}")
     private String APPLE_SANDBOX_URL;
 
+
+    @Override
     public ResponseEntity<AppleOrderResponse> appleGetTransaction(
         AppleTransaction appleTransaction) {
-
         ResponseEntity<AppleOrderResponse> transactionResponse =
             getTransactionByWebClient(appleTransaction, APPLE_PRODUCTION_URL);
 
@@ -42,10 +43,9 @@ public class AppleUtil {
         return transactionResponse;
     }
 
+    @Override
     public ResponseEntity<AppleOrderResponse> getTransactionByWebClient(
-        AppleTransaction appleTransaction,
-        String appleUrl) {
-
+        AppleTransaction appleTransaction, String appleUrl) {
         String appleToken = tokenFactory.generateAppleToken();
 
         WebClient webClient = WebClient.builder()
@@ -58,5 +58,4 @@ public class AppleUtil {
             .exchangeToMono(clientResponse -> clientResponse.toEntity(AppleOrderResponse.class))
             .block();
     }
-
 }

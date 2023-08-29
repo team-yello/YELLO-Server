@@ -21,12 +21,12 @@ public class FakeUserRepository implements UserRepository {
 
     @Override
     public User save(User user) {
-        if (user.getId() != null && user.getId() > id) {
+        if (user.getId()!=null && user.getId() > id) {
             id = user.getId();
         }
 
         User newUser = User.builder()
-            .id(user.getId() == null ? ++id : user.getId())
+            .id(user.getId()==null ? ++id : user.getId())
             .recommendCount(0L)
             .name(user.getName())
             .yelloId(user.getYelloId())
@@ -39,7 +39,7 @@ public class FakeUserRepository implements UserRepository {
             .group(user.getGroup())
             .groupAdmissionYear(user.getGroupAdmissionYear())
             .email(user.getEmail())
-            .subscribe(user.getSubscribe())
+            .subscribe(user.getSubscribe()).ticketCount(user.getTicketCount())
             .deviceToken(user.getDeviceToken())
             .build();
 
@@ -86,7 +86,7 @@ public class FakeUserRepository implements UserRepository {
     @Override
     public Optional<User> findByYelloId(String yelloId) {
         return data.stream()
-            .filter(user -> user.getDeletedAt() == null)
+            .filter(user -> user.getDeletedAt()==null)
             .filter(user -> user.getYelloId().equals(yelloId))
             .findFirst();
     }
