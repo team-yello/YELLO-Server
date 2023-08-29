@@ -3,8 +3,8 @@ package com.yello.server.domain.purchase;
 import static com.yello.server.global.common.ErrorCode.NOT_FOUND_TRANSACTION_EXCEPTION;
 import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 
-import com.yello.server.domain.purchase.dto.apple.AppleOrderResponse;
 import com.yello.server.domain.purchase.dto.apple.AppleTransaction;
+import com.yello.server.domain.purchase.dto.apple.TransactionInfoResponse;
 import com.yello.server.domain.purchase.exception.PurchaseException;
 import com.yello.server.global.common.factory.TokenFactory;
 import com.yello.server.infrastructure.client.ApiWebClient;
@@ -27,9 +27,9 @@ public class FakeAppleApiWebClient implements ApiWebClient {
     }
 
     @Override
-    public ResponseEntity<AppleOrderResponse> appleGetTransaction(
+    public ResponseEntity<TransactionInfoResponse> appleGetTransaction(
         AppleTransaction appleTransaction) {
-        ResponseEntity<AppleOrderResponse> transactionResponse =
+        ResponseEntity<TransactionInfoResponse> transactionResponse =
             getTransactionByWebClient(appleTransaction, APPLE_PRODUCTION_URL);
 
         HttpStatus statusCode = transactionResponse.getStatusCode();
@@ -44,7 +44,7 @@ public class FakeAppleApiWebClient implements ApiWebClient {
     }
 
     @Override
-    public ResponseEntity<AppleOrderResponse> getTransactionByWebClient(
+    public ResponseEntity<TransactionInfoResponse> getTransactionByWebClient(
         AppleTransaction appleTransaction, String appleUrl) {
         String appleToken = tokenFactory.generateAppleToken();
 
@@ -55,7 +55,8 @@ public class FakeAppleApiWebClient implements ApiWebClient {
 
         return webClient.get()
             .uri(appleUrl + "/{transactionId}", appleTransaction.transactionId())
-            .exchangeToMono(clientResponse -> clientResponse.toEntity(AppleOrderResponse.class))
+            .exchangeToMono(
+                clientResponse -> clientResponse.toEntity(TransactionInfoResponse.class))
             .block();
     }
 }

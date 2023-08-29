@@ -20,8 +20,8 @@ import static com.yello.server.global.common.util.ConstantUtil.YELLO_PLUS_ID;
 
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
-import com.yello.server.domain.purchase.dto.apple.AppleOrderResponse;
 import com.yello.server.domain.purchase.dto.apple.AppleTransaction;
+import com.yello.server.domain.purchase.dto.apple.TransactionInfoResponse;
 import com.yello.server.domain.purchase.dto.request.AppleInAppRefundRequest;
 import com.yello.server.domain.purchase.dto.request.GoogleSubscriptionGetRequest;
 import com.yello.server.domain.purchase.dto.request.GoogleTicketGetRequest;
@@ -88,7 +88,7 @@ public class PurchaseService {
     @Transactional
     public void verifyAppleSubscriptionTransaction(Long userId,
         AppleTransaction request) {
-        ResponseEntity<AppleOrderResponse> verifyReceiptResponse =
+        ResponseEntity<TransactionInfoResponse> verifyReceiptResponse =
             apiWebClient.appleGetTransaction(request);
         final User user = userRepository.getById(userId);
 
@@ -108,7 +108,7 @@ public class PurchaseService {
 
     @Transactional
     public void verifyAppleTicketTransaction(Long userId, AppleTransaction request) {
-        final ResponseEntity<AppleOrderResponse> verifyReceiptResponse =
+        final ResponseEntity<TransactionInfoResponse> verifyReceiptResponse =
             apiWebClient.appleGetTransaction(request);
         final User user = userRepository.getById(userId);
 
