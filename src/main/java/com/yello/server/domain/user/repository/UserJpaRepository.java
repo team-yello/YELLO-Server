@@ -3,6 +3,8 @@ package com.yello.server.domain.user.repository;
 import com.yello.server.domain.user.entity.User;
 import java.util.List;
 import java.util.Optional;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -71,4 +73,10 @@ public interface UserJpaRepository extends JpaRepository<User, Long> {
         @Param("keyword") String keyword);
 
     Optional<User> findByDeviceToken(String deviceToken);
+
+    Long countAllByYelloIdContaining(String yelloId);
+
+    @Query("select u from User u "
+        + "where LOWER(u.yelloId) like LOWER(CONCAT('%', :yelloId, '%'))")
+    Page<User> findAllByYelloIdContaining(Pageable pageable, @Param("yelloId") String yelloId);
 }

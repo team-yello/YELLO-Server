@@ -9,6 +9,8 @@ import com.yello.server.domain.user.exception.UserNotFoundException;
 import java.util.List;
 import java.util.Optional;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -96,5 +98,30 @@ public class UserRepositoryImpl implements UserRepository {
     @Override
     public List<User> findAllByOtherGroupContainingYelloId(Long groupId, String keyword) {
         return userJpaRepository.findAllByOtherGroupContainingYelloId(groupId, keyword);
+    }
+
+    @Override
+    public Long count() {
+        return userJpaRepository.count();
+    }
+
+    @Override
+    public Long countAllByYelloIdContaining(String yelloId) {
+        return userJpaRepository.countAllByYelloIdContaining(yelloId);
+    }
+
+    @Override
+    public Page<User> findAll(Pageable pageable) {
+        return userJpaRepository.findAll(pageable);
+    }
+
+    @Override
+    public Page<User> findAllContaining(Pageable pageable, String yelloId) {
+        return userJpaRepository.findAllByYelloIdContaining(pageable, yelloId);
+    }
+
+    @Override
+    public void delete(User user) {
+        userJpaRepository.delete(user);
     }
 }
