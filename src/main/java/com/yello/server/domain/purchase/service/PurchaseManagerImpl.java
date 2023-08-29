@@ -1,12 +1,15 @@
 package com.yello.server.domain.purchase.service;
 
+import static com.yello.server.global.common.ErrorCode.APPLE_IN_APP_BAD_REQUEST_EXCEPTION;
 import static com.yello.server.global.common.ErrorCode.APPLE_TOKEN_SERVER_EXCEPTION;
 import static com.yello.server.global.common.ErrorCode.GOOGLE_SUBSCRIPTIONS_SUBSCRIPTION_EXCEPTION;
 
 import com.yello.server.domain.purchase.dto.apple.TransactionInfoResponse;
+import com.yello.server.domain.purchase.dto.response.AppleJwsTransactionResponse;
 import com.yello.server.domain.purchase.entity.Gateway;
 import com.yello.server.domain.purchase.entity.ProductType;
 import com.yello.server.domain.purchase.entity.Purchase;
+import com.yello.server.domain.purchase.exception.AppleBadRequestException;
 import com.yello.server.domain.purchase.exception.AppleTokenServerErrorException;
 import com.yello.server.domain.purchase.exception.PurchaseConflictException;
 import com.yello.server.domain.purchase.repository.PurchaseRepository;
@@ -44,6 +47,13 @@ public class PurchaseManagerImpl implements PurchaseManager {
     @Override
     public void handleAppleTransactionError(ResponseEntity<TransactionInfoResponse> response,
         String transactionId) {
+
+        AppleJwsTransactionResponse appleJwsResponse =
+            tokenFactory.decodeTransactionToken(response.getBody().signedTransactionInfo());
+
+        if (appleJwsResponse==null || !appleJwsResponse.transactionId().equals(transactionId)) {
+            throw new AppleBadRequestException(APPLE_IN_APP_BAD_REQUEST_EXCEPTION);
+        }
 
         if (!response.getStatusCode().is2xxSuccessful()) {
             throw new AppleTokenServerErrorException(APPLE_TOKEN_SERVER_EXCEPTION);
