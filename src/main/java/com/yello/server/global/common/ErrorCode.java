@@ -33,6 +33,7 @@ public enum ErrorCode {
     GOOGLE_SUBSCRIPTION_DUPLICATED_CANCEL_EXCEPTION(BAD_REQUEST,
         "이미 CANCELED한 유저에게 CANCELED 요청을 보내어 중복됩니다"),
     GOOGLE_INAPP_BAD_REQUEST_EXCEPTION(BAD_REQUEST, "해당 영수증은 취소되었거나, 대기 중인 결제입니다."),
+    APPLE_IN_APP_BAD_REQUEST_EXCEPTION(BAD_REQUEST, "존재하지 않는 영수증입니다."),
 
     /**
      * 401 UNAUTHORIZED

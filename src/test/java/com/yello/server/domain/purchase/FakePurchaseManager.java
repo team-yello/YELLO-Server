@@ -3,7 +3,7 @@ package com.yello.server.domain.purchase;
 import static com.yello.server.global.common.ErrorCode.APPLE_TOKEN_SERVER_EXCEPTION;
 import static com.yello.server.global.common.ErrorCode.GOOGLE_SUBSCRIPTIONS_SUBSCRIPTION_EXCEPTION;
 
-import com.yello.server.domain.purchase.dto.apple.AppleOrderResponse;
+import com.yello.server.domain.purchase.dto.apple.TransactionInfoResponse;
 import com.yello.server.domain.purchase.entity.Gateway;
 import com.yello.server.domain.purchase.entity.ProductType;
 import com.yello.server.domain.purchase.entity.Purchase;
@@ -41,7 +41,7 @@ public class FakePurchaseManager implements PurchaseManager {
     }
 
     @Override
-    public void handleAppleTransactionError(ResponseEntity<AppleOrderResponse> response,
+    public void handleAppleTransactionError(ResponseEntity<TransactionInfoResponse> response,
         String transactionId) {
         if (!response.getStatusCode().is2xxSuccessful()) {
             throw new AppleTokenServerErrorException(APPLE_TOKEN_SERVER_EXCEPTION);
