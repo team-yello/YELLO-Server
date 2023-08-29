@@ -2,6 +2,7 @@ package com.yello.server.domain.purchase;
 
 import static java.util.Base64.getUrlDecoder;
 
+import com.yello.server.domain.purchase.dto.response.AppleJwsTransactionResponse;
 import com.yello.server.global.common.factory.TokenFactory;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
@@ -49,5 +50,10 @@ public class FakeTokenFactory implements TokenFactory {
         } catch (NoSuchAlgorithmException e) {
             throw new RuntimeException(e);
         }
+    }
+
+    @Override
+    public AppleJwsTransactionResponse decodeTransactionToken(String signedTransactionInfo) {
+        return null;
     }
 }

@@ -2,6 +2,8 @@ package com.yello.server.domain.cooldown.repository;
 
 import com.yello.server.domain.cooldown.entity.Cooldown;
 import java.util.Optional;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -23,4 +25,11 @@ public interface CooldownJpaRepository extends JpaRepository<Cooldown, Long> {
         "where c.messageId = :messageId " +
         "and c.deletedAt is null")
     boolean existsByMessageId(@Param("messageId") String messageId);
+
+    Long countAllByUserYelloIdContaining(String yelloId);
+
+    @Query("select c from Cooldown c, User u "
+        + "where c.user.id = u.id and "
+        + "LOWER(u.yelloId) like LOWER(CONCAT('%', :yelloId, '%'))")
+    Page<Cooldown> findAllByUserYelloIdContaining(Pageable pageable, @Param("yelloId") String yelloId);
 }

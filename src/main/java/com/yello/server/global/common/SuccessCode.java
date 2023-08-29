@@ -35,6 +35,10 @@ public enum SuccessCode {
     REVEAL_NAME_SUCCESS(OK, "전체 이름 확인에 성공했습니다."),
     FRIEND_SEARCH_SUCCESS(OK, "친구 검색하기에 성공했습니다."),
     VERIFY_RECEIPT_SUCCESS(OK, "인앱결제 검증에 성공했습니다."),
+    READ_USER_ADMIN_SUCCESS(OK, "어드민 페이지 유저 조회에 성공하였습니다."),
+    READ_COOLDOWN_ADMIN_SUCCESS(OK, "어드민 페이지 쿨다운 조회에 성공하였습니다."),
+    DELETE_USER_ADMIN_SUCCESS(OK, "어드민 권환으로 유저 삭제에 성공하였습니다."),
+    DELETE_COOLDOWN_ADMIN_SUCCESS(OK, "어드민 권환으로 쿨다운 삭제에 성공하였습니다."),
 
     /**
      * 201 CREATED
