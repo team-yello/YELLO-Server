@@ -17,10 +17,11 @@ public class FakeAppleApiWebClient implements ApiWebClient {
 
     private final TokenFactory tokenFactory;
 
-    private String APPLE_PRODUCTION_URL = "https://api.storekit.itunes.apple.com/inApps/v1/history";
+    private String APPLE_PRODUCTION_URL =
+        "https://api.storekit.itunes.apple.com/inApps/v1/transactions";
 
     private String APPLE_SANDBOX_URL =
-        "https://api.storekit-sandbox.itunes.apple.com/inApps/v1/history";
+        "https://api.storekit-sandbox.itunes.apple.com/inApps/v1/transactions";
 
     public FakeAppleApiWebClient(TokenFactory tokenFactory) {
         this.tokenFactory = tokenFactory;

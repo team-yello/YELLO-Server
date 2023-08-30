@@ -1,38 +1,38 @@
 package com.yello.server.global.common.factory;
 
+import com.google.gson.Gson;
+import com.google.gson.JsonObject;
 import com.yello.server.domain.purchase.dto.response.AppleJwsTransactionResponse;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
+import java.io.IOException;
+import java.io.InputStreamReader;
 import java.security.KeyFactory;
 import java.security.spec.PKCS8EncodedKeySpec;
 import java.util.Date;
 import lombok.SneakyThrows;
 import org.apache.commons.codec.binary.Base64;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.core.io.ClassPathResource;
 import org.springframework.stereotype.Component;
 
 @Component
 public class TokenFactoryImpl implements TokenFactory {
 
-    @Value("${kid}")
     private String kid;
-
-    @Value("${iss}")
     private String iss;
-
-    @Value("${aud}")
     private String aud;
-
-    @Value("${bid}")
     private String bid;
-
-    @Value("${sig}")
     private String sig;
 
+    @Value("${apple.key}")
+    private String appleConfigPath;
 
     @SneakyThrows
     @Override
     public String generateAppleToken() {
+        setKey();
+
         return Jwts.builder()
             .setHeaderParam("kid", kid)
             .setIssuer(iss)
@@ -53,6 +53,19 @@ public class TokenFactoryImpl implements TokenFactory {
     public AppleJwsTransactionResponse decodeTransactionToken(String signedTransactionInfo) {
 
         return null;
+    }
+
+    public void setKey() throws IOException {
+        Gson gson = new Gson();
+        ClassPathResource resource = new ClassPathResource(appleConfigPath);
+        JsonObject object =
+            gson.fromJson(new InputStreamReader(resource.getInputStream()), JsonObject.class);
+        kid = String.valueOf(object.get("kid")).replaceAll("\"", "");
+        iss = String.valueOf(object.get("iss")).replaceAll("\"", "");
+        aud = String.valueOf(object.get("aud")).replaceAll("\"", "");
+        bid = String.valueOf(object.get("bid")).replaceAll("\"", "");
+        sig = String.valueOf(object.get("sig-auth-key")).replaceAll("\"", "")
+            .replaceAll("\\\\n", "\n");
     }
 
 
