@@ -1,6 +1,6 @@
 package com.yello.server.domain.purchase.service;
 
-import com.yello.server.domain.purchase.dto.apple.AppleOrderResponse;
+import com.yello.server.domain.purchase.dto.apple.TransactionInfoResponse;
 import com.yello.server.domain.purchase.entity.Gateway;
 import com.yello.server.domain.purchase.entity.ProductType;
 import com.yello.server.domain.purchase.entity.Purchase;
@@ -14,7 +14,7 @@ public interface PurchaseManager {
     Purchase createTicket(User user, ProductType productType, Gateway gateway,
         String transactionId);
 
-    void handleAppleTransactionError(ResponseEntity<AppleOrderResponse> response,
+    void handleAppleTransactionError(ResponseEntity<TransactionInfoResponse> response,
         String transactionId);
 
 }

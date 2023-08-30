@@ -2,7 +2,8 @@ name: 🚀 YELL:O Deploy
 
 on:
   push:
-    branches: [ "main" ]
+    branches:
+      - staging
 
 permissions:
   contents: read

@@ -37,6 +37,9 @@ public class TimeFactory {
     }
 
     public static String toDateFormattedString(LocalDateTime localDateTime) {
+        if (localDateTime == null) {
+            return "";
+        }
         DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
         return localDateTime.format(dateTimeFormatter);
     }

@@ -10,6 +10,9 @@ import com.yello.server.domain.user.repository.UserRepository;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.Pageable;
 
 public class FakeUserRepository implements UserRepository {
 
@@ -151,5 +154,42 @@ public class FakeUserRepository implements UserRepository {
             .filter(user -> user.getYelloId().contains(keyword))
             .filter(user -> !user.getId().equals(1L))
             .toList();
+    }
+
+    @Override
+    public Long count() {
+        return (long) data.size();
+    }
+
+    @Override
+    public Long countAllByYelloIdContaining(String yelloId) {
+        return (long) data.stream()
+            .filter(user -> user.getYelloId().contains(yelloId))
+            .toList()
+            .size();
+    }
+
+    @Override
+    public Page<User> findAll(Pageable pageable) {
+        final List<User> userList = data.stream()
+            .skip(pageable.getOffset())
+            .limit(pageable.getPageSize())
+            .toList();
+        return new PageImpl<>(userList);
+    }
+
+    @Override
+    public Page<User> findAllContaining(Pageable pageable, String yelloId) {
+        final List<User> userList = data.stream()
+            .filter(user -> user.getYelloId().contains(yelloId))
+            .skip(pageable.getOffset())
+            .limit(pageable.getPageSize())
+            .toList();
+        return new PageImpl<>(userList);
+    }
+
+    @Override
+    public void delete(User user) {
+        data.remove(user);
     }
 }

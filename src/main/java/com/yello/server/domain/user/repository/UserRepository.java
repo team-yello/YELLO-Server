@@ -3,6 +3,8 @@ package com.yello.server.domain.user.repository;
 import com.yello.server.domain.user.entity.User;
 import java.util.List;
 import java.util.Optional;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 
 public interface UserRepository {
 
@@ -36,4 +38,13 @@ public interface UserRepository {
 
     List<User> findAllByOtherGroupContainingYelloId(Long groupId, String keyword);
 
+    Long count();
+
+    Long countAllByYelloIdContaining(String yelloId);
+
+    Page<User> findAll(Pageable pageable);
+
+    Page<User> findAllContaining(Pageable pageable, String yelloId);
+
+    void delete(User user);
 }

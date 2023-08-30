@@ -1,5 +1,6 @@
 package com.yello.server.global.common.factory;
 
+import com.yello.server.domain.purchase.dto.response.AppleJwsTransactionResponse;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import java.security.KeyFactory;
@@ -45,6 +46,13 @@ public class TokenFactoryImpl implements TokenFactory {
                     .generatePrivate(new PKCS8EncodedKeySpec(Base64.decodeBase64(sig)))
             )
             .compact();
+    }
+
+    @SneakyThrows
+    @Override
+    public AppleJwsTransactionResponse decodeTransactionToken(String signedTransactionInfo) {
+
+        return null;
     }
 
 

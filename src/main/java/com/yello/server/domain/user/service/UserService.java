@@ -2,6 +2,7 @@ package com.yello.server.domain.user.service;
 
 import static com.yello.server.global.common.ErrorCode.DEVICE_TOKEN_CONFLICT_USER_EXCEPTION;
 
+import com.yello.server.domain.admin.repository.UserAdminRepository;
 import com.yello.server.domain.cooldown.entity.Cooldown;
 import com.yello.server.domain.cooldown.repository.CooldownRepository;
 import com.yello.server.domain.friend.entity.Friend;
@@ -33,6 +34,7 @@ public class UserService {
     private final CooldownRepository cooldownRepository;
     private final TokenRepository tokenRepository;
     private final PurchaseRepository purchaseRepository;
+    private final UserAdminRepository userAdminRepository;
 
     public UserDetailResponse findMyProfile(Long userId) {
         final User user = userRepository.getById(userId);

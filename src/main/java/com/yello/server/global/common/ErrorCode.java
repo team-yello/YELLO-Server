@@ -33,6 +33,7 @@ public enum ErrorCode {
     GOOGLE_SUBSCRIPTION_DUPLICATED_CANCEL_EXCEPTION(BAD_REQUEST,
         "이미 CANCELED한 유저에게 CANCELED 요청을 보내어 중복됩니다"),
     GOOGLE_INAPP_BAD_REQUEST_EXCEPTION(BAD_REQUEST, "해당 영수증은 취소되었거나, 대기 중인 결제입니다."),
+    APPLE_IN_APP_BAD_REQUEST_EXCEPTION(BAD_REQUEST, "존재하지 않는 영수증입니다."),
 
     /**
      * 401 UNAUTHORIZED
@@ -80,6 +81,7 @@ public enum ErrorCode {
     GOOGLE_TOKEN_NOT_FOUND_EXCEPTION(NOT_FOUND, "Google OAuth 2.0 토큰 튜플이 DB에 없습니다. DBA에게 문의해주세요."),
     GOOGLE_TOKEN_FIELD_NOT_FOUND_EXCEPTION(NOT_FOUND,
         "Google OAuth 2.0 특정 토큰이 DB에 없습니다. DBA에게 문의해주세요."),
+    USER_ADMIN_NOT_FOUND_EXCEPTION(NOT_FOUND, "해당 Admin이 존재하지 않습니다."),
 
     /**
      * 409 CONFLICT

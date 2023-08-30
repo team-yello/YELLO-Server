@@ -20,6 +20,7 @@ import com.yello.server.domain.authorization.exception.OAuthException;
 import com.yello.server.domain.friend.exception.FriendException;
 import com.yello.server.domain.friend.exception.FriendNotFoundException;
 import com.yello.server.domain.group.exception.GroupNotFoundException;
+import com.yello.server.domain.purchase.exception.AppleBadRequestException;
 import com.yello.server.domain.purchase.exception.AppleTokenServerErrorException;
 import com.yello.server.domain.purchase.exception.GoogleBadRequestException;
 import com.yello.server.domain.purchase.exception.GoogleTokenNotFoundException;
@@ -92,7 +93,8 @@ public class ControllerExceptionAdvice {
         UserBadRequestException.class,
         QuestionException.class,
         PurchaseException.class,
-        GoogleBadRequestException.class
+        GoogleBadRequestException.class,
+        AppleBadRequestException.class
     })
     public ResponseEntity<BaseResponse> BadRequestException(CustomException exception) {
         return ResponseEntity.status(BAD_REQUEST)
