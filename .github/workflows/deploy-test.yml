@@ -2,7 +2,7 @@ name: 🚀 YELL:O Deploy for staging server
 
 on:
   push:
-    branches: [ "staging" ]
+    branches: [ "develop" ]
 
 permissions:
   contents: read
