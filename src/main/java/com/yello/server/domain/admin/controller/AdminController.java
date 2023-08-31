@@ -15,7 +15,6 @@ import com.yello.server.global.common.factory.PaginationFactory;
 import javax.annotation.Nullable;
 import lombok.RequiredArgsConstructor;
 import lombok.val;
-import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -25,7 +24,6 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api/v1/admin")
-@CrossOrigin(origins = "http://localhost:3000")
 public class AdminController {
 
     private final AdminService adminService;
