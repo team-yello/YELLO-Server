@@ -39,10 +39,14 @@ jobs:
           touch ./google_client_secret.json
           echo "$GOOGLE_CLIENT_SECRET" > ./google_client_secret.json
           sed -i 's/#/"/g' ./google_client_secret.json
+          touch ./apple_client_secret.json
+          echo "$APPLE_CLIENT_SECRET" > ./apple_client_secret.json
+          sed -i 's/#/"/g' ./apple_client_secret.json
         env:
           APPLICATION: ${{ secrets.APPLICATION_TEST }}
           FIREBASE_JSON: ${{ secrets.FIREBASE_JSON }}
           GOOGLE_CLIENT_SECRET: ${{ secrets.GOOGLE_CLIENT_SECRET }}
+          APPLE_CLIENT_SECRET: ${{ secrets.APPLE_CLIENT_SECRET }}
         shell: bash
 
       - name: 🐘 Gradle로 빌드 실행

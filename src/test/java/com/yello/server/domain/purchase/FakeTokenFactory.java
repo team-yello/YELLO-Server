@@ -15,12 +15,12 @@ import org.apache.commons.codec.binary.Base64;
 
 public class FakeTokenFactory implements TokenFactory {
 
-    byte[] kidDecode = getUrlDecoder().decode("OFo0QkRCU1czNQ==");
+    byte[] kidDecode = getUrlDecoder().decode("UlpBM1c0MlZRNQ==");
     byte[] issDecode = getUrlDecoder().decode("MmRlMTMyMGUtY2JlOC00ZDNmLWFmYTctNTc3ZmY0NDM4NzFk");
     byte[] audDecode = getUrlDecoder().decode("YXBwc3RvcmVjb25uZWN0LXYx");
     byte[] bidDecode = getUrlDecoder().decode("WUVMTE8uaU9T");
     byte[] sigDecode = getUrlDecoder().decode(
-        "TUlHVEFnRUFNQk1HQnlxR1NNNDlBZ0VHQ0NxR1NNNDlBd0VIQkhrd2R3SUJBUVFnOWpYNkJXbndBVGJiaGxkdw0KVElBL2FkTFptUFJTREYwN01GVjJIb1B2Mkw2Z0NnWUlLb1pJemowREFRZWhSQU5DQUFUVU5oQUJVU1ZLYWhDaw0KbGNINWZscDMveG8xem9PbDV6T0FsWXM2dWIveWM1Qm1HV245c0t2cWtwWHd2c0xZTG5qeUlOZmY4QU1HS2UvcQ0Ka3U3bXNUTVI=");
+        "TUlHVEFnRUFNQk1HQnlxR1NNNDlBZ0VHQ0NxR1NNNDlBd0VIQkhrd2R3SUJBUVFncVNuWnI2TGlic01Fa2QwYQ0KeFJqdG5VaXhReVNGdnZOb2RvRklrNEdmUlFLZ0NnWUlLb1pJemowREFRZWhSQU5DQUFRekcvN3NQYWM0bHFxWg0KMWYrNnRQVHBRZWNHOEtxV2hZRktnQ1NiaFhmb2dvTzJ1eFhuNyttbWR3NzdkYmVVZ0tDdkxTdlM1R2ZwU1NrMw0KeEZGNFh3Y3E=");
 
     private String kid = new String(kidDecode);
     private String iss = new String(issDecode);
