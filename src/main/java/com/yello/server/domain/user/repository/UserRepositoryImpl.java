@@ -81,23 +81,27 @@ public class UserRepositoryImpl implements UserRepository {
     }
 
     @Override
-    public List<User> findAllByGroupContainingName(Long groupId, String keyword) {
-        return userJpaRepository.findAllByGroupContainingName(groupId, keyword);
+    public List<User> findAllByGroupContainingName(String groupName, String keyword,
+        List<String> uuidList) {
+        return userJpaRepository.findAllByGroupContainingName(groupName, keyword, uuidList);
     }
 
     @Override
-    public List<User> findAllByOtherGroupContainingName(Long groupId, String keyword) {
-        return userJpaRepository.findAllByOtherGroupContainingName(groupId, keyword);
+    public List<User> findAllByOtherGroupContainingName(String groupName, String keyword,
+        List<String> uuidList) {
+        return userJpaRepository.findAllByOtherGroupContainingName(groupName, keyword, uuidList);
     }
 
     @Override
-    public List<User> findAllByGroupContainingYelloId(Long groupId, String keyword) {
-        return userJpaRepository.findAllByGroupContainingYelloId(groupId, keyword);
+    public List<User> findAllByGroupContainingYelloId(String groupName, String keyword,
+        List<String> uuidList) {
+        return userJpaRepository.findAllByGroupContainingYelloId(groupName, keyword, uuidList);
     }
 
     @Override
-    public List<User> findAllByOtherGroupContainingYelloId(Long groupId, String keyword) {
-        return userJpaRepository.findAllByOtherGroupContainingYelloId(groupId, keyword);
+    public List<User> findAllByOtherGroupContainingYelloId(String groupName, String keyword,
+        List<String> uuidList) {
+        return userJpaRepository.findAllByOtherGroupContainingYelloId(groupName, keyword, uuidList);
     }
 
     @Override

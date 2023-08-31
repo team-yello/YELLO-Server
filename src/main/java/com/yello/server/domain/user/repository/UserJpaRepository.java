@@ -41,36 +41,40 @@ public interface UserJpaRepository extends JpaRepository<User, Long> {
 
 
     @Query("select u from User u "
-        + "where u.group.id = :groupId "
-        + "And u.name like CONCAT('%', :keyword, '%') "
+        + "where u.group.schoolName = :groupName "
+        + "and u.uuid not in :uuidList "
+        + "and u.name like CONCAT('%', :keyword, '%') "
         + "and u.deletedAt is null "
         + "order by u.name ASC ")
-    List<User> findAllByGroupContainingName(@Param("groupId") Long groupId,
-        @Param("keyword") String keyword);
+    List<User> findAllByGroupContainingName(@Param("groupName") String groupName,
+        @Param("keyword") String keyword, @Param("uuidList") List<String> uuidList);
 
     @Query("select u from User u "
-        + "where u.group.id <> :groupId "
-        + "And u.name like CONCAT('%', :keyword, '%') "
+        + "where u.group.schoolName <> :groupName "
+        + "and u.uuid not in :uuidList "
+        + "and u.name like CONCAT('%', :keyword, '%') "
         + "and u.deletedAt is null "
         + "order by u.groupAdmissionYear DESC ")
-    List<User> findAllByOtherGroupContainingName(@Param("groupId") Long groupId,
-        @Param("keyword") String keyword);
+    List<User> findAllByOtherGroupContainingName(@Param("groupName") String groupName,
+        @Param("keyword") String keyword, @Param("uuidList") List<String> uuidList);
 
     @Query("select u from User u "
-        + "where u.group.id = :groupId "
-        + "And LOWER(u.yelloId) like LOWER(CONCAT('%', :keyword, '%')) "
+        + "where u.group.schoolName = :groupName "
+        + "and u.uuid not in :uuidList "
+        + "and LOWER(u.yelloId) like LOWER(CONCAT('%', :keyword, '%')) "
         + "and u.deletedAt is null "
         + "order by u.yelloId ASC ")
-    List<User> findAllByGroupContainingYelloId(@Param("groupId") Long groupId,
-        @Param("keyword") String keyword);
+    List<User> findAllByGroupContainingYelloId(@Param("groupName") String groupName,
+        @Param("keyword") String keyword, @Param("uuidList") List<String> uuidList);
 
     @Query("select u from User u "
-        + "where u.group.id <> :groupId "
-        + "And LOWER(u.yelloId) like LOWER(CONCAT('%', :keyword, '%')) "
+        + "where u.group.schoolName <> :groupName "
+        + "and u.uuid not in :uuidList "
+        + "and LOWER(u.yelloId) like LOWER(CONCAT('%', :keyword, '%')) "
         + "and u.deletedAt is null "
         + "order by u.groupAdmissionYear DESC ")
-    List<User> findAllByOtherGroupContainingYelloId(@Param("groupId") Long groupId,
-        @Param("keyword") String keyword);
+    List<User> findAllByOtherGroupContainingYelloId(@Param("groupName") String groupName,
+        @Param("keyword") String keyword, @Param("uuidList") List<String> uuidList);
 
     Optional<User> findByDeviceToken(String deviceToken);
 

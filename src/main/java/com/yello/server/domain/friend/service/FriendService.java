@@ -3,6 +3,8 @@ package com.yello.server.domain.friend.service;
 import static com.yello.server.global.common.ErrorCode.EXIST_FRIEND_EXCEPTION;
 import static com.yello.server.global.common.ErrorCode.LACK_USER_EXCEPTION;
 import static com.yello.server.global.common.util.ConstantUtil.RANDOM_COUNT;
+import static com.yello.server.global.common.util.ConstantUtil.YELLO_FEMALE;
+import static com.yello.server.global.common.util.ConstantUtil.YELLO_MALE;
 
 import com.yello.server.domain.friend.dto.request.KakaoRecommendRequest;
 import com.yello.server.domain.friend.dto.response.FriendResponse;
@@ -141,7 +143,8 @@ public class FriendService {
     public SearchFriendResponse searchFriend(Long userId, Pageable pageable,
         String keyword) {
         final User user = userRepository.getById(userId);
-        final Long groupId = user.getGroup().getId();
+        final String groupName = user.getGroup().getSchoolName();
+        List<String> uuidList = Arrays.asList(YELLO_FEMALE, YELLO_MALE);
 
         List<User> friendList = new ArrayList<>();
 
@@ -150,14 +153,18 @@ public class FriendService {
         }
 
         if (!isEnglish(keyword)) {
-            friendList.addAll(userRepository.findAllByGroupContainingName(groupId, keyword));
-            friendList.addAll(userRepository.findAllByOtherGroupContainingName(groupId, keyword));
+            friendList.addAll(
+                userRepository.findAllByGroupContainingName(groupName, keyword, uuidList));
+            friendList.addAll(
+                userRepository.findAllByOtherGroupContainingName(groupName, keyword, uuidList));
 
         } else {
-            friendList.addAll(userRepository.findAllByGroupContainingYelloId(groupId, keyword));
             friendList.addAll(
-                userRepository.findAllByOtherGroupContainingYelloId(groupId, keyword));
+                userRepository.findAllByGroupContainingYelloId(groupName, keyword, uuidList));
+            friendList.addAll(
+                userRepository.findAllByOtherGroupContainingYelloId(groupName, keyword, uuidList));
         }
+
         List<SearchFriendVO> pageList = PaginationFactory.getPage(friendList, pageable)
             .stream()
             .filter(friend -> !userId.equals(friend.getId()))
