@@ -30,13 +30,17 @@ public interface UserRepository {
 
     List<User> findAllByGroupId(Long groupId);
 
-    List<User> findAllByGroupContainingName(Long groupId, String keyword);
+    List<User> findAllByGroupContainingName(String groupName, String keyword,
+        List<String> uuidList);
 
-    List<User> findAllByOtherGroupContainingName(Long groupId, String keyword);
+    List<User> findAllByOtherGroupContainingName(String groupName, String keyword,
+        List<String> uuidList);
 
-    List<User> findAllByGroupContainingYelloId(Long groupId, String keyword);
+    List<User> findAllByGroupContainingYelloId(String groupName, String keyword,
+        List<String> uuidList);
 
-    List<User> findAllByOtherGroupContainingYelloId(Long groupId, String keyword);
+    List<User> findAllByOtherGroupContainingYelloId(String groupName, String keyword,
+        List<String> uuidList);
 
     Long count();
 
