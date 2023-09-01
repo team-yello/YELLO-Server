@@ -8,7 +8,6 @@ import java.util.List;
 import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
-import org.springframework.transaction.annotation.Transactional;
 
 @Repository
 @RequiredArgsConstructor
@@ -27,7 +26,6 @@ public class QuestionRepositoryImpl implements QuestionRepository {
             .orElseThrow(() -> new QuestionException(NOT_FOUND_QUESTION_EXCEPTION));
     }
 
-    @Transactional
     @Override
     public Question save(Question question) {
         return questionJpaRepository.save(question);
