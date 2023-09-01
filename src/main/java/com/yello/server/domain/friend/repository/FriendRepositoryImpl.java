@@ -19,13 +19,11 @@ public class FriendRepositoryImpl implements FriendRepository {
 
     private final FriendJpaRepository friendJpaRepository;
 
-    @Transactional
     @Override
     public Friend save(Friend friend) {
         return friendJpaRepository.save(friend);
     }
 
-    @Transactional
     @Override
     public void delete(Friend friend) {
         friendJpaRepository.delete(friend);
