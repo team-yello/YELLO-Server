@@ -8,6 +8,7 @@ import com.yello.server.domain.vote.entity.Vote;
 import com.yello.server.infrastructure.firebase.dto.request.NotificationMessage;
 import com.yello.server.infrastructure.firebase.manager.FCMManager;
 import com.yello.server.infrastructure.redis.repository.TokenRepository;
+import java.util.Objects;
 import lombok.Builder;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
@@ -27,9 +28,10 @@ public class NotificationFcmService implements NotificationService {
     public void sendRecommendNotification(User user, User target) {
         NotificationMessage notificationMessage = NotificationMessage.toRecommendNotificationContent(user);
 
-        final Message message = fcmManager.createMessage(target.getDeviceToken(), notificationMessage);
-
-        fcmManager.send(message);
+        if (target.getDeviceToken() != null && !Objects.equals(target.getDeviceToken(), "")) {
+            final Message message = fcmManager.createMessage(target.getDeviceToken(), notificationMessage);
+            fcmManager.send(message);
+        }
     }
 
     @Override
@@ -39,9 +41,11 @@ public class NotificationFcmService implements NotificationService {
         NotificationMessage notificationMessage = NotificationMessage.toYelloNotificationContent(vote);
 
         final String path = "/api/v1/vote/" + vote.getId().toString();
-        final Message message = fcmManager.createMessage(receiver.getDeviceToken(), notificationMessage, path);
 
-        fcmManager.send(message);
+        if (receiver.getDeviceToken() != null && !Objects.equals(receiver.getDeviceToken(), "")) {
+            final Message message = fcmManager.createMessage(receiver.getDeviceToken(), notificationMessage, path);
+            fcmManager.send(message);
+        }
     }
 
     @Override
@@ -51,9 +55,10 @@ public class NotificationFcmService implements NotificationService {
 
         NotificationMessage notificationMessage = NotificationMessage.toFriendNotificationContent(sender);
 
-        final Message message = fcmManager.createMessage(receiver.getDeviceToken(), notificationMessage);
-
-        fcmManager.send(message);
+        if (receiver.getDeviceToken() != null && !Objects.equals(receiver.getDeviceToken(), "")) {
+            final Message message = fcmManager.createMessage(receiver.getDeviceToken(), notificationMessage);
+            fcmManager.send(message);
+        }
     }
 
     @Override
@@ -62,9 +67,10 @@ public class NotificationFcmService implements NotificationService {
 
         NotificationMessage notificationMessage = NotificationMessage.toVoteAvailableNotificationContent();
 
-        final Message message = fcmManager.createMessage(receiveUser.getDeviceToken(), notificationMessage);
-
-        fcmManager.send(message);
-        log.info("[rabbitmq] successfully send notification!");
+        if (receiveUser.getDeviceToken() != null && !Objects.equals(receiveUser.getDeviceToken(), "")) {
+            final Message message = fcmManager.createMessage(receiveUser.getDeviceToken(), notificationMessage);
+            fcmManager.send(message);
+            log.info("[rabbitmq] successfully send notification!");
+        }
     }
 }
