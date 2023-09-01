@@ -9,6 +9,7 @@ import static org.springframework.http.HttpStatus.INTERNAL_SERVER_ERROR;
 import static org.springframework.http.HttpStatus.NOT_FOUND;
 import static org.springframework.http.HttpStatus.UNAUTHORIZED;
 
+import com.yello.server.domain.admin.exception.UserAdminNotFoundException;
 import com.yello.server.domain.authorization.exception.AuthBadRequestException;
 import com.yello.server.domain.authorization.exception.CustomAuthenticationException;
 import com.yello.server.domain.authorization.exception.ExpiredTokenException;
@@ -172,7 +173,8 @@ public class ControllerExceptionAdvice {
         QuestionNotFoundException.class,
         RedisNotFoundException.class,
         PurchaseNotFoundException.class,
-        GoogleTokenNotFoundException.class
+        GoogleTokenNotFoundException.class,
+        UserAdminNotFoundException.class
     })
     public ResponseEntity<BaseResponse> NotFoundException(CustomException exception) {
         return ResponseEntity.status(NOT_FOUND)
