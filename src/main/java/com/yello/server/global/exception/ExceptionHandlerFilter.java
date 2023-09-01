@@ -6,6 +6,7 @@ import com.fasterxml.jackson.core.json.JsonWriteFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.yello.server.global.common.ErrorCode;
 import com.yello.server.global.common.dto.BaseResponse;
+import com.yello.server.global.common.dto.MultiReadHttpServletRequest;
 import java.io.IOException;
 import javax.servlet.FilterChain;
 import javax.servlet.ServletException;
@@ -21,8 +22,10 @@ public class ExceptionHandlerFilter extends OncePerRequestFilter {
         HttpServletResponse response,
         FilterChain filterChain
     ) throws ServletException, IOException {
+        MultiReadHttpServletRequest multiReadRequest = new MultiReadHttpServletRequest(request);
+        
         try {
-            filterChain.doFilter(request, response);
+            filterChain.doFilter(multiReadRequest, response);
         } catch (CustomException exception) {
             setErrorResponse(response, exception.getError());
         }

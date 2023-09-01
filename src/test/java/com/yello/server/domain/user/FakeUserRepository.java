@@ -121,36 +121,40 @@ public class FakeUserRepository implements UserRepository {
     }
 
     @Override
-    public List<User> findAllByGroupContainingName(Long groupId, String keyword) {
+    public List<User> findAllByGroupContainingName(String groupName, String keyword,
+        List<String> uuidList) {
         return data.stream()
-            .filter(user -> user.getGroup().getId().equals(groupId))
+            .filter(user -> user.getGroup().getSchoolName().equals(groupName))
             .filter(user -> user.getName().contains(keyword))
             .filter(user -> !user.getId().equals(1L))
             .toList();
     }
 
     @Override
-    public List<User> findAllByOtherGroupContainingName(Long groupId, String keyword) {
+    public List<User> findAllByOtherGroupContainingName(String groupName, String keyword,
+        List<String> uuidList) {
         return data.stream()
-            .filter(user -> !user.getGroup().getId().equals(groupId))
+            .filter(user -> !user.getGroup().getSchoolName().equals(groupName))
             .filter(user -> user.getName().contains(keyword))
             .filter(user -> !user.getId().equals(1L))
             .toList();
     }
 
     @Override
-    public List<User> findAllByGroupContainingYelloId(Long groupId, String keyword) {
+    public List<User> findAllByGroupContainingYelloId(String groupName, String keyword,
+        List<String> uuidList) {
         return data.stream()
-            .filter(user -> user.getGroup().getId().equals(groupId))
+            .filter(user -> user.getGroup().getSchoolName().equals(groupName))
             .filter(user -> user.getYelloId().contains(keyword))
             .filter(user -> !user.getId().equals(1L))
             .toList();
     }
 
     @Override
-    public List<User> findAllByOtherGroupContainingYelloId(Long groupId, String keyword) {
+    public List<User> findAllByOtherGroupContainingYelloId(String groupName, String keyword,
+        List<String> uuidList) {
         return data.stream()
-            .filter(user -> !user.getGroup().getId().equals(groupId))
+            .filter(user -> !user.getGroup().getSchoolName().equals(groupName))
             .filter(user -> user.getYelloId().contains(keyword))
             .filter(user -> !user.getId().equals(1L))
             .toList();

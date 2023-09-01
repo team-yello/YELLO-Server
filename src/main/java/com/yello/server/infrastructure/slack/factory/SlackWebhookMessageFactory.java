@@ -4,8 +4,10 @@ import com.yello.server.domain.authorization.service.TokenProvider;
 import com.yello.server.domain.user.entity.User;
 import com.yello.server.domain.user.repository.UserRepository;
 import com.yello.server.global.common.factory.TimeFactory;
+import java.io.BufferedReader;
 import java.io.IOException;
-import java.nio.charset.StandardCharsets;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.Collections;
@@ -18,7 +20,6 @@ import net.gpedro.integrations.slack.SlackField;
 import net.gpedro.integrations.slack.SlackMessage;
 import org.springframework.http.HttpHeaders;
 import org.springframework.stereotype.Component;
-import org.springframework.util.StreamUtils;
 
 @Component
 @RequiredArgsConstructor
@@ -31,6 +32,38 @@ public class SlackWebhookMessageFactory {
 
     private final UserRepository userRepository;
     private final TokenProvider tokenProvider;
+
+    private static String getRequestBody(HttpServletRequest request) throws IOException {
+
+        String body = null;
+        StringBuilder stringBuilder = new StringBuilder();
+        BufferedReader bufferedReader = null;
+
+        try {
+            InputStream inputStream = request.getInputStream();
+            if (inputStream != null) {
+                bufferedReader = new BufferedReader(new InputStreamReader(inputStream));
+                char[] charBuffer = new char[128];
+                int bytesRead = -1;
+                while ((bytesRead = bufferedReader.read(charBuffer)) > 0) {
+                    stringBuilder.append(charBuffer, 0, bytesRead);
+                }
+            }
+        } catch (IOException ex) {
+            throw ex;
+        } finally {
+            if (bufferedReader != null) {
+                try {
+                    bufferedReader.close();
+                } catch (IOException ex) {
+                    throw ex;
+                }
+            }
+        }
+
+        body = stringBuilder.toString();
+        return body;
+    }
 
     public SlackMessage generateSlackErrorMessage(
         HttpServletRequest request,
@@ -81,10 +114,10 @@ public class SlackWebhookMessageFactory {
     private List<SlackField> generateSlackFieldList(
         HttpServletRequest request
     ) throws IOException {
-        final String token =
-            request.getHeader(HttpHeaders.AUTHORIZATION).substring("Bearer ".length());
-        final Long userId = tokenProvider.getUserId(token);
-        final Optional<User> user = userRepository.findById(userId);
+        final String authHeader = request.getHeader(HttpHeaders.AUTHORIZATION);
+        final String token = authHeader == null ? "null" : authHeader.substring("Bearer ".length());
+        final Long userId = authHeader == null ? -1L : tokenProvider.getUserId(token);
+        final Optional<User> user = authHeader == null ? Optional.empty() : userRepository.findById(userId);
         final String yelloId = user.isPresent() ? user.get().getYelloId() : "null";
         final String deviceToken = user.isPresent() ? user.get().getDeviceToken() : "null";
 
@@ -93,6 +126,7 @@ public class SlackWebhookMessageFactory {
                 deviceToken);
 
         return Arrays.asList(
+            new SlackField().setTitle("Request Method").setValue(request.getMethod()),
             new SlackField().setTitle("Request URL").setValue(request.getRequestURL().toString()),
             new SlackField().setTitle("Request Time")
                 .setValue(TimeFactory.toDateFormattedString(LocalDateTime.now())),
@@ -102,10 +136,8 @@ public class SlackWebhookMessageFactory {
             new SlackField().setTitle("인증/인가 정보 - Authorization")
                 .setValue(request.getHeader(HttpHeaders.AUTHORIZATION)),
             new SlackField().setTitle("Request Body")
-                .setValue(
-                    StreamUtils.copyToString(request.getInputStream(), StandardCharsets.UTF_8)),
+                .setValue(getRequestBody(request)),
             new SlackField().setTitle("인증/인가 정보 - 유저").setValue(userInfo)
         );
     }
-
 }

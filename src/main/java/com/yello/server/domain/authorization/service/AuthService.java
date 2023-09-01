@@ -129,7 +129,7 @@ public class AuthService {
                     Friend savedFriend =
                         friendRepository.save(Friend.createFriend(user, friend.get()));
                     friendRepository.save(Friend.createFriend(friend.get(), user));
-
+                    
                     notificationService.sendFriendNotification(savedFriend);
                 }
             });
