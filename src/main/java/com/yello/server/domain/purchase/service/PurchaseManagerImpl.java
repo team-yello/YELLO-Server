@@ -44,6 +44,8 @@ public class PurchaseManagerImpl implements PurchaseManager {
     @Override
     public void handleAppleTransactionError(ResponseEntity<TransactionInfoResponse> response,
         String transactionId) {
+        tokenFactory.decodeTransactionToken(response.getBody().signedTransactionInfo(),
+            transactionId);
 
         if (!response.getStatusCode().is2xxSuccessful()) {
             throw new AppleTokenServerErrorException(APPLE_TOKEN_SERVER_EXCEPTION);
@@ -53,5 +55,6 @@ public class PurchaseManagerImpl implements PurchaseManager {
                 throw new PurchaseConflictException(GOOGLE_SUBSCRIPTIONS_SUBSCRIPTION_EXCEPTION);
             });
     }
+
 
 }
