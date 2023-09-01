@@ -18,7 +18,6 @@ public class VoteRepositoryImpl implements VoteRepository {
 
     private final VoteJpaRepository voteJpaRepository;
 
-    @Transactional
     @Override
     public Vote save(Vote vote) {
         return voteJpaRepository.save(vote);
