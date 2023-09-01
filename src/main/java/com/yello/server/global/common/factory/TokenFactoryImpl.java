@@ -1,8 +1,10 @@
 package com.yello.server.global.common.factory;
 
+import static com.yello.server.global.common.ErrorCode.NOT_EQUAL_TRANSACTION_EXCEPTION;
+
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
-import com.yello.server.domain.purchase.dto.response.AppleJwsTransactionResponse;
+import com.yello.server.domain.purchase.exception.PurchaseNotFoundException;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import java.io.IOException;
@@ -10,6 +12,7 @@ import java.io.InputStreamReader;
 import java.security.KeyFactory;
 import java.security.spec.PKCS8EncodedKeySpec;
 import java.util.Date;
+import java.util.Map;
 import lombok.SneakyThrows;
 import org.apache.commons.codec.binary.Base64;
 import org.springframework.beans.factory.annotation.Value;
@@ -50,9 +53,16 @@ public class TokenFactoryImpl implements TokenFactory {
 
     @SneakyThrows
     @Override
-    public AppleJwsTransactionResponse decodeTransactionToken(String signedTransactionInfo) {
+    public void decodeTransactionToken(String signedTransactionInfo,
+        String transactionId) {
 
-        return null;
+        Map<String, Object> decodeToken = DecodeTokenFactory.decodeToken(signedTransactionInfo);
+
+        String decodeTransactionId = decodeToken.get("transactionId").toString();
+        if (!transactionId.equals(decodeTransactionId)) {
+            throw new PurchaseNotFoundException(NOT_EQUAL_TRANSACTION_EXCEPTION);
+        }
+
     }
 
     public void setKey() throws IOException {
