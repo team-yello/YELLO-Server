@@ -2,10 +2,13 @@ package com.yello.server.domain.admin.controller;
 
 import static com.yello.server.global.common.SuccessCode.DELETE_COOLDOWN_ADMIN_SUCCESS;
 import static com.yello.server.global.common.SuccessCode.DELETE_USER_ADMIN_SUCCESS;
+import static com.yello.server.global.common.SuccessCode.LOGIN_USER_ADMIN_SUCCESS;
 import static com.yello.server.global.common.SuccessCode.READ_COOLDOWN_ADMIN_SUCCESS;
 import static com.yello.server.global.common.SuccessCode.READ_USER_ADMIN_SUCCESS;
 
+import com.yello.server.domain.admin.dto.request.AdminLoginRequest;
 import com.yello.server.domain.admin.dto.response.AdminCooldownResponse;
+import com.yello.server.domain.admin.dto.response.AdminLoginResponse;
 import com.yello.server.domain.admin.dto.response.AdminUserResponse;
 import com.yello.server.domain.admin.service.AdminService;
 import com.yello.server.domain.user.entity.User;
@@ -17,6 +20,8 @@ import lombok.RequiredArgsConstructor;
 import lombok.val;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
@@ -27,6 +32,12 @@ import org.springframework.web.bind.annotation.RestController;
 public class AdminController {
 
     private final AdminService adminService;
+
+    @PostMapping("/login")
+    public BaseResponse<AdminLoginResponse> postAdminLogin(@RequestBody AdminLoginRequest request) {
+        val data = adminService.login(request);
+        return BaseResponse.success(LOGIN_USER_ADMIN_SUCCESS, data);
+    }
 
     @GetMapping("/user")
     public BaseResponse<AdminUserResponse> getUserAdmin(@AccessTokenUser User user, @RequestParam Integer page,
