@@ -43,6 +43,11 @@ public class UserRepositoryImpl implements UserRepository {
     }
 
     @Override
+    public Optional<User> findByUuidNotFiltered(String uuid) {
+        return userJpaRepository.findByUuidNotFiltered(uuid);
+    }
+
+    @Override
     public User getByUuid(String uuid) {
         return userJpaRepository.findByUuid(uuid)
             .orElseThrow(() -> new UserNotFoundException(AUTH_UUID_NOT_FOUND_USER_EXCEPTION));
@@ -72,6 +77,11 @@ public class UserRepositoryImpl implements UserRepository {
     @Override
     public Optional<User> findByDeviceToken(String deviceToken) {
         return userJpaRepository.findByDeviceToken(deviceToken);
+    }
+
+    @Override
+    public Optional<User> findByDeviceTokenNotFiltered(String deviceToken) {
+        return userJpaRepository.findByDeviceTokenNotFiltered(deviceToken);
     }
 
     @Override
