@@ -2,6 +2,8 @@ package com.yello.server.global;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
@@ -13,8 +15,13 @@ public class HealthCheckController {
         return "Yell:o world!";
     }
 
+    @PostMapping("/")
+    public String amazon(@RequestBody String string) {
+        return string;
+    }
+
     @GetMapping("/abc")
     public void text() throws Exception {
-        throw new Exception("Abc");
+        throw new NullPointerException();
     }
 }
