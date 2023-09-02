@@ -5,6 +5,8 @@ import com.yello.server.domain.user.entity.Social;
 import com.yello.server.domain.user.entity.Subscribe;
 import com.yello.server.domain.user.entity.User;
 import com.yello.server.domain.user.repository.UserRepository;
+import java.util.ArrayList;
+import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
@@ -26,6 +28,15 @@ public class UserManagerImpl implements UserManager {
             .orElseGet(() ->
                 userRepository.save(makeOfficialUser(OFFICIAL_NAME, uuid, gender.reverse()))
             );
+    }
+
+    @Override
+    public List<User> getOfficialUsers() {
+        List<User> users = new ArrayList<>();
+        users.add(getOfficialUser(Gender.FEMALE));
+        users.add(getOfficialUser(Gender.MALE));
+        
+        return users;
     }
 
     private User makeOfficialUser(String name, String yelloId, Gender gender) {
