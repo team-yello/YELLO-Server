@@ -6,6 +6,8 @@ import com.yello.server.domain.user.entity.Subscribe;
 import com.yello.server.domain.user.entity.User;
 import com.yello.server.domain.user.repository.UserRepository;
 import com.yello.server.domain.user.service.UserManager;
+import java.util.ArrayList;
+import java.util.List;
 
 public class FakeUserManager implements UserManager {
 
@@ -27,6 +29,15 @@ public class FakeUserManager implements UserManager {
             .orElseGet(() ->
                 userRepository.save(makeOfficialUser(OFFICIAL_NAME, uuid, gender.reverse()))
             );
+    }
+
+    @Override
+    public List<User> getOfficialUsers() {
+        List<User> users = new ArrayList<>();
+        users.add(getOfficialUser(Gender.FEMALE));
+        users.add(getOfficialUser(Gender.MALE));
+
+        return users;
     }
 
     private User makeOfficialUser(String name, String yelloId, Gender gender) {
