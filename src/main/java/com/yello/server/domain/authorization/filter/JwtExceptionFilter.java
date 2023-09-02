@@ -45,6 +45,7 @@ public class JwtExceptionFilter extends OncePerRequestFilter {
         if (requestPath.equals("/")
             || requestPath.startsWith("/docs")
             || requestPath.startsWith("/actuator") || requestPath.startsWith("/prometheus")
+            || requestPath.startsWith("/api/v1/admin/login")
             || (requestPath.startsWith("/api/v1/auth")
             && !requestPath.startsWith("/api/v1/auth/token/issue"))) {
             filterChain.doFilter(request, response);
