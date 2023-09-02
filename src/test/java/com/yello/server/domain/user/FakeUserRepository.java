@@ -21,12 +21,12 @@ public class FakeUserRepository implements UserRepository {
 
     @Override
     public User save(User user) {
-        if (user.getId()!=null && user.getId() > id) {
+        if (user.getId() != null && user.getId() > id) {
             id = user.getId();
         }
 
         User newUser = User.builder()
-            .id(user.getId()==null ? ++id : user.getId())
+            .id(user.getId() == null ? ++id : user.getId())
             .recommendCount(0L)
             .name(user.getName())
             .yelloId(user.getYelloId())
@@ -70,6 +70,13 @@ public class FakeUserRepository implements UserRepository {
     }
 
     @Override
+    public Optional<User> findByUuidNotFiltered(String uuid) {
+        return data.stream()
+            .filter(user -> user.getUuid().equals(uuid))
+            .findFirst();
+    }
+
+    @Override
     public User getByUuid(String uuid) {
         return data.stream()
             .filter(user -> user.getUuid().equals(uuid))
@@ -86,7 +93,7 @@ public class FakeUserRepository implements UserRepository {
     @Override
     public Optional<User> findByYelloId(String yelloId) {
         return data.stream()
-            .filter(user -> user.getDeletedAt()==null)
+            .filter(user -> user.getDeletedAt() == null)
             .filter(user -> user.getYelloId().equals(yelloId))
             .findFirst();
     }
@@ -108,6 +115,13 @@ public class FakeUserRepository implements UserRepository {
 
     @Override
     public Optional<User> findByDeviceToken(String deviceToken) {
+        return data.stream()
+            .filter(user -> user.getDeviceToken().equals(deviceToken))
+            .findFirst();
+    }
+
+    @Override
+    public Optional<User> findByDeviceTokenNotFiltered(String deviceToken) {
         return data.stream()
             .filter(user -> user.getDeviceToken().equals(deviceToken))
             .findFirst();

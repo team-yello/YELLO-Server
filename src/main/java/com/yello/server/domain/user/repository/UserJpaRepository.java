@@ -20,6 +20,10 @@ public interface UserJpaRepository extends JpaRepository<User, Long> {
         "where u.uuid = :uuid")
     Optional<User> findByUuid(@Param("uuid") String uuid);
 
+    @Query("select u from User u " +
+        "where u.uuid = :uuid")
+    Optional<User> findByUuidNotFiltered(@Param("uuid") String uuid);
+
     @Query("select case when count(u) > 0 then true else false end from User u " +
         "where u.uuid = :uuid " +
         "and u.deletedAt is null")
@@ -76,7 +80,14 @@ public interface UserJpaRepository extends JpaRepository<User, Long> {
     List<User> findAllByOtherGroupContainingYelloId(@Param("groupName") String groupName,
         @Param("keyword") String keyword, @Param("uuidList") List<String> uuidList);
 
-    Optional<User> findByDeviceToken(String deviceToken);
+    @Query("select u from User u "
+        + "where u.deviceToken = :deviceToken "
+        + "and u.deletedAt is null")
+    Optional<User> findByDeviceToken(@Param("deviceToken") String deviceToken);
+
+    @Query("select u from User u " +
+        "where u.deviceToken = :deviceToken")
+    Optional<User> findByDeviceTokenNotFiltered(@Param("deviceToken") String deviceToken);
 
     Long countAllByYelloIdContaining(String yelloId);
 

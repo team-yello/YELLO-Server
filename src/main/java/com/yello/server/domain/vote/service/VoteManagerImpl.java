@@ -107,11 +107,11 @@ public class VoteManagerImpl implements VoteManager {
 
     @Override
     public int useNameHint(User sender, Vote vote) {
-        if (sender.getPoint() < NAME_HINT_POINT && sender.getSubscribe()==Subscribe.NORMAL) {
+        if (sender.getPoint() < NAME_HINT_POINT && sender.getSubscribe() == Subscribe.NORMAL) {
             throw new VoteForbiddenException(LACK_POINT_EXCEPTION);
         }
 
-        if (vote.getNameHint()!=NAME_HINT_DEFAULT) {
+        if (vote.getNameHint() != NAME_HINT_DEFAULT) {
             throw new VoteNotFoundException(INVALID_VOTE_EXCEPTION);
         }
 
@@ -119,7 +119,7 @@ public class VoteManagerImpl implements VoteManager {
         int randomIndex = random.nextInt(2);
         vote.checkNameIndexOf(randomIndex);
 
-        if (sender.getSubscribe()==Subscribe.NORMAL) {
+        if (sender.getSubscribe() == Subscribe.NORMAL) {
             sender.minusPoint(NAME_HINT_POINT);
             return randomIndex;
         }
@@ -129,16 +129,13 @@ public class VoteManagerImpl implements VoteManager {
 
     @Override
     public KeywordCheckResponse useKeywordHint(User user, Vote vote) {
-        if (user.getSubscribe()!=Subscribe.NORMAL) {
-            vote.checkKeyword();
-        } else {
-            if (user.getPoint() < KEYWORD_HINT_POINT) {
-                throw new VoteForbiddenException(LACK_POINT_EXCEPTION);
-            }
-
-            user.minusPoint(KEYWORD_HINT_POINT);
-            vote.checkKeyword();
+        if (user.getPoint() < KEYWORD_HINT_POINT) {
+            throw new VoteForbiddenException(LACK_POINT_EXCEPTION);
         }
+
+        user.minusPoint(KEYWORD_HINT_POINT);
+        vote.checkKeyword();
+
         return KeywordCheckResponse.of(vote);
     }
 
