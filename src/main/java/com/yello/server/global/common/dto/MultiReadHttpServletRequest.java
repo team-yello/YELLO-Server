@@ -5,6 +5,8 @@ import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.util.Enumeration;
+import java.util.Map;
 import javax.servlet.ReadListener;
 import javax.servlet.ServletInputStream;
 import javax.servlet.http.HttpServletRequest;
@@ -13,10 +15,21 @@ import org.apache.tomcat.util.http.fileupload.IOUtils;
 
 public class MultiReadHttpServletRequest extends HttpServletRequestWrapper {
 
+    private final Enumeration<String> headerNames;
+    private final Map<String, String> headers;
     private ByteArrayOutputStream cachedBytes;
 
     public MultiReadHttpServletRequest(HttpServletRequest request) {
         super(request);
+
+        headerNames = request.getHeaderNames();
+        headers = new java.util.HashMap<>();
+
+        while (headerNames.hasMoreElements()) {
+            String headerName = headerNames.nextElement();
+            String headerValue = request.getHeader(headerName);
+            headers.put(headerName, headerValue);
+        }
     }
 
     @Override
@@ -41,6 +54,20 @@ public class MultiReadHttpServletRequest extends HttpServletRequestWrapper {
         IOUtils.copy(super.getInputStream(), cachedBytes);
     }
 
+    @Override
+    public String toString() {
+        StringBuilder builder = new StringBuilder();
+        headers.keySet()
+            .forEach((key) -> {
+                builder
+                    .append(key)
+                    .append(": ")
+                    .append(headers.get(key))
+                    .append("\n");
+            });
+        
+        return builder.toString();
+    }
 
     /* An input stream which reads the cached request body */
     private static class CachedServletInputStream extends ServletInputStream {

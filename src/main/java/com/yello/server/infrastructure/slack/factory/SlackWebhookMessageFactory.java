@@ -93,7 +93,9 @@ public class SlackWebhookMessageFactory {
             .setColor("danger")
             .setTitle(ERROR_TITLE)
             .setTitleLink(request.getContextPath())
-            .setText(Arrays.toString(exception.getStackTrace()))
+            .setText("Exception Class : " + exception.getClass().getName() + "\n"
+                + "Exception Message : " + exception.getMessage() + "\n"
+                + Arrays.toString(exception.getStackTrace()))
             .setColor("danger")
             .setFields(generateSlackFieldList(request));
         return Collections.singletonList(slackAttachment);
@@ -103,6 +105,7 @@ public class SlackWebhookMessageFactory {
         HttpServletRequest request
     ) throws IOException {
         final SlackAttachment slackAttachment = new SlackAttachment()
+            .setFallback("good")
             .setColor("good")
             .setTitle(PURCHASE_TITLE)
             .setTitleLink(request.getContextPath())
@@ -131,12 +134,12 @@ public class SlackWebhookMessageFactory {
             new SlackField().setTitle("Request Time")
                 .setValue(TimeFactory.toDateFormattedString(LocalDateTime.now())),
             new SlackField().setTitle("Request IP").setValue(request.getRemoteAddr()),
-            new SlackField().setTitle("Request User-Agent")
-                .setValue(request.getHeader(HttpHeaders.USER_AGENT)),
-            new SlackField().setTitle("인증/인가 정보 - Authorization")
-                .setValue(request.getHeader(HttpHeaders.AUTHORIZATION)),
+            new SlackField().setTitle("Request Headers")
+                .setValue(request.toString()),
             new SlackField().setTitle("Request Body")
                 .setValue(getRequestBody(request)),
+            new SlackField().setTitle("인증/인가 정보 - Authorization")
+                .setValue(request.getHeader(HttpHeaders.AUTHORIZATION)),
             new SlackField().setTitle("인증/인가 정보 - 유저").setValue(userInfo)
         );
     }
