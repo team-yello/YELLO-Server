@@ -1,5 +1,6 @@
 package com.yello.server.domain.authorization.service;
 
+import static com.yello.server.global.common.ErrorCode.DEVICE_TOKEN_CONFLICT_USER_EXCEPTION;
 import static com.yello.server.global.common.ErrorCode.NOT_SIGNIN_USER_EXCEPTION;
 import static com.yello.server.global.common.ErrorCode.UUID_CONFLICT_USER_EXCEPTION;
 import static com.yello.server.global.common.ErrorCode.YELLOID_CONFLICT_USER_EXCEPTION;
@@ -66,7 +67,7 @@ public class AuthManagerImpl implements AuthManager {
 
     @Override
     public void validateSignupRequest(SignUpRequest signUpRequest) {
-        userRepository.findByUuid(signUpRequest.uuid())
+        userRepository.findByUuidNotFiltered(signUpRequest.uuid())
             .ifPresent(action -> {
                 throw new UserConflictException(UUID_CONFLICT_USER_EXCEPTION);
             });
@@ -74,6 +75,11 @@ public class AuthManagerImpl implements AuthManager {
         userRepository.findByYelloIdNotFiltered(signUpRequest.yelloId())
             .ifPresent(action -> {
                 throw new UserConflictException(YELLOID_CONFLICT_USER_EXCEPTION);
+            });
+
+        userRepository.findByDeviceTokenNotFiltered(signUpRequest.deviceToken())
+            .ifPresent(action -> {
+                throw new UserConflictException(DEVICE_TOKEN_CONFLICT_USER_EXCEPTION);
             });
     }
 

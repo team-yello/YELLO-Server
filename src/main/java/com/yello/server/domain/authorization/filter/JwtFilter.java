@@ -23,6 +23,8 @@ import org.springframework.web.filter.OncePerRequestFilter;
 @RequiredArgsConstructor
 public class JwtFilter extends OncePerRequestFilter {
 
+    public static final String X_ACCESS_AUTH = "X-ACCESS-AUTH";
+    public static final String X_REFRESH_AUTH = "X-REFRESH-AUTH";
     public static final String BEARER = "Bearer ";
     private final UserRepository userRepository;
 
@@ -36,6 +38,7 @@ public class JwtFilter extends OncePerRequestFilter {
         if (requestPath.equals("/")
             || requestPath.startsWith("/docs")
             || requestPath.startsWith("/actuator") || requestPath.startsWith("/prometheus")
+            || requestPath.startsWith("/api/v1/admin/login")
             || requestPath.startsWith("/api/v1/auth")) {
             filterChain.doFilter(request, response);
             return;

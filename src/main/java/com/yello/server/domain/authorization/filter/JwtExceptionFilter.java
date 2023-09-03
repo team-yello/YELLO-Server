@@ -1,6 +1,8 @@
 package com.yello.server.domain.authorization.filter;
 
 import static com.yello.server.domain.authorization.filter.JwtFilter.BEARER;
+import static com.yello.server.domain.authorization.filter.JwtFilter.X_ACCESS_AUTH;
+import static com.yello.server.domain.authorization.filter.JwtFilter.X_REFRESH_AUTH;
 import static com.yello.server.global.common.ErrorCode.AUTHENTICATION_ERROR;
 import static com.yello.server.global.common.ErrorCode.EXPIRED_TOKEN;
 import static com.yello.server.global.common.ErrorCode.ILLEGAL_TOKEN;
@@ -43,25 +45,45 @@ public class JwtExceptionFilter extends OncePerRequestFilter {
         if (requestPath.equals("/")
             || requestPath.startsWith("/docs")
             || requestPath.startsWith("/actuator") || requestPath.startsWith("/prometheus")
-            || requestPath.startsWith("/api/v1/auth")) {
+            || requestPath.startsWith("/api/v1/admin/login")
+            || (requestPath.startsWith("/api/v1/auth")
+            && !requestPath.startsWith("/api/v1/auth/token/issue"))) {
             filterChain.doFilter(request, response);
             return;
         }
 
-        val accessHeader = request.getHeader(AUTHORIZATION);
-        log.info("Authorization : {}", accessHeader);
-
-        if (accessHeader==null || !accessHeader.startsWith(BEARER)) {
-            throw new CustomAuthenticationException(AUTHENTICATION_ERROR);
-        }
-
-        val token = accessHeader.substring(BEARER.length());
         try {
-            Long userId = tokenProvider.getUserId(token);
-            request.setAttribute("userId", userId);
+            if (requestPath.startsWith("/api/v1/auth/token/issue")) {
+                val accessHeader = request.getHeader(X_ACCESS_AUTH);
+                val refreshHeader = request.getHeader(X_REFRESH_AUTH);
+                log.info("Authorization-access : {}", accessHeader);
+                log.info("Authorization-refresh : {}", refreshHeader);
+
+                if (accessHeader == null || !accessHeader.startsWith(BEARER)
+                    || refreshHeader == null || !refreshHeader.startsWith(BEARER)) {
+                    throw new CustomAuthenticationException(AUTHENTICATION_ERROR);
+                }
+
+                val token = accessHeader.substring(BEARER.length());
+                Long userId = tokenProvider.getUserId(token);
+                request.setAttribute("userId", userId);
+            } else {
+                val accessHeader = request.getHeader(AUTHORIZATION);
+                log.info("Authorization : {}", accessHeader);
+
+                if (accessHeader == null || !accessHeader.startsWith(BEARER)) {
+                    throw new CustomAuthenticationException(AUTHENTICATION_ERROR);
+                }
+
+                val token = accessHeader.substring(BEARER.length());
+                Long userId = tokenProvider.getUserId(token);
+                request.setAttribute("userId", userId);
+            }
         } catch (ExpiredJwtException e) {
-            log.info("토큰이 만료되었습니다. 토큰 재발급 API 호출이 필요합니다.");
-            throw new InvalidTokenException(EXPIRED_TOKEN);
+            if (!requestPath.startsWith("/api/v1/auth/token/issue")) {
+                log.info("토큰이 만료되었습니다. 토큰 재발급 API 호출이 필요합니다.");
+                throw new InvalidTokenException(EXPIRED_TOKEN);
+            }
         } catch (MalformedJwtException e) {
             log.info("토큰이 변조되었습니다.");
             throw new InvalidTokenException(MALFORMED_TOKEN);

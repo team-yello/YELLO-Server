@@ -16,6 +16,8 @@ public interface UserRepository {
 
     Optional<User> findByUuid(String uuid);
 
+    Optional<User> findByUuidNotFiltered(String uuid);
+
     User getByUuid(String uuid);
 
     boolean existsByUuid(String uuid);
@@ -27,6 +29,8 @@ public interface UserRepository {
     User getByYelloId(String yelloId);
 
     Optional<User> findByDeviceToken(String deviceToken);
+
+    Optional<User> findByDeviceTokenNotFiltered(String deviceToken);
 
     List<User> findAllByGroupId(Long groupId);
 
