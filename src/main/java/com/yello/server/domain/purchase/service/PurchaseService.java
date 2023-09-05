@@ -198,6 +198,7 @@ public class PurchaseService {
             case ConstantUtil.GOOGLE_PURCHASE_SUBSCRIPTION_ACTIVE -> {
                 final Purchase subscribe =
                     purchaseManager.createSubscribe(user, Gateway.GOOGLE, request.orderId());
+                user.addTicketCount(3);
                 subscribe.setTransactionId(request.orderId());
             }
         }
@@ -239,7 +240,6 @@ public class PurchaseService {
         if (!inAppResponse.getStatusCode().is2xxSuccessful()) {
             throw new GoogleTokenServerErrorException(GOOGLE_TOKEN_SERVER_EXCEPTION);
         }
-        System.out.println("inAppResponse = " + inAppResponse);
 
         if (inAppResponse.getBody().purchaseState() == 0) {
             purchaseRepository.findByTransactionId(inAppResponse.getBody().orderId())
