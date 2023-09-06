@@ -96,11 +96,12 @@ public class FriendService {
     public RecommendFriendResponse findAllRecommendSchoolFriends(Pageable pageable, Long userId) {
         final User user = userRepository.getById(userId);
 
-        List<User> recommendFriends = userRepository.findAllByGroupId(user.getGroup().getId())
-            .stream()
-            .filter(target -> !userId.equals(target.getId()))
-            .filter(target -> !friendRepository.existsByUserAndTarget(userId, target.getId()))
-            .toList();
+        List<User> recommendFriends =
+            userRepository.findAllByGroupId(user.getGroup().getSchoolName())
+                .stream()
+                .filter(target -> !userId.equals(target.getId()))
+                .filter(target -> !friendRepository.existsByUserAndTarget(userId, target.getId()))
+                .toList();
 
         List<FriendResponse> pageList = PaginationFactory.getPage(recommendFriends, pageable)
             .stream()
