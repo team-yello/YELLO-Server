@@ -39,9 +39,9 @@ public interface UserJpaRepository extends JpaRepository<User, Long> {
     Optional<User> findByYelloIdNotFiltered(@Param("yelloId") String yelloId);
 
     @Query("select u from User u " +
-        "where u.group.id = :groupId " +
+        "where u.group.schoolName = :schoolName " +
         "and u.deletedAt is null")
-    List<User> findAllByGroupId(@Param("groupId") Long groupId);
+    List<User> findAllByGroupId(@Param("schoolName") String schoolName);
 
 
     @Query("select u from User u "
