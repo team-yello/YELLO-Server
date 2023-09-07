@@ -58,7 +58,7 @@ public class PurchaseController {
     }
 
     @PostMapping("/google/verify/subscribe")
-//    @SlackPurchaseNotification
+    @SlackPurchaseNotification
     public BaseResponse<GoogleSubscriptionGetResponse> verifyGoogleSubscriptionTransaction(
         @AccessTokenUser User user,
         @RequestBody GoogleSubscriptionGetRequest request
