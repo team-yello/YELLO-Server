@@ -1,6 +1,7 @@
 package com.yello.server.domain.user.repository;
 
 import static com.yello.server.global.common.ErrorCode.AUTH_UUID_NOT_FOUND_USER_EXCEPTION;
+import static com.yello.server.global.common.ErrorCode.DEVICE_TOKEN_NOT_FOUND_USER_EXCEPTION;
 import static com.yello.server.global.common.ErrorCode.USERID_NOT_FOUND_USER_EXCEPTION;
 import static com.yello.server.global.common.ErrorCode.YELLOID_NOT_FOUND_USER_EXCEPTION;
 
@@ -59,6 +60,18 @@ public class UserRepositoryImpl implements UserRepository {
     }
 
     @Override
+    public User getByYelloId(String yelloId) {
+        return userJpaRepository.findByYelloId(yelloId)
+            .orElseThrow(() -> new UserNotFoundException(YELLOID_NOT_FOUND_USER_EXCEPTION));
+    }
+
+    @Override
+    public User getByYelloIdNotFiltered(String yelloId) {
+        return userJpaRepository.findByYelloIdNotFiltered(yelloId)
+            .orElseThrow(() -> new UserNotFoundException(YELLOID_NOT_FOUND_USER_EXCEPTION));
+    }
+
+    @Override
     public Optional<User> findByYelloId(String yelloId) {
         return userJpaRepository.findByYelloId(yelloId);
     }
@@ -69,9 +82,15 @@ public class UserRepositoryImpl implements UserRepository {
     }
 
     @Override
-    public User getByYelloId(String yelloId) {
-        return userJpaRepository.findByYelloId(yelloId)
-            .orElseThrow(() -> new UserNotFoundException(YELLOID_NOT_FOUND_USER_EXCEPTION));
+    public User getByDeviceToken(String deviceToken) {
+        return userJpaRepository.findByDeviceToken(deviceToken)
+            .orElseThrow(() -> new UserNotFoundException(DEVICE_TOKEN_NOT_FOUND_USER_EXCEPTION));
+    }
+
+    @Override
+    public User getByDeviceTokenNotFiltered(String deviceToken) {
+        return userJpaRepository.findByDeviceTokenNotFiltered(deviceToken)
+            .orElseThrow(() -> new UserNotFoundException(DEVICE_TOKEN_NOT_FOUND_USER_EXCEPTION));
     }
 
     @Override

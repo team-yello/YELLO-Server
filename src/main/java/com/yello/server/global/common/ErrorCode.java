@@ -66,6 +66,7 @@ public enum ErrorCode {
      * 404 NOT FOUND
      */
     YELLOID_NOT_FOUND_USER_EXCEPTION(NOT_FOUND, "탈퇴했거나 존재하지 않는 유저의 yelloId입니다."),
+    DEVICE_TOKEN_NOT_FOUND_USER_EXCEPTION(NOT_FOUND, "해당 Device Token의 유저가 존재하지 않습니다."),
     AUTH_NOT_FOUND_USER_EXCEPTION(NOT_FOUND, "토큰 정보에 해당하는 유저가 존재하지 않습니다."),
     AUTH_UUID_NOT_FOUND_USER_EXCEPTION(NOT_FOUND, "토큰 uuid에 해당하는 유저가 존재하지 않습니다."),
     GROUPID_NOT_FOUND_GROUP_EXCEPTION(NOT_FOUND, "해당 그룹 id의 그룹이 존재하지 않습니다."),
