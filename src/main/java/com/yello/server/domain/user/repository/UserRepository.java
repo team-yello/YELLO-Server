@@ -22,11 +22,18 @@ public interface UserRepository {
 
     boolean existsByUuid(String uuid);
 
+    User getByYelloId(String yelloId);
+
+    User getByYelloIdNotFiltered(String yelloId);
+
     Optional<User> findByYelloId(String yelloId);
 
     Optional<User> findByYelloIdNotFiltered(String yelloId);
 
-    User getByYelloId(String yelloId);
+    User getByDeviceToken(String deviceToken);
+
+    User getByDeviceTokenNotFiltered(String deviceToken);
+
 
     Optional<User> findByDeviceToken(String deviceToken);
 
