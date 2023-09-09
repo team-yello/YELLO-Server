@@ -47,11 +47,12 @@ public class AdminController {
 
     @GetMapping("/user")
     public BaseResponse<AdminUserResponse> getUserAdmin(@AccessTokenUser User user, @RequestParam Integer page,
-        @Nullable @RequestParam String yelloId) {
-        val data = yelloId == null
+        @Nullable @RequestParam String field,
+        @Nullable @RequestParam String value) {
+        val data = (field == null && value == null)
             ? adminService.findUser(user.getId(), PaginationFactory.createPageableLimitTen(page))
             : adminService.findUserContaining(user.getId(), PaginationFactory.createPageableLimitTen(page),
-                yelloId);
+                field, value);
         return BaseResponse.success(READ_USER_ADMIN_SUCCESS, data);
     }
 
