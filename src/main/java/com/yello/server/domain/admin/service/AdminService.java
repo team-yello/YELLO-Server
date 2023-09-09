@@ -25,6 +25,7 @@ import com.yello.server.domain.user.repository.UserRepository;
 import com.yello.server.domain.user.service.UserManager;
 import com.yello.server.global.common.dto.EmptyObject;
 import java.util.List;
+import java.util.Objects;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Pageable;
@@ -109,15 +110,21 @@ public class AdminService {
 
         userRepository.findByUuidNotFiltered(request.uuid())
             .ifPresent(action -> {
-                throw new UserConflictException(UUID_CONFLICT_USER_EXCEPTION);
+                if (!Objects.equals(action.getId(), userId)) {
+                    throw new UserConflictException(UUID_CONFLICT_USER_EXCEPTION);
+                }
             });
         userRepository.findByYelloIdNotFiltered(request.yelloId())
             .ifPresent(action -> {
-                throw new UserConflictException(YELLOID_CONFLICT_USER_EXCEPTION);
+                if (!Objects.equals(action.getId(), userId)) {
+                    throw new UserConflictException(YELLOID_CONFLICT_USER_EXCEPTION);
+                }
             });
         userRepository.findByDeviceTokenNotFiltered(request.deviceToken())
             .ifPresent(action -> {
-                throw new UserConflictException(DEVICE_TOKEN_CONFLICT_USER_EXCEPTION);
+                if (!Objects.equals(action.getId(), userId)) {
+                    throw new UserConflictException(DEVICE_TOKEN_CONFLICT_USER_EXCEPTION);
+                }
             });
 
         user.update(request);

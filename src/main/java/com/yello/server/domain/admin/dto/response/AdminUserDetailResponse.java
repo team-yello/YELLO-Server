@@ -34,7 +34,7 @@ public record AdminUserDetailResponse(
             .social(user.getSocial().toString())
             .profileImage(user.getProfileImage())
             .uuid(user.getUuid())
-            .deletedAt(user.getDeletedAt().toString())
+            .deletedAt(user.getDeletedAt() == null ? "" : user.getDeletedAt().toString())
             .group(user.getGroup().toString())
             .groupAdmissionYear(user.getGroupAdmissionYear())
             .email(user.getEmail())
