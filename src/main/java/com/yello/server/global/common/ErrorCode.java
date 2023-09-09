@@ -35,6 +35,7 @@ public enum ErrorCode {
     GOOGLE_INAPP_BAD_REQUEST_EXCEPTION(BAD_REQUEST, "해당 영수증은 취소되었거나, 대기 중인 결제입니다."),
     APPLE_IN_APP_BAD_REQUEST_EXCEPTION(BAD_REQUEST, "존재하지 않는 영수증입니다."),
     METHOD_ARGUMENT_TYPE_MISMATCH_EXCEPTION(BAD_REQUEST, "입력한 값의 타입이 올바르지 않습니다."),
+    USER_ADMIN_BAD_REQUEST_EXCEPTION(BAD_REQUEST, "검색 필드가 없습니다."),
 
     /**
      * 401 UNAUTHORIZED

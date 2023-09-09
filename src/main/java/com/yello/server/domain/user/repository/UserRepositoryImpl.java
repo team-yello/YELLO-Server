@@ -143,13 +143,23 @@ public class UserRepositoryImpl implements UserRepository {
     }
 
     @Override
+    public Long countAllByNameContaining(String name) {
+        return userJpaRepository.countAllByNameContaining(name);
+    }
+
+    @Override
     public Page<User> findAll(Pageable pageable) {
         return userJpaRepository.findAll(pageable);
     }
 
     @Override
-    public Page<User> findAllContaining(Pageable pageable, String yelloId) {
+    public Page<User> findAllByYelloIdContaining(Pageable pageable, String yelloId) {
         return userJpaRepository.findAllByYelloIdContaining(pageable, yelloId);
+    }
+
+    @Override
+    public Page<User> findAllByNameContaining(Pageable pageable, String name) {
+        return userJpaRepository.findAllByNameContaining(pageable, name);
     }
 
     @Override

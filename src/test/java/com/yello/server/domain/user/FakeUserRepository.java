@@ -214,6 +214,14 @@ public class FakeUserRepository implements UserRepository {
     }
 
     @Override
+    public Long countAllByNameContaining(String name) {
+        return (long) data.stream()
+            .filter(user -> user.getName().contains(name))
+            .toList()
+            .size();
+    }
+
+    @Override
     public Page<User> findAll(Pageable pageable) {
         final List<User> userList = data.stream()
             .skip(pageable.getOffset())
@@ -223,9 +231,19 @@ public class FakeUserRepository implements UserRepository {
     }
 
     @Override
-    public Page<User> findAllContaining(Pageable pageable, String yelloId) {
+    public Page<User> findAllByYelloIdContaining(Pageable pageable, String yelloId) {
         final List<User> userList = data.stream()
             .filter(user -> user.getYelloId().contains(yelloId))
+            .skip(pageable.getOffset())
+            .limit(pageable.getPageSize())
+            .toList();
+        return new PageImpl<>(userList);
+    }
+
+    @Override
+    public Page<User> findAllByNameContaining(Pageable pageable, String name) {
+        final List<User> userList = data.stream()
+            .filter(user -> user.getName().contains(name))
             .skip(pageable.getOffset())
             .limit(pageable.getPageSize())
             .toList();

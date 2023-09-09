@@ -57,9 +57,13 @@ public interface UserRepository {
 
     Long countAllByYelloIdContaining(String yelloId);
 
+    Long countAllByNameContaining(String name);
+
     Page<User> findAll(Pageable pageable);
 
-    Page<User> findAllContaining(Pageable pageable, String yelloId);
+    Page<User> findAllByYelloIdContaining(Pageable pageable, String yelloId);
 
+    Page<User> findAllByNameContaining(Pageable pageable, String name);
+    
     void delete(User user);
 }
