@@ -1,6 +1,7 @@
 package com.yello.server.domain.admin.service;
 
 import static com.yello.server.global.common.ErrorCode.DEVICE_TOKEN_CONFLICT_USER_EXCEPTION;
+import static com.yello.server.global.common.ErrorCode.USER_ADMIN_BAD_REQUEST_EXCEPTION;
 import static com.yello.server.global.common.ErrorCode.USER_ADMIN_NOT_FOUND_EXCEPTION;
 import static com.yello.server.global.common.ErrorCode.UUID_CONFLICT_USER_EXCEPTION;
 import static com.yello.server.global.common.ErrorCode.YELLOID_CONFLICT_USER_EXCEPTION;
@@ -13,6 +14,7 @@ import com.yello.server.domain.admin.dto.response.AdminLoginResponse;
 import com.yello.server.domain.admin.dto.response.AdminUserContentVO;
 import com.yello.server.domain.admin.dto.response.AdminUserDetailResponse;
 import com.yello.server.domain.admin.dto.response.AdminUserResponse;
+import com.yello.server.domain.admin.exception.UserAdminBadRequestException;
 import com.yello.server.domain.admin.exception.UserAdminNotFoundException;
 import com.yello.server.domain.admin.repository.UserAdminRepository;
 import com.yello.server.domain.authorization.service.TokenProvider;
@@ -24,6 +26,7 @@ import com.yello.server.domain.user.exception.UserConflictException;
 import com.yello.server.domain.user.repository.UserRepository;
 import com.yello.server.domain.user.service.UserManager;
 import com.yello.server.global.common.dto.EmptyObject;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import lombok.RequiredArgsConstructor;
@@ -74,16 +77,30 @@ public class AdminService {
         return AdminUserResponse.of(totalCount, list);
     }
 
-    public AdminUserResponse findUserContaining(Long adminId, Pageable page, String yelloId) {
+    public AdminUserResponse findUserContaining(Long adminId, Pageable page, String field, String value) {
         // exception
         final User admin = userRepository.getById(adminId);
         userAdminRepository.getByUser(admin);
 
         // logic
-        final Long totalCount = userRepository.countAllByYelloIdContaining(yelloId);
-        final List<AdminUserContentVO> list = userRepository.findAllContaining(page, yelloId).stream()
-            .map(AdminUserContentVO::of)
-            .toList();
+        Long totalCount = 0L;
+        List<AdminUserContentVO> list = new ArrayList<>();
+
+        if (field == null || value == null) {
+            throw new UserAdminBadRequestException(USER_ADMIN_BAD_REQUEST_EXCEPTION);
+        } else if (field.equals("yelloId")) {
+            totalCount = userRepository.countAllByYelloIdContaining(value);
+            list = userRepository.findAllByYelloIdContaining(page, value).stream()
+                .map(AdminUserContentVO::of)
+                .toList();
+        } else if (field.equals("name")) {
+            totalCount = userRepository.countAllByNameContaining(value);
+            list = userRepository.findAllByNameContaining(page, value).stream()
+                .map(AdminUserContentVO::of)
+                .toList();
+        } else {
+            throw new UserAdminBadRequestException(USER_ADMIN_BAD_REQUEST_EXCEPTION);
+        }
 
         return AdminUserResponse.of(totalCount, list);
     }
