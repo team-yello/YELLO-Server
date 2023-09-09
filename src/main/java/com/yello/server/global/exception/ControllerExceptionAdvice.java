@@ -10,6 +10,7 @@ import static org.springframework.http.HttpStatus.INTERNAL_SERVER_ERROR;
 import static org.springframework.http.HttpStatus.NOT_FOUND;
 import static org.springframework.http.HttpStatus.UNAUTHORIZED;
 
+import com.yello.server.domain.admin.exception.UserAdminBadRequestException;
 import com.yello.server.domain.admin.exception.UserAdminNotFoundException;
 import com.yello.server.domain.authorization.exception.AuthBadRequestException;
 import com.yello.server.domain.authorization.exception.CustomAuthenticationException;
@@ -97,7 +98,8 @@ public class ControllerExceptionAdvice {
         QuestionException.class,
         PurchaseException.class,
         GoogleBadRequestException.class,
-        AppleBadRequestException.class
+        AppleBadRequestException.class,
+        UserAdminBadRequestException.class
     })
     public ResponseEntity<BaseResponse> BadRequestException(CustomException exception) {
         return ResponseEntity.status(BAD_REQUEST)

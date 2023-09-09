@@ -91,7 +91,13 @@ public interface UserJpaRepository extends JpaRepository<User, Long> {
 
     Long countAllByYelloIdContaining(String yelloId);
 
+    Long countAllByNameContaining(String name);
+
     @Query("select u from User u "
         + "where LOWER(u.yelloId) like LOWER(CONCAT('%', :yelloId, '%'))")
     Page<User> findAllByYelloIdContaining(Pageable pageable, @Param("yelloId") String yelloId);
+
+    @Query("select u from User u "
+        + "where LOWER(u.name) like LOWER(CONCAT('%', :name, '%'))")
+    Page<User> findAllByNameContaining(Pageable pageable, @Param("name") String name);
 }
