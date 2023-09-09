@@ -2,6 +2,7 @@ package com.yello.server.domain.user.entity;
 
 import static com.yello.server.global.common.util.ConstantUtil.RECOMMEND_POINT;
 
+import com.yello.server.domain.admin.dto.request.AdminUserDetailRequest;
 import com.yello.server.domain.authorization.dto.request.SignUpRequest;
 import com.yello.server.domain.group.entity.School;
 import com.yello.server.global.common.dto.AuditingTimeEntity;
@@ -132,6 +133,22 @@ public class User extends AuditingTimeEntity {
         this.deviceToken = null;
     }
 
+    public void update(AdminUserDetailRequest request) {
+        this.recommendCount = request.recommendCount();
+        this.name = request.name();
+        this.yelloId = request.yelloId();
+        this.gender = request.gender();
+        this.point = request.point();
+        this.social = request.social();
+        this.profileImage = request.profileImage();
+        this.uuid = request.uuid();
+        this.groupAdmissionYear = request.groupAdmissionYear();
+        this.email = request.email();
+        this.ticketCount = request.ticketCount();
+        this.deviceToken = request.deviceToken();
+        this.subscribe = request.subscribe();
+    }
+
     public void renew() {
         this.deletedAt = null;
     }
@@ -149,7 +166,7 @@ public class User extends AuditingTimeEntity {
     }
 
     public void plusPoint(Integer point) {
-        if (this.getSubscribe()==Subscribe.NORMAL) {
+        if (this.getSubscribe() == Subscribe.NORMAL) {
             this.point += point;
             return;
         }
