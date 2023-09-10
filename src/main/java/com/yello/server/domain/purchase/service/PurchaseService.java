@@ -15,6 +15,7 @@ import static com.yello.server.global.common.ErrorCode.SUBSCRIBE_ACTIVE_EXCEPTIO
 import static com.yello.server.global.common.util.ConstantUtil.APPLE_NOTIFICATION_CONSUMPTION_REQUEST;
 import static com.yello.server.global.common.util.ConstantUtil.APPLE_NOTIFICATION_REFUND;
 import static com.yello.server.global.common.util.ConstantUtil.APPLE_NOTIFICATION_SUBSCRIPTION_STATUS_CHANGE;
+import static com.yello.server.global.common.util.ConstantUtil.APPLE_NOTIFICATION_TEST;
 import static com.yello.server.global.common.util.ConstantUtil.FIVE_TICKET_ID;
 import static com.yello.server.global.common.util.ConstantUtil.GOOGLE_FIVE_TICKET_ID;
 import static com.yello.server.global.common.util.ConstantUtil.GOOGLE_TWO_TICKET_ID;
@@ -296,26 +297,17 @@ public class PurchaseService {
         AppleNotificationPayloadVO payloadVO =
             purchaseManager.decodeApplePayload(request.signedPayload());
 
-        if (payloadVO.data().signedRenewalInfo()==null || payloadVO.data().signedTransactionInfo()
-            .isEmpty()) {
-            return;
-        }
-
-        String transactionId =
-            purchaseManager.decodeAppleNotificationData(payloadVO.data().signedTransactionInfo());
-        Purchase purchase = purchaseRepository.findByTransactionId(transactionId)
-            .orElseThrow(() -> new PurchaseNotFoundException(NOT_FOUND_TRANSACTION_EXCEPTION));
-
         switch (payloadVO.notificationType()) {
             case APPLE_NOTIFICATION_CONSUMPTION_REQUEST:
                 break;
             case APPLE_NOTIFICATION_SUBSCRIPTION_STATUS_CHANGE:
-                purchaseManager.changeSubscriptionStatus(purchase.getUser(), transactionId,
-                    payloadVO);
+                purchaseManager.changeSubscriptionStatus(payloadVO);
                 break;
             case APPLE_NOTIFICATION_REFUND:
                 System.out.println("dd");
                 break;
+            case APPLE_NOTIFICATION_TEST:
+                return;
             default:
                 throw new PurchaseNotFoundException(NOT_FOUND_NOTIFICATION_TYPE_EXCEPTION);
         }

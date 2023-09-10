@@ -13,6 +13,7 @@ import com.yello.server.domain.purchase.entity.ProductType;
 import com.yello.server.domain.purchase.entity.Purchase;
 import com.yello.server.domain.purchase.exception.AppleTokenServerErrorException;
 import com.yello.server.domain.purchase.exception.PurchaseConflictException;
+import com.yello.server.domain.purchase.exception.PurchaseNotFoundException;
 import com.yello.server.domain.purchase.repository.PurchaseRepository;
 import com.yello.server.domain.user.entity.Subscribe;
 import com.yello.server.domain.user.entity.User;
@@ -67,16 +68,17 @@ public class PurchaseManagerImpl implements PurchaseManager {
 
     @Override
     public AppleNotificationPayloadVO decodeApplePayload(String signedPayload) {
-        System.out.println(signedPayload + " ㅎㅎㅎㅎㅎㅎㅎㅎㅎㅎ");
+        
         Map<String, Object> jsonPayload = DecodeTokenFactory.decodeToken(signedPayload);
         ObjectMapper objectMapper = new ObjectMapper();
+
+        System.out.println(jsonPayload + " ??????ddddd");
 
         String notificationType = jsonPayload.get("notificationType").toString();
         String subType =
             (jsonPayload.get("subType")!=null) ? jsonPayload.get("subType").toString() : null;
         Map<String, Object> data = (Map<String, Object>) jsonPayload.get("data");
 
-        System.out.println(data + " ??????ddddd");
         String notificationUUID =
             (jsonPayload.get("notificationUUID")!=null) ? jsonPayload.get("notificationUUID")
                 .toString() : null;
@@ -100,8 +102,15 @@ public class PurchaseManagerImpl implements PurchaseManager {
     }
 
     @Override
-    public void changeSubscriptionStatus(User user, String transactionId,
-        AppleNotificationPayloadVO payloadVO) {
+    public void changeSubscriptionStatus(AppleNotificationPayloadVO payloadVO) {
+
+        String transactionId =
+            decodeAppleNotificationData(payloadVO.data().signedTransactionInfo());
+        Purchase purchase = purchaseRepository.findByTransactionId(transactionId)
+            .orElseThrow(() -> new PurchaseNotFoundException(NOT_FOUND_TRANSACTION_EXCEPTION));
+
+        User user = purchase.getUser();
+
         if (payloadVO.subType().equals(ConstantUtil.APPLE_SUBTYPE_AUTO_RENEW_DISABLED)
             && !user.getSubscribe().equals(Subscribe.NORMAL)) {
             user.setSubscribe(Subscribe.NORMAL);

@@ -64,8 +64,7 @@ public class FakePurchaseManager implements PurchaseManager {
     }
 
     @Override
-    public void changeSubscriptionStatus(User user, String transactionId,
-        AppleNotificationPayloadVO payloadVO) {
+    public void changeSubscriptionStatus(AppleNotificationPayloadVO payloadVO) {
 
     }
 }
