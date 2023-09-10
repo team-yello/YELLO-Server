@@ -4,9 +4,9 @@ import static com.yello.server.global.common.ErrorCode.APPLE_TOKEN_SERVER_EXCEPT
 import static com.yello.server.global.common.ErrorCode.GOOGLE_SUBSCRIPTIONS_SUBSCRIPTION_EXCEPTION;
 import static com.yello.server.global.common.ErrorCode.NOT_FOUND_TRANSACTION_EXCEPTION;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.yello.server.domain.purchase.dto.apple.AppleNotificationPayloadVO;
+import com.yello.server.domain.purchase.dto.apple.ApplePayloadDataVO;
 import com.yello.server.domain.purchase.dto.apple.TransactionInfoResponse;
 import com.yello.server.domain.purchase.entity.Gateway;
 import com.yello.server.domain.purchase.entity.ProductType;
@@ -67,17 +67,18 @@ public class PurchaseManagerImpl implements PurchaseManager {
 
     @Override
     public AppleNotificationPayloadVO decodeApplePayload(String signedPayload) {
-        String jsonPayload = DecodeTokenFactory.decodePayload(signedPayload);
-
+        Map<String, Object> jsonPayload = DecodeTokenFactory.decodePayload(signedPayload);
         ObjectMapper objectMapper = new ObjectMapper();
-        try {
-            AppleNotificationPayloadVO payloadVO =
-                objectMapper.readValue(jsonPayload, AppleNotificationPayloadVO.class);
-            System.out.println(payloadVO + " 입니다아아아아아");
-            return payloadVO;
-        } catch (JsonProcessingException e) {
-            throw new RuntimeException(e);
-        }
+
+        String notificationType = jsonPayload.get("notificationType").toString();
+        String subType = jsonPayload.get("subType").toString();
+        Map<String, Object> data = (Map<String, Object>) jsonPayload.get("data");
+        String notificationUUID = jsonPayload.get("notificationUUID").toString();
+        
+        ApplePayloadDataVO payloadVO = objectMapper.convertValue(data, ApplePayloadDataVO.class);
+
+        return AppleNotificationPayloadVO.of(notificationType, subType, payloadVO,
+            notificationUUID);
     }
 
     @Override
