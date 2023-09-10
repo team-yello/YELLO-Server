@@ -15,13 +15,4 @@ public class DecodeTokenFactory {
         return jsonArray;
     }
 
-    public static Map<String, Object> decodePayload(String payload) {
-        final String decodePayload = new String(java.util.Base64.getUrlDecoder().decode(payload));
-
-        BasicJsonParser jsonParser = new BasicJsonParser();
-        Map<String, Object> jsonArray = jsonParser.parseMap(decodePayload);
-        
-        return jsonArray;
-    }
-
 }
