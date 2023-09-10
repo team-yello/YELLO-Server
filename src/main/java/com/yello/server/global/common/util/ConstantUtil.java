@@ -46,6 +46,14 @@ public class ConstantUtil {
     public static final String GOOGLE_PURCHASE_INAPP_CANCELED = "CANCELED";
     public static final String YELLO_FEMALE = "yello_female";
     public static final String YELLO_MALE = "yello_male";
+    public static final String APPLE_NOTIFICATION_CONSUMPTION_REQUEST = "CONSUMPTION_REQUEST";
+    public static final String APPLE_NOTIFICATION_SUBSCRIPTION_STATUS_CHANGE =
+        "DID_CHANGE_RENEWAL_STATUS";
+    public static final String APPLE_NOTIFICATION_REFUND = "REFUND";
+    public static final String APPLE_NOTIFICATION_EXPIRED = "EXPIRED";
+    public static final String APPLE_NOTIFICATION_TEST = "TEST";
+    public static final String APPLE_SUBTYPE_AUTO_RENEW_DISABLED = "AUTO_RENEW_DISABLED";
+    public static final String APPLE_SUBTYPE_VOLUNTARY = "VOLUNTARY";
 
 
     private ConstantUtil() {
