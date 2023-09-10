@@ -67,14 +67,15 @@ public class PurchaseManagerImpl implements PurchaseManager {
 
     @Override
     public AppleNotificationPayloadVO decodeApplePayload(String signedPayload) {
-        Map<String, Object> jsonPayload = DecodeTokenFactory.decodePayload(signedPayload);
+        System.out.println(signedPayload + " ㅎㅎㅎㅎㅎㅎㅎㅎㅎㅎ");
+        Map<String, Object> jsonPayload = DecodeTokenFactory.decodeToken(signedPayload);
         ObjectMapper objectMapper = new ObjectMapper();
 
         String notificationType = jsonPayload.get("notificationType").toString();
         String subType = jsonPayload.get("subType").toString();
         Map<String, Object> data = (Map<String, Object>) jsonPayload.get("data");
         String notificationUUID = jsonPayload.get("notificationUUID").toString();
-        
+
         ApplePayloadDataVO payloadVO = objectMapper.convertValue(data, ApplePayloadDataVO.class);
 
         return AppleNotificationPayloadVO.of(notificationType, subType, payloadVO,
