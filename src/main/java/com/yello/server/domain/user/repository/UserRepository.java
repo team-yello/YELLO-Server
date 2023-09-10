@@ -14,6 +14,8 @@ public interface UserRepository {
 
     User getById(Long id);
 
+    User getByIdNotFiltered(Long id);
+
     Optional<User> findByUuid(String uuid);
 
     Optional<User> findByUuidNotFiltered(String uuid);
@@ -64,6 +66,6 @@ public interface UserRepository {
     Page<User> findAllByYelloIdContaining(Pageable pageable, String yelloId);
 
     Page<User> findAllByNameContaining(Pageable pageable, String name);
-    
+
     void delete(User user);
 }
