@@ -22,7 +22,6 @@ public interface PurchaseManager {
 
     String decodeAppleNotificationData(String signedTransactionInfo);
 
-    void changeSubscriptionStatus(User user, String transactionId,
-        AppleNotificationPayloadVO payloadVO);
+    void changeSubscriptionStatus(AppleNotificationPayloadVO payloadVO);
 
 }
