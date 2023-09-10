@@ -36,9 +36,12 @@ public enum SuccessCode {
     FRIEND_SEARCH_SUCCESS(OK, "친구 검색하기에 성공했습니다."),
     VERIFY_RECEIPT_SUCCESS(OK, "인앱결제 검증에 성공했습니다."),
     READ_USER_ADMIN_SUCCESS(OK, "어드민 페이지 유저 조회에 성공하였습니다."),
+    READ_USER_DETAIL_ADMIN_SUCCESS(OK, "어드민 페이지 유저 상세 조회에 성공하였습니다."),
+    UPDATE_USER_DETAIL_ADMIN_SUCCESS(OK, "어드민 페이지 유저 상세 정보 수정에 성공하였습니다."),
     READ_COOLDOWN_ADMIN_SUCCESS(OK, "어드민 페이지 쿨다운 조회에 성공하였습니다."),
     DELETE_USER_ADMIN_SUCCESS(OK, "어드민 권환으로 유저 삭제에 성공하였습니다."),
     DELETE_COOLDOWN_ADMIN_SUCCESS(OK, "어드민 권환으로 쿨다운 삭제에 성공하였습니다."),
+    POST_APPLE_NOTIFICATION_SUCCESS(OK, "apple 알림 처리에 성공하였습니다."),
 
     /**
      * 201 CREATED

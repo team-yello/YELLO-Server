@@ -34,6 +34,8 @@ public enum ErrorCode {
         "이미 CANCELED한 유저에게 CANCELED 요청을 보내어 중복됩니다"),
     GOOGLE_INAPP_BAD_REQUEST_EXCEPTION(BAD_REQUEST, "해당 영수증은 취소되었거나, 대기 중인 결제입니다."),
     APPLE_IN_APP_BAD_REQUEST_EXCEPTION(BAD_REQUEST, "존재하지 않는 영수증입니다."),
+    METHOD_ARGUMENT_TYPE_MISMATCH_EXCEPTION(BAD_REQUEST, "입력한 값의 타입이 올바르지 않습니다."),
+    USER_ADMIN_BAD_REQUEST_EXCEPTION(BAD_REQUEST, "검색 필드가 없습니다."),
 
     /**
      * 401 UNAUTHORIZED
@@ -66,6 +68,7 @@ public enum ErrorCode {
      * 404 NOT FOUND
      */
     YELLOID_NOT_FOUND_USER_EXCEPTION(NOT_FOUND, "탈퇴했거나 존재하지 않는 유저의 yelloId입니다."),
+    DEVICE_TOKEN_NOT_FOUND_USER_EXCEPTION(NOT_FOUND, "해당 Device Token의 유저가 존재하지 않습니다."),
     AUTH_NOT_FOUND_USER_EXCEPTION(NOT_FOUND, "토큰 정보에 해당하는 유저가 존재하지 않습니다."),
     AUTH_UUID_NOT_FOUND_USER_EXCEPTION(NOT_FOUND, "토큰 uuid에 해당하는 유저가 존재하지 않습니다."),
     GROUPID_NOT_FOUND_GROUP_EXCEPTION(NOT_FOUND, "해당 그룹 id의 그룹이 존재하지 않습니다."),
@@ -83,6 +86,7 @@ public enum ErrorCode {
         "Google OAuth 2.0 특정 토큰이 DB에 없습니다. DBA에게 문의해주세요."),
     USER_ADMIN_NOT_FOUND_EXCEPTION(NOT_FOUND, "해당 Admin이 존재하지 않습니다."),
     NOT_EQUAL_TRANSACTION_EXCEPTION(NOT_FOUND, "동일하지 않은 거래입니다."),
+    NOT_FOUND_NOTIFICATION_TYPE_EXCEPTION(NOT_FOUND, "존재하지 않는 알림 타입 입니다"),
 
     /**
      * 409 CONFLICT

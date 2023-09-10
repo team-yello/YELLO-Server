@@ -2,7 +2,11 @@ package com.yello.server.domain.purchase.service;
 
 import static com.yello.server.global.common.ErrorCode.APPLE_TOKEN_SERVER_EXCEPTION;
 import static com.yello.server.global.common.ErrorCode.GOOGLE_SUBSCRIPTIONS_SUBSCRIPTION_EXCEPTION;
+import static com.yello.server.global.common.ErrorCode.NOT_FOUND_TRANSACTION_EXCEPTION;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.yello.server.domain.purchase.dto.apple.AppleNotificationPayloadVO;
+import com.yello.server.domain.purchase.dto.apple.ApplePayloadDataVO;
 import com.yello.server.domain.purchase.dto.apple.TransactionInfoResponse;
 import com.yello.server.domain.purchase.entity.Gateway;
 import com.yello.server.domain.purchase.entity.ProductType;
@@ -12,7 +16,11 @@ import com.yello.server.domain.purchase.exception.PurchaseConflictException;
 import com.yello.server.domain.purchase.repository.PurchaseRepository;
 import com.yello.server.domain.user.entity.Subscribe;
 import com.yello.server.domain.user.entity.User;
+import com.yello.server.domain.user.repository.UserRepository;
+import com.yello.server.global.common.factory.DecodeTokenFactory;
 import com.yello.server.global.common.factory.TokenFactory;
+import com.yello.server.global.common.util.ConstantUtil;
+import java.util.Map;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
@@ -23,6 +31,7 @@ public class PurchaseManagerImpl implements PurchaseManager {
 
     private final PurchaseRepository purchaseRepository;
     private final TokenFactory tokenFactory;
+    private final UserRepository userRepository;
 
     @Override
     public Purchase createSubscribe(User user, Gateway gateway, String transactionId) {
@@ -54,6 +63,43 @@ public class PurchaseManagerImpl implements PurchaseManager {
             .ifPresent(action -> {
                 throw new PurchaseConflictException(GOOGLE_SUBSCRIPTIONS_SUBSCRIPTION_EXCEPTION);
             });
+    }
+
+    @Override
+    public AppleNotificationPayloadVO decodeApplePayload(String signedPayload) {
+        Map<String, Object> jsonPayload = DecodeTokenFactory.decodePayload(signedPayload);
+        ObjectMapper objectMapper = new ObjectMapper();
+
+        String notificationType = jsonPayload.get("notificationType").toString();
+        String subType = jsonPayload.get("subType").toString();
+        Map<String, Object> data = (Map<String, Object>) jsonPayload.get("data");
+        String notificationUUID = jsonPayload.get("notificationUUID").toString();
+        
+        ApplePayloadDataVO payloadVO = objectMapper.convertValue(data, ApplePayloadDataVO.class);
+
+        return AppleNotificationPayloadVO.of(notificationType, subType, payloadVO,
+            notificationUUID);
+    }
+
+    @Override
+    public String decodeAppleNotificationData(String signedTransactionInfo) {
+
+        Map<String, Object> decodeToken = DecodeTokenFactory.decodeToken(signedTransactionInfo);
+        String decodeTransactionId = decodeToken.get("transactionId").toString();
+
+        Purchase purchase = purchaseRepository.findByTransactionId(decodeTransactionId)
+            .orElseThrow(() -> new PurchaseConflictException(NOT_FOUND_TRANSACTION_EXCEPTION));
+
+        return purchase.getTransactionId();
+    }
+
+    @Override
+    public void changeSubscriptionStatus(User user, String transactionId,
+        AppleNotificationPayloadVO payloadVO) {
+        if (payloadVO.subType().equals(ConstantUtil.APPLE_SUBTYPE_AUTO_RENEW_DISABLED)
+            && !user.getSubscribe().equals(Subscribe.NORMAL)) {
+            user.setSubscribe(Subscribe.NORMAL);
+        }
     }
 
 

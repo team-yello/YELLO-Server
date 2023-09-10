@@ -14,6 +14,9 @@ public class SlackConfiguration {
     @Value("${slack.token.bank}")
     String slackTokenForPurchase;
 
+    @Value("${slack.token.sign-up}")
+    String slackTokenForSignUp;
+
     @Bean
     SlackApi slackErrorApi() {
         return new SlackApi("https://hooks.slack.com/services/" + slackTokenForError);
@@ -22,5 +25,10 @@ public class SlackConfiguration {
     @Bean
     SlackApi slackPurchaseApi() {
         return new SlackApi("https://hooks.slack.com/services/" + slackTokenForPurchase);
+    }
+
+    @Bean
+    SlackApi slackSignUpApi() {
+        return new SlackApi("https://hooks.slack.com/services/" + slackTokenForSignUp);
     }
 }

@@ -35,8 +35,7 @@ public class TokenFactoryImpl implements TokenFactory {
     @Override
     public String generateAppleToken() {
         setKey();
-
-        return Jwts.builder()
+        String compact = Jwts.builder()
             .setHeaderParam("kid", kid)
             .setIssuer(iss)
             .setIssuedAt(new Date(System.currentTimeMillis()))
@@ -49,6 +48,8 @@ public class TokenFactoryImpl implements TokenFactory {
                     .generatePrivate(new PKCS8EncodedKeySpec(Base64.decodeBase64(sig)))
             )
             .compact();
+        System.out.println(compact + " sdsdfsdsdfss");
+        return compact;
     }
 
     @SneakyThrows

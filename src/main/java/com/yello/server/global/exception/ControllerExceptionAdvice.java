@@ -1,6 +1,7 @@
 package com.yello.server.global.exception;
 
 import static com.yello.server.global.common.ErrorCode.FIELD_REQUIRED_EXCEPTION;
+import static com.yello.server.global.common.ErrorCode.METHOD_ARGUMENT_TYPE_MISMATCH_EXCEPTION;
 import static com.yello.server.global.common.ErrorCode.QUERY_STRING_REQUIRED_EXCEPTION;
 import static org.springframework.http.HttpStatus.BAD_REQUEST;
 import static org.springframework.http.HttpStatus.CONFLICT;
@@ -9,6 +10,7 @@ import static org.springframework.http.HttpStatus.INTERNAL_SERVER_ERROR;
 import static org.springframework.http.HttpStatus.NOT_FOUND;
 import static org.springframework.http.HttpStatus.UNAUTHORIZED;
 
+import com.yello.server.domain.admin.exception.UserAdminBadRequestException;
 import com.yello.server.domain.admin.exception.UserAdminNotFoundException;
 import com.yello.server.domain.authorization.exception.AuthBadRequestException;
 import com.yello.server.domain.authorization.exception.CustomAuthenticationException;
@@ -55,6 +57,7 @@ import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.MissingServletRequestParameterException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
+import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
 
 @RestControllerAdvice
 public class ControllerExceptionAdvice {
@@ -95,7 +98,8 @@ public class ControllerExceptionAdvice {
         QuestionException.class,
         PurchaseException.class,
         GoogleBadRequestException.class,
-        AppleBadRequestException.class
+        AppleBadRequestException.class,
+        UserAdminBadRequestException.class
     })
     public ResponseEntity<BaseResponse> BadRequestException(CustomException exception) {
         return ResponseEntity.status(BAD_REQUEST)
@@ -132,6 +136,17 @@ public class ControllerExceptionAdvice {
         return ResponseEntity.status(BAD_REQUEST)
             .body(BaseResponse.error(QUERY_STRING_REQUIRED_EXCEPTION,
                 QUERY_STRING_REQUIRED_EXCEPTION.getMessage()));
+    }
+
+    @ExceptionHandler({
+        MethodArgumentTypeMismatchException.class
+    })
+    public ResponseEntity<BaseResponse> BadRequestException(
+        MethodArgumentTypeMismatchException exception
+    ) {
+        return ResponseEntity.status(BAD_REQUEST)
+            .body(BaseResponse.error(METHOD_ARGUMENT_TYPE_MISMATCH_EXCEPTION,
+                METHOD_ARGUMENT_TYPE_MISMATCH_EXCEPTION.getMessage()));
     }
 
     /**

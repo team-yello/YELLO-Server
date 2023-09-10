@@ -30,6 +30,9 @@ public class SlackWebhookMessageFactory {
     private static final String PURCHASE_TITLE = "돈이 입금되었습니다.";
     private static final String PURCHASE_USERNAME = "옐로 뱅크";
 
+    private static final String SIGNUP_TITLE = "신규 유저가 가입하였습니다. ";
+    private static final String SIGNUP_USERNAME = "옐로 온보딩";
+
     private final UserRepository userRepository;
     private final TokenProvider tokenProvider;
 
@@ -84,6 +87,15 @@ public class SlackWebhookMessageFactory {
             .setUsername(PURCHASE_USERNAME);
     }
 
+    public SlackMessage generateSlackSignUpMessage(
+        HttpServletRequest request
+    ) throws IOException {
+        return new SlackMessage()
+            .setAttachments(generateSlackSignUpAttachment(request))
+            .setText(SIGNUP_TITLE)
+            .setUsername(SIGNUP_USERNAME);
+    }
+
     private List<SlackAttachment> generateSlackErrorAttachment(
         HttpServletRequest request,
         Exception exception
@@ -114,6 +126,19 @@ public class SlackWebhookMessageFactory {
         return Collections.singletonList(slackAttachment);
     }
 
+    private List<SlackAttachment> generateSlackSignUpAttachment(
+        HttpServletRequest request
+    ) throws IOException {
+        final SlackAttachment slackAttachment = new SlackAttachment()
+            .setFallback("good")
+            .setColor("good")
+            .setTitle(SIGNUP_TITLE)
+            .setTitleLink(request.getContextPath())
+            .setText(SIGNUP_TITLE)
+            .setFields(generateSlackSimpleFieldList(request));
+        return Collections.singletonList(slackAttachment);
+    }
+
     private List<SlackField> generateSlackFieldList(
         HttpServletRequest request
     ) throws IOException {
@@ -141,6 +166,15 @@ public class SlackWebhookMessageFactory {
             new SlackField().setTitle("인증/인가 정보 - Authorization")
                 .setValue(request.getHeader(HttpHeaders.AUTHORIZATION)),
             new SlackField().setTitle("인증/인가 정보 - 유저").setValue(userInfo)
+        );
+    }
+
+    private List<SlackField> generateSlackSimpleFieldList(
+        HttpServletRequest request
+    ) throws IOException {
+        return Arrays.asList(
+            new SlackField().setTitle("Request Body")
+                .setValue(getRequestBody(request))
         );
     }
 }

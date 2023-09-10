@@ -14,6 +14,8 @@ public interface UserRepository {
 
     User getById(Long id);
 
+    User getByIdNotFiltered(Long id);
+
     Optional<User> findByUuid(String uuid);
 
     Optional<User> findByUuidNotFiltered(String uuid);
@@ -22,11 +24,18 @@ public interface UserRepository {
 
     boolean existsByUuid(String uuid);
 
+    User getByYelloId(String yelloId);
+
+    User getByYelloIdNotFiltered(String yelloId);
+
     Optional<User> findByYelloId(String yelloId);
 
     Optional<User> findByYelloIdNotFiltered(String yelloId);
 
-    User getByYelloId(String yelloId);
+    User getByDeviceToken(String deviceToken);
+
+    User getByDeviceTokenNotFiltered(String deviceToken);
+
 
     Optional<User> findByDeviceToken(String deviceToken);
 
@@ -50,9 +59,13 @@ public interface UserRepository {
 
     Long countAllByYelloIdContaining(String yelloId);
 
+    Long countAllByNameContaining(String name);
+
     Page<User> findAll(Pageable pageable);
 
-    Page<User> findAllContaining(Pageable pageable, String yelloId);
+    Page<User> findAllByYelloIdContaining(Pageable pageable, String yelloId);
+
+    Page<User> findAllByNameContaining(Pageable pageable, String name);
 
     void delete(User user);
 }

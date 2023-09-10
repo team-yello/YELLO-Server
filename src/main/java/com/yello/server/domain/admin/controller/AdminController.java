@@ -5,21 +5,27 @@ import static com.yello.server.global.common.SuccessCode.DELETE_USER_ADMIN_SUCCE
 import static com.yello.server.global.common.SuccessCode.LOGIN_USER_ADMIN_SUCCESS;
 import static com.yello.server.global.common.SuccessCode.READ_COOLDOWN_ADMIN_SUCCESS;
 import static com.yello.server.global.common.SuccessCode.READ_USER_ADMIN_SUCCESS;
+import static com.yello.server.global.common.SuccessCode.READ_USER_DETAIL_ADMIN_SUCCESS;
+import static com.yello.server.global.common.SuccessCode.UPDATE_USER_DETAIL_ADMIN_SUCCESS;
 
 import com.yello.server.domain.admin.dto.request.AdminLoginRequest;
+import com.yello.server.domain.admin.dto.request.AdminUserDetailRequest;
 import com.yello.server.domain.admin.dto.response.AdminCooldownResponse;
 import com.yello.server.domain.admin.dto.response.AdminLoginResponse;
+import com.yello.server.domain.admin.dto.response.AdminUserDetailResponse;
 import com.yello.server.domain.admin.dto.response.AdminUserResponse;
 import com.yello.server.domain.admin.service.AdminService;
 import com.yello.server.domain.user.entity.User;
 import com.yello.server.global.common.annotation.AccessTokenUser;
 import com.yello.server.global.common.dto.BaseResponse;
+import com.yello.server.global.common.dto.EmptyObject;
 import com.yello.server.global.common.factory.PaginationFactory;
 import javax.annotation.Nullable;
 import lombok.RequiredArgsConstructor;
 import lombok.val;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -41,12 +47,26 @@ public class AdminController {
 
     @GetMapping("/user")
     public BaseResponse<AdminUserResponse> getUserAdmin(@AccessTokenUser User user, @RequestParam Integer page,
-        @Nullable @RequestParam String yelloId) {
-        val data = yelloId == null
+        @Nullable @RequestParam String field,
+        @Nullable @RequestParam String value) {
+        val data = (field == null && value == null)
             ? adminService.findUser(user.getId(), PaginationFactory.createPageableLimitTen(page))
             : adminService.findUserContaining(user.getId(), PaginationFactory.createPageableLimitTen(page),
-                yelloId);
+                field, value);
         return BaseResponse.success(READ_USER_ADMIN_SUCCESS, data);
+    }
+
+    @GetMapping("/user/{id}")
+    public BaseResponse<AdminUserDetailResponse> getUserDetailAdmin(@AccessTokenUser User user, @PathVariable Long id) {
+        val data = adminService.findUserDetail(user.getId(), id);
+        return BaseResponse.success(READ_USER_DETAIL_ADMIN_SUCCESS, data);
+    }
+
+    @PostMapping("/user/{id}")
+    public BaseResponse<EmptyObject> postUserDetailAdmin(@AccessTokenUser User user,
+        @PathVariable Long id, @RequestBody AdminUserDetailRequest request) {
+        val data = adminService.updateUserDetail(user.getId(), id, request);
+        return BaseResponse.success(UPDATE_USER_DETAIL_ADMIN_SUCCESS);
     }
 
     @DeleteMapping("/user")

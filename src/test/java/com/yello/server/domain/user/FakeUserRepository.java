@@ -1,6 +1,7 @@
 package com.yello.server.domain.user;
 
 import static com.yello.server.global.common.ErrorCode.AUTH_UUID_NOT_FOUND_USER_EXCEPTION;
+import static com.yello.server.global.common.ErrorCode.DEVICE_TOKEN_NOT_FOUND_USER_EXCEPTION;
 import static com.yello.server.global.common.ErrorCode.USERID_NOT_FOUND_USER_EXCEPTION;
 import static com.yello.server.global.common.ErrorCode.YELLOID_NOT_FOUND_USER_EXCEPTION;
 
@@ -21,12 +22,12 @@ public class FakeUserRepository implements UserRepository {
 
     @Override
     public User save(User user) {
-        if (user.getId()!=null && user.getId() > id) {
+        if (user.getId() != null && user.getId() > id) {
             id = user.getId();
         }
 
         User newUser = User.builder()
-            .id(user.getId()==null ? ++id : user.getId())
+            .id(user.getId() == null ? ++id : user.getId())
             .recommendCount(0L)
             .name(user.getName())
             .yelloId(user.getYelloId())
@@ -56,6 +57,15 @@ public class FakeUserRepository implements UserRepository {
 
     @Override
     public User getById(Long id) {
+        return data.stream()
+            .filter(user -> user.getDeletedAt() == null)
+            .filter(user -> user.getId().equals(id))
+            .findFirst()
+            .orElseThrow(() -> new UserNotFoundException(USERID_NOT_FOUND_USER_EXCEPTION));
+    }
+
+    @Override
+    public User getByIdNotFiltered(Long id) {
         return data.stream()
             .filter(user -> user.getId().equals(id))
             .findFirst()
@@ -93,7 +103,7 @@ public class FakeUserRepository implements UserRepository {
     @Override
     public Optional<User> findByYelloId(String yelloId) {
         return data.stream()
-            .filter(user -> user.getDeletedAt()==null)
+            .filter(user -> user.getDeletedAt() == null)
             .filter(user -> user.getYelloId().equals(yelloId))
             .findFirst();
     }
@@ -106,7 +116,32 @@ public class FakeUserRepository implements UserRepository {
     }
 
     @Override
+    public User getByDeviceToken(String deviceToken) {
+        return data.stream()
+            .filter(user -> user.getDeletedAt() == null)
+            .filter(user -> user.getDeviceToken().equals(deviceToken))
+            .findFirst()
+            .orElseThrow(() -> new UserNotFoundException(DEVICE_TOKEN_NOT_FOUND_USER_EXCEPTION));
+    }
+
+    @Override
+    public User getByDeviceTokenNotFiltered(String deviceToken) {
+        return data.stream()
+            .filter(user -> user.getDeviceToken().equals(deviceToken))
+            .findFirst()
+            .orElseThrow(() -> new UserNotFoundException(DEVICE_TOKEN_NOT_FOUND_USER_EXCEPTION));
+    }
+
+    @Override
     public User getByYelloId(String yelloId) {
+        return data.stream()
+            .filter(user -> user.getYelloId().equals(yelloId))
+            .findFirst()
+            .orElseThrow(() -> new UserNotFoundException(YELLOID_NOT_FOUND_USER_EXCEPTION));
+    }
+
+    @Override
+    public User getByYelloIdNotFiltered(String yelloId) {
         return data.stream()
             .filter(user -> user.getYelloId().equals(yelloId))
             .findFirst()
@@ -188,6 +223,14 @@ public class FakeUserRepository implements UserRepository {
     }
 
     @Override
+    public Long countAllByNameContaining(String name) {
+        return (long) data.stream()
+            .filter(user -> user.getName().contains(name))
+            .toList()
+            .size();
+    }
+
+    @Override
     public Page<User> findAll(Pageable pageable) {
         final List<User> userList = data.stream()
             .skip(pageable.getOffset())
@@ -197,9 +240,19 @@ public class FakeUserRepository implements UserRepository {
     }
 
     @Override
-    public Page<User> findAllContaining(Pageable pageable, String yelloId) {
+    public Page<User> findAllByYelloIdContaining(Pageable pageable, String yelloId) {
         final List<User> userList = data.stream()
             .filter(user -> user.getYelloId().contains(yelloId))
+            .skip(pageable.getOffset())
+            .limit(pageable.getPageSize())
+            .toList();
+        return new PageImpl<>(userList);
+    }
+
+    @Override
+    public Page<User> findAllByNameContaining(Pageable pageable, String name) {
+        final List<User> userList = data.stream()
+            .filter(user -> user.getName().contains(name))
             .skip(pageable.getOffset())
             .limit(pageable.getPageSize())
             .toList();

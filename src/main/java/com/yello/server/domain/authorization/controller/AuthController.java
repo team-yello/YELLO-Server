@@ -21,6 +21,7 @@ import com.yello.server.domain.authorization.dto.response.SignUpResponse;
 import com.yello.server.domain.authorization.service.AuthService;
 import com.yello.server.global.common.annotation.ServiceToken;
 import com.yello.server.global.common.dto.BaseResponse;
+import com.yello.server.infrastructure.slack.annotation.SlackSignUpNotification;
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 import lombok.RequiredArgsConstructor;
@@ -52,6 +53,7 @@ public class AuthController {
     }
 
     @PostMapping("/signup")
+    @SlackSignUpNotification
     public BaseResponse<SignUpResponse> postSignUp(@Valid @RequestBody SignUpRequest signUpRequest) {
         val data = authService.signUp(signUpRequest);
         return BaseResponse.success(SIGN_UP_SUCCESS, data);
