@@ -7,6 +7,8 @@ import static com.yello.server.global.common.ErrorCode.NOT_FOUND_TRANSACTION_EXC
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.yello.server.domain.purchase.dto.apple.AppleNotificationPayloadVO;
 import com.yello.server.domain.purchase.dto.apple.ApplePayloadDataVO;
+import com.fasterxml.jackson.core.JsonProcessingException;
+
 import com.yello.server.domain.purchase.dto.apple.TransactionInfoResponse;
 import com.yello.server.domain.purchase.entity.Gateway;
 import com.yello.server.domain.purchase.entity.ProductType;
@@ -67,6 +69,7 @@ public class PurchaseManagerImpl implements PurchaseManager {
 
     @Override
     public AppleNotificationPayloadVO decodeApplePayload(String signedPayload) {
+
         Map<String, Object> jsonPayload = DecodeTokenFactory.decodePayload(signedPayload);
         ObjectMapper objectMapper = new ObjectMapper();
 
@@ -79,6 +82,7 @@ public class PurchaseManagerImpl implements PurchaseManager {
 
         return AppleNotificationPayloadVO.of(notificationType, subType, payloadVO,
             notificationUUID);
+
     }
 
     @Override

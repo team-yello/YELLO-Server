@@ -24,4 +24,10 @@ public class DecodeTokenFactory {
         return jsonArray;
     }
 
+    public static String decodePayload(String payload) {
+        final String decodePayload = new String(java.util.Base64.getUrlDecoder().decode(payload));
+
+        return decodePayload;
+    }
+
 }

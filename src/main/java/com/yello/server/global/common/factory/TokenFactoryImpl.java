@@ -35,6 +35,7 @@ public class TokenFactoryImpl implements TokenFactory {
     @Override
     public String generateAppleToken() {
         setKey();
+
         String compact = Jwts.builder()
             .setHeaderParam("kid", kid)
             .setIssuer(iss)
