@@ -58,6 +58,15 @@ public class FakeUserRepository implements UserRepository {
     @Override
     public User getById(Long id) {
         return data.stream()
+            .filter(user -> user.getDeletedAt() == null)
+            .filter(user -> user.getId().equals(id))
+            .findFirst()
+            .orElseThrow(() -> new UserNotFoundException(USERID_NOT_FOUND_USER_EXCEPTION));
+    }
+
+    @Override
+    public User getByIdNotFiltered(Long id) {
+        return data.stream()
             .filter(user -> user.getId().equals(id))
             .findFirst()
             .orElseThrow(() -> new UserNotFoundException(USERID_NOT_FOUND_USER_EXCEPTION));
