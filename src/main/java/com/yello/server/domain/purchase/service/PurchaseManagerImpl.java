@@ -75,10 +75,11 @@ public class PurchaseManagerImpl implements PurchaseManager {
         String subType =
             (jsonPayload.get("subType")!=null) ? jsonPayload.get("subType").toString() : null;
         Map<String, Object> data = (Map<String, Object>) jsonPayload.get("data");
+
+        System.out.println(data + " ??????ddddd");
         String notificationUUID =
             (jsonPayload.get("notificationUUID")!=null) ? jsonPayload.get("notificationUUID")
                 .toString() : null;
-        ;
 
         ApplePayloadDataVO payloadVO = objectMapper.convertValue(data, ApplePayloadDataVO.class);
 

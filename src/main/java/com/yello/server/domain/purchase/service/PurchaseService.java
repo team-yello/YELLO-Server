@@ -295,6 +295,12 @@ public class PurchaseService {
 
         AppleNotificationPayloadVO payloadVO =
             purchaseManager.decodeApplePayload(request.signedPayload());
+
+        if (payloadVO.data().signedRenewalInfo()==null || payloadVO.data().signedTransactionInfo()
+            .isEmpty()) {
+            return;
+        }
+
         String transactionId =
             purchaseManager.decodeAppleNotificationData(payloadVO.data().signedTransactionInfo());
         Purchase purchase = purchaseRepository.findByTransactionId(transactionId)
