@@ -111,7 +111,7 @@ public class AdminService {
         userAdminRepository.getByUser(admin);
 
         // logic
-        final User user = userRepository.getById(userId);
+        final User user = userRepository.getByIdNotFiltered(userId);
 
         return AdminUserDetailResponse.of(user);
     }
