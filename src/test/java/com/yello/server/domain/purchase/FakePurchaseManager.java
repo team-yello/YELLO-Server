@@ -3,6 +3,7 @@ package com.yello.server.domain.purchase;
 import static com.yello.server.global.common.ErrorCode.APPLE_TOKEN_SERVER_EXCEPTION;
 import static com.yello.server.global.common.ErrorCode.GOOGLE_SUBSCRIPTIONS_SUBSCRIPTION_EXCEPTION;
 
+import com.yello.server.domain.purchase.dto.apple.AppleNotificationPayloadVO;
 import com.yello.server.domain.purchase.dto.apple.TransactionInfoResponse;
 import com.yello.server.domain.purchase.entity.Gateway;
 import com.yello.server.domain.purchase.entity.ProductType;
@@ -50,5 +51,21 @@ public class FakePurchaseManager implements PurchaseManager {
             .ifPresent(action -> {
                 throw new PurchaseConflictException(GOOGLE_SUBSCRIPTIONS_SUBSCRIPTION_EXCEPTION);
             });
+    }
+
+    @Override
+    public AppleNotificationPayloadVO decodeApplePayload(String signedPayload) {
+        return null;
+    }
+
+    @Override
+    public String decodeAppleNotificationData(String signedTransactionInfo) {
+        return null;
+    }
+
+    @Override
+    public void changeSubscriptionStatus(User user, String transactionId,
+        AppleNotificationPayloadVO payloadVO) {
+
     }
 }
