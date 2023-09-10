@@ -11,4 +11,14 @@ public record AppleNotificationPayloadVO(
 
 ) {
 
+    public static AppleNotificationPayloadVO of(String notificationType, String subType,
+        ApplePayloadDataVO data, String notificationUUID) {
+        return AppleNotificationPayloadVO.builder()
+            .notificationType(notificationType)
+            .subType(subType)
+            .data(data)
+            .notificationUUID(notificationUUID)
+            .build();
+    }
+
 }
