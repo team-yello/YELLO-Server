@@ -13,16 +13,14 @@ import lombok.Builder;
 public record VoteAvailableResponse(
     Boolean isPossible,
     Integer point,
-    String createdAt,
-    Integer friendStatus
+    String createdAt
 ) {
 
-    public static VoteAvailableResponse of(User user, Cooldown cooldown, Integer friendStatus) {
+    public static VoteAvailableResponse of(User user, Cooldown cooldown) {
         return VoteAvailableResponse.builder()
             .isPossible(cooldown.isPossible())
             .point(user.getPoint())
             .createdAt(toDateFormattedString(cooldown.getCreatedAt()))
-            .friendStatus(friendStatus)
             .build();
     }
 

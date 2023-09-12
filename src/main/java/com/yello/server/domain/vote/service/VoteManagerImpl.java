@@ -3,12 +3,10 @@ package com.yello.server.domain.vote.service;
 import static com.yello.server.global.common.ErrorCode.DUPLICATE_VOTE_EXCEPTION;
 import static com.yello.server.global.common.ErrorCode.INVALID_VOTE_EXCEPTION;
 import static com.yello.server.global.common.ErrorCode.LACK_POINT_EXCEPTION;
-import static com.yello.server.global.common.ErrorCode.LACK_USER_EXCEPTION;
 import static com.yello.server.global.common.factory.WeightedRandomFactory.randomPoint;
 import static com.yello.server.global.common.util.ConstantUtil.KEYWORD_HINT_POINT;
 import static com.yello.server.global.common.util.ConstantUtil.NAME_HINT_DEFAULT;
 import static com.yello.server.global.common.util.ConstantUtil.NAME_HINT_POINT;
-import static com.yello.server.global.common.util.ConstantUtil.NO_FRIEND_COUNT;
 import static com.yello.server.global.common.util.ConstantUtil.RANDOM_COUNT;
 import static com.yello.server.global.common.util.ConstantUtil.VOTE_COUNT;
 import static com.yello.server.global.common.util.ConstantUtil.YELLO_FEMALE;
@@ -16,7 +14,6 @@ import static com.yello.server.global.common.util.ConstantUtil.YELLO_MALE;
 
 import com.yello.server.domain.friend.dto.response.FriendShuffleResponse;
 import com.yello.server.domain.friend.entity.Friend;
-import com.yello.server.domain.friend.exception.FriendException;
 import com.yello.server.domain.friend.repository.FriendRepository;
 import com.yello.server.domain.keyword.dto.response.KeywordCheckResponse;
 import com.yello.server.domain.keyword.entity.Keyword;
@@ -110,11 +107,11 @@ public class VoteManagerImpl implements VoteManager {
 
     @Override
     public int useNameHint(User sender, Vote vote) {
-        if (sender.getPoint() < NAME_HINT_POINT && sender.getSubscribe()==Subscribe.NORMAL) {
+        if (sender.getPoint() < NAME_HINT_POINT && sender.getSubscribe() == Subscribe.NORMAL) {
             throw new VoteForbiddenException(LACK_POINT_EXCEPTION);
         }
 
-        if (vote.getNameHint()!=NAME_HINT_DEFAULT) {
+        if (vote.getNameHint() != NAME_HINT_DEFAULT) {
             throw new VoteNotFoundException(INVALID_VOTE_EXCEPTION);
         }
 
@@ -122,7 +119,7 @@ public class VoteManagerImpl implements VoteManager {
         int randomIndex = random.nextInt(2);
         vote.checkNameIndexOf(randomIndex);
 
-        if (sender.getSubscribe()==Subscribe.NORMAL) {
+        if (sender.getSubscribe() == Subscribe.NORMAL) {
             sender.minusPoint(NAME_HINT_POINT);
             return randomIndex;
         }
@@ -163,33 +160,22 @@ public class VoteManagerImpl implements VoteManager {
         voteRepository.save(createFirstVote(sender, user, greetingQuestion));
     }
 
-    @Override
-    public List<FriendShuffleResponse> getShuffledFriends(User user) {
+    private boolean isDuplicatedVote(int index, List<VoteAnswer> voteAnswers) {
+        return index > 0 && voteAnswers.get(index - 1).questionId()
+            .equals(voteAnswers.get(index).questionId());
+    }
+
+    private List<FriendShuffleResponse> getShuffledFriends(User user) {
         List<String> uuidList = Arrays.asList(YELLO_FEMALE, YELLO_MALE);
         final List<Friend> friends = friendRepository.findAllByUserIdNotIn(user.getId(), uuidList);
 
         List<Friend> friendList = new ArrayList<>(friends);
         Collections.shuffle(friendList);
 
-        if (friends.size()==NO_FRIEND_COUNT) {
-            throw new FriendException(LACK_USER_EXCEPTION);
-        }
-
-        if (friends.size() > NO_FRIEND_COUNT && friends.size() < RANDOM_COUNT) {
-            return friendList.stream()
-                .map(FriendShuffleResponse::of)
-                .toList();
-        }
-
         return friendList.stream()
             .map(FriendShuffleResponse::of)
             .limit(RANDOM_COUNT)
             .toList();
-    }
-
-    private boolean isDuplicatedVote(int index, List<VoteAnswer> voteAnswers) {
-        return index > 0 && voteAnswers.get(index - 1).questionId()
-            .equals(voteAnswers.get(index).questionId());
     }
 
     private List<String> getShuffledKeywords(Question question) {
