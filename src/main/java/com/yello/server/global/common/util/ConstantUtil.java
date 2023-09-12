@@ -57,7 +57,6 @@ public class ConstantUtil {
     public static final int REFUND_ONE_TICKET = 1;
     public static final int REFUND_TWO_TICKET = 2;
     public static final int REFUND_FIVE_TICKET = 5;
-    public static final int NO_FRIEND_COUNT = 0;
 
 
     private ConstantUtil() {
