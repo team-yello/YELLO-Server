@@ -54,9 +54,6 @@ public class ConstantUtil {
     public static final String APPLE_NOTIFICATION_TEST = "TEST";
     public static final String APPLE_SUBTYPE_AUTO_RENEW_DISABLED = "AUTO_RENEW_DISABLED";
     public static final String APPLE_SUBTYPE_VOLUNTARY = "VOLUNTARY";
-    public static final int REFUND_ONE_TICKET = 1;
-    public static final int REFUND_TWO_TICKET = 2;
-    public static final int REFUND_FIVE_TICKET = 5;
 
 
     private ConstantUtil() {
