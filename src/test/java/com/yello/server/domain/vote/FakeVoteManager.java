@@ -3,15 +3,18 @@ package com.yello.server.domain.vote;
 import static com.yello.server.global.common.ErrorCode.DUPLICATE_VOTE_EXCEPTION;
 import static com.yello.server.global.common.ErrorCode.INVALID_VOTE_EXCEPTION;
 import static com.yello.server.global.common.ErrorCode.LACK_POINT_EXCEPTION;
+import static com.yello.server.global.common.ErrorCode.LACK_USER_EXCEPTION;
 import static com.yello.server.global.common.factory.WeightedRandomFactory.randomPoint;
 import static com.yello.server.global.common.util.ConstantUtil.KEYWORD_HINT_POINT;
 import static com.yello.server.global.common.util.ConstantUtil.NAME_HINT_DEFAULT;
 import static com.yello.server.global.common.util.ConstantUtil.NAME_HINT_POINT;
+import static com.yello.server.global.common.util.ConstantUtil.NO_FRIEND_COUNT;
 import static com.yello.server.global.common.util.ConstantUtil.RANDOM_COUNT;
 import static com.yello.server.global.common.util.ConstantUtil.VOTE_COUNT;
 
 import com.yello.server.domain.friend.dto.response.FriendShuffleResponse;
 import com.yello.server.domain.friend.entity.Friend;
+import com.yello.server.domain.friend.exception.FriendException;
 import com.yello.server.domain.friend.repository.FriendRepository;
 import com.yello.server.domain.keyword.dto.response.KeywordCheckResponse;
 import com.yello.server.domain.keyword.entity.Keyword;
@@ -163,10 +166,21 @@ public class FakeVoteManager implements VoteManager {
             .equals(voteAnswers.get(index).questionId());
     }
 
-    private List<FriendShuffleResponse> getShuffledFriends(User user) {
+    @Override
+    public List<FriendShuffleResponse> getShuffledFriends(User user) {
         final List<Friend> friends = friendRepository.findAllByUserId(user.getId());
         List<Friend> friendList = new ArrayList<>(friends);
         Collections.shuffle(friendList);
+
+        if (friends.size()==NO_FRIEND_COUNT) {
+            throw new FriendException(LACK_USER_EXCEPTION);
+        }
+
+        if (friends.size() > NO_FRIEND_COUNT && friends.size() < RANDOM_COUNT) {
+            return friendList.stream()
+                .map(FriendShuffleResponse::of)
+                .toList();
+        }
 
         return friendList.stream()
             .map(FriendShuffleResponse::of)
