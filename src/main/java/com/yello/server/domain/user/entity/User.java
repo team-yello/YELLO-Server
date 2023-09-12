@@ -121,7 +121,7 @@ public class User extends AuditingTimeEntity {
             .group(group)
             .groupAdmissionYear(signUpRequest.groupAdmissionYear())
             .email(signUpRequest.email())
-            .deviceToken(signUpRequest.deviceToken())
+            .deviceToken(signUpRequest.deviceToken().isEmpty() ? null : signUpRequest.deviceToken())
             .subscribe(Subscribe.NORMAL)
             .ticketCount(0)
             .build();
@@ -182,7 +182,11 @@ public class User extends AuditingTimeEntity {
     }
 
     public void setDeviceToken(String deviceToken) {
-        this.deviceToken = deviceToken;
+        if (deviceToken.isEmpty()) {
+            this.deviceToken = null;
+        } else {
+            this.deviceToken = deviceToken;
+        }
     }
 
     public void setSubscribe(Subscribe subscribe) {
