@@ -67,9 +67,4 @@ public class FakePurchaseManager implements PurchaseManager {
     public void changeSubscriptionStatus(AppleNotificationPayloadVO payloadVO) {
 
     }
-
-    @Override
-    public void refundAppleInApp(AppleNotificationPayloadVO payloadVO) {
-
-    }
 }
