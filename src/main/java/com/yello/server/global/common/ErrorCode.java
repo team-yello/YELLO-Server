@@ -86,6 +86,7 @@ public enum ErrorCode {
         "Google OAuth 2.0 특정 토큰이 DB에 없습니다. DBA에게 문의해주세요."),
     USER_ADMIN_NOT_FOUND_EXCEPTION(NOT_FOUND, "해당 Admin이 존재하지 않습니다."),
     NOT_EQUAL_TRANSACTION_EXCEPTION(NOT_FOUND, "동일하지 않은 거래입니다."),
+    NOT_FOUND_NOTIFICATION_TYPE_EXCEPTION(NOT_FOUND, "존재하지 않는 알림 타입 입니다"),
 
     /**
      * 409 CONFLICT

@@ -9,8 +9,13 @@ import static com.yello.server.global.common.ErrorCode.GOOGLE_SUBSCRIPTION_USED_
 import static com.yello.server.global.common.ErrorCode.GOOGLE_TOKEN_FIELD_NOT_FOUND_EXCEPTION;
 import static com.yello.server.global.common.ErrorCode.GOOGLE_TOKEN_FORBIDDEN_EXCEPTION;
 import static com.yello.server.global.common.ErrorCode.GOOGLE_TOKEN_SERVER_EXCEPTION;
+import static com.yello.server.global.common.ErrorCode.NOT_FOUND_NOTIFICATION_TYPE_EXCEPTION;
 import static com.yello.server.global.common.ErrorCode.NOT_FOUND_TRANSACTION_EXCEPTION;
 import static com.yello.server.global.common.ErrorCode.SUBSCRIBE_ACTIVE_EXCEPTION;
+import static com.yello.server.global.common.util.ConstantUtil.APPLE_NOTIFICATION_CONSUMPTION_REQUEST;
+import static com.yello.server.global.common.util.ConstantUtil.APPLE_NOTIFICATION_REFUND;
+import static com.yello.server.global.common.util.ConstantUtil.APPLE_NOTIFICATION_SUBSCRIPTION_STATUS_CHANGE;
+import static com.yello.server.global.common.util.ConstantUtil.APPLE_NOTIFICATION_TEST;
 import static com.yello.server.global.common.util.ConstantUtil.FIVE_TICKET_ID;
 import static com.yello.server.global.common.util.ConstantUtil.GOOGLE_FIVE_TICKET_ID;
 import static com.yello.server.global.common.util.ConstantUtil.GOOGLE_TWO_TICKET_ID;
@@ -20,9 +25,11 @@ import static com.yello.server.global.common.util.ConstantUtil.YELLO_PLUS_ID;
 
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
+import com.yello.server.domain.purchase.dto.apple.AppleNotificationPayloadVO;
 import com.yello.server.domain.purchase.dto.apple.AppleTransaction;
 import com.yello.server.domain.purchase.dto.apple.TransactionInfoResponse;
 import com.yello.server.domain.purchase.dto.request.AppleInAppRefundRequest;
+import com.yello.server.domain.purchase.dto.request.AppleNotificationRequest;
 import com.yello.server.domain.purchase.dto.request.GoogleSubscriptionGetRequest;
 import com.yello.server.domain.purchase.dto.request.GoogleTicketGetRequest;
 import com.yello.server.domain.purchase.dto.response.GoogleSubscriptionGetResponse;
@@ -77,7 +84,7 @@ public class PurchaseService {
         final Optional<Purchase> mostRecentPurchase =
             purchaseRepository.findTopByUserAndProductTypeOrderByCreatedAtDesc(
                 user, ProductType.YELLO_PLUS);
-        final Boolean isSubscribeNeeded = user.getSubscribe() == Subscribe.CANCELED
+        final Boolean isSubscribeNeeded = user.getSubscribe()==Subscribe.CANCELED
             && mostRecentPurchase.isPresent()
             && Duration.between(mostRecentPurchase.get().getCreatedAt(), time).getSeconds()
             < 1 * 24 * 60 * 60;
@@ -94,7 +101,7 @@ public class PurchaseService {
 
         purchaseManager.handleAppleTransactionError(verifyReceiptResponse, request.transactionId());
 
-        if (user.getSubscribe() == Subscribe.ACTIVE) {
+        if (user.getSubscribe()==Subscribe.ACTIVE) {
             throw new SubscriptionConflictException(SUBSCRIBE_ACTIVE_EXCEPTION);
         }
 
@@ -110,6 +117,7 @@ public class PurchaseService {
     public void verifyAppleTicketTransaction(Long userId, AppleTransaction request) {
         final ResponseEntity<TransactionInfoResponse> verifyReceiptResponse =
             apiWebClient.appleGetTransaction(request);
+
         final User user = userRepository.getById(userId);
 
         purchaseManager.handleAppleTransactionError(verifyReceiptResponse, request.transactionId());
@@ -141,7 +149,7 @@ public class PurchaseService {
         User user = userRepository.getById(userId);
 
         // exception
-        if (user.getSubscribe() != Subscribe.NORMAL) {
+        if (user.getSubscribe()!=Subscribe.NORMAL) {
             throw new PurchaseConflictException(GOOGLE_SUBSCRIPTIONS_FORBIDDEN_EXCEPTION);
         }
 
@@ -187,7 +195,7 @@ public class PurchaseService {
                     GOOGLE_SUBSCRIPTION_TRANSACTION_EXPIRED_EXCEPTION);
             }
             case ConstantUtil.GOOGLE_PURCHASE_SUBSCRIPTION_CANCELED -> {
-                if (user.getSubscribe() == Subscribe.CANCELED) {
+                if (user.getSubscribe()==Subscribe.CANCELED) {
                     throw new GoogleBadRequestException(
                         GOOGLE_SUBSCRIPTION_DUPLICATED_CANCEL_EXCEPTION);
                 } else {
@@ -241,7 +249,7 @@ public class PurchaseService {
             throw new GoogleTokenServerErrorException(GOOGLE_TOKEN_SERVER_EXCEPTION);
         }
 
-        if (inAppResponse.getBody().purchaseState() == 0) {
+        if (inAppResponse.getBody().purchaseState()==0) {
             purchaseRepository.findByTransactionId(inAppResponse.getBody().orderId())
                 .ifPresent(action -> {
                     throw new PurchaseConflictException(
@@ -281,6 +289,28 @@ public class PurchaseService {
 
         purchaseRepository.delete(purchase);
         user.setSubscribe(Subscribe.NORMAL);
+    }
+
+    @Transactional
+    public void appleNotification(AppleNotificationRequest request) {
+
+        AppleNotificationPayloadVO payloadVO =
+            purchaseManager.decodeApplePayload(request.signedPayload());
+
+        switch (payloadVO.notificationType()) {
+            case APPLE_NOTIFICATION_CONSUMPTION_REQUEST:
+                break;
+            case APPLE_NOTIFICATION_SUBSCRIPTION_STATUS_CHANGE:
+                purchaseManager.changeSubscriptionStatus(payloadVO);
+                break;
+            case APPLE_NOTIFICATION_REFUND:
+                System.out.println("dd");
+                break;
+            case APPLE_NOTIFICATION_TEST:
+                return;
+            default:
+                throw new PurchaseNotFoundException(NOT_FOUND_NOTIFICATION_TYPE_EXCEPTION);
+        }
     }
 
     public ProductType getProductType(String googleInAppId) {

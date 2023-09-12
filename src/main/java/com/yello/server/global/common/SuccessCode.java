@@ -41,6 +41,7 @@ public enum SuccessCode {
     READ_COOLDOWN_ADMIN_SUCCESS(OK, "어드민 페이지 쿨다운 조회에 성공하였습니다."),
     DELETE_USER_ADMIN_SUCCESS(OK, "어드민 권환으로 유저 삭제에 성공하였습니다."),
     DELETE_COOLDOWN_ADMIN_SUCCESS(OK, "어드민 권환으로 쿨다운 삭제에 성공하였습니다."),
+    POST_APPLE_NOTIFICATION_SUCCESS(OK, "apple 알림 처리에 성공하였습니다."),
 
     /**
      * 201 CREATED

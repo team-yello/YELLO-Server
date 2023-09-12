@@ -1,5 +1,6 @@
 package com.yello.server.domain.purchase.service;
 
+import com.yello.server.domain.purchase.dto.apple.AppleNotificationPayloadVO;
 import com.yello.server.domain.purchase.dto.apple.TransactionInfoResponse;
 import com.yello.server.domain.purchase.entity.Gateway;
 import com.yello.server.domain.purchase.entity.ProductType;
@@ -16,5 +17,11 @@ public interface PurchaseManager {
 
     void handleAppleTransactionError(ResponseEntity<TransactionInfoResponse> response,
         String transactionId);
+
+    AppleNotificationPayloadVO decodeApplePayload(String signedPayload);
+
+    String decodeAppleNotificationData(String signedTransactionInfo);
+
+    void changeSubscriptionStatus(AppleNotificationPayloadVO payloadVO);
 
 }
