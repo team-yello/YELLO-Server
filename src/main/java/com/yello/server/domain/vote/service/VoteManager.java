@@ -1,5 +1,6 @@
 package com.yello.server.domain.vote.service;
 
+import com.yello.server.domain.friend.dto.response.FriendShuffleResponse;
 import com.yello.server.domain.keyword.dto.response.KeywordCheckResponse;
 import com.yello.server.domain.question.dto.response.QuestionForVoteResponse;
 import com.yello.server.domain.question.entity.Question;
@@ -19,4 +20,7 @@ public interface VoteManager {
     KeywordCheckResponse useKeywordHint(User user, Vote vote);
 
     void makeGreetingVote(User user);
+
+    List<FriendShuffleResponse> getShuffledFriends(User user);
+
 }
