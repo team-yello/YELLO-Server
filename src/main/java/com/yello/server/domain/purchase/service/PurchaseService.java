@@ -110,7 +110,7 @@ public class PurchaseService {
         }
 
         purchaseManager.createSubscribe(user, Gateway.APPLE, request.transactionId());
-        user.addTicketCount(3);
+        user.setTicketCount(3);
     }
 
     @Transactional
@@ -126,17 +126,17 @@ public class PurchaseService {
             case ONE_TICKET_ID:
                 purchaseManager.createTicket(user, ProductType.ONE_TICKET, Gateway.APPLE,
                     request.transactionId());
-                user.addTicketCount(1);
+                user.setTicketCount(1);
                 break;
             case TWO_TICKET_ID:
                 purchaseManager.createTicket(user, ProductType.TWO_TICKET, Gateway.APPLE,
                     request.transactionId());
-                user.addTicketCount(2);
+                user.setTicketCount(2);
                 break;
             case FIVE_TICKET_ID:
                 purchaseManager.createTicket(user, ProductType.FIVE_TICKET, Gateway.APPLE,
                     request.transactionId());
-                user.addTicketCount(5);
+                user.setTicketCount(5);
                 break;
             default:
                 throw new PurchaseException(NOT_FOUND_TRANSACTION_EXCEPTION);
@@ -206,7 +206,7 @@ public class PurchaseService {
             case ConstantUtil.GOOGLE_PURCHASE_SUBSCRIPTION_ACTIVE -> {
                 final Purchase subscribe =
                     purchaseManager.createSubscribe(user, Gateway.GOOGLE, request.orderId());
-                user.addTicketCount(3);
+                user.setTicketCount(3);
                 subscribe.setTransactionId(request.orderId());
             }
         }
@@ -259,7 +259,7 @@ public class PurchaseService {
             Purchase ticket =
                 purchaseManager.createTicket(user, getProductType(request.productId()),
                     Gateway.GOOGLE, request.orderId());
-            user.addTicketCount(getTicketAmount(request.productId()) * request.quantity());
+            user.setTicketCount(getTicketAmount(request.productId()) * request.quantity());
             ticket.setTransactionId(inAppResponse.getBody().orderId());
         } else {
             throw new GoogleBadRequestException(GOOGLE_INAPP_BAD_REQUEST_EXCEPTION);
@@ -304,7 +304,7 @@ public class PurchaseService {
                 purchaseManager.changeSubscriptionStatus(payloadVO);
                 break;
             case APPLE_NOTIFICATION_REFUND:
-                System.out.println("dd");
+                purchaseManager.refundAppleInApp(payloadVO);
                 break;
             case APPLE_NOTIFICATION_TEST:
                 return;
