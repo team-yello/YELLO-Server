@@ -122,8 +122,7 @@ public class User extends AuditingTimeEntity {
             .group(group)
             .groupAdmissionYear(signUpRequest.groupAdmissionYear())
             .email(signUpRequest.email())
-            .deviceToken(Objects.equals(signUpRequest.deviceToken(), "") ? null
-                : signUpRequest.deviceToken())
+            .deviceToken(Objects.equals(signUpRequest.deviceToken(), "") ? null : signUpRequest.deviceToken())
             .subscribe(Subscribe.NORMAL)
             .ticketCount(0)
             .build();
@@ -168,7 +167,7 @@ public class User extends AuditingTimeEntity {
     }
 
     public void plusPoint(Integer point) {
-        if (this.getSubscribe()==Subscribe.NORMAL) {
+        if (this.getSubscribe() == Subscribe.NORMAL) {
             this.point += point;
             return;
         }
@@ -195,7 +194,7 @@ public class User extends AuditingTimeEntity {
         this.subscribe = subscribe;
     }
 
-    public void setTicketCount(int ticketCount) {
+    public void addTicketCount(int ticketCount) {
         this.ticketCount += ticketCount;
     }
 

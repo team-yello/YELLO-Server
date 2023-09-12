@@ -195,7 +195,7 @@ public class VoteService {
         }
 
         vote.checkNameIndexOf(CHECK_FULL_NAME);
-        sender.setTicketCount(MINUS_TICKET_COUNT);
+        sender.addTicketCount(MINUS_TICKET_COUNT);
 
         return RevealFullNameResponse.of(vote.getSender());
     }

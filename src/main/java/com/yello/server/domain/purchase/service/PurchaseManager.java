@@ -24,5 +24,4 @@ public interface PurchaseManager {
 
     void changeSubscriptionStatus(AppleNotificationPayloadVO payloadVO);
 
-    void refundAppleInApp(AppleNotificationPayloadVO payloadVO);
 }
