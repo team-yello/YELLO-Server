@@ -137,7 +137,7 @@ public class UserTest {
         assertThat(user.getTicketCount()).isZero();
 
         // when
-        user.setTicketCount(10);
+        user.addTicketCount(10);
 
         // then
         assertThat(user.getTicketCount()).isEqualTo(10);

@@ -22,7 +22,7 @@ public enum ErrorCode {
     REQUEST_VALIDATION_EXCEPTION(BAD_REQUEST, "잘못된 요청입니다."),
     YELLOID_REQUIRED_EXCEPTION(BAD_REQUEST, "쿼리 스트링에 yelloId를 포함해야 합니다."),
     OAUTH_ACCESS_TOKEN_REQUIRED_EXCEPTION(BAD_REQUEST, "소셜 액세스 토큰이 없습니다."),
-    LACK_USER_EXCEPTION(BAD_REQUEST, "친구가 부족합니다."),
+    LACK_USER_EXCEPTION(BAD_REQUEST, "친구가 4명 이하입니다."),
     SIGNIN_FIELD_REQUIRED_EXCEPTION(BAD_REQUEST, "회원가입에 필요한 값이 없습니다."),
     FIELD_REQUIRED_EXCEPTION(BAD_REQUEST, "필요한 값이 없습니다."),
     INVALID_VOTE_EXCEPTION(BAD_REQUEST, "이미 공개한 투표입니다"),

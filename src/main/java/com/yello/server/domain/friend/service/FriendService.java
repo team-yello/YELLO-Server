@@ -1,6 +1,8 @@
 package com.yello.server.domain.friend.service;
 
 import static com.yello.server.global.common.ErrorCode.EXIST_FRIEND_EXCEPTION;
+import static com.yello.server.global.common.ErrorCode.LACK_USER_EXCEPTION;
+import static com.yello.server.global.common.util.ConstantUtil.RANDOM_COUNT;
 import static com.yello.server.global.common.util.ConstantUtil.YELLO_FEMALE;
 import static com.yello.server.global.common.util.ConstantUtil.YELLO_MALE;
 
@@ -18,7 +20,6 @@ import com.yello.server.domain.user.dto.response.UserResponse;
 import com.yello.server.domain.user.entity.User;
 import com.yello.server.domain.user.repository.UserRepository;
 import com.yello.server.domain.vote.repository.VoteRepository;
-import com.yello.server.domain.vote.service.VoteManager;
 import com.yello.server.global.common.factory.PaginationFactory;
 import java.lang.Character.UnicodeBlock;
 import java.util.ArrayList;
@@ -42,7 +43,6 @@ public class FriendService {
     private final FriendRepository friendRepository;
     private final UserRepository userRepository;
     private final VoteRepository voteRepository;
-    private final VoteManager voteManager;
 
     public FriendsResponse findAllFriends(Pageable pageable, Long userId) {
         final Page<Friend> friendsData = friendRepository.findAllFriendsByUserId(pageable, userId);
@@ -77,7 +77,20 @@ public class FriendService {
     public List<FriendShuffleResponse> findShuffledFriend(Long userId) {
         final User user = userRepository.getById(userId);
 
-        return voteManager.getShuffledFriends(user);
+        final List<Friend> friends =
+            new ArrayList<>(friendRepository.findAllByUserId(user.getId()));
+        List<Friend> friendList = new ArrayList<>(friends);
+
+        if (friendList.size() < RANDOM_COUNT) {
+            throw new FriendException(LACK_USER_EXCEPTION);
+        }
+
+        Collections.shuffle(friendList);
+
+        return friendList.stream()
+            .map(FriendShuffleResponse::of)
+            .limit(RANDOM_COUNT)
+            .toList();
     }
 
     public RecommendFriendResponse findAllRecommendSchoolFriends(Pageable pageable, Long userId) {
