@@ -83,9 +83,8 @@ import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 class VoteControllerTest {
 
     final String[] excludeRequestHeaders = {"X-CSRF-TOKEN", "Host"};
-    final String[] excludeResponseHeaders =
-        {"X-Content-Type-Options", "X-XSS-Protection", "Cache-Control", "Pragma",
-            "Expires", "X-Frame-Options", "Content-Length"};
+    final String[] excludeResponseHeaders = {"X-Content-Type-Options", "X-XSS-Protection", "Cache-Control", "Pragma",
+        "Expires", "X-Frame-Options", "Content-Length"};
 
     @Autowired
     private MockMvc mockMvc;
@@ -112,12 +111,10 @@ class VoteControllerTest {
     @Test
     void 내_투표_전체_조회에_성공합니다() throws Exception {
         // given
-        final Vote vote =
-            testDataUtil.generateVote(1L, user, target, testDataUtil.generateQuestion(1L));
+        final Vote vote = testDataUtil.generateVote(1L, user, target, testDataUtil.generateQuestion(1L));
         final VoteResponse voteResponse = VoteResponse.of(vote);
         final VoteCountVO voteCountVO = VoteCountVO.of(1, 0, 0, 0, 0);
-        final VoteListResponse voteListResponse =
-            VoteListResponse.of(voteCountVO, Arrays.asList(voteResponse), user);
+        final VoteListResponse voteListResponse = VoteListResponse.of(voteCountVO, Arrays.asList(voteResponse), user);
 
         given(voteService.findAllVotes(anyLong(), any(Pageable.class)))
             .willReturn(voteListResponse);
@@ -129,10 +126,8 @@ class VoteControllerTest {
                 .param("page", "0"))
             .andDo(print())
             .andDo(document("api/v1/vote/findAllMyVotes",
-                Preprocessors.preprocessRequest(prettyPrint(),
-                    removeHeaders(excludeRequestHeaders)),
-                Preprocessors.preprocessResponse(prettyPrint(),
-                    removeHeaders(excludeResponseHeaders)),
+                Preprocessors.preprocessRequest(prettyPrint(), removeHeaders(excludeRequestHeaders)),
+                Preprocessors.preprocessResponse(prettyPrint(), removeHeaders(excludeResponseHeaders)),
                 requestParameters(parameterWithName("page").description("페이지네이션 페이지 번호")))
             )
             .andExpect(MockMvcResultMatchers.status().isOk());
@@ -153,10 +148,8 @@ class VoteControllerTest {
             )
             .andDo(print())
             .andDo(document("api/v1/vote/getUnreadVoteCount",
-                Preprocessors.preprocessRequest(prettyPrint(),
-                    removeHeaders(excludeRequestHeaders)),
-                Preprocessors.preprocessResponse(prettyPrint(),
-                    removeHeaders(excludeResponseHeaders)))
+                Preprocessors.preprocessRequest(prettyPrint(), removeHeaders(excludeRequestHeaders)),
+                Preprocessors.preprocessResponse(prettyPrint(), removeHeaders(excludeResponseHeaders)))
             )
             .andExpect(MockMvcResultMatchers.status().isOk());
     }
@@ -164,11 +157,9 @@ class VoteControllerTest {
     @Test
     void 친구_투표_조회에_성공합니다() throws Exception {
         // given
-        final Vote vote =
-            testDataUtil.generateVote(1L, user, target, testDataUtil.generateQuestion(1L));
+        final Vote vote = testDataUtil.generateVote(1L, user, target, testDataUtil.generateQuestion(1L));
         final VoteFriendVO voteFriendVO = VoteFriendVO.of(vote);
-        final VoteFriendResponse voteFriendResponse =
-            VoteFriendResponse.of(1, Arrays.asList(voteFriendVO));
+        final VoteFriendResponse voteFriendResponse = VoteFriendResponse.of(1, Arrays.asList(voteFriendVO));
 
         given(voteService.findAllFriendVotes(anyLong(), any(Pageable.class)))
             .willReturn(voteFriendResponse);
@@ -180,10 +171,8 @@ class VoteControllerTest {
                 .param("page", "0"))
             .andDo(print())
             .andDo(document("api/v1/vote/findAllFriendVotes",
-                Preprocessors.preprocessRequest(prettyPrint(),
-                    removeHeaders(excludeRequestHeaders)),
-                Preprocessors.preprocessResponse(prettyPrint(),
-                    removeHeaders(excludeResponseHeaders)),
+                Preprocessors.preprocessRequest(prettyPrint(), removeHeaders(excludeRequestHeaders)),
+                Preprocessors.preprocessResponse(prettyPrint(), removeHeaders(excludeResponseHeaders)),
                 requestParameters(parameterWithName("page").description("페이지네이션 페이지 번호")))
             )
             .andExpect(MockMvcResultMatchers.status().isOk());
@@ -192,8 +181,7 @@ class VoteControllerTest {
     @Test
     void 투표_상세_조회에_성공합니다() throws Exception {
         // given
-        final Vote vote =
-            testDataUtil.generateVote(1L, user, target, testDataUtil.generateQuestion(1L));
+        final Vote vote = testDataUtil.generateVote(1L, user, target, testDataUtil.generateQuestion(1L));
         final VoteDetailResponse voteDetailResponse = VoteDetailResponse.of(vote, user);
 
         given(voteService.findVoteById(anyLong(), anyLong()))
@@ -206,10 +194,8 @@ class VoteControllerTest {
             )
             .andDo(print())
             .andDo(document("api/v1/vote/findVoteById",
-                Preprocessors.preprocessRequest(prettyPrint(),
-                    removeHeaders(excludeRequestHeaders)),
-                Preprocessors.preprocessResponse(prettyPrint(),
-                    removeHeaders(excludeResponseHeaders)),
+                Preprocessors.preprocessRequest(prettyPrint(), removeHeaders(excludeRequestHeaders)),
+                Preprocessors.preprocessResponse(prettyPrint(), removeHeaders(excludeResponseHeaders)),
                 pathParameters(parameterWithName("voteId").description("투표 아이디 값")))
             )
             .andExpect(MockMvcResultMatchers.status().isOk());
@@ -218,8 +204,7 @@ class VoteControllerTest {
     @Test
     void 키워드_확인에_성공합니다() throws Exception {
         // given
-        final Vote vote =
-            testDataUtil.generateVote(1L, user, target, testDataUtil.generateQuestion(1L));
+        final Vote vote = testDataUtil.generateVote(1L, user, target, testDataUtil.generateQuestion(1L));
         final KeywordCheckResponse keywordCheckResponse = KeywordCheckResponse.of(vote);
 
         given(voteService.checkKeyword(anyLong(), anyLong()))
@@ -233,10 +218,8 @@ class VoteControllerTest {
             )
             .andDo(print())
             .andDo(document("api/v1/vote/checkKeyword",
-                Preprocessors.preprocessRequest(prettyPrint(),
-                    removeHeaders(excludeRequestHeaders)),
-                Preprocessors.preprocessResponse(prettyPrint(),
-                    removeHeaders(excludeResponseHeaders)),
+                Preprocessors.preprocessRequest(prettyPrint(), removeHeaders(excludeRequestHeaders)),
+                Preprocessors.preprocessResponse(prettyPrint(), removeHeaders(excludeResponseHeaders)),
                 pathParameters(parameterWithName("voteId").description("투표 아이디 값")))
             )
             .andExpect(MockMvcResultMatchers.status().isOk());
@@ -246,8 +229,7 @@ class VoteControllerTest {
     void 투표_8개_조회에_성공합니다() throws Exception {
         // given
         final Friend friend = testDataUtil.generateFriend(user, target);
-        final List<FriendShuffleResponse> friendShuffleResponses =
-            Arrays.asList(FriendShuffleResponse.of(friend));
+        final List<FriendShuffleResponse> friendShuffleResponses = Arrays.asList(FriendShuffleResponse.of(friend));
         final List<String> keywordList = Arrays.asList("A", "B", "C", "D");
         final QuestionVO questionVO = QuestionVO.of(testDataUtil.generateQuestion(1L));
         final QuestionForVoteResponse questionForVoteResponse = QuestionForVoteResponse.builder()
@@ -268,10 +250,8 @@ class VoteControllerTest {
             )
             .andDo(print())
             .andDo(document("api/v1/vote/findVoteQuestions",
-                Preprocessors.preprocessRequest(prettyPrint(),
-                    removeHeaders(excludeRequestHeaders)),
-                Preprocessors.preprocessResponse(prettyPrint(),
-                    removeHeaders(excludeResponseHeaders)))
+                Preprocessors.preprocessRequest(prettyPrint(), removeHeaders(excludeRequestHeaders)),
+                Preprocessors.preprocessResponse(prettyPrint(), removeHeaders(excludeResponseHeaders)))
             )
             .andExpect(MockMvcResultMatchers.status().isOk());
     }
@@ -279,10 +259,8 @@ class VoteControllerTest {
     @Test
     void 투표_가능_여부_조회에_성공합니다() throws Exception {
         // given
-        final Cooldown cooldown =
-            Cooldown.of(user, UUID.randomUUID().toString(), LocalDateTime.now());
-        final VoteAvailableResponse voteAvailableResponse =
-            VoteAvailableResponse.of(user, cooldown, 1);
+        final Cooldown cooldown = Cooldown.of(user, UUID.randomUUID().toString(), LocalDateTime.now());
+        final VoteAvailableResponse voteAvailableResponse = VoteAvailableResponse.of(user, cooldown);
 
         given(voteService.checkVoteAvailable(anyLong()))
             .willReturn(voteAvailableResponse);
@@ -294,10 +272,8 @@ class VoteControllerTest {
             )
             .andDo(print())
             .andDo(document("api/v1/vote/checkVoteAvailable",
-                Preprocessors.preprocessRequest(prettyPrint(),
-                    removeHeaders(excludeRequestHeaders)),
-                Preprocessors.preprocessResponse(prettyPrint(),
-                    removeHeaders(excludeResponseHeaders)))
+                Preprocessors.preprocessRequest(prettyPrint(), removeHeaders(excludeRequestHeaders)),
+                Preprocessors.preprocessResponse(prettyPrint(), removeHeaders(excludeResponseHeaders)))
             )
             .andExpect(MockMvcResultMatchers.status().isOk());
     }
@@ -305,8 +281,7 @@ class VoteControllerTest {
     @Test
     void 투표_생성에_성공합니다() throws Exception {
         // given
-        final Vote vote =
-            testDataUtil.generateVote(1L, user, target, testDataUtil.generateQuestion(1L));
+        final Vote vote = testDataUtil.generateVote(1L, user, target, testDataUtil.generateQuestion(1L));
         final VoteCreateVO voteCreateVO = VoteCreateVO.of(10, Arrays.asList(vote));
         final VoteCreateResponse voteCreateResponse = VoteCreateResponse.of(10);
         final VoteAnswer voteAnswer = VoteAnswer.builder()
@@ -337,10 +312,8 @@ class VoteControllerTest {
                 .content(objectMapper.writeValueAsString(createVoteRequest)))
             .andDo(print())
             .andDo(document("api/v1/vote/createVote",
-                Preprocessors.preprocessRequest(prettyPrint(),
-                    removeHeaders(excludeRequestHeaders)),
-                Preprocessors.preprocessResponse(prettyPrint(),
-                    removeHeaders(excludeResponseHeaders)))
+                Preprocessors.preprocessRequest(prettyPrint(), removeHeaders(excludeRequestHeaders)),
+                Preprocessors.preprocessResponse(prettyPrint(), removeHeaders(excludeResponseHeaders)))
             )
             .andExpect(MockMvcResultMatchers.status().isOk());
     }
@@ -362,10 +335,8 @@ class VoteControllerTest {
             )
             .andDo(print())
             .andDo(document("api/v1/vote/revealNameHint",
-                Preprocessors.preprocessRequest(prettyPrint(),
-                    removeHeaders(excludeRequestHeaders)),
-                Preprocessors.preprocessResponse(prettyPrint(),
-                    removeHeaders(excludeResponseHeaders)),
+                Preprocessors.preprocessRequest(prettyPrint(), removeHeaders(excludeRequestHeaders)),
+                Preprocessors.preprocessResponse(prettyPrint(), removeHeaders(excludeResponseHeaders)),
                 pathParameters(parameterWithName("voteId").description("투표 아이디 값")))
             )
             .andExpect(MockMvcResultMatchers.status().isOk());
@@ -382,17 +353,14 @@ class VoteControllerTest {
 
         // when
         // then
-        mockMvc.perform(
-                RestDocumentationRequestBuilders.patch("/api/v1/vote/{voteId}/fullname", voteId)
-                    .header(HttpHeaders.AUTHORIZATION, "Bearer your-access-token")
-                    .with(csrf().asHeader())
+        mockMvc.perform(RestDocumentationRequestBuilders.patch("/api/v1/vote/{voteId}/fullname", voteId)
+                .header(HttpHeaders.AUTHORIZATION, "Bearer your-access-token")
+                .with(csrf().asHeader())
             )
             .andDo(print())
             .andDo(document("api/v1/vote/revealFullName",
-                Preprocessors.preprocessRequest(prettyPrint(),
-                    removeHeaders(excludeRequestHeaders)),
-                Preprocessors.preprocessResponse(prettyPrint(),
-                    removeHeaders(excludeResponseHeaders)),
+                Preprocessors.preprocessRequest(prettyPrint(), removeHeaders(excludeRequestHeaders)),
+                Preprocessors.preprocessResponse(prettyPrint(), removeHeaders(excludeResponseHeaders)),
                 pathParameters(parameterWithName("voteId").description("투표 아이디 값")))
             )
             .andExpect(MockMvcResultMatchers.status().isOk());
