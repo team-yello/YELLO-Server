@@ -7,6 +7,7 @@ import com.yello.server.domain.authorization.dto.request.SignUpRequest;
 import com.yello.server.domain.group.entity.School;
 import com.yello.server.global.common.dto.AuditingTimeEntity;
 import java.time.LocalDateTime;
+import java.util.Objects;
 import javax.persistence.Column;
 import javax.persistence.Convert;
 import javax.persistence.Entity;
@@ -121,7 +122,8 @@ public class User extends AuditingTimeEntity {
             .group(group)
             .groupAdmissionYear(signUpRequest.groupAdmissionYear())
             .email(signUpRequest.email())
-            .deviceToken(signUpRequest.deviceToken().isEmpty() ? null : signUpRequest.deviceToken())
+            .deviceToken(Objects.equals(signUpRequest.deviceToken(), "") ? null
+                : signUpRequest.deviceToken())
             .subscribe(Subscribe.NORMAL)
             .ticketCount(0)
             .build();
@@ -166,7 +168,7 @@ public class User extends AuditingTimeEntity {
     }
 
     public void plusPoint(Integer point) {
-        if (this.getSubscribe() == Subscribe.NORMAL) {
+        if (this.getSubscribe()==Subscribe.NORMAL) {
             this.point += point;
             return;
         }
@@ -182,7 +184,7 @@ public class User extends AuditingTimeEntity {
     }
 
     public void setDeviceToken(String deviceToken) {
-        if (deviceToken.isEmpty()) {
+        if (Objects.equals(deviceToken, "")) {
             this.deviceToken = null;
         } else {
             this.deviceToken = deviceToken;
@@ -193,7 +195,7 @@ public class User extends AuditingTimeEntity {
         this.subscribe = subscribe;
     }
 
-    public void addTicketCount(int ticketCount) {
+    public void setTicketCount(int ticketCount) {
         this.ticketCount += ticketCount;
     }
 
