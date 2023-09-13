@@ -3,6 +3,9 @@ package com.yello.server.domain.purchase.service;
 import static com.yello.server.global.common.ErrorCode.APPLE_TOKEN_SERVER_EXCEPTION;
 import static com.yello.server.global.common.ErrorCode.GOOGLE_SUBSCRIPTIONS_SUBSCRIPTION_EXCEPTION;
 import static com.yello.server.global.common.ErrorCode.NOT_FOUND_TRANSACTION_EXCEPTION;
+import static com.yello.server.global.common.util.ConstantUtil.REFUND_FIVE_TICKET;
+import static com.yello.server.global.common.util.ConstantUtil.REFUND_ONE_TICKET;
+import static com.yello.server.global.common.util.ConstantUtil.REFUND_TWO_TICKET;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.yello.server.domain.purchase.dto.apple.AppleNotificationPayloadVO;
@@ -68,7 +71,7 @@ public class PurchaseManagerImpl implements PurchaseManager {
 
     @Override
     public AppleNotificationPayloadVO decodeApplePayload(String signedPayload) {
-        
+
         Map<String, Object> jsonPayload = DecodeTokenFactory.decodeToken(signedPayload);
         ObjectMapper objectMapper = new ObjectMapper();
 
@@ -114,6 +117,36 @@ public class PurchaseManagerImpl implements PurchaseManager {
         if (payloadVO.subType().equals(ConstantUtil.APPLE_SUBTYPE_AUTO_RENEW_DISABLED)
             && !user.getSubscribe().equals(Subscribe.NORMAL)) {
             user.setSubscribe(Subscribe.NORMAL);
+        }
+    }
+
+    @Override
+    public void refundAppleInApp(AppleNotificationPayloadVO payloadVO) {
+        String transactionId =
+            decodeAppleNotificationData(payloadVO.data().signedTransactionInfo());
+        Purchase purchase = purchaseRepository.findByTransactionId(transactionId)
+            .orElseThrow(() -> new PurchaseNotFoundException(NOT_FOUND_TRANSACTION_EXCEPTION));
+        User user = purchase.getUser();
+
+        switch (purchase.getProductType()) {
+            case YELLO_PLUS -> {
+                user.setSubscribe(Subscribe.NORMAL);
+            }
+            case ONE_TICKET -> {
+                validateTicketCount(REFUND_ONE_TICKET, user);
+            }
+            case TWO_TICKET -> {
+                validateTicketCount(REFUND_TWO_TICKET, user);
+            }
+            case FIVE_TICKET -> {
+                validateTicketCount(REFUND_FIVE_TICKET, user);
+            }
+        }
+    }
+
+    public void validateTicketCount(int ticketCount, User user) {
+        if (user.getTicketCount() >= ticketCount) {
+            user.setTicketCount(-Math.abs(ticketCount));
         }
     }
 
