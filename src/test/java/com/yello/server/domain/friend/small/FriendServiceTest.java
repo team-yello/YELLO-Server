@@ -18,12 +18,16 @@ import com.yello.server.domain.friend.repository.FriendRepository;
 import com.yello.server.domain.friend.service.FriendService;
 import com.yello.server.domain.question.FakeQuestionRepository;
 import com.yello.server.domain.question.repository.QuestionRepository;
+import com.yello.server.domain.user.FakeUserManager;
 import com.yello.server.domain.user.FakeUserRepository;
 import com.yello.server.domain.user.entity.User;
 import com.yello.server.domain.user.exception.UserNotFoundException;
 import com.yello.server.domain.user.repository.UserRepository;
+import com.yello.server.domain.user.service.UserManager;
+import com.yello.server.domain.vote.FakeVoteManager;
 import com.yello.server.domain.vote.FakeVoteRepository;
 import com.yello.server.domain.vote.repository.VoteRepository;
+import com.yello.server.domain.vote.service.VoteManager;
 import com.yello.server.util.TestDataRepositoryUtil;
 import java.util.List;
 import java.util.Optional;
@@ -42,6 +46,10 @@ class FriendServiceTest {
     private final FriendRepository friendRepository = new FakeFriendRepository();
     private final VoteRepository voteRepository = new FakeVoteRepository();
     private final QuestionRepository questionRepository = new FakeQuestionRepository();
+    private final UserManager userManager = new FakeUserManager(userRepository);
+    private final VoteManager voteManager =
+        new FakeVoteManager(userRepository, questionRepository, voteRepository, friendRepository,
+            userManager);
     private final TestDataRepositoryUtil testDataUtil = new TestDataRepositoryUtil(
         userRepository,
         voteRepository,
@@ -62,6 +70,7 @@ class FriendServiceTest {
             .userRepository(userRepository)
             .friendRepository(friendRepository)
             .voteRepository(voteRepository)
+            .voteManager(voteManager)
             .build();
 
         user1 = testDataUtil.generateUser(1L, 1L);
@@ -163,13 +172,13 @@ class FriendServiceTest {
     @Test
     void 친구_셔플_시_친구_수가_부족한_경우에_FriendException이_발생합니다() {
         // given
-        final Long userId = 1L;
+        final Long userId = 3L;
 
         // when
         // then
         assertThatThrownBy(() -> friendService.findShuffledFriend(userId))
             .isInstanceOf(FriendException.class)
-            .hasMessageContaining("[FriendException] 친구가 4명 이하입니다.");
+            .hasMessageContaining("[FriendException] 친구가 부족합니다.");
     }
 
     @Test
