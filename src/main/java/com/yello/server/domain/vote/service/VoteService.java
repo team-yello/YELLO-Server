@@ -9,6 +9,7 @@ import static com.yello.server.global.common.factory.TimeFactory.minusTime;
 import static com.yello.server.global.common.util.ConstantUtil.CHECK_FULL_NAME;
 import static com.yello.server.global.common.util.ConstantUtil.COOL_DOWN_TIME;
 import static com.yello.server.global.common.util.ConstantUtil.MINUS_TICKET_COUNT;
+import static com.yello.server.global.common.util.ConstantUtil.NO_FRIEND_COUNT;
 import static com.yello.server.global.common.util.ConstantUtil.RANDOM_COUNT;
 
 import com.yello.server.domain.cooldown.entity.Cooldown;
@@ -122,7 +123,7 @@ public class VoteService {
         final User user = userRepository.getById(userId);
 
         final List<Friend> friends = friendRepository.findAllByUserId(user.getId());
-        if (friends.size() < RANDOM_COUNT) {
+        if (friends.size()==NO_FRIEND_COUNT) {
             throw new FriendException(LACK_USER_EXCEPTION);
         }
 
@@ -144,14 +145,18 @@ public class VoteService {
         final String messageId = UUID.randomUUID().toString();
         final List<Friend> friends = friendRepository.findAllByUserId(user.getId());
 
-        if (friends.size() < RANDOM_COUNT) {
+        if (friends.size()==NO_FRIEND_COUNT) {
             throw new FriendException(LACK_USER_EXCEPTION);
         }
 
         final Cooldown cooldown = cooldownRepository.findByUserId(user.getId())
             .orElse(Cooldown.of(user, messageId, minusTime(LocalDateTime.now(), COOL_DOWN_TIME)));
 
-        return VoteAvailableResponse.of(user, cooldown);
+        if (friends.size() > NO_FRIEND_COUNT && friends.size() < RANDOM_COUNT) {
+            return VoteAvailableResponse.of(user, cooldown, 0);
+        }
+
+        return VoteAvailableResponse.of(user, cooldown, 1);
     }
 
     @Transactional
@@ -195,7 +200,7 @@ public class VoteService {
         }
 
         vote.checkNameIndexOf(CHECK_FULL_NAME);
-        sender.addTicketCount(MINUS_TICKET_COUNT);
+        sender.setTicketCount(MINUS_TICKET_COUNT);
 
         return RevealFullNameResponse.of(vote.getSender());
     }
