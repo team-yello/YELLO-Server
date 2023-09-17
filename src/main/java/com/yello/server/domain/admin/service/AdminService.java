@@ -7,10 +7,14 @@ import static com.yello.server.global.common.ErrorCode.UUID_CONFLICT_USER_EXCEPT
 import static com.yello.server.global.common.ErrorCode.YELLOID_CONFLICT_USER_EXCEPTION;
 
 import com.yello.server.domain.admin.dto.request.AdminLoginRequest;
+import com.yello.server.domain.admin.dto.request.AdminQuestionVoteRequest;
 import com.yello.server.domain.admin.dto.request.AdminUserDetailRequest;
 import com.yello.server.domain.admin.dto.response.AdminCooldownContentVO;
 import com.yello.server.domain.admin.dto.response.AdminCooldownResponse;
 import com.yello.server.domain.admin.dto.response.AdminLoginResponse;
+import com.yello.server.domain.admin.dto.response.AdminQuestionContentVO;
+import com.yello.server.domain.admin.dto.response.AdminQuestionDetailResponse;
+import com.yello.server.domain.admin.dto.response.AdminQuestionResponse;
 import com.yello.server.domain.admin.dto.response.AdminUserContentVO;
 import com.yello.server.domain.admin.dto.response.AdminUserDetailResponse;
 import com.yello.server.domain.admin.dto.response.AdminUserResponse;
@@ -20,15 +24,20 @@ import com.yello.server.domain.admin.repository.UserAdminRepository;
 import com.yello.server.domain.authorization.service.TokenProvider;
 import com.yello.server.domain.cooldown.entity.Cooldown;
 import com.yello.server.domain.cooldown.repository.CooldownRepository;
+import com.yello.server.domain.question.entity.Question;
+import com.yello.server.domain.question.repository.QuestionRepository;
 import com.yello.server.domain.user.entity.Gender;
 import com.yello.server.domain.user.entity.User;
 import com.yello.server.domain.user.exception.UserConflictException;
 import com.yello.server.domain.user.repository.UserRepository;
 import com.yello.server.domain.user.service.UserManager;
+import com.yello.server.domain.vote.entity.Vote;
+import com.yello.server.domain.vote.repository.VoteRepository;
 import com.yello.server.global.common.dto.EmptyObject;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
+import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Pageable;
@@ -44,6 +53,8 @@ public class AdminService {
     private final UserManager userManager;
     private final TokenProvider tokenProvider;
     private final CooldownRepository cooldownRepository;
+    private final QuestionRepository questionRepository;
+    private final VoteRepository voteRepository;
     private final UserAdminRepository userAdminRepository;
 
     @Value("${admin.password}")
@@ -123,7 +134,7 @@ public class AdminService {
         userAdminRepository.getByUser(admin);
 
         // logic
-        final User user = userRepository.getById(userId);
+        final User user = userRepository.getByIdNotFiltered(userId);
 
         userRepository.findByUuidNotFiltered(request.uuid())
             .ifPresent(action -> {
@@ -154,7 +165,7 @@ public class AdminService {
         // exception
         final User admin = userRepository.getById(adminId);
         userAdminRepository.getByUser(admin);
-        final User user = userRepository.getById(userId);
+        final User user = userRepository.getByIdNotFiltered(userId);
 
         // logic
         userRepository.delete(user);
@@ -197,5 +208,71 @@ public class AdminService {
 
         // logic
         cooldownRepository.delete(cooldown);
+    }
+
+    public AdminQuestionResponse findQuestion(Long adminId, Pageable page) {
+        // exception
+        final User admin = userRepository.getById(adminId);
+        userAdminRepository.getByUser(admin);
+
+        // logic
+        final Long totalCount = questionRepository.count();
+        final List<AdminQuestionContentVO> list = questionRepository.findAll(page).stream()
+            .map(AdminQuestionContentVO::of)
+            .toList();
+
+        return AdminQuestionResponse.of(totalCount, list);
+    }
+
+    public AdminQuestionDetailResponse findQuestionDetail(Long adminId, Long questionId) {
+        // exception
+        final User admin = userRepository.getById(adminId);
+        userAdminRepository.getByUser(admin);
+        final Question question = questionRepository.getById(questionId);
+
+        // logic
+
+        return AdminQuestionDetailResponse.of(question);
+    }
+
+    @Transactional
+    public List<Vote> createVote(Long adminId, Long questionId, AdminQuestionVoteRequest request) {
+        // exception
+        final User admin = userRepository.getById(adminId);
+        userAdminRepository.getByUser(admin);
+        final Question question = questionRepository.getById(questionId);
+
+        // logic
+        final List<Vote> result = new ArrayList<>();
+        request.voteContentList().forEach((voteContent -> {
+            final Optional<User> sender = userRepository.findByIdNotFiltered(voteContent.senderId());
+            final Optional<User> receiver = userRepository.findByIdNotFiltered(voteContent.receiverId());
+
+            if (sender.isPresent() && receiver.isPresent()) {
+                final Vote vote = Vote.createVote(
+                    voteContent.keyword(),
+                    sender.get(),
+                    receiver.get(),
+                    question,
+                    voteContent.colorIndex()
+                );
+
+                voteRepository.save(vote);
+                result.add(vote);
+            }
+        }));
+
+        return result;
+    }
+
+    @Transactional
+    public void deleteQuestion(Long adminId, Long questionId) {
+        // exception
+        final User admin = userRepository.getById(adminId);
+        userAdminRepository.getByUser(admin);
+        final Question question = questionRepository.getById(questionId);
+
+        // logic
+        questionRepository.delete(question);
     }
 }

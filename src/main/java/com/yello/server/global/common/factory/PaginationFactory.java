@@ -21,12 +21,16 @@ public class PaginationFactory {
         return PageRequest.of(page, PAGE_LIMIT);
     }
 
-    public static Pageable createPageableByNameSort(Integer page) {
-        return PageRequest.of(page, PAGE_LIMIT, Sort.by(Sort.Direction.ASC, "name"));
+    public static Pageable createPageable(Integer page, Integer limit) {
+        return PageRequest.of(page, limit);
     }
 
     public static Pageable createPageableLimitTen(Integer page) {
-        return PageRequest.of(page, PAGE_LIMIT_TEN);
+        return createPageable(page, PAGE_LIMIT_TEN);
+    }
+
+    public static Pageable createPageableByNameSort(Integer page) {
+        return PageRequest.of(page, PAGE_LIMIT, Sort.by(Sort.Direction.ASC, "name"));
     }
 
     public static <T> Page<T> getPage(List<T> list, Pageable pageable) {
