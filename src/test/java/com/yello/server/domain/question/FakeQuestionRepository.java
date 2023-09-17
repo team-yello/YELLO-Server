@@ -12,6 +12,9 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.Pageable;
 
 public class FakeQuestionRepository implements QuestionRepository {
 
@@ -21,23 +24,44 @@ public class FakeQuestionRepository implements QuestionRepository {
 
 
     @Override
+    public Long count() {
+        return (long) data.size();
+    }
+
+    @Override
     public List<Question> findAll() {
         return data.stream()
             .toList();
     }
 
     @Override
-    public Question findById(Long questionId) {
+    public Page<Question> findAll(Pageable pageable) {
+        final List<Question> questionList = data.stream()
+            .skip(pageable.getOffset())
+            .limit(pageable.getPageSize())
+            .toList();
+        return new PageImpl<>(questionList);
+    }
+
+    @Override
+    public Question getById(Long id) {
         return data.stream()
-            .filter(question -> question.getId().equals(questionId))
+            .filter(question -> question.getId().equals(id))
             .findFirst()
             .orElseThrow(() -> new QuestionNotFoundException(NOT_FOUND_QUESTION_EXCEPTION));
     }
 
     @Override
+    public Optional<Question> findById(Long questionId) {
+        return data.stream()
+            .filter(question -> question.getId().equals(questionId))
+            .findFirst();
+    }
+
+    @Override
     public Question save(Question question) {
         Question newQuestion = Question.builder()
-            .id(question.getId()==null ? id++ : question.getId())
+            .id(question.getId() == null ? id++ : question.getId())
             .nameHead(question.getNameHead())
             .nameFoot(question.getNameFoot())
             .keywordFoot(question.getKeywordFoot())
@@ -67,5 +91,10 @@ public class FakeQuestionRepository implements QuestionRepository {
                 && Objects.equals(question.getKeywordHead(), keywordHead)
                 && Objects.equals(question.getKeywordFoot(), keywordFoot))
             .findFirst();
+    }
+
+    @Override
+    public void delete(Question question) {
+        data.remove(question);
     }
 }

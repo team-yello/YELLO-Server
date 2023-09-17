@@ -68,7 +68,7 @@ public class FakeVoteManager implements VoteManager {
                 }
 
                 User receiver = userRepository.getById(currentVote.friendId());
-                Question question = questionRepository.findById(currentVote.questionId());
+                Question question = questionRepository.getById(currentVote.questionId());
 
                 Vote newVote = Vote.createVote(
                     currentVote.keywordName(),
@@ -114,7 +114,7 @@ public class FakeVoteManager implements VoteManager {
             throw new VoteForbiddenException(LACK_POINT_EXCEPTION);
         }
 
-        if (vote.getNameHint()!=NAME_HINT_DEFAULT) {
+        if (vote.getNameHint() != NAME_HINT_DEFAULT) {
             throw new VoteNotFoundException(INVALID_VOTE_EXCEPTION);
         }
 
@@ -172,7 +172,7 @@ public class FakeVoteManager implements VoteManager {
         List<Friend> friendList = new ArrayList<>(friends);
         Collections.shuffle(friendList);
 
-        if (friends.size()==NO_FRIEND_COUNT) {
+        if (friends.size() == NO_FRIEND_COUNT) {
             throw new FriendException(LACK_USER_EXCEPTION);
         }
 
