@@ -33,6 +33,11 @@ public class UserRepositoryImpl implements UserRepository {
     }
 
     @Override
+    public Optional<User> findByIdNotFiltered(Long id) {
+        return userJpaRepository.findByIdNotFiltered(id);
+    }
+
+    @Override
     public User getById(Long id) {
         return userJpaRepository.findById(id)
             .orElseThrow(() -> new UserNotFoundException(USERID_NOT_FOUND_USER_EXCEPTION));
