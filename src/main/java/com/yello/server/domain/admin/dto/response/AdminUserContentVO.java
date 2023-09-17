@@ -12,6 +12,7 @@ public record AdminUserContentVO(
     String name,
     String yelloId,
     String group,
+    String imageUrl,
     String createdAt,
     String deletedAt
 ) {
@@ -24,6 +25,7 @@ public record AdminUserContentVO(
             .name(user.getName())
             .yelloId(user.getYelloId())
             .group(userGroup == null ? "" : userGroup.toString())
+            .imageUrl(user.getProfileImage())
             .createdAt(toDateFormattedString(user.getCreatedAt()))
             .deletedAt(toDateFormattedString(user.getDeletedAt()))
             .build();

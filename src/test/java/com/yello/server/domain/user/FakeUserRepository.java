@@ -56,6 +56,13 @@ public class FakeUserRepository implements UserRepository {
     }
 
     @Override
+    public Optional<User> findByIdNotFiltered(Long id) {
+        return data.stream()
+            .filter(user -> user.getId().equals(id))
+            .findFirst();
+    }
+
+    @Override
     public User getById(Long id) {
         return data.stream()
             .filter(user -> user.getDeletedAt() == null)

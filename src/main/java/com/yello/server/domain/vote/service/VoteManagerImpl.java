@@ -74,7 +74,7 @@ public class VoteManagerImpl implements VoteManager {
                 }
 
                 User receiver = userRepository.getById(currentVote.friendId());
-                Question question = questionRepository.findById(currentVote.questionId());
+                Question question = questionRepository.getById(currentVote.questionId());
 
                 Vote newVote = Vote.createVote(
                     currentVote.keywordName(),
@@ -110,11 +110,11 @@ public class VoteManagerImpl implements VoteManager {
 
     @Override
     public int useNameHint(User sender, Vote vote) {
-        if (sender.getPoint() < NAME_HINT_POINT && sender.getSubscribe()==Subscribe.NORMAL) {
+        if (sender.getPoint() < NAME_HINT_POINT && sender.getSubscribe() == Subscribe.NORMAL) {
             throw new VoteForbiddenException(LACK_POINT_EXCEPTION);
         }
 
-        if (vote.getNameHint()!=NAME_HINT_DEFAULT) {
+        if (vote.getNameHint() != NAME_HINT_DEFAULT) {
             throw new VoteNotFoundException(INVALID_VOTE_EXCEPTION);
         }
 
@@ -122,7 +122,7 @@ public class VoteManagerImpl implements VoteManager {
         int randomIndex = random.nextInt(2);
         vote.checkNameIndexOf(randomIndex);
 
-        if (sender.getSubscribe()==Subscribe.NORMAL) {
+        if (sender.getSubscribe() == Subscribe.NORMAL) {
             sender.minusPoint(NAME_HINT_POINT);
             return randomIndex;
         }
@@ -171,7 +171,7 @@ public class VoteManagerImpl implements VoteManager {
         List<Friend> friendList = new ArrayList<>(friends);
         Collections.shuffle(friendList);
 
-        if (friends.size()==NO_FRIEND_COUNT) {
+        if (friends.size() == NO_FRIEND_COUNT) {
             throw new FriendException(LACK_USER_EXCEPTION);
         }
 
