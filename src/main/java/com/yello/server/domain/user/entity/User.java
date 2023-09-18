@@ -159,6 +159,11 @@ public class User extends AuditingTimeEntity {
         return this.group.toString() + " " + this.getGroupAdmissionYear() + "학번";
     }
 
+    public String highSchoolString() {
+        return this.group.getSchoolName() + " " + this.getGroupAdmissionYear() + "학년 "
+            + this.group.getDepartmentName() + "반";
+    }
+
     public void increaseRecommendCount() {
         this.recommendCount += 1;
     }

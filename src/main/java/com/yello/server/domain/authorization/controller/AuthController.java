@@ -1,5 +1,6 @@
 package com.yello.server.domain.authorization.controller;
 
+import static com.yello.server.global.common.SuccessCode.CLASS_NAME_SEARCH_BY_SCHOOL_NAME_SCHOOL_SUCCESS;
 import static com.yello.server.global.common.SuccessCode.DEPARTMENT_NAME_SEARCH_BY_SCHOOL_NAME_SCHOOL_SUCCESS;
 import static com.yello.server.global.common.SuccessCode.LOGIN_SUCCESS;
 import static com.yello.server.global.common.SuccessCode.ONBOARDING_FRIENDS_SUCCESS;
@@ -13,6 +14,7 @@ import com.yello.server.domain.authorization.dto.ServiceTokenVO;
 import com.yello.server.domain.authorization.dto.request.OAuthRequest;
 import com.yello.server.domain.authorization.dto.request.OnBoardingFriendRequest;
 import com.yello.server.domain.authorization.dto.request.SignUpRequest;
+import com.yello.server.domain.authorization.dto.response.ClassNameSearchResponse;
 import com.yello.server.domain.authorization.dto.response.DepartmentSearchResponse;
 import com.yello.server.domain.authorization.dto.response.GroupNameSearchResponse;
 import com.yello.server.domain.authorization.dto.response.OAuthResponse;
@@ -54,7 +56,8 @@ public class AuthController {
 
     @PostMapping("/signup")
     @SlackSignUpNotification
-    public BaseResponse<SignUpResponse> postSignUp(@Valid @RequestBody SignUpRequest signUpRequest) {
+    public BaseResponse<SignUpResponse> postSignUp(
+        @Valid @RequestBody SignUpRequest signUpRequest) {
         val data = authService.signUp(signUpRequest);
         return BaseResponse.success(SIGN_UP_SUCCESS, data);
     }
@@ -68,7 +71,7 @@ public class AuthController {
         return BaseResponse.success(ONBOARDING_FRIENDS_SUCCESS, data);
     }
 
-    @GetMapping("/school")
+    @GetMapping("/group/univ/name")
     public BaseResponse<GroupNameSearchResponse> getSchoolList(
         @NotNull @RequestParam("keyword") String keyword,
         @NotNull @RequestParam("page") Integer page
@@ -77,9 +80,9 @@ public class AuthController {
         return BaseResponse.success(SCHOOL_NAME_SEARCH_SCHOOL_SUCCESS, data);
     }
 
-    @GetMapping("/school/department")
+    @GetMapping("/group/univ/department")
     public BaseResponse<DepartmentSearchResponse> getDepartmentList(
-        @NotNull @RequestParam("school") String schoolName,
+        @NotNull @RequestParam("name") String schoolName,
         @NotNull @RequestParam("keyword") String keyword,
         @NotNull @RequestParam("page") Integer page
     ) {
@@ -91,5 +94,24 @@ public class AuthController {
     public BaseResponse<ServiceTokenVO> postReIssueToken(@ServiceToken ServiceTokenVO tokens) {
         val data = authService.reIssueToken(tokens);
         return BaseResponse.success(RE_ISSUE_TOKEN_AUTH_SUCCESS, data);
+    }
+
+    @GetMapping("/group/high/name")
+    public BaseResponse<GroupNameSearchResponse> getHighSchoolList(
+        @NotNull @RequestParam("keyword") String keyword,
+        @NotNull @RequestParam("page") Integer page
+    ) {
+        val data = authService.getHighSchoolList(keyword, createPageable(page));
+        return BaseResponse.success(SCHOOL_NAME_SEARCH_SCHOOL_SUCCESS, data);
+    }
+
+    @GetMapping("/group/high/class")
+    public BaseResponse<ClassNameSearchResponse> getHighSchoolClassName(
+        @NotNull @RequestParam("name") String schoolName,
+        @NotNull @RequestParam("keyword") String keyword
+    ) {
+        System.out.println("sfsdfsdfs");
+        val data = authService.getHighSchoolClassName(schoolName, keyword);
+        return BaseResponse.success(CLASS_NAME_SEARCH_BY_SCHOOL_NAME_SCHOOL_SUCCESS, data);
     }
 }

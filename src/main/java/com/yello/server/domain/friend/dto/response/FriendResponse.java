@@ -1,5 +1,6 @@
 package com.yello.server.domain.friend.dto.response;
 
+import com.yello.server.domain.group.entity.SchoolType;
 import com.yello.server.domain.user.entity.User;
 import lombok.Builder;
 
@@ -15,7 +16,8 @@ public record FriendResponse(
         return FriendResponse.builder()
             .id(user.getId())
             .name(user.getName())
-            .group(user.groupString())
+            .group(user.getGroup().getSchoolType()==SchoolType.UNIVERSITY ? user.groupString()
+                : user.highSchoolString())
             .profileImage(user.getProfileImage())
             .build();
     }

@@ -66,4 +66,20 @@ public class FakeSchoolRepository implements SchoolRepository {
         Pageable pageable) {
         return null;
     }
+
+    @Override
+    public Integer countDistinctHighSchoolNameContaining(String schoolName) {
+        return null;
+    }
+
+    @Override
+    public List<String> findDistinctHighSchoolNameContaining(String schoolName, Pageable pageable) {
+        return null;
+    }
+
+    @Override
+    public School findHighSchoolIdBySchoolNameAndClassName(String schoolName,
+        String className) {
+        return null;
+    }
 }

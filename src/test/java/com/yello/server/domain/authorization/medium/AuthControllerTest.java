@@ -65,8 +65,9 @@ import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 class AuthControllerTest {
 
     final String[] excludeRequestHeaders = {"X-CSRF-TOKEN", "Host"};
-    final String[] excludeResponseHeaders = {"X-Content-Type-Options", "X-XSS-Protection", "Cache-Control", "Pragma",
-        "Expires", "X-Frame-Options", "Content-Length"};
+    final String[] excludeResponseHeaders =
+        {"X-Content-Type-Options", "X-XSS-Protection", "Cache-Control", "Pragma",
+            "Expires", "X-Frame-Options", "Content-Length"};
 
     @Autowired
     private MockMvc mockMvc;
@@ -114,8 +115,10 @@ class AuthControllerTest {
                 .content(objectMapper.writeValueAsString(oAuthRequest)))
             .andDo(print())
             .andDo(document("api/v1/auth/oauthLogin",
-                Preprocessors.preprocessRequest(prettyPrint(), removeHeaders(excludeRequestHeaders)),
-                Preprocessors.preprocessResponse(prettyPrint(), removeHeaders(excludeResponseHeaders)))
+                Preprocessors.preprocessRequest(prettyPrint(),
+                    removeHeaders(excludeRequestHeaders)),
+                Preprocessors.preprocessResponse(prettyPrint(),
+                    removeHeaders(excludeResponseHeaders)))
             )
             .andExpect(MockMvcResultMatchers.status().isOk());
     }
@@ -132,8 +135,10 @@ class AuthControllerTest {
                 .param("yelloId", "yelloId here"))
             .andDo(print())
             .andDo(document("api/v1/auth/getYelloIdValidation",
-                Preprocessors.preprocessRequest(prettyPrint(), removeHeaders(excludeRequestHeaders)),
-                Preprocessors.preprocessResponse(prettyPrint(), removeHeaders(excludeResponseHeaders)),
+                Preprocessors.preprocessRequest(prettyPrint(),
+                    removeHeaders(excludeRequestHeaders)),
+                Preprocessors.preprocessResponse(prettyPrint(),
+                    removeHeaders(excludeResponseHeaders)),
                 requestParameters(parameterWithName("yelloId").description("중복 체크할 yelloId")))
             )
             .andExpect(MockMvcResultMatchers.status().isOk());
@@ -175,8 +180,10 @@ class AuthControllerTest {
                 .content(objectMapper.writeValueAsString(signUpRequest)))
             .andDo(print())
             .andDo(document("api/v1/auth/postSignUp",
-                Preprocessors.preprocessRequest(prettyPrint(), removeHeaders(excludeRequestHeaders)),
-                Preprocessors.preprocessResponse(prettyPrint(), removeHeaders(excludeResponseHeaders)))
+                Preprocessors.preprocessRequest(prettyPrint(),
+                    removeHeaders(excludeRequestHeaders)),
+                Preprocessors.preprocessResponse(prettyPrint(),
+                    removeHeaders(excludeResponseHeaders)))
             )
             .andExpect(MockMvcResultMatchers.status().isOk());
     }
@@ -188,9 +195,11 @@ class AuthControllerTest {
             .friendKakaoId(Arrays.asList("friendKakaoId"))
             .build();
 
-        final OnBoardingFriendResponse onBoardingFriendResponse = OnBoardingFriendResponse.of(0, Arrays.asList(user));
+        final OnBoardingFriendResponse onBoardingFriendResponse =
+            OnBoardingFriendResponse.of(0, Arrays.asList(user));
 
-        given(authService.findOnBoardingFriends(any(OnBoardingFriendRequest.class), any(Pageable.class)))
+        given(authService.findOnBoardingFriends(any(OnBoardingFriendRequest.class),
+            any(Pageable.class)))
             .willReturn(onBoardingFriendResponse);
 
         // when
@@ -202,8 +211,10 @@ class AuthControllerTest {
                 .param("page", "0"))
             .andDo(print())
             .andDo(document("api/v1/auth/findOnBoardingFriends",
-                Preprocessors.preprocessRequest(prettyPrint(), removeHeaders(excludeRequestHeaders)),
-                Preprocessors.preprocessResponse(prettyPrint(), removeHeaders(excludeResponseHeaders)),
+                Preprocessors.preprocessRequest(prettyPrint(),
+                    removeHeaders(excludeRequestHeaders)),
+                Preprocessors.preprocessResponse(prettyPrint(),
+                    removeHeaders(excludeResponseHeaders)),
                 requestParameters(parameterWithName("page").description("페이지네이션 페이지 번호")))
             )
             .andExpect(MockMvcResultMatchers.status().isOk());
@@ -222,14 +233,16 @@ class AuthControllerTest {
 
         // when
         // then
-        mockMvc.perform(RestDocumentationRequestBuilders.get("/api/v1/auth/school")
+        mockMvc.perform(RestDocumentationRequestBuilders.get("/api/v1/auth/group/univ/name")
                 .param("page", "0")
                 .param("keyword", "keyword here")
             )
             .andDo(print())
             .andDo(document("api/v1/auth/findSchoolsByKeyword",
-                Preprocessors.preprocessRequest(prettyPrint(), removeHeaders(excludeRequestHeaders)),
-                Preprocessors.preprocessResponse(prettyPrint(), removeHeaders(excludeResponseHeaders)),
+                Preprocessors.preprocessRequest(prettyPrint(),
+                    removeHeaders(excludeRequestHeaders)),
+                Preprocessors.preprocessResponse(prettyPrint(),
+                    removeHeaders(excludeResponseHeaders)),
                 requestParameters(
                     parameterWithName("page").description("페이지네이션 페이지 번호"),
                     parameterWithName("keyword").description("검색할 쿼리")))
@@ -250,18 +263,20 @@ class AuthControllerTest {
 
         // when
         // then
-        mockMvc.perform(RestDocumentationRequestBuilders.get("/api/v1/auth/school/department")
+        mockMvc.perform(RestDocumentationRequestBuilders.get("/api/v1/auth/group/univ/department")
                 .param("page", "0")
-                .param("school", "school name here")
+                .param("name", "school name here")
                 .param("keyword", "keyword here")
             )
             .andDo(print())
             .andDo(document("api/v1/auth/findDepartmentsByKeyword",
-                Preprocessors.preprocessRequest(prettyPrint(), removeHeaders(excludeRequestHeaders)),
-                Preprocessors.preprocessResponse(prettyPrint(), removeHeaders(excludeResponseHeaders)),
+                Preprocessors.preprocessRequest(prettyPrint(),
+                    removeHeaders(excludeRequestHeaders)),
+                Preprocessors.preprocessResponse(prettyPrint(),
+                    removeHeaders(excludeResponseHeaders)),
                 requestParameters(
                     parameterWithName("page").description("페이지네이션 페이지 번호"),
-                    parameterWithName("school").description("학교 이름"),
+                    parameterWithName("name").description("학교 이름"),
                     parameterWithName("keyword").description("검색할 쿼리")))
             )
             .andExpect(MockMvcResultMatchers.status().isOk());
@@ -287,8 +302,10 @@ class AuthControllerTest {
             )
             .andDo(print())
             .andDo(document("api/v1/auth/reIssueToken",
-                Preprocessors.preprocessRequest(prettyPrint(), removeHeaders(excludeRequestHeaders)),
-                Preprocessors.preprocessResponse(prettyPrint(), removeHeaders(excludeResponseHeaders)))
+                Preprocessors.preprocessRequest(prettyPrint(),
+                    removeHeaders(excludeRequestHeaders)),
+                Preprocessors.preprocessResponse(prettyPrint(),
+                    removeHeaders(excludeResponseHeaders)))
             )
             .andExpect(MockMvcResultMatchers.status().isOk());
     }
