@@ -9,6 +9,7 @@ import com.yello.server.domain.authorization.dto.kakao.KakaoTokenInfo;
 import com.yello.server.domain.authorization.dto.request.OAuthRequest;
 import com.yello.server.domain.authorization.dto.request.OnBoardingFriendRequest;
 import com.yello.server.domain.authorization.dto.request.SignUpRequest;
+import com.yello.server.domain.authorization.dto.response.ClassNameSearchResponse;
 import com.yello.server.domain.authorization.dto.response.DepartmentSearchResponse;
 import com.yello.server.domain.authorization.dto.response.GroupNameSearchResponse;
 import com.yello.server.domain.authorization.dto.response.OAuthResponse;
@@ -103,7 +104,7 @@ public class AuthService {
 
     @Transactional
     public void recommendUser(String recommendYelloId, String userYelloId) {
-        if (recommendYelloId != null && !recommendYelloId.isEmpty()) {
+        if (recommendYelloId!=null && !recommendYelloId.isEmpty()) {
             User recommendedUser = userRepository.getByYelloId(recommendYelloId);
             User user = userRepository.getByYelloId(userYelloId);
 
@@ -129,7 +130,7 @@ public class AuthService {
                     Friend savedFriend =
                         friendRepository.save(Friend.createFriend(user, friend.get()));
                     friendRepository.save(Friend.createFriend(friend.get(), user));
-                    
+
                     notificationService.sendFriendNotification(savedFriend);
                 }
             });
@@ -178,5 +179,18 @@ public class AuthService {
         }
 
         throw new NotExpiredTokenForbiddenException(TOKEN_NOT_EXPIRED_AUTH_EXCEPTION);
+    }
+
+    public GroupNameSearchResponse getHighSchoolList(String keyword, Pageable pageable) {
+        int totalCount = schoolRepository.countDistinctHighSchoolNameContaining(keyword);
+        final List<String> nameList = schoolRepository.findDistinctHighSchoolNameContaining(keyword,
+            pageable);
+        return GroupNameSearchResponse.of(totalCount, nameList);
+    }
+
+    public ClassNameSearchResponse getHighSchoolClassName(String schoolName, String keyword) {
+        School school =
+            schoolRepository.findHighSchoolIdBySchoolNameAndClassName(schoolName, keyword);
+        return ClassNameSearchResponse.of(school);
     }
 }

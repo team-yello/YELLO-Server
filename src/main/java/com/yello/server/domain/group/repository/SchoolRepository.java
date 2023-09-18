@@ -21,4 +21,10 @@ public interface SchoolRepository {
 
     List<School> findAllBySchoolNameContaining(String schoolName, String departmentName,
         Pageable pageable);
+
+    Integer countDistinctHighSchoolNameContaining(String schoolName);
+
+    List<String> findDistinctHighSchoolNameContaining(String schoolName, Pageable pageable);
+
+    School findHighSchoolIdBySchoolNameAndClassName(String schoolName, String className);
 }
