@@ -53,6 +53,24 @@ public class SchoolRepositoryImpl implements SchoolRepository {
     @Override
     public List<School> findAllBySchoolNameContaining(String schoolName, String departmentName,
         Pageable pageable) {
-        return schoolJpaRepository.findAllBySchoolNameContaining(schoolName, departmentName, pageable);
+        return schoolJpaRepository.findAllBySchoolNameContaining(schoolName, departmentName,
+            pageable);
+    }
+
+    @Override
+    public Integer countDistinctHighSchoolNameContaining(String schoolName) {
+        return schoolJpaRepository.countDistinctHighSchoolNameContaining(schoolName);
+    }
+
+    @Override
+    public List<String> findDistinctHighSchoolNameContaining(String schoolName, Pageable pageable) {
+        return schoolJpaRepository.findDistinctHighSchoolNameContaining(schoolName, pageable);
+    }
+
+    @Override
+    public School findHighSchoolIdBySchoolNameAndClassName(String schoolName,
+        String className) {
+        return schoolJpaRepository.findHighSchoolIdBySchoolNameAndClassName(schoolName, className)
+            .orElseThrow(() -> new GroupNotFoundException(GROUPID_NOT_FOUND_GROUP_EXCEPTION));
     }
 }
