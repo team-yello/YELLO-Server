@@ -98,7 +98,7 @@ public class AdminService {
         Long totalCount = 0L;
         List<AdminUserContentVO> list = new ArrayList<>();
 
-        if (field==null || value==null) {
+        if (field == null || value == null) {
             throw new UserAdminBadRequestException(USER_ADMIN_BAD_REQUEST_EXCEPTION);
         } else if (field.equals("yelloId")) {
             totalCount = userRepository.countAllByYelloIdContaining(value);

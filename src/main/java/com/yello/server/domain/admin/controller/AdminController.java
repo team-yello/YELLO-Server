@@ -61,7 +61,7 @@ public class AdminController {
         @RequestParam Integer page,
         @Nullable @RequestParam String field,
         @Nullable @RequestParam String value) {
-        val data = (field==null && value==null)
+        val data = (field == null && value == null)
             ? adminService.findUser(user.getId(), createPageableLimitTen(page))
             : adminService.findUserContaining(user.getId(), createPageableLimitTen(page),
                 field, value);
@@ -92,7 +92,7 @@ public class AdminController {
     public BaseResponse<AdminCooldownResponse> getCooldownAdmin(@AccessTokenUser User user,
         @RequestParam Integer page,
         @Nullable @RequestParam String yelloId) {
-        val data = yelloId==null
+        val data = yelloId == null
             ? adminService.findCooldown(user.getId(), createPageableLimitTen(page))
             : adminService.findCooldownContaining(user.getId(), createPageableLimitTen(page),
                 yelloId);
@@ -136,11 +136,10 @@ public class AdminController {
     }
 
     @PostMapping("/notification")
-    public BaseResponse postCustomNotificationSendAdmin(@AccessTokenUser User user,
+    public BaseResponse<EmptyObject> postCustomNotificationSendAdmin(@AccessTokenUser User user,
         @RequestBody NotificationCustomMessage request) {
+        val data = notificationService.adminSendCustomNotification(user.getId(), request);
 
-        notificationService.sendCustomNotification(request);
-
-        return BaseResponse.success(CREATE_VOTE_SUCCESS);
+        return BaseResponse.success(CREATE_VOTE_SUCCESS, data);
     }
 }
