@@ -18,7 +18,8 @@ public record NotificationMessage(
     public static NotificationMessage toRecommendNotificationContent(User user) {
         return NotificationMessage.builder()
             .title("40분 대기 초기화 + 100포인트 적립")
-            .message(MessageFormat.format("{0}님이 나를 추천인으로 가입해 옐로하기 대기 초기화 + 100포인트가 적립되었어요!", user.getName()))
+            .message(MessageFormat.format("{0}님이 나를 추천인으로 가입해 옐로하기 대기 초기화 + 100포인트가 적립되었어요!",
+                user.getName()))
             .type(NotificationType.RECOMMEND)
             .build();
     }
@@ -42,10 +43,21 @@ public record NotificationMessage(
     public static NotificationMessage toYelloNotificationContent(Vote vote) {
         final User sender = vote.getSender();
 
-        final String target = Gender.MALE.getIntial().equals(sender.getGender().getIntial()) ? "남학생" : "여학생";
+        final String target =
+            Gender.MALE.getIntial().equals(sender.getGender().getIntial()) ? "남학생" : "여학생";
         return NotificationMessage.builder()
             .title(MessageFormat.format("{0}이 쪽지를 보냈어요!", target))
             .message(vote.getQuestion().toNotificationSentence())
+            .type(NotificationType.NEW_VOTE)
+            .build();
+    }
+
+    public static NotificationMessage toYelloNotificationCustomContent(
+        NotificationCustomMessage message) {
+
+        return NotificationMessage.builder()
+            .title(message.title())
+            .message(message.message())
             .type(NotificationType.NEW_VOTE)
             .build();
     }
