@@ -52,15 +52,12 @@ public record NotificationMessage(
             .build();
     }
 
-    public static NotificationMessage toYelloNotificationCustomContent(Vote vote,
+    public static NotificationMessage toYelloNotificationCustomContent(
         NotificationCustomMessage message) {
-        final User sender = vote.getSender();
 
-        final String target =
-            Gender.MALE.getIntial().equals(sender.getGender().getIntial()) ? "남학생" : "여학생";
         return NotificationMessage.builder()
-            .title(MessageFormat.format(message.title(), target))
-            .message(message.title())
+            .title(message.title())
+            .message(message.message())
             .type(NotificationType.NEW_VOTE)
             .build();
     }

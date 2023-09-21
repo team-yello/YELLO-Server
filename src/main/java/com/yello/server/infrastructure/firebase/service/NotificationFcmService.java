@@ -86,13 +86,21 @@ public class NotificationFcmService implements NotificationService {
 
     @Override
     public void sendCustomNotification(NotificationCustomMessage request) {
-        NotificationMessage notificationMessage =
-            NotificationMessage.toYelloNotificationCustomContent(user);
 
-        if (target.getDeviceToken()!=null && !Objects.equals(target.getDeviceToken(), "")) {
-            final Message message =
-                fcmManager.createMessage(target.getDeviceToken(), notificationMessage);
-            fcmManager.send(message);
-        }
+        request.userIdList().stream()
+            .forEach(userId -> {
+                final User receiver = userRepository.getById(userId);
+
+                NotificationMessage notificationMessage =
+                    NotificationMessage.toYelloNotificationCustomContent(request);
+
+                if (receiver.getDeviceToken()!=null && !Objects.equals(receiver.getDeviceToken(),
+                    "")) {
+                    final Message message =
+                        fcmManager.createMessage(receiver.getDeviceToken(), notificationMessage);
+                    fcmManager.send(message);
+                }
+            });
+
     }
 }

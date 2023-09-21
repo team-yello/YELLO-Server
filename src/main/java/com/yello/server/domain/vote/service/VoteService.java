@@ -136,6 +136,7 @@ public class VoteService {
                 }
                 return true;
             })
+            .filter(question -> !question.getId().equals(102L))
             .toList();
         return voteManager.generateVoteQuestion(user, questions);
     }
