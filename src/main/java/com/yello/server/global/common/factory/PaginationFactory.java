@@ -7,6 +7,7 @@ import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
+import org.springframework.data.domain.Sort.Direction;
 
 public class PaginationFactory {
 
@@ -31,6 +32,10 @@ public class PaginationFactory {
 
     public static Pageable createPageableByNameSort(Integer page) {
         return PageRequest.of(page, PAGE_LIMIT, Sort.by(Sort.Direction.ASC, "name"));
+    }
+
+    public static Pageable createPageableByIdSortDescLimitTen(Integer page) {
+        return PageRequest.of(page, PAGE_LIMIT_TEN, Sort.by(Direction.DESC, "id"));
     }
 
     public static <T> Page<T> getPage(List<T> list, Pageable pageable) {

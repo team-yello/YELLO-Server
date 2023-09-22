@@ -12,6 +12,7 @@ import static com.yello.server.global.common.SuccessCode.READ_USER_ADMIN_SUCCESS
 import static com.yello.server.global.common.SuccessCode.READ_USER_DETAIL_ADMIN_SUCCESS;
 import static com.yello.server.global.common.SuccessCode.UPDATE_USER_DETAIL_ADMIN_SUCCESS;
 import static com.yello.server.global.common.factory.PaginationFactory.createPageable;
+import static com.yello.server.global.common.factory.PaginationFactory.createPageableByIdSortDescLimitTen;
 import static com.yello.server.global.common.factory.PaginationFactory.createPageableLimitTen;
 
 import com.yello.server.domain.admin.dto.request.AdminLoginRequest;
@@ -62,8 +63,9 @@ public class AdminController {
         @Nullable @RequestParam String field,
         @Nullable @RequestParam String value) {
         val data = (field==null && value==null)
-            ? adminService.findUser(user.getId(), createPageableLimitTen(page))
-            : adminService.findUserContaining(user.getId(), createPageableLimitTen(page),
+            ? adminService.findUser(user.getId(), createPageableByIdSortDescLimitTen(page))
+            : adminService.findUserContaining(user.getId(),
+                createPageableByIdSortDescLimitTen(page),
                 field, value);
         return BaseResponse.success(READ_USER_ADMIN_SUCCESS, data);
     }
