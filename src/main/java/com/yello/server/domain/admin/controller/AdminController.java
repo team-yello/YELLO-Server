@@ -12,6 +12,7 @@ import static com.yello.server.global.common.SuccessCode.READ_USER_ADMIN_SUCCESS
 import static com.yello.server.global.common.SuccessCode.READ_USER_DETAIL_ADMIN_SUCCESS;
 import static com.yello.server.global.common.SuccessCode.UPDATE_USER_DETAIL_ADMIN_SUCCESS;
 import static com.yello.server.global.common.factory.PaginationFactory.createPageable;
+import static com.yello.server.global.common.factory.PaginationFactory.createPageableByNameSortDescLimitTen;
 import static com.yello.server.global.common.factory.PaginationFactory.createPageableLimitTen;
 
 import com.yello.server.domain.admin.dto.request.AdminLoginRequest;
@@ -61,9 +62,10 @@ public class AdminController {
         @RequestParam Integer page,
         @Nullable @RequestParam String field,
         @Nullable @RequestParam String value) {
-        val data = (field == null && value == null)
-            ? adminService.findUser(user.getId(), createPageableLimitTen(page))
-            : adminService.findUserContaining(user.getId(), createPageableLimitTen(page),
+        val data = (field==null && value==null)
+            ? adminService.findUser(user.getId(), createPageableByNameSortDescLimitTen(page))
+            : adminService.findUserContaining(user.getId(),
+                createPageableByNameSortDescLimitTen(page),
                 field, value);
         return BaseResponse.success(READ_USER_ADMIN_SUCCESS, data);
     }
@@ -92,7 +94,7 @@ public class AdminController {
     public BaseResponse<AdminCooldownResponse> getCooldownAdmin(@AccessTokenUser User user,
         @RequestParam Integer page,
         @Nullable @RequestParam String yelloId) {
-        val data = yelloId == null
+        val data = yelloId==null
             ? adminService.findCooldown(user.getId(), createPageableLimitTen(page))
             : adminService.findCooldownContaining(user.getId(), createPageableLimitTen(page),
                 yelloId);
