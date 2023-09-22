@@ -1,10 +1,12 @@
 package com.yello.server.infrastructure.firebase.service;
 
 import com.google.firebase.messaging.Message;
+import com.yello.server.domain.admin.repository.UserAdminRepository;
 import com.yello.server.domain.friend.entity.Friend;
 import com.yello.server.domain.user.entity.User;
 import com.yello.server.domain.user.repository.UserRepository;
 import com.yello.server.domain.vote.entity.Vote;
+import com.yello.server.global.common.dto.EmptyObject;
 import com.yello.server.infrastructure.firebase.dto.request.NotificationCustomMessage;
 import com.yello.server.infrastructure.firebase.dto.request.NotificationMessage;
 import com.yello.server.infrastructure.firebase.manager.FCMManager;
@@ -24,6 +26,7 @@ public class NotificationFcmService implements NotificationService {
     private final UserRepository userRepository;
     private final TokenRepository tokenRepository;
     private final FCMManager fcmManager;
+    private final UserAdminRepository userAdminRepository;
 
     @Override
     public void sendRecommendNotification(User user, User target) {
@@ -101,6 +104,18 @@ public class NotificationFcmService implements NotificationService {
                     fcmManager.send(message);
                 }
             });
+    }
 
+    @Override
+    public EmptyObject adminSendCustomNotification(Long adminId,
+        NotificationCustomMessage request) {
+        // exception
+        final User admin = userRepository.getById(adminId);
+        userAdminRepository.getByUser(admin);
+
+        // logic
+        this.sendCustomNotification(request);
+
+        return EmptyObject.builder().build();
     }
 }

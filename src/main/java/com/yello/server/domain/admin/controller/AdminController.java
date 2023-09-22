@@ -138,11 +138,10 @@ public class AdminController {
     }
 
     @PostMapping("/notification")
-    public BaseResponse postCustomNotificationSendAdmin(@AccessTokenUser User user,
+    public BaseResponse<EmptyObject> postCustomNotificationSendAdmin(@AccessTokenUser User user,
         @RequestBody NotificationCustomMessage request) {
+        val data = notificationService.adminSendCustomNotification(user.getId(), request);
 
-        notificationService.sendCustomNotification(request);
-
-        return BaseResponse.success(CREATE_VOTE_SUCCESS);
+        return BaseResponse.success(CREATE_VOTE_SUCCESS, data);
     }
 }
