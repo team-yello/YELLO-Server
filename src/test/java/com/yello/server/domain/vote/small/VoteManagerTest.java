@@ -5,6 +5,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 import com.yello.server.domain.friend.FakeFriendRepository;
 import com.yello.server.domain.friend.repository.FriendRepository;
+import com.yello.server.domain.group.entity.UserGroupType;
 import com.yello.server.domain.question.FakeQuestionRepository;
 import com.yello.server.domain.question.entity.Question;
 import com.yello.server.domain.question.repository.QuestionRepository;
@@ -64,7 +65,7 @@ public class VoteManagerTest {
         }
 
         for (long i = 1; i <= 5; i++) {
-            userData.add(testDataUtil.generateUser(i, 1L));
+            userData.add(testDataUtil.generateUser(i, 1L, UserGroupType.UNIVERSITY));
         }
 
         testDataUtil.generateFriend(userData.get(1), userData.get(0));

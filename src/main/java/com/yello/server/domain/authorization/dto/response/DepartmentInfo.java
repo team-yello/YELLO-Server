@@ -1,6 +1,6 @@
 package com.yello.server.domain.authorization.dto.response;
 
-import com.yello.server.domain.group.entity.School;
+import com.yello.server.domain.group.entity.UserGroup;
 import lombok.Builder;
 
 @Builder
@@ -9,10 +9,10 @@ public record DepartmentInfo(
     String departmentName
 ) {
 
-    public static DepartmentInfo of(School school) {
+    public static DepartmentInfo of(UserGroup userGroup) {
         return DepartmentInfo.builder()
-            .groupId(school.getId())
-            .departmentName(school.getDepartmentName())
+            .groupId(userGroup.getId())
+            .departmentName(userGroup.getSubGroupName())
             .build();
     }
 }

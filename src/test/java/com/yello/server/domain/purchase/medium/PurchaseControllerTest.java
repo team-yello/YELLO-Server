@@ -15,6 +15,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.yello.server.domain.authorization.filter.JwtExceptionFilter;
 import com.yello.server.domain.authorization.filter.JwtFilter;
+import com.yello.server.domain.group.entity.UserGroupType;
 import com.yello.server.domain.purchase.controller.PurchaseController;
 import com.yello.server.domain.purchase.dto.apple.AppleTransaction;
 import com.yello.server.domain.purchase.dto.request.AppleInAppRefundRequest;
@@ -80,8 +81,8 @@ class PurchaseControllerTest {
 
     @BeforeEach
     void init() {
-        user = testDataUtil.generateUser(1L, 1L);
-        target = testDataUtil.generateUser(2L, 1L);
+        user = testDataUtil.generateUser(1L, 1L, UserGroupType.UNIVERSITY);
+        target = testDataUtil.generateUser(2L, 1L, UserGroupType.UNIVERSITY);
     }
 
     @Test

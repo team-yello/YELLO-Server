@@ -29,7 +29,7 @@ public enum SuccessCode {
     DELETE_USER_SUCCESS(OK, "유저 탈퇴에 성공했습니다."),
     DELETE_FRIEND_SUCCESS(OK, "친구 삭제에 성공했습니다."),
     ONBOARDING_FRIENDS_SUCCESS(OK, "추천 친구 조회에 성공했습니다."),
-    SCHOOL_NAME_SEARCH_SCHOOL_SUCCESS(OK, "학교 검색에 성공했습니다."),
+    UNIVERSITY_NAME_SEARCH_USER_GROUP_SUCCESS(OK, "학교 이름 검색에 성공했습니다."),
     DEPARTMENT_NAME_SEARCH_BY_SCHOOL_NAME_SCHOOL_SUCCESS(OK, "학과 검색에 성공했습니다."),
     REVEAL_NAME_HINT_SUCCESS(OK, "이름 초성 확인에 성공했습니다."),
     REVEAL_NAME_SUCCESS(OK, "전체 이름 확인에 성공했습니다."),

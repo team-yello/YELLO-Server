@@ -1,7 +1,9 @@
 package com.yello.server.domain.user.small;
 
+import static com.yello.server.global.common.util.ConstantUtil.RECOMMEND_POINT;
 import static org.assertj.core.api.Assertions.assertThat;
 
+import com.yello.server.domain.group.entity.UserGroupType;
 import com.yello.server.domain.user.entity.Subscribe;
 import com.yello.server.domain.user.entity.User;
 import com.yello.server.util.TestDataEntityUtil;
@@ -22,8 +24,8 @@ public class UserTest {
 
     @BeforeEach
     void init() {
-        user = testDataEntityUtil.generateUser(1L, 1L);
-        deletedUser = testDataEntityUtil.generateDeletedUser(2L, 1L);
+        user = testDataEntityUtil.generateUser(1L, 1L, UserGroupType.UNIVERSITY);
+        deletedUser = testDataEntityUtil.generateDeletedUser(2L, 1L, UserGroupType.UNIVERSITY);
     }
 
     @Test
@@ -60,7 +62,7 @@ public class UserTest {
         // given
         // when
         // then
-        assertThat(user.groupString()).isEqualTo("테스트 대학교 1 테스트 학과 1 20학번");
+        assertThat(user.toGroupString()).isEqualTo("테스트 대학교 1 테스트 학과 1 20학번");
     }
 
     @Test
@@ -69,7 +71,7 @@ public class UserTest {
         assertThat(user.getRecommendCount()).isZero();
 
         // when
-        user.increaseRecommendCount();
+        user.addRecommendCount(1L);
 
         // then
         assertThat(user.getRecommendCount()).isEqualTo(1);
@@ -81,7 +83,7 @@ public class UserTest {
         assertThat(user.getPoint()).isEqualTo(200);
 
         // when
-        user.increaseRecommendPoint();
+        user.addPoint(RECOMMEND_POINT);
 
         // then
         assertThat(user.getPoint()).isEqualTo(300);
@@ -93,7 +95,7 @@ public class UserTest {
         assertThat(user.getPoint()).isEqualTo(200);
 
         // when
-        user.minusPoint(100);
+        user.subPoint(100);
 
         // then
         assertThat(user.getPoint()).isEqualTo(100);
@@ -137,7 +139,7 @@ public class UserTest {
         assertThat(user.getTicketCount()).isZero();
 
         // when
-        user.setTicketCount(10);
+        user.addTicketCount(10);
 
         // then
         assertThat(user.getTicketCount()).isEqualTo(10);

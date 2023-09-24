@@ -48,7 +48,7 @@ public class TokenFactoryImpl implements TokenFactory {
                     .generatePrivate(new PKCS8EncodedKeySpec(Base64.decodeBase64(sig)))
             )
             .compact();
-        System.out.println(compact + " sdsdfsdsdfss");
+
         return compact;
     }
 

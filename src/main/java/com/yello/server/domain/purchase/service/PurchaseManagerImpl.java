@@ -75,8 +75,6 @@ public class PurchaseManagerImpl implements PurchaseManager {
         Map<String, Object> jsonPayload = DecodeTokenFactory.decodeToken(signedPayload);
         ObjectMapper objectMapper = new ObjectMapper();
 
-        System.out.println(jsonPayload + " ??????ddddd");
-
         String notificationType = jsonPayload.get("notificationType").toString();
         String subtype =
             (jsonPayload.get("subtype")!=null) ? jsonPayload.get("subtype").toString() : null;
@@ -146,9 +144,7 @@ public class PurchaseManagerImpl implements PurchaseManager {
 
     public void validateTicketCount(int ticketCount, User user) {
         if (user.getTicketCount() >= ticketCount) {
-            user.setTicketCount(-Math.abs(ticketCount));
+            user.addTicketCount(-Math.abs(ticketCount));
         }
     }
-
-
 }

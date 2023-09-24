@@ -1,7 +1,8 @@
 package com.yello.server.util;
 
 import com.yello.server.domain.friend.entity.Friend;
-import com.yello.server.domain.group.entity.School;
+import com.yello.server.domain.group.entity.UserGroup;
+import com.yello.server.domain.group.entity.UserGroupType;
 import com.yello.server.domain.question.entity.Question;
 import com.yello.server.domain.user.entity.Gender;
 import com.yello.server.domain.user.entity.Social;
@@ -13,11 +14,12 @@ import java.time.LocalDateTime;
 public class TestDataEntityUtil implements TestDataUtil {
 
     @Override
-    public User generateUser(long index, long schoolIndex) {
-        School school = School.builder()
+    public User generateUser(long index, long schoolIndex, UserGroupType userGroupType) {
+        UserGroup userGroup = UserGroup.builder()
             .id(schoolIndex)
-            .schoolName("테스트 대학교 %d".formatted(index))
-            .departmentName("테스트 학과 %d".formatted(index))
+            .groupName("테스트 대학교 %d".formatted(index))
+            .subGroupName("테스트 학과 %d".formatted(index))
+            .userGroupType(userGroupType)
             .build();
 
         return User.builder()
@@ -31,7 +33,7 @@ public class TestDataEntityUtil implements TestDataUtil {
             .profileImage("test image")
             .uuid("%d".formatted(index))
             .deletedAt(null)
-            .group(school)
+            .group(userGroup)
             .groupAdmissionYear(20)
             .deviceToken("deviceToken#%d".formatted(index))
             .subscribe(Subscribe.NORMAL)
@@ -41,11 +43,12 @@ public class TestDataEntityUtil implements TestDataUtil {
     }
 
     @Override
-    public User generateDeletedUser(long index, long schoolIndex) {
-        School school = School.builder()
+    public User generateDeletedUser(long index, long schoolIndex, UserGroupType userGroupType) {
+        UserGroup userGroup = UserGroup.builder()
             .id(schoolIndex)
-            .schoolName("테스트 대학교 %d".formatted(index))
-            .departmentName("테스트 학과 %d".formatted(index))
+            .groupName("테스트 대학교 %d".formatted(index))
+            .subGroupName("테스트 학과 %d".formatted(index))
+            .userGroupType(userGroupType)
             .build();
 
         return User.builder()
@@ -59,7 +62,7 @@ public class TestDataEntityUtil implements TestDataUtil {
             .profileImage("test image")
             .uuid("%d".formatted(index))
             .deletedAt(LocalDateTime.now())
-            .group(school)
+            .group(userGroup)
             .groupAdmissionYear(20)
             .deviceToken(null)
             .subscribe(Subscribe.NORMAL)
@@ -99,11 +102,12 @@ public class TestDataEntityUtil implements TestDataUtil {
     }
 
     @Override
-    public School generateSchool(long index) {
-        return School.builder()
+    public UserGroup generateGroup(long index, UserGroupType userGroupType) {
+        return UserGroup.builder()
             .id(index)
-            .schoolName("테스트 대학교 %d".formatted(index))
-            .departmentName("테스트 학과 %d".formatted(index))
+            .groupName("테스트 그룹 %d".formatted(index))
+            .subGroupName("테스트 하위 그룹 %d".formatted(index))
+            .userGroupType(userGroupType)
             .build();
     }
 }

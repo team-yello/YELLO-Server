@@ -3,6 +3,7 @@ package com.yello.server.domain.authorization.service;
 import static com.yello.server.global.common.ErrorCode.TOKEN_ALL_EXPIRED_AUTH_EXCEPTION;
 import static com.yello.server.global.common.ErrorCode.TOKEN_NOT_EXPIRED_AUTH_EXCEPTION;
 import static com.yello.server.global.common.ErrorCode.YELLOID_REQUIRED_EXCEPTION;
+import static com.yello.server.global.common.util.ConstantUtil.RECOMMEND_POINT;
 
 import com.yello.server.domain.authorization.dto.ServiceTokenVO;
 import com.yello.server.domain.authorization.dto.kakao.KakaoTokenInfo;
@@ -22,8 +23,9 @@ import com.yello.server.domain.cooldown.repository.CooldownRepository;
 import com.yello.server.domain.friend.entity.Friend;
 import com.yello.server.domain.friend.repository.FriendRepository;
 import com.yello.server.domain.friend.service.FriendManager;
-import com.yello.server.domain.group.entity.School;
-import com.yello.server.domain.group.repository.SchoolRepository;
+import com.yello.server.domain.group.entity.UserGroup;
+import com.yello.server.domain.group.entity.UserGroupType;
+import com.yello.server.domain.group.repository.UserGroupRepository;
 import com.yello.server.domain.user.entity.User;
 import com.yello.server.domain.user.repository.UserRepository;
 import com.yello.server.domain.vote.service.VoteManager;
@@ -50,7 +52,7 @@ import org.springframework.transaction.annotation.Transactional;
 public class AuthService {
 
     private final UserRepository userRepository;
-    private final SchoolRepository schoolRepository;
+    private final UserGroupRepository userGroupRepository;
     private final FriendRepository friendRepository;
     private final CooldownRepository cooldownRepository;
     private final MessageQueueRepository messageQueueRepository;
@@ -87,7 +89,7 @@ public class AuthService {
     @Transactional
     public SignUpResponse signUp(SignUpRequest signUpRequest) {
         authManager.validateSignupRequest(signUpRequest);
-        final School group = schoolRepository.getById(signUpRequest.groupId());
+        final UserGroup group = userGroupRepository.getById(signUpRequest.groupId());
 
         final User newUser = userRepository.save(User.of(signUpRequest, group));
         newUser.setDeviceToken(signUpRequest.deviceToken());
@@ -104,13 +106,13 @@ public class AuthService {
 
     @Transactional
     public void recommendUser(String recommendYelloId, String userYelloId) {
-        if (recommendYelloId!=null && !recommendYelloId.isEmpty()) {
+        if (recommendYelloId != null && !recommendYelloId.isEmpty()) {
             User recommendedUser = userRepository.getByYelloId(recommendYelloId);
             User user = userRepository.getByYelloId(userYelloId);
 
-            recommendedUser.increaseRecommendCount();
-            recommendedUser.increaseRecommendPoint();
-            user.increaseRecommendPoint();
+            recommendedUser.addRecommendCount(1L);
+            recommendedUser.addPoint(RECOMMEND_POINT);
+            user.addPoint(RECOMMEND_POINT);
 
             notificationService.sendRecommendNotification(user, recommendedUser);
 
@@ -148,19 +150,24 @@ public class AuthService {
         return OnBoardingFriendResponse.of(kakaoFriends.size(), pageList);
     }
 
-    public GroupNameSearchResponse findSchoolsByKeyword(String keyword, Pageable pageable) {
-        int totalCount = schoolRepository.countDistinctSchoolNameContaining(keyword);
-        final List<String> nameList = schoolRepository.findDistinctSchoolNameContaining(keyword,
-            pageable);
+    public GroupNameSearchResponse findGroupNameContaining(String keyword, UserGroupType userGroupType,
+        Pageable pageable) {
+        int totalCount = userGroupRepository.countDistinctGroupNameContaining(keyword, userGroupType);
+        final List<String> nameList = userGroupRepository.findDistinctGroupNameContaining(keyword, userGroupType,
+                pageable)
+            .stream()
+            .toList();
+
         return GroupNameSearchResponse.of(totalCount, nameList);
     }
 
-    public DepartmentSearchResponse findDepartmentsByKeyword(String schoolName, String keyword,
-        Pageable pageable) {
-        int totalCount = schoolRepository.countAllBySchoolNameContaining(schoolName, keyword);
-        final List<School> schoolResult = schoolRepository.findAllBySchoolNameContaining(schoolName,
-            keyword, pageable);
-        return DepartmentSearchResponse.of(totalCount, schoolResult);
+    public DepartmentSearchResponse findGroupDepartmentBySchoolNameContaining(String schoolName, String keyword,
+        UserGroupType userGroupType, Pageable pageable) {
+        int totalCount = userGroupRepository.countAllByGroupNameContaining(schoolName, keyword, userGroupType);
+        final List<UserGroup> userGroupResult = userGroupRepository.findAllByGroupNameContaining(schoolName, keyword,
+            userGroupType, pageable);
+
+        return DepartmentSearchResponse.of(totalCount, userGroupResult);
     }
 
     @Transactional
@@ -181,16 +188,9 @@ public class AuthService {
         throw new NotExpiredTokenForbiddenException(TOKEN_NOT_EXPIRED_AUTH_EXCEPTION);
     }
 
-    public GroupNameSearchResponse getHighSchoolList(String keyword, Pageable pageable) {
-        int totalCount = schoolRepository.countDistinctHighSchoolNameContaining(keyword);
-        final List<String> nameList = schoolRepository.findDistinctHighSchoolNameContaining(keyword,
-            pageable);
-        return GroupNameSearchResponse.of(totalCount, nameList);
-    }
-
-    public ClassNameSearchResponse getHighSchoolClassName(String schoolName, String keyword) {
-        School school =
-            schoolRepository.findHighSchoolIdBySchoolNameAndClassName(schoolName, keyword);
-        return ClassNameSearchResponse.of(school);
+    public ClassNameSearchResponse getHighSchoolClassName(String schoolName, String className) {
+        UserGroup userGroup =
+            userGroupRepository.getByGroupNameAndSubGroupName(schoolName, className, UserGroupType.HIGH_SCHOOL);
+        return ClassNameSearchResponse.of(userGroup);
     }
 }

@@ -1,10 +1,8 @@
 package com.yello.server.domain.user.entity;
 
-import static com.yello.server.global.common.util.ConstantUtil.RECOMMEND_POINT;
-
 import com.yello.server.domain.admin.dto.request.AdminUserDetailRequest;
 import com.yello.server.domain.authorization.dto.request.SignUpRequest;
-import com.yello.server.domain.group.entity.School;
+import com.yello.server.domain.group.entity.UserGroup;
 import com.yello.server.global.common.dto.AuditingTimeEntity;
 import java.time.LocalDateTime;
 import java.util.Objects;
@@ -87,7 +85,7 @@ public class User extends AuditingTimeEntity {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "groupId")
-    private School group;
+    private UserGroup group;
 
     @Column(nullable = false)
     private int groupAdmissionYear;
@@ -100,6 +98,7 @@ public class User extends AuditingTimeEntity {
     @Column(nullable = false)
     private Integer ticketCount;
 
+    @Getter
     @Column(name = "device_token")
     private String deviceToken;
 
@@ -108,7 +107,7 @@ public class User extends AuditingTimeEntity {
     @Convert(converter = SubscribeConverter.class)
     private Subscribe subscribe;
 
-    public static User of(SignUpRequest signUpRequest, School group) {
+    public static User of(SignUpRequest signUpRequest, UserGroup group) {
         return User.builder()
             .recommendCount(0L)
             .name(signUpRequest.name())
@@ -135,6 +134,10 @@ public class User extends AuditingTimeEntity {
         this.deviceToken = null;
     }
 
+    public void renew() {
+        this.deletedAt = null;
+    }
+
     public void update(AdminUserDetailRequest request) {
         this.recommendCount = request.recommendCount();
         this.name = request.name();
@@ -151,41 +154,45 @@ public class User extends AuditingTimeEntity {
         this.subscribe = request.subscribe();
     }
 
-    public void renew() {
-        this.deletedAt = null;
-    }
-
-    public String groupString() {
-        return this.group.toString() + " " + this.getGroupAdmissionYear() + "학번";
-    }
-
-    public String highSchoolString() {
-        return this.group.getSchoolName() + " " + this.getGroupAdmissionYear() + "학년 "
-            + this.group.getDepartmentName() + "반";
-    }
-
-    public void increaseRecommendCount() {
-        this.recommendCount += 1;
-    }
-
-    public void increaseRecommendPoint() {
-        this.point += RECOMMEND_POINT;
-    }
-
-    public void plusPoint(Integer point) {
-        if (this.getSubscribe()==Subscribe.NORMAL) {
+    public void addPoint(Integer point) {
+        if (this.getSubscribe() == Subscribe.NORMAL) {
             this.point += point;
             return;
         }
         this.point += point * 2;
     }
 
-    public void minusPoint(Integer point) {
+    public void subPoint(Integer point) {
         this.point -= point;
     }
 
-    public String getDeviceToken() {
-        return this.deviceToken;
+    public void addRecommendCount(Long recommendCount) {
+        this.recommendCount += recommendCount;
+    }
+
+    public void addTicketCount(int ticketCount) {
+        this.ticketCount += ticketCount;
+    }
+
+    public String toGroupString() {
+        /**
+         * TODO 고등학교 중학교 처참함. groupAdmissionYear를 '입학년도'로 볼 것이 아닌,
+         * TODO UserGroup과 종속된 User 하나에게 주어지는 '고유한 값'(1:1 특성)으로 보아야함.
+         * TODO '학번', '번호', 등은 해당 유저의 각각 대학교, 고등학교이라는 그룹 내에서 가지는 유저만의 (일부 고유 식별 가능한) 특성임.
+         * */
+
+        return switch (this.group.getUserGroupType()) {
+            case UNIVERSITY -> String.format("%s %s학번", this.group.toString(), this.groupAdmissionYear);
+            case HIGH_SCHOOL -> String.format("%s %s학년 %s반", this.group.getGroupName(), this.groupAdmissionYear,
+                this.group.getSubGroupName());
+            case MIDDLE_SCHOOL -> String.format("%s %s학년 %s반", this.group.getGroupName(), this.groupAdmissionYear,
+                this.group.getSubGroupName());
+            case SOPT -> String.format("%s", this.group.toString());
+        };
+    }
+
+    public void setSubscribe(Subscribe subscribe) {
+        this.subscribe = subscribe;
     }
 
     public void setDeviceToken(String deviceToken) {
@@ -195,13 +202,4 @@ public class User extends AuditingTimeEntity {
             this.deviceToken = deviceToken;
         }
     }
-
-    public void setSubscribe(Subscribe subscribe) {
-        this.subscribe = subscribe;
-    }
-
-    public void setTicketCount(int ticketCount) {
-        this.ticketCount += ticketCount;
-    }
-
 }

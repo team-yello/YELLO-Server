@@ -1,16 +1,17 @@
 package com.yello.server.util;
 
 import com.yello.server.domain.friend.entity.Friend;
-import com.yello.server.domain.group.entity.School;
+import com.yello.server.domain.group.entity.UserGroup;
+import com.yello.server.domain.group.entity.UserGroupType;
 import com.yello.server.domain.question.entity.Question;
 import com.yello.server.domain.user.entity.User;
 import com.yello.server.domain.vote.entity.Vote;
 
 public interface TestDataUtil {
 
-    User generateUser(long index, long schoolIndex);
+    User generateUser(long index, long groupIndex, UserGroupType userGroupType);
 
-    User generateDeletedUser(long index, long schoolIndex);
+    User generateDeletedUser(long index, long groupIndex, UserGroupType userGroupType);
 
     Friend generateFriend(User user, User target);
 
@@ -18,6 +19,6 @@ public interface TestDataUtil {
 
     Question generateQuestion(long index);
 
-    School generateSchool(long index);
+    UserGroup generateGroup(long index, UserGroupType userGroupType);
 }
 

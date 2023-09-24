@@ -2,7 +2,7 @@ package com.yello.server.domain.user.small;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-import com.yello.server.domain.group.entity.School;
+import com.yello.server.domain.group.entity.UserGroup;
 import com.yello.server.domain.user.FakeUserRepository;
 import com.yello.server.domain.user.entity.Gender;
 import com.yello.server.domain.user.entity.Social;
@@ -76,9 +76,9 @@ public class UserManagerTest {
 
 
     private void generateUserForTest() {
-        School school = School.builder()
-            .schoolName("Test School")
-            .departmentName("Testing")
+        UserGroup userGroup = UserGroup.builder()
+            .groupName("Test School")
+            .subGroupName("Testing")
             .build();
 
         Long[] ids = {1L, 2L};
@@ -98,7 +98,7 @@ public class UserManagerTest {
                 .profileImage("test image")
                 .uuid(uuids[i])
                 .deletedAt(null)
-                .group(school)
+                .group(userGroup)
                 .groupAdmissionYear(20)
                 .email("test@test.com")
                 .build());
