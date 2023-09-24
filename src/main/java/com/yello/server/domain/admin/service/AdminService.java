@@ -88,7 +88,8 @@ public class AdminService {
         return AdminUserResponse.of(totalCount, list);
     }
 
-    public AdminUserResponse findUserContaining(Long adminId, Pageable page, String field, String value) {
+    public AdminUserResponse findUserContaining(Long adminId, Pageable page, String field,
+        String value) {
         // exception
         final User admin = userRepository.getById(adminId);
         userAdminRepository.getByUser(admin);
@@ -185,16 +186,18 @@ public class AdminService {
         return AdminCooldownResponse.of(totalCount, list);
     }
 
-    public AdminCooldownResponse findCooldownContaining(Long adminId, Pageable page, String yelloId) {
+    public AdminCooldownResponse findCooldownContaining(Long adminId, Pageable page,
+        String yelloId) {
         // exception
         final User admin = userRepository.getById(adminId);
         userAdminRepository.getByUser(admin);
 
         // logic
         final Long totalCount = cooldownRepository.countAllByYelloIdContaining(yelloId);
-        final List<AdminCooldownContentVO> list = cooldownRepository.findAllContaining(page, yelloId).stream()
-            .map(AdminCooldownContentVO::of)
-            .toList();
+        final List<AdminCooldownContentVO> list =
+            cooldownRepository.findAllContaining(page, yelloId).stream()
+                .map(AdminCooldownContentVO::of)
+                .toList();
 
         return AdminCooldownResponse.of(totalCount, list);
     }
@@ -245,8 +248,10 @@ public class AdminService {
         // logic
         final List<Vote> result = new ArrayList<>();
         request.voteContentList().forEach((voteContent -> {
-            final Optional<User> sender = userRepository.findByIdNotFiltered(voteContent.senderId());
-            final Optional<User> receiver = userRepository.findByIdNotFiltered(voteContent.receiverId());
+            final Optional<User> sender =
+                userRepository.findByIdNotFiltered(voteContent.senderId());
+            final Optional<User> receiver =
+                userRepository.findByIdNotFiltered(voteContent.receiverId());
 
             if (sender.isPresent() && receiver.isPresent()) {
                 final Vote vote = Vote.createVote(
