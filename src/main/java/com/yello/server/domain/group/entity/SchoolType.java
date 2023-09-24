@@ -9,7 +9,9 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public enum SchoolType {
     UNIVERSITY("UNIVERSITY"),
-    HIGHSCHOOL("HIGH_SCHOOL");
+    HIGH_SCHOOL("HIGH_SCHOOL"),
+    MIDDLE_SCHOOL("MIDDLE_SCHOOL"),
+    SOPT("SOPT");
 
     private final String intial;
 
