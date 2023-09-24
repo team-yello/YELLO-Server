@@ -75,15 +75,13 @@ public class PurchaseManagerImpl implements PurchaseManager {
         Map<String, Object> jsonPayload = DecodeTokenFactory.decodeToken(signedPayload);
         ObjectMapper objectMapper = new ObjectMapper();
 
-        System.out.println(jsonPayload + " ??????ddddd");
-
         String notificationType = jsonPayload.get("notificationType").toString();
         String subType =
-            (jsonPayload.get("subType")!=null) ? jsonPayload.get("subType").toString() : null;
+            (jsonPayload.get("subType") != null) ? jsonPayload.get("subType").toString() : null;
         Map<String, Object> data = (Map<String, Object>) jsonPayload.get("data");
 
         String notificationUUID =
-            (jsonPayload.get("notificationUUID")!=null) ? jsonPayload.get("notificationUUID")
+            (jsonPayload.get("notificationUUID") != null) ? jsonPayload.get("notificationUUID")
                 .toString() : null;
 
         ApplePayloadDataVO payloadVO = objectMapper.convertValue(data, ApplePayloadDataVO.class);
@@ -146,9 +144,7 @@ public class PurchaseManagerImpl implements PurchaseManager {
 
     public void validateTicketCount(int ticketCount, User user) {
         if (user.getTicketCount() >= ticketCount) {
-            user.setTicketCount(-Math.abs(ticketCount));
+            user.addTicketCount(-Math.abs(ticketCount));
         }
     }
-
-
 }

@@ -14,6 +14,7 @@ import com.yello.server.domain.cooldown.FakeCooldownRepository;
 import com.yello.server.domain.cooldown.repository.CooldownRepository;
 import com.yello.server.domain.friend.FakeFriendRepository;
 import com.yello.server.domain.friend.repository.FriendRepository;
+import com.yello.server.domain.group.entity.UserGroupType;
 import com.yello.server.domain.question.FakeQuestionRepository;
 import com.yello.server.domain.question.repository.QuestionRepository;
 import com.yello.server.domain.user.FakeUserRepository;
@@ -67,10 +68,10 @@ public class AuthManagerTest {
             .build();
 
         // soft-deleted User
-        testDataUtil.generateDeletedUser(0L, 1L);
+        testDataUtil.generateDeletedUser(0L, 1L, UserGroupType.UNIVERSITY);
 
         for (int i = 1; i <= 3; i++) {
-            testDataUtil.generateUser(i, 1L);
+            testDataUtil.generateUser(i, 1L, UserGroupType.UNIVERSITY);
         }
     }
 

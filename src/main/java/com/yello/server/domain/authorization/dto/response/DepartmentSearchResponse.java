@@ -1,6 +1,6 @@
 package com.yello.server.domain.authorization.dto.response;
 
-import com.yello.server.domain.group.entity.School;
+import com.yello.server.domain.group.entity.UserGroup;
 import java.util.List;
 import lombok.Builder;
 
@@ -10,8 +10,8 @@ public record DepartmentSearchResponse(
     List<DepartmentInfo> groupList
 ) {
 
-    public static DepartmentSearchResponse of(int totalCount, List<School> schoolList) {
-        List<DepartmentInfo> departmentInfoList = schoolList.stream()
+    public static DepartmentSearchResponse of(int totalCount, List<UserGroup> userGroupList) {
+        List<DepartmentInfo> departmentInfoList = userGroupList.stream()
             .map(DepartmentInfo::of)
             .toList();
 

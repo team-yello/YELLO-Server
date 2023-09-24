@@ -7,7 +7,7 @@ import lombok.RequiredArgsConstructor;
 
 @Getter
 @RequiredArgsConstructor
-public enum SchoolType {
+public enum UserGroupType {
     UNIVERSITY("UNIVERSITY"),
     HIGH_SCHOOL("HIGH_SCHOOL"),
     MIDDLE_SCHOOL("MIDDLE_SCHOOL"),
@@ -15,12 +15,12 @@ public enum SchoolType {
 
     private final String intial;
 
-    public static SchoolType fromCode(String dbData) {
-        return Arrays.stream(SchoolType.values())
+    public static UserGroupType fromCode(String dbData) {
+        return Arrays.stream(UserGroupType.values())
             .filter(v -> v.getIntial().equals(dbData))
             .findAny()
             .orElseThrow(() -> new IllegalArgumentException(
-                MessageFormat.format("존재하지 않는 학교타입 입니다. {0}", dbData)));
+                MessageFormat.format("존재하지 않는 그룹 타입 입니다. {0}", dbData)));
     }
 
     public String intial() {

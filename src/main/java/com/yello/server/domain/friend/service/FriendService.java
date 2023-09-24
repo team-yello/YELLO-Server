@@ -84,7 +84,7 @@ public class FriendService {
         final User user = userRepository.getById(userId);
 
         List<User> recommendFriends =
-            userRepository.findAllByGroupId(user.getGroup().getSchoolName())
+            userRepository.findAllByGroupId(user.getGroup().getId())
                 .stream()
                 .filter(target -> !userId.equals(target.getId()))
                 .filter(target -> !friendRepository.existsByUserAndTarget(userId, target.getId()))
@@ -131,12 +131,12 @@ public class FriendService {
     public SearchFriendResponse searchFriend(Long userId, Pageable pageable,
         String keyword) {
         final User user = userRepository.getById(userId);
-        final String groupName = user.getGroup().getSchoolName();
+        final String groupName = user.getGroup().getGroupName();
         List<String> uuidList = Arrays.asList(YELLO_FEMALE, YELLO_MALE);
 
         List<User> friendList = new ArrayList<>();
 
-        if (keyword==null || keyword.trim().isEmpty()) {
+        if (keyword == null || keyword.trim().isEmpty()) {
             return SearchFriendResponse.of(0, Collections.emptyList());
         }
 
@@ -165,7 +165,7 @@ public class FriendService {
 
     public boolean isEnglish(String keyword) {
         for (char c : keyword.toCharArray()) {
-            if (Character.UnicodeBlock.of(c)!=UnicodeBlock.BASIC_LATIN) {
+            if (Character.UnicodeBlock.of(c) != UnicodeBlock.BASIC_LATIN) {
                 return false;
             }
         }

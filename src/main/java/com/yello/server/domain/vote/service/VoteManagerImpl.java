@@ -123,10 +123,10 @@ public class VoteManagerImpl implements VoteManager {
         vote.checkNameIndexOf(randomIndex);
 
         if (sender.getSubscribe() == Subscribe.NORMAL) {
-            sender.minusPoint(NAME_HINT_POINT);
+            sender.subPoint(NAME_HINT_POINT);
             return randomIndex;
         }
-        sender.minusPoint(0);
+        sender.subPoint(0);
         return randomIndex;
     }
 
@@ -136,7 +136,7 @@ public class VoteManagerImpl implements VoteManager {
             throw new VoteForbiddenException(LACK_POINT_EXCEPTION);
         }
 
-        user.minusPoint(KEYWORD_HINT_POINT);
+        user.subPoint(KEYWORD_HINT_POINT);
         vote.checkKeyword();
 
         return KeywordCheckResponse.of(vote);

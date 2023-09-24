@@ -1,6 +1,6 @@
 package com.yello.server.util;
 
-import com.yello.server.domain.group.entity.School;
+import com.yello.server.domain.group.entity.UserGroup;
 import com.yello.server.domain.user.entity.Gender;
 import com.yello.server.domain.user.entity.Social;
 import com.yello.server.domain.user.entity.Subscribe;
@@ -18,9 +18,9 @@ public class WithAccessTokenUserSecurityFactory implements WithSecurityContextFa
     public SecurityContext createSecurityContext(WithAccessTokenUser annotation) {
         SecurityContext context = SecurityContextHolder.createEmptyContext();
 
-        School school = School.builder()
-            .schoolName("school")
-            .departmentName("department")
+        UserGroup userGroup = UserGroup.builder()
+            .groupName("school")
+            .subGroupName("department")
             .build();
 
         User user = User.builder()
@@ -34,7 +34,7 @@ public class WithAccessTokenUserSecurityFactory implements WithSecurityContextFa
             .profileImage("profileImage")
             .uuid("uuid")
             .deletedAt(null)
-            .group(school)
+            .group(userGroup)
             .deviceToken("deviceToken")
             .subscribe(Subscribe.NORMAL)
             .ticketCount(0)

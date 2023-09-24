@@ -2,7 +2,7 @@ package com.yello.server.domain.admin.dto.response;
 
 import static com.yello.server.global.common.factory.TimeFactory.toDateFormattedString;
 
-import com.yello.server.domain.group.entity.School;
+import com.yello.server.domain.group.entity.UserGroup;
 import com.yello.server.domain.user.entity.User;
 import lombok.Builder;
 
@@ -18,7 +18,7 @@ public record AdminUserContentVO(
 ) {
 
     public static AdminUserContentVO of(User user) {
-        final School userGroup = user.getGroup();
+        final UserGroup userGroup = user.getGroup();
 
         return AdminUserContentVO.builder()
             .id(user.getId())

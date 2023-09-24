@@ -115,8 +115,8 @@ public class UserRepositoryImpl implements UserRepository {
     }
 
     @Override
-    public List<User> findAllByGroupId(String schoolName) {
-        return userJpaRepository.findAllByGroupId(schoolName);
+    public List<User> findAllByGroupId(Long groupId) {
+        return userJpaRepository.findAllByGroupId(groupId);
     }
 
     @Override

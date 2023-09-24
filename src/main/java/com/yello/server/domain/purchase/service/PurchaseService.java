@@ -84,7 +84,7 @@ public class PurchaseService {
         final Optional<Purchase> mostRecentPurchase =
             purchaseRepository.findTopByUserAndProductTypeOrderByCreatedAtDesc(
                 user, ProductType.YELLO_PLUS);
-        final Boolean isSubscribeNeeded = user.getSubscribe()==Subscribe.CANCELED
+        final Boolean isSubscribeNeeded = user.getSubscribe() == Subscribe.CANCELED
             && mostRecentPurchase.isPresent()
             && Duration.between(mostRecentPurchase.get().getCreatedAt(), time).getSeconds()
             < 1 * 24 * 60 * 60;
@@ -101,7 +101,7 @@ public class PurchaseService {
 
         purchaseManager.handleAppleTransactionError(verifyReceiptResponse, request.transactionId());
 
-        if (user.getSubscribe()==Subscribe.ACTIVE) {
+        if (user.getSubscribe() == Subscribe.ACTIVE) {
             throw new SubscriptionConflictException(SUBSCRIBE_ACTIVE_EXCEPTION);
         }
 
@@ -110,7 +110,7 @@ public class PurchaseService {
         }
 
         purchaseManager.createSubscribe(user, Gateway.APPLE, request.transactionId());
-        user.setTicketCount(3);
+        user.addTicketCount(3);
     }
 
     @Transactional
@@ -126,17 +126,17 @@ public class PurchaseService {
             case ONE_TICKET_ID:
                 purchaseManager.createTicket(user, ProductType.ONE_TICKET, Gateway.APPLE,
                     request.transactionId());
-                user.setTicketCount(1);
+                user.addTicketCount(1);
                 break;
             case TWO_TICKET_ID:
                 purchaseManager.createTicket(user, ProductType.TWO_TICKET, Gateway.APPLE,
                     request.transactionId());
-                user.setTicketCount(2);
+                user.addTicketCount(2);
                 break;
             case FIVE_TICKET_ID:
                 purchaseManager.createTicket(user, ProductType.FIVE_TICKET, Gateway.APPLE,
                     request.transactionId());
-                user.setTicketCount(5);
+                user.addTicketCount(5);
                 break;
             default:
                 throw new PurchaseException(NOT_FOUND_TRANSACTION_EXCEPTION);
@@ -149,7 +149,7 @@ public class PurchaseService {
         User user = userRepository.getById(userId);
 
         // exception
-        if (user.getSubscribe()!=Subscribe.NORMAL) {
+        if (user.getSubscribe() != Subscribe.NORMAL) {
             throw new PurchaseConflictException(GOOGLE_SUBSCRIPTIONS_FORBIDDEN_EXCEPTION);
         }
 
@@ -195,7 +195,7 @@ public class PurchaseService {
                     GOOGLE_SUBSCRIPTION_TRANSACTION_EXPIRED_EXCEPTION);
             }
             case ConstantUtil.GOOGLE_PURCHASE_SUBSCRIPTION_CANCELED -> {
-                if (user.getSubscribe()==Subscribe.CANCELED) {
+                if (user.getSubscribe() == Subscribe.CANCELED) {
                     throw new GoogleBadRequestException(
                         GOOGLE_SUBSCRIPTION_DUPLICATED_CANCEL_EXCEPTION);
                 } else {
@@ -206,7 +206,7 @@ public class PurchaseService {
             case ConstantUtil.GOOGLE_PURCHASE_SUBSCRIPTION_ACTIVE -> {
                 final Purchase subscribe =
                     purchaseManager.createSubscribe(user, Gateway.GOOGLE, request.orderId());
-                user.setTicketCount(3);
+                user.addTicketCount(3);
                 subscribe.setTransactionId(request.orderId());
             }
         }
@@ -249,7 +249,7 @@ public class PurchaseService {
             throw new GoogleTokenServerErrorException(GOOGLE_TOKEN_SERVER_EXCEPTION);
         }
 
-        if (inAppResponse.getBody().purchaseState()==0) {
+        if (inAppResponse.getBody().purchaseState() == 0) {
             purchaseRepository.findByTransactionId(inAppResponse.getBody().orderId())
                 .ifPresent(action -> {
                     throw new PurchaseConflictException(
@@ -259,7 +259,7 @@ public class PurchaseService {
             Purchase ticket =
                 purchaseManager.createTicket(user, getProductType(request.productId()),
                     Gateway.GOOGLE, request.orderId());
-            user.setTicketCount(getTicketAmount(request.productId()) * request.quantity());
+            user.addTicketCount(getTicketAmount(request.productId()) * request.quantity());
             ticket.setTransactionId(inAppResponse.getBody().orderId());
         } else {
             throw new GoogleBadRequestException(GOOGLE_INAPP_BAD_REQUEST_EXCEPTION);

@@ -43,7 +43,7 @@ public interface UserRepository {
 
     Optional<User> findByDeviceTokenNotFiltered(String deviceToken);
 
-    List<User> findAllByGroupId(String schoolName);
+    List<User> findAllByGroupId(Long groupId);
 
     List<User> findAllByGroupContainingName(String groupName, String keyword,
         List<String> uuidList);
