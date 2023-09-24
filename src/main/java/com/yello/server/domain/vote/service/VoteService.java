@@ -105,7 +105,7 @@ public class VoteService {
         final Integer totalCount = voteRepository.countAllReceivedByFriends(userId);
         final List<VoteFriendVO> list = voteRepository.findAllReceivedByFriends(userId, pageable)
             .stream()
-            .filter(vote -> vote.getNameHint()!=-3)
+            .filter(vote -> vote.getNameHint() != -3)
             .map(VoteFriendVO::of)
             .toList();
         return VoteFriendResponse.of(totalCount, list);
@@ -123,7 +123,7 @@ public class VoteService {
         final User user = userRepository.getById(userId);
 
         final List<Friend> friends = friendRepository.findAllByUserId(user.getId());
-        if (friends.size()==NO_FRIEND_COUNT) {
+        if (friends.size() == NO_FRIEND_COUNT) {
             throw new FriendException(LACK_USER_EXCEPTION);
         }
 
@@ -136,6 +136,7 @@ public class VoteService {
                 }
                 return true;
             })
+            .filter(question -> !question.getId().equals(102L))
             .toList();
         return voteManager.generateVoteQuestion(user, questions);
     }
@@ -145,7 +146,7 @@ public class VoteService {
         final String messageId = UUID.randomUUID().toString();
         final List<Friend> friends = friendRepository.findAllByUserId(user.getId());
 
-        if (friends.size()==NO_FRIEND_COUNT) {
+        if (friends.size() == NO_FRIEND_COUNT) {
             throw new FriendException(LACK_USER_EXCEPTION);
         }
 
@@ -172,7 +173,7 @@ public class VoteService {
         cooldown.updateDate(LocalDateTime.now());
         producerService.produceVoteAvailableNotification(cooldown);
 
-        sender.plusPoint(request.totalPoint());
+        sender.addPoint(request.totalPoint());
         return VoteCreateVO.of(sender.getPoint(), votes);
     }
 
@@ -200,7 +201,7 @@ public class VoteService {
         }
 
         vote.checkNameIndexOf(CHECK_FULL_NAME);
-        sender.setTicketCount(MINUS_TICKET_COUNT);
+        sender.addTicketCount(MINUS_TICKET_COUNT);
 
         return RevealFullNameResponse.of(vote.getSender());
     }

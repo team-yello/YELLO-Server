@@ -2,6 +2,7 @@ package com.yello.server.infrastructure.firebase.small;
 
 import com.yello.server.domain.friend.FakeFriendRepository;
 import com.yello.server.domain.friend.repository.FriendRepository;
+import com.yello.server.domain.group.entity.UserGroupType;
 import com.yello.server.domain.question.FakeQuestionRepository;
 import com.yello.server.domain.question.entity.Question;
 import com.yello.server.domain.question.repository.QuestionRepository;
@@ -44,8 +45,8 @@ public class FcmManagerTest {
             .voteRepository(voteRepository)
             .build();
 
-        User user = testDataUtil.generateUser(1L, 1L);
-        User target = testDataUtil.generateUser(2L, 1L);
+        User user = testDataUtil.generateUser(1L, 1L, UserGroupType.UNIVERSITY);
+        User target = testDataUtil.generateUser(2L, 1L, UserGroupType.UNIVERSITY);
         Question question = testDataUtil.generateQuestion(1L);
         testDataUtil.generateVote(1L, user, target, question);
     }

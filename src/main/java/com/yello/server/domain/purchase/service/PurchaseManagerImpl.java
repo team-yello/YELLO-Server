@@ -75,11 +75,9 @@ public class PurchaseManagerImpl implements PurchaseManager {
         Map<String, Object> jsonPayload = DecodeTokenFactory.decodeToken(signedPayload);
         ObjectMapper objectMapper = new ObjectMapper();
 
-        System.out.println(jsonPayload + " ??????ddddd");
-
         String notificationType = jsonPayload.get("notificationType").toString();
-        String subType =
-            (jsonPayload.get("subType")!=null) ? jsonPayload.get("subType").toString() : null;
+        String subtype =
+            (jsonPayload.get("subtype")!=null) ? jsonPayload.get("subtype").toString() : null;
         Map<String, Object> data = (Map<String, Object>) jsonPayload.get("data");
 
         String notificationUUID =
@@ -88,7 +86,7 @@ public class PurchaseManagerImpl implements PurchaseManager {
 
         ApplePayloadDataVO payloadVO = objectMapper.convertValue(data, ApplePayloadDataVO.class);
 
-        return AppleNotificationPayloadVO.of(notificationType, subType, payloadVO,
+        return AppleNotificationPayloadVO.of(notificationType, subtype, payloadVO,
             notificationUUID);
     }
 
@@ -114,7 +112,7 @@ public class PurchaseManagerImpl implements PurchaseManager {
 
         User user = purchase.getUser();
 
-        if (payloadVO.subType().equals(ConstantUtil.APPLE_SUBTYPE_AUTO_RENEW_DISABLED)
+        if (payloadVO.subtype().equals(ConstantUtil.APPLE_SUBTYPE_AUTO_RENEW_DISABLED)
             && !user.getSubscribe().equals(Subscribe.NORMAL)) {
             user.setSubscribe(Subscribe.NORMAL);
         }
@@ -146,9 +144,7 @@ public class PurchaseManagerImpl implements PurchaseManager {
 
     public void validateTicketCount(int ticketCount, User user) {
         if (user.getTicketCount() >= ticketCount) {
-            user.setTicketCount(-Math.abs(ticketCount));
+            user.addTicketCount(-Math.abs(ticketCount));
         }
     }
-
-
 }

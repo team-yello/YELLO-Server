@@ -17,7 +17,7 @@
 
 * link:find-onboarding-friends.html[가입한 친구 목록 불러오기]
 
-* link:search-school.html[대학교 검색하기]
+* link:search-userGroup.html[대학교 검색하기]
 
 * link:search-department.html[대학교 학과 검색하기]
 

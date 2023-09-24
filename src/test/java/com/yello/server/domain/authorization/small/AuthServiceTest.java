@@ -26,9 +26,10 @@ import com.yello.server.domain.friend.FakeFriendManager;
 import com.yello.server.domain.friend.FakeFriendRepository;
 import com.yello.server.domain.friend.repository.FriendRepository;
 import com.yello.server.domain.friend.service.FriendManager;
-import com.yello.server.domain.group.FakeSchoolRepository;
+import com.yello.server.domain.group.FakeUserGroupRepository;
+import com.yello.server.domain.group.entity.UserGroupType;
 import com.yello.server.domain.group.exception.GroupNotFoundException;
-import com.yello.server.domain.group.repository.SchoolRepository;
+import com.yello.server.domain.group.repository.UserGroupRepository;
 import com.yello.server.domain.question.FakeQuestionRepository;
 import com.yello.server.domain.question.repository.QuestionRepository;
 import com.yello.server.domain.user.FakeUserManager;
@@ -74,7 +75,7 @@ public class AuthServiceTest {
         "keyForTestkeyForTestkeyForTestkeyForTestkeyForTestkeyForTestkeyForTestkeyForTestkeyForTest".getBytes());
 
     private final UserRepository userRepository = new FakeUserRepository();
-    private final SchoolRepository schoolRepository = new FakeSchoolRepository();
+    private final UserGroupRepository userGroupRepository = new FakeUserGroupRepository();
     private final FriendRepository friendRepository = new FakeFriendRepository();
     private final CooldownRepository cooldownRepository = new FakeCooldownRepository();
     private final TokenRepository tokenRepository = new FakeTokenRepository();
@@ -113,7 +114,7 @@ public class AuthServiceTest {
     void init() {
         this.authService = AuthService.builder()
             .userRepository(userRepository)
-            .schoolRepository(schoolRepository)
+            .userGroupRepository(userGroupRepository)
             .friendRepository(friendRepository)
             .cooldownRepository(cooldownRepository)
             .messageQueueRepository(messageQueueRepository)
@@ -125,13 +126,13 @@ public class AuthServiceTest {
             .notificationService(notificationService)
             .build();
 
-        schoolRepository.save(testDataUtil.generateSchool(1L));
+        userGroupRepository.save(testDataUtil.generateGroup(1L, UserGroupType.UNIVERSITY));
 
         // soft-deleted User
-        testDataUtil.generateDeletedUser(0L, 1L);
+        testDataUtil.generateDeletedUser(0L, 1L, UserGroupType.UNIVERSITY);
 
         for (int i = 1; i <= 3; i++) {
-            testDataUtil.generateUser(i, 1L);
+            testDataUtil.generateUser(i, 1L, UserGroupType.UNIVERSITY);
         }
     }
 

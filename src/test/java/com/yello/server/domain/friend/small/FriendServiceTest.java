@@ -16,6 +16,7 @@ import com.yello.server.domain.friend.exception.FriendException;
 import com.yello.server.domain.friend.exception.FriendNotFoundException;
 import com.yello.server.domain.friend.repository.FriendRepository;
 import com.yello.server.domain.friend.service.FriendService;
+import com.yello.server.domain.group.entity.UserGroupType;
 import com.yello.server.domain.question.FakeQuestionRepository;
 import com.yello.server.domain.question.repository.QuestionRepository;
 import com.yello.server.domain.user.FakeUserManager;
@@ -73,11 +74,11 @@ class FriendServiceTest {
             .voteManager(voteManager)
             .build();
 
-        user1 = testDataUtil.generateUser(1L, 1L);
-        user2 = testDataUtil.generateUser(2L, 2L);
-        user3 = testDataUtil.generateUser(3L, 1L);
-        user4 = testDataUtil.generateUser(4L, 1L);
-        user5 = testDataUtil.generateUser(5L, 1L);
+        user1 = testDataUtil.generateUser(1L, 1L, UserGroupType.UNIVERSITY);
+        user2 = testDataUtil.generateUser(2L, 2L, UserGroupType.UNIVERSITY);
+        user3 = testDataUtil.generateUser(3L, 1L, UserGroupType.UNIVERSITY);
+        user4 = testDataUtil.generateUser(4L, 1L, UserGroupType.UNIVERSITY);
+        user5 = testDataUtil.generateUser(5L, 1L, UserGroupType.UNIVERSITY);
 
         testDataUtil.generateFriend(user1, user2);
         testDataUtil.generateFriend(user2, user1);

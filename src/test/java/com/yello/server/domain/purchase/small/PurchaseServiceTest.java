@@ -2,7 +2,7 @@ package com.yello.server.domain.purchase.small;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-import com.yello.server.domain.group.entity.School;
+import com.yello.server.domain.group.entity.UserGroup;
 import com.yello.server.domain.purchase.FakeAppleApiWebClient;
 import com.yello.server.domain.purchase.FakePurchaseManager;
 import com.yello.server.domain.purchase.FakePurchaseRepository;
@@ -50,9 +50,9 @@ public class PurchaseServiceTest {
             .purchaseManager(purchaseManager)
             .build();
 
-        School school = School.builder()
-            .schoolName("Test School")
-            .departmentName("Testing")
+        UserGroup userGroup = UserGroup.builder()
+            .groupName("Test School")
+            .subGroupName("Testing")
             .build();
         final User user = User.builder()
             .id(1L)
@@ -60,7 +60,7 @@ public class PurchaseServiceTest {
             .yelloId("yelloworld").gender(Gender.MALE)
             .point(200).social(Social.KAKAO)
             .profileImage("test image").uuid("1234")
-            .deletedAt(null).group(school)
+            .deletedAt(null).group(userGroup)
             .groupAdmissionYear(20).email("test@test.com")
             .subscribe(Subscribe.CANCELED).ticketCount(0)
             .build();
