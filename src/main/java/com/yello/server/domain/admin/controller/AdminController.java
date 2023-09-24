@@ -12,6 +12,7 @@ import static com.yello.server.global.common.SuccessCode.READ_USER_ADMIN_SUCCESS
 import static com.yello.server.global.common.SuccessCode.READ_USER_DETAIL_ADMIN_SUCCESS;
 import static com.yello.server.global.common.SuccessCode.UPDATE_USER_DETAIL_ADMIN_SUCCESS;
 import static com.yello.server.global.common.factory.PaginationFactory.createPageable;
+import static com.yello.server.global.common.factory.PaginationFactory.createPageableByNameSortDescLimitTen;
 import static com.yello.server.global.common.factory.PaginationFactory.createPageableLimitTen;
 
 import com.yello.server.domain.admin.dto.request.AdminLoginRequest;
@@ -28,6 +29,7 @@ import com.yello.server.domain.user.entity.User;
 import com.yello.server.global.common.annotation.AccessTokenUser;
 import com.yello.server.global.common.dto.BaseResponse;
 import com.yello.server.global.common.dto.EmptyObject;
+import com.yello.server.infrastructure.firebase.dto.request.NotificationCustomMessage;
 import com.yello.server.infrastructure.firebase.service.NotificationService;
 import javax.annotation.Nullable;
 import lombok.RequiredArgsConstructor;
@@ -56,18 +58,21 @@ public class AdminController {
     }
 
     @GetMapping("/user")
-    public BaseResponse<AdminUserResponse> getUserAdmin(@AccessTokenUser User user, @RequestParam Integer page,
+    public BaseResponse<AdminUserResponse> getUserAdmin(@AccessTokenUser User user,
+        @RequestParam Integer page,
         @Nullable @RequestParam String field,
         @Nullable @RequestParam String value) {
-        val data = (field == null && value == null)
-            ? adminService.findUser(user.getId(), createPageableLimitTen(page))
-            : adminService.findUserContaining(user.getId(), createPageableLimitTen(page),
+        val data = (field==null && value==null)
+            ? adminService.findUser(user.getId(), createPageableByNameSortDescLimitTen(page))
+            : adminService.findUserContaining(user.getId(),
+                createPageableByNameSortDescLimitTen(page),
                 field, value);
         return BaseResponse.success(READ_USER_ADMIN_SUCCESS, data);
     }
 
     @GetMapping("/user/{id}")
-    public BaseResponse<AdminUserDetailResponse> getUserDetailAdmin(@AccessTokenUser User user, @PathVariable Long id) {
+    public BaseResponse<AdminUserDetailResponse> getUserDetailAdmin(@AccessTokenUser User user,
+        @PathVariable Long id) {
         val data = adminService.findUserDetail(user.getId(), id);
         return BaseResponse.success(READ_USER_DETAIL_ADMIN_SUCCESS, data);
     }
@@ -86,9 +91,10 @@ public class AdminController {
     }
 
     @GetMapping("/cooldown")
-    public BaseResponse<AdminCooldownResponse> getCooldownAdmin(@AccessTokenUser User user, @RequestParam Integer page,
+    public BaseResponse<AdminCooldownResponse> getCooldownAdmin(@AccessTokenUser User user,
+        @RequestParam Integer page,
         @Nullable @RequestParam String yelloId) {
-        val data = yelloId == null
+        val data = yelloId==null
             ? adminService.findCooldown(user.getId(), createPageableLimitTen(page))
             : adminService.findCooldownContaining(user.getId(), createPageableLimitTen(page),
                 yelloId);
@@ -109,7 +115,8 @@ public class AdminController {
     }
 
     @GetMapping("/question/{id}")
-    public BaseResponse<AdminQuestionDetailResponse> getQuestionDetailAdmin(@AccessTokenUser User user,
+    public BaseResponse<AdminQuestionDetailResponse> getQuestionDetailAdmin(
+        @AccessTokenUser User user,
         @PathVariable Long id) {
         val data = adminService.findQuestionDetail(user.getId(), id);
         return BaseResponse.success(READ_QUESTION_DETAIL_ADMIN_SUCCESS, data);
@@ -128,5 +135,13 @@ public class AdminController {
     public BaseResponse deleteQuestion(@AccessTokenUser User user, @RequestParam Long questionId) {
         adminService.deleteQuestion(user.getId(), questionId);
         return BaseResponse.success(DELETE_QUESTION_ADMIN_SUCCESS);
+    }
+
+    @PostMapping("/notification")
+    public BaseResponse<EmptyObject> postCustomNotificationSendAdmin(@AccessTokenUser User user,
+        @RequestBody NotificationCustomMessage request) {
+        val data = notificationService.adminSendCustomNotification(user.getId(), request);
+
+        return BaseResponse.success(CREATE_VOTE_SUCCESS, data);
     }
 }
