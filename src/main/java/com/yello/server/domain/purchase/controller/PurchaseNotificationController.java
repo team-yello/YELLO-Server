@@ -5,7 +5,7 @@ import static com.yello.server.global.common.SuccessCode.POST_APPLE_NOTIFICATION
 import com.yello.server.domain.purchase.dto.request.AppleNotificationRequest;
 import com.yello.server.domain.purchase.service.PurchaseService;
 import com.yello.server.global.common.dto.BaseResponse;
-import com.yello.server.infrastructure.slack.annotation.SlackPurchaseNotification;
+import com.yello.server.infrastructure.slack.annotation.SlackApplePurchaseNotification;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -18,7 +18,7 @@ public class PurchaseNotificationController {
     private final PurchaseService purchaseService;
 
     @PostMapping("/v2/apple/notifications")
-    @SlackPurchaseNotification
+    @SlackApplePurchaseNotification
     public BaseResponse appleNotification(
         @RequestBody AppleNotificationRequest request
     ) {
