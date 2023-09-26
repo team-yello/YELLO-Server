@@ -24,6 +24,7 @@ import com.yello.server.domain.user.repository.UserRepository;
 import com.yello.server.global.common.factory.DecodeTokenFactory;
 import com.yello.server.global.common.factory.TokenFactory;
 import com.yello.server.global.common.util.ConstantUtil;
+import com.yello.server.infrastructure.slack.dto.response.SlackAppleNotificationResponse;
 import java.util.Map;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -91,7 +92,7 @@ public class PurchaseManagerImpl implements PurchaseManager {
     }
 
     @Override
-    public String decodeAppleNotificationData(String signedTransactionInfo) {
+    public Purchase decodeAppleNotificationData(String signedTransactionInfo) {
 
         Map<String, Object> decodeToken = DecodeTokenFactory.decodeToken(signedTransactionInfo);
         String decodeTransactionId = decodeToken.get("transactionId").toString();
@@ -99,14 +100,15 @@ public class PurchaseManagerImpl implements PurchaseManager {
         Purchase purchase = purchaseRepository.findByTransactionId(decodeTransactionId)
             .orElseThrow(() -> new PurchaseConflictException(NOT_FOUND_TRANSACTION_EXCEPTION));
 
-        return purchase.getTransactionId();
+        return purchase;
     }
 
     @Override
     public void changeSubscriptionStatus(AppleNotificationPayloadVO payloadVO) {
 
         String transactionId =
-            decodeAppleNotificationData(payloadVO.data().signedTransactionInfo());
+            decodeAppleNotificationData(
+                payloadVO.data().signedTransactionInfo()).getTransactionId();
         Purchase purchase = purchaseRepository.findByTransactionId(transactionId)
             .orElseThrow(() -> new PurchaseNotFoundException(NOT_FOUND_TRANSACTION_EXCEPTION));
 
@@ -121,7 +123,8 @@ public class PurchaseManagerImpl implements PurchaseManager {
     @Override
     public void refundAppleInApp(AppleNotificationPayloadVO payloadVO) {
         String transactionId =
-            decodeAppleNotificationData(payloadVO.data().signedTransactionInfo());
+            decodeAppleNotificationData(
+                payloadVO.data().signedTransactionInfo()).getTransactionId();
         Purchase purchase = purchaseRepository.findByTransactionId(transactionId)
             .orElseThrow(() -> new PurchaseNotFoundException(NOT_FOUND_TRANSACTION_EXCEPTION));
         User user = purchase.getUser();
@@ -140,6 +143,14 @@ public class PurchaseManagerImpl implements PurchaseManager {
                 validateTicketCount(REFUND_FIVE_TICKET, user);
             }
         }
+    }
+
+    @Override
+    public SlackAppleNotificationResponse checkPurchaseDataByAppleSignedPayload(String payload) {
+        AppleNotificationPayloadVO payloadVO = decodeApplePayload(payload);
+        Purchase purchase = decodeAppleNotificationData(payloadVO.data().signedTransactionInfo());
+
+        return SlackAppleNotificationResponse.of(payloadVO, purchase);
     }
 
     public void validateTicketCount(int ticketCount, User user) {
