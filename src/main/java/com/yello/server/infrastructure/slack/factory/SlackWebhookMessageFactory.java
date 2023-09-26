@@ -3,11 +3,11 @@ package com.yello.server.infrastructure.slack.factory;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.yello.server.domain.authorization.service.TokenProvider;
-import com.yello.server.domain.purchase.dto.apple.AppleNotificationPayloadVO;
 import com.yello.server.domain.purchase.service.PurchaseManager;
 import com.yello.server.domain.user.entity.User;
 import com.yello.server.domain.user.repository.UserRepository;
 import com.yello.server.global.common.factory.TimeFactory;
+import com.yello.server.infrastructure.slack.dto.response.SlackAppleNotificationResponse;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
@@ -241,8 +241,10 @@ public class SlackWebhookMessageFactory {
         } catch (Exception e) {
             e.printStackTrace();
         }
-        AppleNotificationPayloadVO payloadVO = purchaseManager.decodeApplePayload(payload[0]);
 
-        return payloadVO.toString();
+        SlackAppleNotificationResponse response =
+            purchaseManager.checkPurchaseDataByAppleSignedPayload(payload[0]);
+
+        return response.toString();
     }
 }

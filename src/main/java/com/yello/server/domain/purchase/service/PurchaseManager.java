@@ -6,6 +6,7 @@ import com.yello.server.domain.purchase.entity.Gateway;
 import com.yello.server.domain.purchase.entity.ProductType;
 import com.yello.server.domain.purchase.entity.Purchase;
 import com.yello.server.domain.user.entity.User;
+import com.yello.server.infrastructure.slack.dto.response.SlackAppleNotificationResponse;
 import org.springframework.http.ResponseEntity;
 
 public interface PurchaseManager {
@@ -20,9 +21,11 @@ public interface PurchaseManager {
 
     AppleNotificationPayloadVO decodeApplePayload(String signedPayload);
 
-    String decodeAppleNotificationData(String signedTransactionInfo);
+    Purchase decodeAppleNotificationData(String signedTransactionInfo);
 
     void changeSubscriptionStatus(AppleNotificationPayloadVO payloadVO);
 
     void refundAppleInApp(AppleNotificationPayloadVO payloadVO);
+
+    SlackAppleNotificationResponse checkPurchaseDataByAppleSignedPayload(String payload);
 }
