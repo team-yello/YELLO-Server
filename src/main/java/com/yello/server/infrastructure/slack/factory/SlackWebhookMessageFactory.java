@@ -1,6 +1,10 @@
 package com.yello.server.infrastructure.slack.factory;
 
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.yello.server.domain.authorization.service.TokenProvider;
+import com.yello.server.domain.purchase.dto.apple.AppleNotificationPayloadVO;
+import com.yello.server.domain.purchase.service.PurchaseManager;
 import com.yello.server.domain.user.entity.User;
 import com.yello.server.domain.user.repository.UserRepository;
 import com.yello.server.global.common.factory.TimeFactory;
@@ -33,8 +37,12 @@ public class SlackWebhookMessageFactory {
     private static final String SIGNUP_TITLE = "신규 유저가 가입하였습니다. ";
     private static final String SIGNUP_USERNAME = "옐로 온보딩";
 
+    private static final String APPLE_PURCHASE_ALARM_TITLE = "애플이 결제 관련 알림을 보냈습니다.";
+    private static final String APPLE_PURCHASE_ALARM_USERNAME = "애플 뱅크 알림";
+
     private final UserRepository userRepository;
     private final TokenProvider tokenProvider;
+    private final PurchaseManager purchaseManager;
 
     private static String getRequestBody(HttpServletRequest request) throws IOException {
 
@@ -44,7 +52,7 @@ public class SlackWebhookMessageFactory {
 
         try {
             InputStream inputStream = request.getInputStream();
-            if (inputStream != null) {
+            if (inputStream!=null) {
                 bufferedReader = new BufferedReader(new InputStreamReader(inputStream));
                 char[] charBuffer = new char[128];
                 int bytesRead = -1;
@@ -55,7 +63,7 @@ public class SlackWebhookMessageFactory {
         } catch (IOException ex) {
             throw ex;
         } finally {
-            if (bufferedReader != null) {
+            if (bufferedReader!=null) {
                 try {
                     bufferedReader.close();
                 } catch (IOException ex) {
@@ -94,6 +102,15 @@ public class SlackWebhookMessageFactory {
             .setAttachments(generateSlackSignUpAttachment(request))
             .setText(SIGNUP_TITLE)
             .setUsername(SIGNUP_USERNAME);
+    }
+
+    public SlackMessage generateAppleSlackPurchaseMessage(
+        HttpServletRequest request
+    ) throws IOException {
+        return new SlackMessage()
+            .setAttachments(generateSlackApplePurchaseAttachment(request))
+            .setText(APPLE_PURCHASE_ALARM_TITLE)
+            .setUsername(APPLE_PURCHASE_ALARM_USERNAME);
     }
 
     private List<SlackAttachment> generateSlackErrorAttachment(
@@ -139,13 +156,27 @@ public class SlackWebhookMessageFactory {
         return Collections.singletonList(slackAttachment);
     }
 
+    private List<SlackAttachment> generateSlackApplePurchaseAttachment(
+        HttpServletRequest request
+    ) throws IOException {
+        final SlackAttachment slackAttachment = new SlackAttachment()
+            .setFallback("good")
+            .setColor("good")
+            .setTitle(APPLE_PURCHASE_ALARM_TITLE)
+            .setTitleLink(request.getContextPath())
+            .setText(APPLE_PURCHASE_ALARM_TITLE)
+            .setFields(generateSlackAppleFieldList(request));
+        return Collections.singletonList(slackAttachment);
+    }
+
     private List<SlackField> generateSlackFieldList(
         HttpServletRequest request
     ) throws IOException {
         final String authHeader = request.getHeader(HttpHeaders.AUTHORIZATION);
-        final String token = authHeader == null ? "null" : authHeader.substring("Bearer ".length());
-        final Long userId = authHeader == null ? -1L : tokenProvider.getUserId(token);
-        final Optional<User> user = authHeader == null ? Optional.empty() : userRepository.findById(userId);
+        final String token = authHeader==null ? "null" : authHeader.substring("Bearer ".length());
+        final Long userId = authHeader==null ? -1L : tokenProvider.getUserId(token);
+        final Optional<User> user =
+            authHeader==null ? Optional.empty() : userRepository.findById(userId);
         final String yelloId = user.isPresent() ? user.get().getYelloId() : "null";
         final String deviceToken = user.isPresent() ? user.get().getDeviceToken() : "null";
 
@@ -176,5 +207,42 @@ public class SlackWebhookMessageFactory {
             new SlackField().setTitle("Request Body")
                 .setValue(getRequestBody(request))
         );
+    }
+
+    private List<SlackField> generateSlackAppleFieldList(
+        HttpServletRequest request
+    ) throws IOException {
+        return Arrays.asList(
+            new SlackField().setTitle("Request Method").setValue(request.getMethod()),
+            new SlackField().setTitle("Request URL").setValue(request.getRequestURL().toString()),
+            new SlackField().setTitle("Request Time")
+                .setValue(TimeFactory.toDateFormattedString(LocalDateTime.now())),
+            new SlackField().setTitle("Request IP").setValue(request.getRemoteAddr()),
+            new SlackField().setTitle("Request Headers")
+                .setValue(request.toString()),
+            new SlackField().setTitle("Request Body")
+                .setValue(generateSlackAppleNotificationRequestField(request))
+        );
+    }
+
+    private String generateSlackAppleNotificationRequestField(
+        HttpServletRequest request
+    ) throws IOException {
+        String jsonString = getRequestBody(request);
+        ObjectMapper objectMapper = new ObjectMapper();
+        String[] payload = new String[1];
+        try {
+            JsonNode jsonNode = objectMapper.readTree(jsonString);
+            if (jsonNode.isObject()) {
+                jsonNode.fields().forEachRemaining(entry -> {
+                    payload[0] = entry.getValue().asText();
+                });
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        AppleNotificationPayloadVO payloadVO = purchaseManager.decodeApplePayload(payload[0]);
+
+        return payloadVO.toString();
     }
 }
