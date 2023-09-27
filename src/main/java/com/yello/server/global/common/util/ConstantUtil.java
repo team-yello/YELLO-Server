@@ -52,8 +52,11 @@ public class ConstantUtil {
     public static final String APPLE_NOTIFICATION_REFUND = "REFUND";
     public static final String APPLE_NOTIFICATION_EXPIRED = "EXPIRED";
     public static final String APPLE_NOTIFICATION_TEST = "TEST";
+    public static final String APPLE_NOTIFICATION_SUBSCRIBED = "SUBSCRIBED";
     public static final String APPLE_SUBTYPE_AUTO_RENEW_DISABLED = "AUTO_RENEW_DISABLED";
     public static final String APPLE_SUBTYPE_VOLUNTARY = "VOLUNTARY";
+    public static final String APPLE_SUBTYPE_AUTO_RENEW_ENABLED = "AUTO_RENEW_ENABLED";
+    public static final String APPLE_SUBTYPE_RESUBSCRIBE = "RESUBSCRIBE";
     public static final int REFUND_ONE_TICKET = 1;
     public static final int REFUND_TWO_TICKET = 2;
     public static final int REFUND_FIVE_TICKET = 5;

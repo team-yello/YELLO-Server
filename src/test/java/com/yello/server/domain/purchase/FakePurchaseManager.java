@@ -78,4 +78,9 @@ public class FakePurchaseManager implements PurchaseManager {
     public SlackAppleNotificationResponse checkPurchaseDataByAppleSignedPayload(String payload) {
         return null;
     }
+
+    @Override
+    public void reSubscribeApple(AppleNotificationPayloadVO payloadVO) {
+
+    }
 }
