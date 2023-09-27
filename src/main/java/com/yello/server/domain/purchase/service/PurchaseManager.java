@@ -28,4 +28,6 @@ public interface PurchaseManager {
     void refundAppleInApp(AppleNotificationPayloadVO payloadVO);
 
     SlackAppleNotificationResponse checkPurchaseDataByAppleSignedPayload(String payload);
+
+    void reSubscribeApple(AppleNotificationPayloadVO payloadVO);
 }
