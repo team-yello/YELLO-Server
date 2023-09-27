@@ -13,7 +13,9 @@ import static com.yello.server.global.common.ErrorCode.NOT_FOUND_NOTIFICATION_TY
 import static com.yello.server.global.common.ErrorCode.NOT_FOUND_TRANSACTION_EXCEPTION;
 import static com.yello.server.global.common.ErrorCode.SUBSCRIBE_ACTIVE_EXCEPTION;
 import static com.yello.server.global.common.util.ConstantUtil.APPLE_NOTIFICATION_CONSUMPTION_REQUEST;
+import static com.yello.server.global.common.util.ConstantUtil.APPLE_NOTIFICATION_EXPIRED;
 import static com.yello.server.global.common.util.ConstantUtil.APPLE_NOTIFICATION_REFUND;
+import static com.yello.server.global.common.util.ConstantUtil.APPLE_NOTIFICATION_SUBSCRIBED;
 import static com.yello.server.global.common.util.ConstantUtil.APPLE_NOTIFICATION_SUBSCRIPTION_STATUS_CHANGE;
 import static com.yello.server.global.common.util.ConstantUtil.APPLE_NOTIFICATION_TEST;
 import static com.yello.server.global.common.util.ConstantUtil.FIVE_TICKET_ID;
@@ -84,7 +86,7 @@ public class PurchaseService {
         final Optional<Purchase> mostRecentPurchase =
             purchaseRepository.findTopByUserAndProductTypeOrderByCreatedAtDesc(
                 user, ProductType.YELLO_PLUS);
-        final Boolean isSubscribeNeeded = user.getSubscribe() == Subscribe.CANCELED
+        final Boolean isSubscribeNeeded = user.getSubscribe()==Subscribe.CANCELED
             && mostRecentPurchase.isPresent()
             && Duration.between(mostRecentPurchase.get().getCreatedAt(), time).getSeconds()
             < 1 * 24 * 60 * 60;
@@ -101,7 +103,7 @@ public class PurchaseService {
 
         purchaseManager.handleAppleTransactionError(verifyReceiptResponse, request.transactionId());
 
-        if (user.getSubscribe() == Subscribe.ACTIVE) {
+        if (user.getSubscribe()==Subscribe.ACTIVE) {
             throw new SubscriptionConflictException(SUBSCRIBE_ACTIVE_EXCEPTION);
         }
 
@@ -110,7 +112,7 @@ public class PurchaseService {
         }
 
         purchaseManager.createSubscribe(user, Gateway.APPLE, request.transactionId());
-        user.addTicketCount(3);
+
     }
 
     @Transactional
@@ -149,7 +151,7 @@ public class PurchaseService {
         User user = userRepository.getById(userId);
 
         // exception
-        if (user.getSubscribe() != Subscribe.NORMAL) {
+        if (user.getSubscribe()!=Subscribe.NORMAL) {
             throw new PurchaseConflictException(GOOGLE_SUBSCRIPTIONS_FORBIDDEN_EXCEPTION);
         }
 
@@ -195,7 +197,7 @@ public class PurchaseService {
                     GOOGLE_SUBSCRIPTION_TRANSACTION_EXPIRED_EXCEPTION);
             }
             case ConstantUtil.GOOGLE_PURCHASE_SUBSCRIPTION_CANCELED -> {
-                if (user.getSubscribe() == Subscribe.CANCELED) {
+                if (user.getSubscribe()==Subscribe.CANCELED) {
                     throw new GoogleBadRequestException(
                         GOOGLE_SUBSCRIPTION_DUPLICATED_CANCEL_EXCEPTION);
                 } else {
@@ -206,7 +208,6 @@ public class PurchaseService {
             case ConstantUtil.GOOGLE_PURCHASE_SUBSCRIPTION_ACTIVE -> {
                 final Purchase subscribe =
                     purchaseManager.createSubscribe(user, Gateway.GOOGLE, request.orderId());
-                user.addTicketCount(3);
                 subscribe.setTransactionId(request.orderId());
             }
         }
@@ -249,7 +250,7 @@ public class PurchaseService {
             throw new GoogleTokenServerErrorException(GOOGLE_TOKEN_SERVER_EXCEPTION);
         }
 
-        if (inAppResponse.getBody().purchaseState() == 0) {
+        if (inAppResponse.getBody().purchaseState()==0) {
             purchaseRepository.findByTransactionId(inAppResponse.getBody().orderId())
                 .ifPresent(action -> {
                     throw new PurchaseConflictException(
@@ -300,12 +301,14 @@ public class PurchaseService {
         switch (payloadVO.notificationType()) {
             case APPLE_NOTIFICATION_CONSUMPTION_REQUEST:
                 break;
-            case APPLE_NOTIFICATION_SUBSCRIPTION_STATUS_CHANGE:
+            case APPLE_NOTIFICATION_SUBSCRIPTION_STATUS_CHANGE, APPLE_NOTIFICATION_EXPIRED:
                 purchaseManager.changeSubscriptionStatus(payloadVO);
                 break;
             case APPLE_NOTIFICATION_REFUND:
                 purchaseManager.refundAppleInApp(payloadVO);
                 break;
+            case APPLE_NOTIFICATION_SUBSCRIBED:
+                purchaseManager.reSubscribeApple(payloadVO);
             case APPLE_NOTIFICATION_TEST:
                 return;
             default:

@@ -10,7 +10,9 @@ import static com.yello.server.global.common.util.ConstantUtil.REFUND_TWO_TICKET
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.yello.server.domain.purchase.dto.apple.AppleNotificationPayloadVO;
 import com.yello.server.domain.purchase.dto.apple.ApplePayloadDataVO;
+import com.yello.server.domain.purchase.dto.apple.ApplePurchaseVO;
 import com.yello.server.domain.purchase.dto.apple.TransactionInfoResponse;
+import com.yello.server.domain.purchase.dto.response.AppleJwsTransactionResponse;
 import com.yello.server.domain.purchase.entity.Gateway;
 import com.yello.server.domain.purchase.entity.ProductType;
 import com.yello.server.domain.purchase.entity.Purchase;
@@ -43,7 +45,7 @@ public class PurchaseManagerImpl implements PurchaseManager {
         user.setSubscribe(Subscribe.ACTIVE);
         Purchase newPurchase =
             Purchase.createPurchase(user, ProductType.YELLO_PLUS, gateway, transactionId);
-
+        user.addTicketCount(3);
         return purchaseRepository.save(newPurchase);
     }
 
@@ -106,30 +108,25 @@ public class PurchaseManagerImpl implements PurchaseManager {
     @Override
     public void changeSubscriptionStatus(AppleNotificationPayloadVO payloadVO) {
 
-        String transactionId =
-            decodeAppleNotificationData(
-                payloadVO.data().signedTransactionInfo()).getTransactionId();
-        Purchase purchase = purchaseRepository.findByTransactionId(transactionId)
-            .orElseThrow(() -> new PurchaseNotFoundException(NOT_FOUND_TRANSACTION_EXCEPTION));
-
-        User user = purchase.getUser();
+        ApplePurchaseVO purchaseData = getPurchaseData(payloadVO);
+        User user = purchaseData.purchase().getUser();
 
         if (payloadVO.subtype().equals(ConstantUtil.APPLE_SUBTYPE_AUTO_RENEW_DISABLED)
             && !user.getSubscribe().equals(Subscribe.NORMAL)) {
+            user.setSubscribe(Subscribe.CANCELED);
+        }
+
+        if (payloadVO.subtype().equals(ConstantUtil.APPLE_SUBTYPE_VOLUNTARY)) {
             user.setSubscribe(Subscribe.NORMAL);
         }
     }
 
     @Override
     public void refundAppleInApp(AppleNotificationPayloadVO payloadVO) {
-        String transactionId =
-            decodeAppleNotificationData(
-                payloadVO.data().signedTransactionInfo()).getTransactionId();
-        Purchase purchase = purchaseRepository.findByTransactionId(transactionId)
-            .orElseThrow(() -> new PurchaseNotFoundException(NOT_FOUND_TRANSACTION_EXCEPTION));
-        User user = purchase.getUser();
+        ApplePurchaseVO purchaseData = getPurchaseData(payloadVO);
+        User user = purchaseData.purchase().getUser();
 
-        switch (purchase.getProductType()) {
+        switch (purchaseData.purchase().getProductType()) {
             case YELLO_PLUS -> {
                 user.setSubscribe(Subscribe.NORMAL);
             }
@@ -153,9 +150,48 @@ public class PurchaseManagerImpl implements PurchaseManager {
         return SlackAppleNotificationResponse.of(payloadVO, purchase);
     }
 
+    @Override
+    public void reSubscribeApple(AppleNotificationPayloadVO payloadVO) {
+
+        if (!payloadVO.subtype().equals(ConstantUtil.APPLE_SUBTYPE_RESUBSCRIBE)) {
+            return;
+        }
+
+        AppleJwsTransactionResponse appleJwtDecode =
+            decodeAppleDataPayload(payloadVO.data().signedTransactionInfo());
+
+        Purchase purchase =
+            purchaseRepository.findByTransactionId(appleJwtDecode.originalTransactionId())
+                .orElseThrow(() -> new PurchaseConflictException(NOT_FOUND_TRANSACTION_EXCEPTION));
+
+        Purchase reSubscribePurchase =
+            createSubscribe(purchase.getUser(), Gateway.APPLE, appleJwtDecode.transactionId());
+
+        purchaseRepository.save(reSubscribePurchase);
+    }
+
     public void validateTicketCount(int ticketCount, User user) {
         if (user.getTicketCount() >= ticketCount) {
             user.addTicketCount(-Math.abs(ticketCount));
         }
+    }
+
+    public ApplePurchaseVO getPurchaseData(AppleNotificationPayloadVO payloadVO) {
+        String transactionId =
+            decodeAppleNotificationData(
+                payloadVO.data().signedTransactionInfo()).getTransactionId();
+        Purchase purchase = purchaseRepository.findByTransactionId(transactionId)
+            .orElseThrow(() -> new PurchaseNotFoundException(NOT_FOUND_TRANSACTION_EXCEPTION));
+
+        return ApplePurchaseVO.of(transactionId, purchase);
+    }
+
+    public AppleJwsTransactionResponse decodeAppleDataPayload(String signedTransactionInfo) {
+
+        Map<String, Object> decodeToken = DecodeTokenFactory.decodeToken(signedTransactionInfo);
+        String decodeOriginalTransactionId = decodeToken.get("originalTransactionId").toString();
+        String decodeTransactionId = decodeToken.get("transactionId").toString();
+
+        return AppleJwsTransactionResponse.of(decodeOriginalTransactionId, decodeTransactionId);
     }
 }
