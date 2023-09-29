@@ -17,6 +17,7 @@ import com.yello.server.domain.authorization.dto.ServiceTokenVO;
 import com.yello.server.domain.authorization.dto.request.OAuthRequest;
 import com.yello.server.domain.authorization.dto.request.OnBoardingFriendRequest;
 import com.yello.server.domain.authorization.dto.request.SignUpRequest;
+import com.yello.server.domain.authorization.dto.response.ClassNameSearchResponse;
 import com.yello.server.domain.authorization.dto.response.DepartmentSearchResponse;
 import com.yello.server.domain.authorization.dto.response.GroupNameSearchResponse;
 import com.yello.server.domain.authorization.dto.response.OAuthResponse;
@@ -25,6 +26,7 @@ import com.yello.server.domain.authorization.dto.response.SignUpResponse;
 import com.yello.server.domain.authorization.filter.JwtExceptionFilter;
 import com.yello.server.domain.authorization.filter.JwtFilter;
 import com.yello.server.domain.authorization.service.AuthService;
+import com.yello.server.domain.group.entity.UserGroupType;
 import com.yello.server.domain.user.entity.Gender;
 import com.yello.server.domain.user.entity.Social;
 import com.yello.server.domain.user.entity.User;
@@ -38,6 +40,7 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.DisplayNameGeneration;
 import org.junit.jupiter.api.DisplayNameGenerator.ReplaceUnderscores;
 import org.junit.jupiter.api.Test;
+import org.mockito.ArgumentMatchers;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.restdocs.AutoConfigureRestDocs;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
@@ -65,8 +68,9 @@ import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 class AuthControllerTest {
 
     final String[] excludeRequestHeaders = {"X-CSRF-TOKEN", "Host"};
-    final String[] excludeResponseHeaders = {"X-Content-Type-Options", "X-XSS-Protection", "Cache-Control", "Pragma",
-        "Expires", "X-Frame-Options", "Content-Length"};
+    final String[] excludeResponseHeaders =
+        {"X-Content-Type-Options", "X-XSS-Protection", "Cache-Control", "Pragma",
+            "Expires", "X-Frame-Options", "Content-Length"};
 
     @Autowired
     private MockMvc mockMvc;
@@ -83,8 +87,8 @@ class AuthControllerTest {
 
     @BeforeEach
     void init() {
-        user = testDataUtil.generateUser(1L, 1L);
-        target = testDataUtil.generateUser(2L, 1L);
+        user = testDataUtil.generateUser(1L, 1L, UserGroupType.UNIVERSITY);
+        target = testDataUtil.generateUser(2L, 1L, UserGroupType.UNIVERSITY);
     }
 
     @Test
@@ -114,8 +118,10 @@ class AuthControllerTest {
                 .content(objectMapper.writeValueAsString(oAuthRequest)))
             .andDo(print())
             .andDo(document("api/v1/auth/oauthLogin",
-                Preprocessors.preprocessRequest(prettyPrint(), removeHeaders(excludeRequestHeaders)),
-                Preprocessors.preprocessResponse(prettyPrint(), removeHeaders(excludeResponseHeaders)))
+                Preprocessors.preprocessRequest(prettyPrint(),
+                    removeHeaders(excludeRequestHeaders)),
+                Preprocessors.preprocessResponse(prettyPrint(),
+                    removeHeaders(excludeResponseHeaders)))
             )
             .andExpect(MockMvcResultMatchers.status().isOk());
     }
@@ -132,8 +138,10 @@ class AuthControllerTest {
                 .param("yelloId", "yelloId here"))
             .andDo(print())
             .andDo(document("api/v1/auth/getYelloIdValidation",
-                Preprocessors.preprocessRequest(prettyPrint(), removeHeaders(excludeRequestHeaders)),
-                Preprocessors.preprocessResponse(prettyPrint(), removeHeaders(excludeResponseHeaders)),
+                Preprocessors.preprocessRequest(prettyPrint(),
+                    removeHeaders(excludeRequestHeaders)),
+                Preprocessors.preprocessResponse(prettyPrint(),
+                    removeHeaders(excludeResponseHeaders)),
                 requestParameters(parameterWithName("yelloId").description("중복 체크할 yelloId")))
             )
             .andExpect(MockMvcResultMatchers.status().isOk());
@@ -175,8 +183,10 @@ class AuthControllerTest {
                 .content(objectMapper.writeValueAsString(signUpRequest)))
             .andDo(print())
             .andDo(document("api/v1/auth/postSignUp",
-                Preprocessors.preprocessRequest(prettyPrint(), removeHeaders(excludeRequestHeaders)),
-                Preprocessors.preprocessResponse(prettyPrint(), removeHeaders(excludeResponseHeaders)))
+                Preprocessors.preprocessRequest(prettyPrint(),
+                    removeHeaders(excludeRequestHeaders)),
+                Preprocessors.preprocessResponse(prettyPrint(),
+                    removeHeaders(excludeResponseHeaders)))
             )
             .andExpect(MockMvcResultMatchers.status().isOk());
     }
@@ -188,9 +198,11 @@ class AuthControllerTest {
             .friendKakaoId(Arrays.asList("friendKakaoId"))
             .build();
 
-        final OnBoardingFriendResponse onBoardingFriendResponse = OnBoardingFriendResponse.of(0, Arrays.asList(user));
+        final OnBoardingFriendResponse onBoardingFriendResponse =
+            OnBoardingFriendResponse.of(0, Arrays.asList(user));
 
-        given(authService.findOnBoardingFriends(any(OnBoardingFriendRequest.class), any(Pageable.class)))
+        given(authService.findOnBoardingFriends(any(OnBoardingFriendRequest.class),
+            any(Pageable.class)))
             .willReturn(onBoardingFriendResponse);
 
         // when
@@ -202,8 +214,10 @@ class AuthControllerTest {
                 .param("page", "0"))
             .andDo(print())
             .andDo(document("api/v1/auth/findOnBoardingFriends",
-                Preprocessors.preprocessRequest(prettyPrint(), removeHeaders(excludeRequestHeaders)),
-                Preprocessors.preprocessResponse(prettyPrint(), removeHeaders(excludeResponseHeaders)),
+                Preprocessors.preprocessRequest(prettyPrint(),
+                    removeHeaders(excludeRequestHeaders)),
+                Preprocessors.preprocessResponse(prettyPrint(),
+                    removeHeaders(excludeResponseHeaders)),
                 requestParameters(parameterWithName("page").description("페이지네이션 페이지 번호")))
             )
             .andExpect(MockMvcResultMatchers.status().isOk());
@@ -217,19 +231,22 @@ class AuthControllerTest {
             Arrays.asList("groupName")
         );
 
-        given(authService.findSchoolsByKeyword(anyString(), any(Pageable.class)))
+        given(authService.findGroupNameContaining(anyString(), ArgumentMatchers.same(UserGroupType.UNIVERSITY),
+            any(Pageable.class)))
             .willReturn(groupNameSearchResponse);
 
         // when
         // then
-        mockMvc.perform(RestDocumentationRequestBuilders.get("/api/v1/auth/school")
+        mockMvc.perform(RestDocumentationRequestBuilders.get("/api/v1/auth/group/univ/name")
                 .param("page", "0")
                 .param("keyword", "keyword here")
             )
             .andDo(print())
-            .andDo(document("api/v1/auth/findSchoolsByKeyword",
-                Preprocessors.preprocessRequest(prettyPrint(), removeHeaders(excludeRequestHeaders)),
-                Preprocessors.preprocessResponse(prettyPrint(), removeHeaders(excludeResponseHeaders)),
+            .andDo(document("api/v1/auth/findAllUnivName",
+                Preprocessors.preprocessRequest(prettyPrint(),
+                    removeHeaders(excludeRequestHeaders)),
+                Preprocessors.preprocessResponse(prettyPrint(),
+                    removeHeaders(excludeResponseHeaders)),
                 requestParameters(
                     parameterWithName("page").description("페이지네이션 페이지 번호"),
                     parameterWithName("keyword").description("검색할 쿼리")))
@@ -242,26 +259,89 @@ class AuthControllerTest {
         // given
         final DepartmentSearchResponse departmentSearchResponse = DepartmentSearchResponse.of(
             0,
-            Arrays.asList(testDataUtil.generateSchool(1L))
+            Arrays.asList(testDataUtil.generateGroup(1L, UserGroupType.UNIVERSITY))
         );
 
-        given(authService.findDepartmentsByKeyword(anyString(), anyString(), any(Pageable.class)))
+        given(authService.findGroupDepartmentBySchoolNameContaining(anyString(), anyString(),
+            ArgumentMatchers.same(UserGroupType.UNIVERSITY), any(Pageable.class)))
             .willReturn(departmentSearchResponse);
 
         // when
         // then
-        mockMvc.perform(RestDocumentationRequestBuilders.get("/api/v1/auth/school/department")
+        mockMvc.perform(RestDocumentationRequestBuilders.get("/api/v1/auth/group/univ/department")
                 .param("page", "0")
-                .param("school", "school name here")
+                .param("name", "school name here")
                 .param("keyword", "keyword here")
             )
             .andDo(print())
-            .andDo(document("api/v1/auth/findDepartmentsByKeyword",
-                Preprocessors.preprocessRequest(prettyPrint(), removeHeaders(excludeRequestHeaders)),
-                Preprocessors.preprocessResponse(prettyPrint(), removeHeaders(excludeResponseHeaders)),
+            .andDo(document("api/v1/auth/findAllUnivDepartmentName",
+                Preprocessors.preprocessRequest(prettyPrint(),
+                    removeHeaders(excludeRequestHeaders)),
+                Preprocessors.preprocessResponse(prettyPrint(),
+                    removeHeaders(excludeResponseHeaders)),
                 requestParameters(
                     parameterWithName("page").description("페이지네이션 페이지 번호"),
-                    parameterWithName("school").description("학교 이름"),
+                    parameterWithName("name").description("학교 이름"),
+                    parameterWithName("keyword").description("검색할 쿼리")))
+            )
+            .andExpect(MockMvcResultMatchers.status().isOk());
+    }
+
+    @Test
+    void 고등학교_이름_검색에_성공합니다() throws Exception {
+        // given
+        final GroupNameSearchResponse groupNameSearchResponse = GroupNameSearchResponse.of(
+            0,
+            Arrays.asList("groupName")
+        );
+
+        given(authService.findGroupNameContaining(anyString(), ArgumentMatchers.same(UserGroupType.HIGH_SCHOOL),
+            any(Pageable.class)))
+            .willReturn(groupNameSearchResponse);
+
+        // when
+        // then
+        mockMvc.perform(RestDocumentationRequestBuilders.get("/api/v1/auth/group/high/name")
+                .param("page", "0")
+                .param("keyword", "keyword here")
+            )
+            .andDo(print())
+            .andDo(document("api/v1/auth/findAllHighSchoolName",
+                Preprocessors.preprocessRequest(prettyPrint(),
+                    removeHeaders(excludeRequestHeaders)),
+                Preprocessors.preprocessResponse(prettyPrint(),
+                    removeHeaders(excludeResponseHeaders)),
+                requestParameters(
+                    parameterWithName("page").description("페이지네이션 페이지 번호"),
+                    parameterWithName("keyword").description("검색할 쿼리")))
+            )
+            .andExpect(MockMvcResultMatchers.status().isOk());
+    }
+
+    @Test
+    void 고등학교_학반_검색에_성공합니다() throws Exception {
+        // given
+        final ClassNameSearchResponse classNameSearchResponse = ClassNameSearchResponse.of(
+            testDataUtil.generateGroup(1L, UserGroupType.HIGH_SCHOOL)
+        );
+
+        given(authService.getHighSchoolClassName(anyString(), anyString()))
+            .willReturn(classNameSearchResponse);
+
+        // when
+        // then
+        mockMvc.perform(RestDocumentationRequestBuilders.get("/api/v1/auth/group/high/class")
+                .param("name", "school name here")
+                .param("keyword", "keyword here")
+            )
+            .andDo(print())
+            .andDo(document("api/v1/auth/findGroupIdByName",
+                Preprocessors.preprocessRequest(prettyPrint(),
+                    removeHeaders(excludeRequestHeaders)),
+                Preprocessors.preprocessResponse(prettyPrint(),
+                    removeHeaders(excludeResponseHeaders)),
+                requestParameters(
+                    parameterWithName("name").description("학교 이름"),
                     parameterWithName("keyword").description("검색할 쿼리")))
             )
             .andExpect(MockMvcResultMatchers.status().isOk());
@@ -287,8 +367,10 @@ class AuthControllerTest {
             )
             .andDo(print())
             .andDo(document("api/v1/auth/reIssueToken",
-                Preprocessors.preprocessRequest(prettyPrint(), removeHeaders(excludeRequestHeaders)),
-                Preprocessors.preprocessResponse(prettyPrint(), removeHeaders(excludeResponseHeaders)))
+                Preprocessors.preprocessRequest(prettyPrint(),
+                    removeHeaders(excludeRequestHeaders)),
+                Preprocessors.preprocessResponse(prettyPrint(),
+                    removeHeaders(excludeResponseHeaders)))
             )
             .andExpect(MockMvcResultMatchers.status().isOk());
     }

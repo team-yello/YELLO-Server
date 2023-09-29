@@ -4,6 +4,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
 
+import com.yello.server.domain.group.entity.UserGroupType;
 import com.yello.server.domain.user.entity.User;
 import com.yello.server.domain.user.repository.UserJpaRepository;
 import com.yello.server.domain.user.repository.UserRepositoryImpl;
@@ -23,8 +24,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 @DisplayName("UserRepository 에서")
 @DisplayNameGeneration(ReplaceUnderscores.class)
 public class UserRepositoryTest {
-
-
+    
     private final TestDataEntityUtil testDataEntityUtil = new TestDataEntityUtil();
 
     @Mock
@@ -41,7 +41,7 @@ public class UserRepositoryTest {
     @Test
     void save에_성공합니다() {
         // given
-        final User user = testDataEntityUtil.generateUser(1L, 1L);
+        final User user = testDataEntityUtil.generateUser(1L, 1L, UserGroupType.UNIVERSITY);
 
         // when
         given(userRepository.save(any(User.class)))

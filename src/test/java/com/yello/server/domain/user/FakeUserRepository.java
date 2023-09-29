@@ -170,9 +170,9 @@ public class FakeUserRepository implements UserRepository {
     }
 
     @Override
-    public List<User> findAllByGroupId(String schoolName) {
+    public List<User> findAllByGroupId(Long groupId) {
         return data.stream()
-            .filter(user -> user.getGroup().getSchoolName().equals(schoolName))
+            .filter(user -> user.getGroup().getId().equals(groupId))
             .toList();
     }
 
@@ -180,7 +180,7 @@ public class FakeUserRepository implements UserRepository {
     public List<User> findAllByGroupContainingName(String groupName, String keyword,
         List<String> uuidList) {
         return data.stream()
-            .filter(user -> user.getGroup().getSchoolName().equals(groupName))
+            .filter(user -> user.getGroup().getGroupName().equals(groupName))
             .filter(user -> user.getName().contains(keyword))
             .filter(user -> !user.getId().equals(1L))
             .toList();
@@ -190,7 +190,7 @@ public class FakeUserRepository implements UserRepository {
     public List<User> findAllByOtherGroupContainingName(String groupName, String keyword,
         List<String> uuidList) {
         return data.stream()
-            .filter(user -> !user.getGroup().getSchoolName().equals(groupName))
+            .filter(user -> !user.getGroup().getGroupName().equals(groupName))
             .filter(user -> user.getName().contains(keyword))
             .filter(user -> !user.getId().equals(1L))
             .toList();
@@ -200,7 +200,7 @@ public class FakeUserRepository implements UserRepository {
     public List<User> findAllByGroupContainingYelloId(String groupName, String keyword,
         List<String> uuidList) {
         return data.stream()
-            .filter(user -> user.getGroup().getSchoolName().equals(groupName))
+            .filter(user -> user.getGroup().getGroupName().equals(groupName))
             .filter(user -> user.getYelloId().contains(keyword))
             .filter(user -> !user.getId().equals(1L))
             .toList();
@@ -210,7 +210,7 @@ public class FakeUserRepository implements UserRepository {
     public List<User> findAllByOtherGroupContainingYelloId(String groupName, String keyword,
         List<String> uuidList) {
         return data.stream()
-            .filter(user -> !user.getGroup().getSchoolName().equals(groupName))
+            .filter(user -> !user.getGroup().getGroupName().equals(groupName))
             .filter(user -> user.getYelloId().contains(keyword))
             .filter(user -> !user.getId().equals(1L))
             .toList();

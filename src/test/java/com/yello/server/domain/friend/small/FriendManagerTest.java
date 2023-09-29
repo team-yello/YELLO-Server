@@ -4,7 +4,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 import com.yello.server.domain.friend.service.FriendManager;
 import com.yello.server.domain.friend.service.FriendManagerImpl;
-import com.yello.server.domain.group.entity.School;
+import com.yello.server.domain.group.entity.UserGroup;
 import com.yello.server.domain.user.FakeUserRepository;
 import com.yello.server.domain.user.entity.Gender;
 import com.yello.server.domain.user.entity.Social;
@@ -58,9 +58,9 @@ public class FriendManagerTest {
     }
 
     private void generateUserForTest(int count) {
-        School school = School.builder()
-            .schoolName("Test School")
-            .departmentName("Testing")
+        UserGroup userGroup = UserGroup.builder()
+            .groupName("Test School")
+            .subGroupName("Testing")
             .build();
 
         for (long i = 0; i < count; i++) {
@@ -75,7 +75,7 @@ public class FriendManagerTest {
                 .profileImage("test image")
                 .uuid("%d".formatted(i))
                 .deletedAt(null)
-                .group(school)
+                .group(userGroup)
                 .groupAdmissionYear(20)
                 .email("test%d@test.com".formatted(i))
                 .build());

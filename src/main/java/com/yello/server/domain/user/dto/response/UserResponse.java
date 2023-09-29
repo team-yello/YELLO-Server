@@ -18,7 +18,7 @@ public record UserResponse(
         return UserResponse.builder()
             .userId(user.getId())
             .name(user.getName())
-            .group(user.groupString())
+            .group(user.toGroupString())
             .profileImageUrl(user.getProfileImage())
             .yelloId(user.getYelloId())
             .yelloCount(yelloCount)

@@ -7,6 +7,7 @@ import com.yello.server.domain.cooldown.FakeCooldownRepository;
 import com.yello.server.domain.cooldown.repository.CooldownRepository;
 import com.yello.server.domain.friend.FakeFriendRepository;
 import com.yello.server.domain.friend.repository.FriendRepository;
+import com.yello.server.domain.group.entity.UserGroupType;
 import com.yello.server.domain.keyword.FakeKeywordRepository;
 import com.yello.server.domain.keyword.dto.response.KeywordCheckResponse;
 import com.yello.server.domain.keyword.repository.KeywordRepository;
@@ -99,7 +100,7 @@ public class VoteServiceTest {
         }
 
         for (long i = 1; i <= 5; i++) {
-            userData.add(testDataUtil.generateUser(i, 1L));
+            userData.add(testDataUtil.generateUser(i, 1L, UserGroupType.UNIVERSITY));
         }
 
         testDataUtil.generateFriend(userData.get(1), userData.get(0));

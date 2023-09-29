@@ -3,7 +3,7 @@ package com.yello.server.infrastructure.firebase;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 import com.yello.server.domain.friend.entity.Friend;
-import com.yello.server.domain.group.entity.School;
+import com.yello.server.domain.group.entity.UserGroup;
 import com.yello.server.domain.question.entity.Question;
 import com.yello.server.domain.user.FakeUserRepository;
 import com.yello.server.domain.user.entity.Gender;
@@ -45,9 +45,9 @@ class NotificationFcmServiceTest {
             .tokenRepository(tokenRepository)
             .fcmManager(fcmManager)
             .build();
-        School school = School.builder()
-            .schoolName("Test School")
-            .departmentName("Testing")
+        UserGroup userGroup = UserGroup.builder()
+            .groupName("Test School")
+            .subGroupName("Testing")
             .build();
         user = userRepository.save(User.builder()
             .id(1L)
@@ -55,7 +55,7 @@ class NotificationFcmServiceTest {
             .yelloId("yelloworld").gender(Gender.MALE)
             .point(200).social(Social.KAKAO)
             .profileImage("test image").uuid("1234")
-            .deletedAt(null).group(school)
+            .deletedAt(null).group(userGroup)
             .groupAdmissionYear(20).email("test@test.com")
             .build());
         target = userRepository.save(User.builder()
@@ -64,7 +64,7 @@ class NotificationFcmServiceTest {
             .yelloId("helloworld").gender(Gender.MALE)
             .point(200).social(Social.KAKAO)
             .profileImage("test image 2").uuid("5678")
-            .deletedAt(null).group(school)
+            .deletedAt(null).group(userGroup)
             .groupAdmissionYear(17).email("hello@test.com")
             .build());
         dummy = User.builder()
@@ -73,7 +73,7 @@ class NotificationFcmServiceTest {
             .yelloId("yelloworld").gender(Gender.MALE)
             .point(200).social(Social.KAKAO)
             .profileImage("test image 3").uuid("91011")
-            .deletedAt(null).group(school)
+            .deletedAt(null).group(userGroup)
             .groupAdmissionYear(19).email("yello@test.com")
             .build();
     }

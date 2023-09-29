@@ -29,7 +29,7 @@ public enum SuccessCode {
     DELETE_USER_SUCCESS(OK, "유저 탈퇴에 성공했습니다."),
     DELETE_FRIEND_SUCCESS(OK, "친구 삭제에 성공했습니다."),
     ONBOARDING_FRIENDS_SUCCESS(OK, "추천 친구 조회에 성공했습니다."),
-    SCHOOL_NAME_SEARCH_SCHOOL_SUCCESS(OK, "학교 검색에 성공했습니다."),
+    UNIVERSITY_NAME_SEARCH_USER_GROUP_SUCCESS(OK, "학교 이름 검색에 성공했습니다."),
     DEPARTMENT_NAME_SEARCH_BY_SCHOOL_NAME_SCHOOL_SUCCESS(OK, "학과 검색에 성공했습니다."),
     REVEAL_NAME_HINT_SUCCESS(OK, "이름 초성 확인에 성공했습니다."),
     REVEAL_NAME_SUCCESS(OK, "전체 이름 확인에 성공했습니다."),
@@ -45,6 +45,7 @@ public enum SuccessCode {
     READ_QUESTION_ADMIN_SUCCESS(OK, "어드민 페이지 질문 조회에 성공하였습니다."),
     READ_QUESTION_DETAIL_ADMIN_SUCCESS(OK, "어드민 페이지 질문 상세 조회에 성공하였습니다."),
     DELETE_QUESTION_ADMIN_SUCCESS(OK, "어드민 권환으로 질문지 삭제에 성공하였습니다."),
+    CLASS_NAME_SEARCH_BY_SCHOOL_NAME_SCHOOL_SUCCESS(OK, "학반 검색에 성공했습니다."),
 
     /**
      * 201 CREATED

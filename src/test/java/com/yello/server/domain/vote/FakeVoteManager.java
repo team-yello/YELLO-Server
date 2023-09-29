@@ -121,7 +121,7 @@ public class FakeVoteManager implements VoteManager {
         final ThreadLocalRandom random = ThreadLocalRandom.current();
         int randomIndex = random.nextInt(2);
         vote.checkNameIndexOf(randomIndex);
-        sender.minusPoint(NAME_HINT_POINT);
+        sender.subPoint(NAME_HINT_POINT);
         return randomIndex;
     }
 
@@ -131,7 +131,7 @@ public class FakeVoteManager implements VoteManager {
             throw new VoteForbiddenException(LACK_POINT_EXCEPTION);
         }
 
-        user.minusPoint(KEYWORD_HINT_POINT);
+        user.subPoint(KEYWORD_HINT_POINT);
         vote.checkKeyword();
         return KeywordCheckResponse.of(vote);
     }

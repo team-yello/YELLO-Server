@@ -42,14 +42,14 @@ public interface UserJpaRepository extends JpaRepository<User, Long> {
         "where u.yelloId = :yelloId")
     Optional<User> findByYelloIdNotFiltered(@Param("yelloId") String yelloId);
 
-    @Query("select u from User u " +
-        "where u.group.schoolName = :schoolName " +
+    @Query("select u from User u, UserGroup g " +
+        "where u.group.id = g.id " +
+        "and g.id = :groupId " +
         "and u.deletedAt is null")
-    List<User> findAllByGroupId(@Param("schoolName") String schoolName);
-
+    List<User> findAllByGroupId(@Param("groupId") Long groupId);
 
     @Query("select u from User u "
-        + "where u.group.schoolName = :groupName "
+        + "where u.group.groupName = :groupName "
         + "and u.uuid not in :uuidList "
         + "and u.name like CONCAT('%', :keyword, '%') "
         + "and u.deletedAt is null "
@@ -58,7 +58,7 @@ public interface UserJpaRepository extends JpaRepository<User, Long> {
         @Param("keyword") String keyword, @Param("uuidList") List<String> uuidList);
 
     @Query("select u from User u "
-        + "where u.group.schoolName <> :groupName "
+        + "where u.group.groupName <> :groupName "
         + "and u.uuid not in :uuidList "
         + "and u.name like CONCAT('%', :keyword, '%') "
         + "and u.deletedAt is null "
@@ -67,7 +67,7 @@ public interface UserJpaRepository extends JpaRepository<User, Long> {
         @Param("keyword") String keyword, @Param("uuidList") List<String> uuidList);
 
     @Query("select u from User u "
-        + "where u.group.schoolName = :groupName "
+        + "where u.group.groupName = :groupName "
         + "and u.uuid not in :uuidList "
         + "and LOWER(u.yelloId) like LOWER(CONCAT('%', :keyword, '%')) "
         + "and u.deletedAt is null "
@@ -76,7 +76,7 @@ public interface UserJpaRepository extends JpaRepository<User, Long> {
         @Param("keyword") String keyword, @Param("uuidList") List<String> uuidList);
 
     @Query("select u from User u "
-        + "where u.group.schoolName <> :groupName "
+        + "where u.group.groupName <> :groupName "
         + "and u.uuid not in :uuidList "
         + "and LOWER(u.yelloId) like LOWER(CONCAT('%', :keyword, '%')) "
         + "and u.deletedAt is null "

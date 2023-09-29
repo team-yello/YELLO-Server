@@ -13,7 +13,9 @@ import static com.yello.server.global.common.ErrorCode.NOT_FOUND_NOTIFICATION_TY
 import static com.yello.server.global.common.ErrorCode.NOT_FOUND_TRANSACTION_EXCEPTION;
 import static com.yello.server.global.common.ErrorCode.SUBSCRIBE_ACTIVE_EXCEPTION;
 import static com.yello.server.global.common.util.ConstantUtil.APPLE_NOTIFICATION_CONSUMPTION_REQUEST;
+import static com.yello.server.global.common.util.ConstantUtil.APPLE_NOTIFICATION_EXPIRED;
 import static com.yello.server.global.common.util.ConstantUtil.APPLE_NOTIFICATION_REFUND;
+import static com.yello.server.global.common.util.ConstantUtil.APPLE_NOTIFICATION_SUBSCRIBED;
 import static com.yello.server.global.common.util.ConstantUtil.APPLE_NOTIFICATION_SUBSCRIPTION_STATUS_CHANGE;
 import static com.yello.server.global.common.util.ConstantUtil.APPLE_NOTIFICATION_TEST;
 import static com.yello.server.global.common.util.ConstantUtil.FIVE_TICKET_ID;
@@ -110,7 +112,7 @@ public class PurchaseService {
         }
 
         purchaseManager.createSubscribe(user, Gateway.APPLE, request.transactionId());
-        user.setTicketCount(3);
+
     }
 
     @Transactional
@@ -126,17 +128,17 @@ public class PurchaseService {
             case ONE_TICKET_ID:
                 purchaseManager.createTicket(user, ProductType.ONE_TICKET, Gateway.APPLE,
                     request.transactionId());
-                user.setTicketCount(1);
+                user.addTicketCount(1);
                 break;
             case TWO_TICKET_ID:
                 purchaseManager.createTicket(user, ProductType.TWO_TICKET, Gateway.APPLE,
                     request.transactionId());
-                user.setTicketCount(2);
+                user.addTicketCount(2);
                 break;
             case FIVE_TICKET_ID:
                 purchaseManager.createTicket(user, ProductType.FIVE_TICKET, Gateway.APPLE,
                     request.transactionId());
-                user.setTicketCount(5);
+                user.addTicketCount(5);
                 break;
             default:
                 throw new PurchaseException(NOT_FOUND_TRANSACTION_EXCEPTION);
@@ -206,7 +208,6 @@ public class PurchaseService {
             case ConstantUtil.GOOGLE_PURCHASE_SUBSCRIPTION_ACTIVE -> {
                 final Purchase subscribe =
                     purchaseManager.createSubscribe(user, Gateway.GOOGLE, request.orderId());
-                user.setTicketCount(3);
                 subscribe.setTransactionId(request.orderId());
             }
         }
@@ -259,7 +260,7 @@ public class PurchaseService {
             Purchase ticket =
                 purchaseManager.createTicket(user, getProductType(request.productId()),
                     Gateway.GOOGLE, request.orderId());
-            user.setTicketCount(getTicketAmount(request.productId()) * request.quantity());
+            user.addTicketCount(getTicketAmount(request.productId()) * request.quantity());
             ticket.setTransactionId(inAppResponse.getBody().orderId());
         } else {
             throw new GoogleBadRequestException(GOOGLE_INAPP_BAD_REQUEST_EXCEPTION);
@@ -300,12 +301,14 @@ public class PurchaseService {
         switch (payloadVO.notificationType()) {
             case APPLE_NOTIFICATION_CONSUMPTION_REQUEST:
                 break;
-            case APPLE_NOTIFICATION_SUBSCRIPTION_STATUS_CHANGE:
+            case APPLE_NOTIFICATION_SUBSCRIPTION_STATUS_CHANGE, APPLE_NOTIFICATION_EXPIRED:
                 purchaseManager.changeSubscriptionStatus(payloadVO);
                 break;
             case APPLE_NOTIFICATION_REFUND:
                 purchaseManager.refundAppleInApp(payloadVO);
                 break;
+            case APPLE_NOTIFICATION_SUBSCRIBED:
+                purchaseManager.reSubscribeApple(payloadVO);
             case APPLE_NOTIFICATION_TEST:
                 return;
             default:

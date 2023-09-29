@@ -15,7 +15,7 @@ public record FriendResponse(
         return FriendResponse.builder()
             .id(user.getId())
             .name(user.getName())
-            .group(user.groupString())
+            .group(user.toGroupString())
             .profileImage(user.getProfileImage())
             .build();
     }

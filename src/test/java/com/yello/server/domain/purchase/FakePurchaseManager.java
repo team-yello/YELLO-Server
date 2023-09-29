@@ -14,6 +14,7 @@ import com.yello.server.domain.purchase.repository.PurchaseRepository;
 import com.yello.server.domain.purchase.service.PurchaseManager;
 import com.yello.server.domain.user.entity.Subscribe;
 import com.yello.server.domain.user.entity.User;
+import com.yello.server.infrastructure.slack.dto.response.SlackAppleNotificationResponse;
 import org.springframework.http.ResponseEntity;
 
 public class FakePurchaseManager implements PurchaseManager {
@@ -59,7 +60,7 @@ public class FakePurchaseManager implements PurchaseManager {
     }
 
     @Override
-    public String decodeAppleNotificationData(String signedTransactionInfo) {
+    public Purchase decodeAppleNotificationData(String signedTransactionInfo) {
         return null;
     }
 
@@ -70,6 +71,16 @@ public class FakePurchaseManager implements PurchaseManager {
 
     @Override
     public void refundAppleInApp(AppleNotificationPayloadVO payloadVO) {
+
+    }
+
+    @Override
+    public SlackAppleNotificationResponse checkPurchaseDataByAppleSignedPayload(String payload) {
+        return null;
+    }
+
+    @Override
+    public void reSubscribeApple(AppleNotificationPayloadVO payloadVO) {
 
     }
 }
