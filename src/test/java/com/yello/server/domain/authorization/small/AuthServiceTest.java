@@ -71,43 +71,38 @@ import org.springframework.data.domain.Pageable;
 @DisplayNameGeneration(ReplaceUnderscores.class)
 public class AuthServiceTest {
 
+    private final ConnectionManager connectionManager = new FakeConnectionManager();
+    private final CooldownRepository cooldownRepository = new FakeCooldownRepository();
+    private final FCMManager fcmManager = new FakeFcmManger();
+    private final FriendRepository friendRepository = new FakeFriendRepository();
+    private final MessageQueueRepository messageQueueRepository = new FakeMessageQueueRepository();
+    private final QuestionRepository questionRepository = new FakeQuestionRepository();
     private final String secretKey = Base64.getEncoder().encodeToString(
         "keyForTestkeyForTestkeyForTestkeyForTestkeyForTestkeyForTestkeyForTestkeyForTestkeyForTest".getBytes());
-
-    private final UserRepository userRepository = new FakeUserRepository();
-    private final UserGroupRepository userGroupRepository = new FakeUserGroupRepository();
-    private final FriendRepository friendRepository = new FakeFriendRepository();
-    private final CooldownRepository cooldownRepository = new FakeCooldownRepository();
+    private final TokenProvider tokenProvider = new TokenJwtProvider(secretKey);
     private final TokenRepository tokenRepository = new FakeTokenRepository();
-    private final QuestionRepository questionRepository = new FakeQuestionRepository();
+    private final UserGroupRepository userGroupRepository = new FakeUserGroupRepository();
+    private final UserRepository userRepository = new FakeUserRepository(friendRepository);
+    private final UserManager userManager = new FakeUserManager(userRepository);
+    private final FriendManager friendManager = new FakeFriendManager(userRepository);
+    private final NotificationService notificationService = NotificationFcmService.builder()
+        .userRepository(userRepository)
+        .tokenRepository(tokenRepository)
+        .fcmManager(fcmManager)
+        .build();
+    private final AuthManager authManager = new FakeAuthManager(
+        friendRepository, cooldownRepository, userRepository, tokenRepository, tokenProvider
+    );
     private final VoteRepository voteRepository = new FakeVoteRepository();
-    private final MessageQueueRepository messageQueueRepository = new FakeMessageQueueRepository();
-
     private final TestDataRepositoryUtil testDataUtil = new TestDataRepositoryUtil(
         userRepository,
         voteRepository,
         questionRepository,
         friendRepository
     );
-
-    private final TokenProvider tokenProvider = new TokenJwtProvider(secretKey);
-    private final AuthManager authManager = new FakeAuthManager(
-        friendRepository, cooldownRepository, userRepository, tokenRepository, tokenProvider
-    );
-    private final UserManager userManager = new FakeUserManager(userRepository);
     private final VoteManager voteManager = new FakeVoteManager(
         userRepository, questionRepository, voteRepository, friendRepository,
         userManager);
-    private final FriendManager friendManager = new FakeFriendManager(userRepository);
-    private final ConnectionManager connectionManager = new FakeConnectionManager();
-    private final FCMManager fcmManager = new FakeFcmManger();
-
-    private final NotificationService notificationService = NotificationFcmService.builder()
-        .userRepository(userRepository)
-        .tokenRepository(tokenRepository)
-        .fcmManager(fcmManager)
-        .build();
-
     private AuthService authService;
 
     @BeforeEach

@@ -33,19 +33,17 @@ import org.springframework.data.domain.Pageable;
 @DisplayNameGeneration(ReplaceUnderscores.class)
 public class VoteManagerTest {
 
-    private final UserRepository userRepository = new FakeUserRepository();
     private final FriendRepository friendRepository = new FakeFriendRepository();
-    private final VoteRepository voteRepository = new FakeVoteRepository();
     private final QuestionRepository questionRepository = new FakeQuestionRepository();
+    private final UserRepository userRepository = new FakeUserRepository(friendRepository);
+    private final UserManager userManager = new FakeUserManager(userRepository);
+    private final VoteRepository voteRepository = new FakeVoteRepository();
     private final TestDataRepositoryUtil testDataUtil = new TestDataRepositoryUtil(
         userRepository,
         voteRepository,
         questionRepository,
         friendRepository
     );
-
-    private final UserManager userManager = new FakeUserManager(userRepository);
-
     private VoteManager voteManager;
     private List<Question> questionData = new ArrayList<>();
     private List<User> userData = new ArrayList<>();

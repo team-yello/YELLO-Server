@@ -36,25 +36,21 @@ import org.junit.jupiter.api.Test;
 @DisplayNameGeneration(ReplaceUnderscores.class)
 public class AuthManagerTest {
 
+    private final CooldownRepository cooldownRepository = new FakeCooldownRepository();
+    private final FriendRepository friendRepository = new FakeFriendRepository();
+    private final QuestionRepository questionRepository = new FakeQuestionRepository();
     private final String secretKey = Base64.getEncoder().encodeToString(
         "keyForTestkeyForTestkeyForTestkeyForTestkeyForTestkeyForTestkeyForTestkeyForTestkeyForTest".getBytes());
-
-    private final UserRepository userRepository = new FakeUserRepository();
-    private final FriendRepository friendRepository = new FakeFriendRepository();
-    private final CooldownRepository cooldownRepository = new FakeCooldownRepository();
+    private final TokenProvider tokenProvider = new TokenJwtProvider(secretKey);
     private final TokenRepository tokenRepository = new FakeTokenRepository();
-    private final QuestionRepository questionRepository = new FakeQuestionRepository();
+    private final UserRepository userRepository = new FakeUserRepository(friendRepository);
     private final VoteRepository voteRepository = new FakeVoteRepository();
-
     private final TestDataRepositoryUtil testDataUtil = new TestDataRepositoryUtil(
         userRepository,
         voteRepository,
         questionRepository,
         friendRepository
     );
-
-    private final TokenProvider tokenProvider = new TokenJwtProvider(secretKey);
-
     private AuthManager authManager;
 
     @BeforeEach

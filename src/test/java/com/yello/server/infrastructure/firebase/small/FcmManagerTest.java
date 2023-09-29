@@ -25,10 +25,10 @@ import org.junit.jupiter.api.Test;
 @DisplayNameGeneration(ReplaceUnderscores.class)
 public class FcmManagerTest {
 
-    private final UserRepository userRepository = new FakeUserRepository();
     private final VoteRepository voteRepository = new FakeVoteRepository();
     private final QuestionRepository questionRepository = new FakeQuestionRepository();
     private final FriendRepository friendRepository = new FakeFriendRepository();
+    private final UserRepository userRepository = new FakeUserRepository(friendRepository);
 
     private final TestDataRepositoryUtil testDataUtil = new TestDataRepositoryUtil(
         userRepository,

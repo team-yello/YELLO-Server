@@ -43,11 +43,11 @@ import org.springframework.data.domain.Pageable;
 @DisplayNameGeneration(ReplaceUnderscores.class)
 class FriendServiceTest {
 
-    private final UserRepository userRepository = new FakeUserRepository();
     private final FriendRepository friendRepository = new FakeFriendRepository();
-    private final VoteRepository voteRepository = new FakeVoteRepository();
     private final QuestionRepository questionRepository = new FakeQuestionRepository();
+    private final UserRepository userRepository = new FakeUserRepository(friendRepository);
     private final UserManager userManager = new FakeUserManager(userRepository);
+    private final VoteRepository voteRepository = new FakeVoteRepository();
     private final VoteManager voteManager =
         new FakeVoteManager(userRepository, questionRepository, voteRepository, friendRepository,
             userManager);
@@ -57,7 +57,6 @@ class FriendServiceTest {
         questionRepository,
         friendRepository
     );
-
     private FriendService friendService;
     private User user1;
     private User user2;
@@ -82,6 +81,9 @@ class FriendServiceTest {
 
         testDataUtil.generateFriend(user1, user2);
         testDataUtil.generateFriend(user2, user1);
+
+        testDataUtil.generateFriend(user1, user3);
+        testDataUtil.generateFriend(user3, user1);
     }
 
     @Test
@@ -95,7 +97,7 @@ class FriendServiceTest {
         final FriendsResponse friends = friendService.findAllFriends(pageable, userId);
 
         // then
-        assertThat(friends.totalCount()).isEqualTo(1);
+        assertThat(friends.totalCount()).isEqualTo(2);
         assertThat(friends.friends().get(0).name()).isEqualTo("name2");
     }
 
@@ -103,7 +105,7 @@ class FriendServiceTest {
     void 친구_추가에_성공합니다() {
         // given
         final Long userId = 1L;
-        final Long targetId = 3L;
+        final Long targetId = 4L;
 
         // when
         friendService.addFriend(userId, targetId);
@@ -111,7 +113,7 @@ class FriendServiceTest {
 
         // then
         assertThat(friend.getUser().getName()).isEqualTo("name1");
-        assertThat(friend.getTarget().getName()).isEqualTo("name3");
+        assertThat(friend.getTarget().getName()).isEqualTo("name4");
     }
 
     @Test
@@ -173,7 +175,7 @@ class FriendServiceTest {
     @Test
     void 친구_셔플_시_친구_수가_부족한_경우에_FriendException이_발생합니다() {
         // given
-        final Long userId = 3L;
+        final Long userId = 4L;
 
         // when
         // then
@@ -197,7 +199,7 @@ class FriendServiceTest {
             );
 
         // then
-        assertThat(recommendSchoolFriends.totalCount()).isEqualTo(3);
+        assertThat(recommendSchoolFriends.totalCount()).isEqualTo(2);
     }
 
     @Test
@@ -261,7 +263,7 @@ class FriendServiceTest {
             );
 
         // then
-        assertThat(allRecommendKakaoFriends.totalCount()).isEqualTo(3);
+        assertThat(allRecommendKakaoFriends.totalCount()).isEqualTo(2);
     }
 
     @Test

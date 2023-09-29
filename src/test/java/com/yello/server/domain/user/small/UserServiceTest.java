@@ -33,19 +33,18 @@ import org.junit.jupiter.api.Test;
 @DisplayNameGeneration(ReplaceUnderscores.class)
 class UserServiceTest {
 
-    private final UserRepository userRepository = new FakeUserRepository();
-    private final FriendRepository friendRepository = new FakeFriendRepository();
-    private final VoteRepository voteRepository = new FakeVoteRepository();
     private final CooldownRepository cooldownRepository = new FakeCooldownRepository();
-    private final TokenRepository tokenRepository = new FakeTokenRepository();
+    private final FriendRepository friendRepository = new FakeFriendRepository();
     private final QuestionRepository questionRepository = new FakeQuestionRepository();
+    private final TokenRepository tokenRepository = new FakeTokenRepository();
+    private final UserRepository userRepository = new FakeUserRepository(friendRepository);
+    private final VoteRepository voteRepository = new FakeVoteRepository();
     private final TestDataRepositoryUtil testDataUtil = new TestDataRepositoryUtil(
         userRepository,
         voteRepository,
         questionRepository,
         friendRepository
     );
-
     private UserService userService;
 
     @BeforeEach
