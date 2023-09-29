@@ -120,6 +120,16 @@ public class UserRepositoryImpl implements UserRepository {
     }
 
     @Override
+    public Integer countAllByGroupNameFilteredByNotFriend(Long userId, String groupName) {
+        return userJpaRepository.countAllByGroupNameFilteredByNotFriend(userId, groupName);
+    }
+
+    @Override
+    public List<User> findAllByGroupNameFilteredByNotFriend(Long userId, String groupName, Pageable pageable) {
+        return userJpaRepository.findAllByGroupNameFilteredByNotFriend(userId, groupName, pageable);
+    }
+
+    @Override
     public List<User> findAllByGroupContainingName(String groupName, String keyword,
         List<String> uuidList) {
         return userJpaRepository.findAllByGroupContainingName(groupName, keyword, uuidList);

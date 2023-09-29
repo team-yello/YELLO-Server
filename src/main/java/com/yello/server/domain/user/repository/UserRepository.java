@@ -38,12 +38,15 @@ public interface UserRepository {
 
     User getByDeviceTokenNotFiltered(String deviceToken);
 
-
     Optional<User> findByDeviceToken(String deviceToken);
 
     Optional<User> findByDeviceTokenNotFiltered(String deviceToken);
 
     List<User> findAllByGroupId(Long groupId);
+
+    Integer countAllByGroupNameFilteredByNotFriend(Long userId, String groupName);
+
+    List<User> findAllByGroupNameFilteredByNotFriend(Long userId, String groupName, Pageable pageable);
 
     List<User> findAllByGroupContainingName(String groupName, String keyword,
         List<String> uuidList);
