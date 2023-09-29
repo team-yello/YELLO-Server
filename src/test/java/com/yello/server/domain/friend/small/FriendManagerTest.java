@@ -2,6 +2,8 @@ package com.yello.server.domain.friend.small;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
+import com.yello.server.domain.friend.FakeFriendRepository;
+import com.yello.server.domain.friend.repository.FriendRepository;
 import com.yello.server.domain.friend.service.FriendManager;
 import com.yello.server.domain.friend.service.FriendManagerImpl;
 import com.yello.server.domain.group.entity.UserGroup;
@@ -22,7 +24,8 @@ import org.junit.jupiter.api.Test;
 @DisplayNameGeneration(ReplaceUnderscores.class)
 public class FriendManagerTest {
 
-    private final UserRepository userRepository = new FakeUserRepository();
+    private final FriendRepository friendRepository = new FakeFriendRepository();
+    private final UserRepository userRepository = new FakeUserRepository(friendRepository);
 
     private FriendManager friendManager;
 

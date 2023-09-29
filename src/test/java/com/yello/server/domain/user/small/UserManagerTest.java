@@ -2,6 +2,8 @@ package com.yello.server.domain.user.small;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
+import com.yello.server.domain.friend.FakeFriendRepository;
+import com.yello.server.domain.friend.repository.FriendRepository;
 import com.yello.server.domain.group.entity.UserGroup;
 import com.yello.server.domain.user.FakeUserRepository;
 import com.yello.server.domain.user.entity.Gender;
@@ -24,7 +26,8 @@ public class UserManagerTest {
     private final static String OFFICIAL_MALE_ID = "yello_male";
     private final static String OFFICIAL_FEMALE_ID = "yello_female";
 
-    private final UserRepository userRepository = new FakeUserRepository();
+    private final FriendRepository friendRepository = new FakeFriendRepository();
+    private final UserRepository userRepository = new FakeUserRepository(friendRepository);
 
     private UserManager userManager;
 

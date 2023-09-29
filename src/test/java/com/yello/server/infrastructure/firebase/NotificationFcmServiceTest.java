@@ -2,7 +2,9 @@ package com.yello.server.infrastructure.firebase;
 
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
+import com.yello.server.domain.friend.FakeFriendRepository;
 import com.yello.server.domain.friend.entity.Friend;
+import com.yello.server.domain.friend.repository.FriendRepository;
 import com.yello.server.domain.group.entity.UserGroup;
 import com.yello.server.domain.question.entity.Question;
 import com.yello.server.domain.user.FakeUserRepository;
@@ -28,7 +30,8 @@ import org.junit.jupiter.api.Test;
 @DisplayNameGeneration(ReplaceUnderscores.class)
 class NotificationFcmServiceTest {
 
-    private final UserRepository userRepository = new FakeUserRepository();
+    private final FriendRepository friendRepository = new FakeFriendRepository();
+    private final UserRepository userRepository = new FakeUserRepository(friendRepository);
     private final TokenRepository tokenRepository = new FakeTokenRepository();
     private final FCMManager fcmManager = new FakeFcmManger();
 
