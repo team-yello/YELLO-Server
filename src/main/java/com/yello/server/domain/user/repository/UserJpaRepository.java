@@ -48,6 +48,25 @@ public interface UserJpaRepository extends JpaRepository<User, Long> {
         "and u.deletedAt is null")
     List<User> findAllByGroupId(@Param("groupId") Long groupId);
 
+    @Query("select count (u) from User u, UserGroup g " +
+        "where u.group.id = g.id " +
+        "and g.groupName = :groupName " +
+        "and u.id <> :userId " +
+        "and u.id not in (select f.target.id from Friend f where :userId = f.user.id and f.target.deletedAt is null) "
+        +
+        "and u.deletedAt is null")
+    Integer countAllByGroupNameFilteredByNotFriend(@Param("userId") Long userId, @Param("groupName") String groupName);
+
+    @Query("select u from User u, UserGroup g " +
+        "where u.group.id = g.id " +
+        "and g.groupName = :groupName " +
+        "and u.id <> :userId " +
+        "and u.id not in (select f.target.id from Friend f where :userId = f.user.id and f.target.deletedAt is null) "
+        +
+        "and u.deletedAt is null")
+    List<User> findAllByGroupNameFilteredByNotFriend(@Param("userId") Long userId,
+        @Param("groupName") String groupName, Pageable pageable);
+
     @Query("select u from User u "
         + "where u.group.groupName = :groupName "
         + "and u.uuid not in :uuidList "

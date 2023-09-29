@@ -2,6 +2,8 @@ package com.yello.server.domain.purchase.small;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
+import com.yello.server.domain.friend.FakeFriendRepository;
+import com.yello.server.domain.friend.repository.FriendRepository;
 import com.yello.server.domain.group.entity.UserGroup;
 import com.yello.server.domain.purchase.FakeAppleApiWebClient;
 import com.yello.server.domain.purchase.FakePurchaseManager;
@@ -34,7 +36,8 @@ import org.junit.jupiter.api.Test;
 @DisplayNameGeneration(ReplaceUnderscores.class)
 public class PurchaseServiceTest {
 
-    private final UserRepository userRepository = new FakeUserRepository();
+    private final FriendRepository friendRepository = new FakeFriendRepository();
+    private final UserRepository userRepository = new FakeUserRepository(friendRepository);
     private final PurchaseRepository purchaseRepository = new FakePurchaseRepository();
     private final TokenFactory tokenFactory = new FakeTokenFactory();
     private final ApiWebClient apiWebClient = new FakeAppleApiWebClient(tokenFactory);

@@ -5,6 +5,7 @@ import static com.yello.server.global.common.ErrorCode.DEVICE_TOKEN_NOT_FOUND_US
 import static com.yello.server.global.common.ErrorCode.USERID_NOT_FOUND_USER_EXCEPTION;
 import static com.yello.server.global.common.ErrorCode.YELLOID_NOT_FOUND_USER_EXCEPTION;
 
+import com.yello.server.domain.friend.repository.FriendRepository;
 import com.yello.server.domain.user.entity.User;
 import com.yello.server.domain.user.exception.UserNotFoundException;
 import com.yello.server.domain.user.repository.UserRepository;
@@ -19,6 +20,12 @@ public class FakeUserRepository implements UserRepository {
 
     private final List<User> data = new ArrayList<>();
     private Long id = 0L;
+
+    private FriendRepository friendRepository;
+
+    public FakeUserRepository(FriendRepository friendRepository) {
+        this.friendRepository = friendRepository;
+    }
 
     @Override
     public User save(User user) {
@@ -173,6 +180,41 @@ public class FakeUserRepository implements UserRepository {
     public List<User> findAllByGroupId(Long groupId) {
         return data.stream()
             .filter(user -> user.getGroup().getId().equals(groupId))
+            .toList();
+    }
+
+    @Override
+    public Integer countAllByGroupNameFilteredByNotFriend(Long userId, String groupName) {
+        return data.stream()
+            .filter(user -> !user.getId().equals(userId))
+            .filter(user -> user.getGroup().getGroupName().equals(groupName))
+            .filter(user ->
+                !friendRepository.findAllByUserId(userId).stream()
+                    .filter(friend -> friend.getTarget().getDeletedAt() == null)
+                    .map(friend -> friend.getTarget().getId())
+                    .toList()
+                    .contains(user.getId())
+            )
+            .filter(user -> user.getDeletedAt() == null)
+            .toList()
+            .size();
+    }
+
+    @Override
+    public List<User> findAllByGroupNameFilteredByNotFriend(Long userId, String groupName, Pageable pageable) {
+        return data.stream()
+            .filter(user -> !user.getId().equals(userId))
+            .filter(user -> user.getGroup().getGroupName().equals(groupName))
+            .filter(user ->
+                !friendRepository.findAllByUserId(userId).stream()
+                    .filter(friend -> friend.getTarget().getDeletedAt() != null)
+                    .map(friend -> friend.getTarget().getId())
+                    .toList()
+                    .contains(user.getId())
+            )
+            .filter(user -> user.getDeletedAt() != null)
+            .skip(pageable.getOffset())
+            .limit(pageable.getPageSize())
             .toList();
     }
 
