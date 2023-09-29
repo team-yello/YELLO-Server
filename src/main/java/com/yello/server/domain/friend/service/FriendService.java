@@ -83,19 +83,14 @@ public class FriendService {
     public RecommendFriendResponse findAllRecommendSchoolFriends(Pageable pageable, Long userId) {
         final User user = userRepository.getById(userId);
 
-        List<User> recommendFriends =
-            userRepository.findAllByGroupId(user.getGroup().getId())
+        Integer size = userRepository.countAllByGroupNameFilteredByNotFriend(userId, user.getGroup().getGroupName());
+        List<FriendResponse> recommendFriends =
+            userRepository.findAllByGroupNameFilteredByNotFriend(userId, user.getGroup().getGroupName(), pageable)
                 .stream()
-                .filter(target -> !userId.equals(target.getId()))
-                .filter(target -> !friendRepository.existsByUserAndTarget(userId, target.getId()))
+                .map(FriendResponse::of)
                 .toList();
 
-        List<FriendResponse> pageList = PaginationFactory.getPage(recommendFriends, pageable)
-            .stream()
-            .map(FriendResponse::of)
-            .toList();
-
-        return RecommendFriendResponse.of(recommendFriends.size(), pageList);
+        return RecommendFriendResponse.of(size, recommendFriends);
     }
 
     @Transactional
