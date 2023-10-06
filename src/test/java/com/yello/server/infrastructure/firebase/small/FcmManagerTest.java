@@ -3,8 +3,10 @@ package com.yello.server.infrastructure.firebase.small;
 import com.yello.server.domain.friend.FakeFriendRepository;
 import com.yello.server.domain.friend.repository.FriendRepository;
 import com.yello.server.domain.group.entity.UserGroupType;
+import com.yello.server.domain.question.FakeQuestionGroupTypeRepository;
 import com.yello.server.domain.question.FakeQuestionRepository;
 import com.yello.server.domain.question.entity.Question;
+import com.yello.server.domain.question.repository.QuestionGroupTypeRepository;
 import com.yello.server.domain.question.repository.QuestionRepository;
 import com.yello.server.domain.user.FakeUserRepository;
 import com.yello.server.domain.user.entity.User;
@@ -29,12 +31,14 @@ public class FcmManagerTest {
     private final QuestionRepository questionRepository = new FakeQuestionRepository();
     private final FriendRepository friendRepository = new FakeFriendRepository();
     private final UserRepository userRepository = new FakeUserRepository(friendRepository);
-
+    private final QuestionGroupTypeRepository
+        questionGroupTypeRepository = new FakeQuestionGroupTypeRepository(questionRepository);
     private final TestDataRepositoryUtil testDataUtil = new TestDataRepositoryUtil(
         userRepository,
         voteRepository,
         questionRepository,
-        friendRepository
+        friendRepository,
+        questionGroupTypeRepository
     );
 
     private FCMManager fcmManager;

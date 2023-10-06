@@ -45,7 +45,8 @@ public class FakeVoteManager implements VoteManager {
     private final FriendRepository friendRepository;
     private final UserManager userManager;
 
-    public FakeVoteManager(UserRepository userRepository, QuestionRepository questionRepository,
+    public
+    FakeVoteManager(UserRepository userRepository, QuestionRepository questionRepository,
         VoteRepository voteRepository, FriendRepository friendRepository, UserManager userManager) {
         this.userRepository = userRepository;
         this.questionRepository = questionRepository;

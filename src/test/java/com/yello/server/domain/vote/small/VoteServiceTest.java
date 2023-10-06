@@ -11,9 +11,12 @@ import com.yello.server.domain.group.entity.UserGroupType;
 import com.yello.server.domain.keyword.FakeKeywordRepository;
 import com.yello.server.domain.keyword.dto.response.KeywordCheckResponse;
 import com.yello.server.domain.keyword.repository.KeywordRepository;
+import com.yello.server.domain.question.FakeQuestionGroupTypeRepository;
 import com.yello.server.domain.question.FakeQuestionRepository;
 import com.yello.server.domain.question.dto.response.QuestionForVoteResponse;
 import com.yello.server.domain.question.entity.Question;
+import com.yello.server.domain.question.entity.QuestionGroupType;
+import com.yello.server.domain.question.repository.QuestionGroupTypeRepository;
 import com.yello.server.domain.question.repository.QuestionRepository;
 import com.yello.server.domain.user.FakeUserManager;
 import com.yello.server.domain.user.FakeUserRepository;
@@ -58,6 +61,8 @@ public class VoteServiceTest {
     private final UserManager userManager = new FakeUserManager(userRepository);
     private final VoteRepository voteRepository = new FakeVoteRepository();
     private final QuestionRepository questionRepository = new FakeQuestionRepository();
+    private final QuestionGroupTypeRepository questionGroupTypeRepository = new FakeQuestionGroupTypeRepository(questionRepository);
+
     private final VoteManager voteManager = new FakeVoteManager(
         userRepository,
         questionRepository,
@@ -69,7 +74,8 @@ public class VoteServiceTest {
         userRepository,
         voteRepository,
         questionRepository,
-        friendRepository
+        friendRepository,
+        questionGroupTypeRepository
     );
     private final CooldownRepository cooldownRepository = new FakeCooldownRepository();
     private final KeywordRepository keywordRepository = new FakeKeywordRepository();
@@ -78,6 +84,7 @@ public class VoteServiceTest {
 
     private VoteService voteService;
     private List<Question> questionData = new ArrayList<>();
+    private List<QuestionGroupType> questionGroupTypeData = new ArrayList<>();
     private List<User> userData = new ArrayList<>();
 
     @BeforeEach
@@ -91,11 +98,18 @@ public class VoteServiceTest {
             .keywordRepository(keywordRepository)
             .producerService(producerService)
             .voteManager(voteManager)
+            .questionGroupTypeRepository(questionGroupTypeRepository)
             .build();
 
         for (long i = 1; i <= 8; i++) {
             questionData.add(testDataUtil.generateQuestion(i));
         }
+
+        for (long i = 1; i <= 8; i++) {
+            QuestionGroupType questionGroupType = testDataUtil.generateQuestionGroupType(i, questionData.get(Long.valueOf(i).intValue() -1));
+            questionGroupTypeData.add(questionGroupType);
+        }
+
 
         for (long i = 1; i <= 5; i++) {
             userData.add(testDataUtil.generateUser(i, 1L, UserGroupType.UNIVERSITY));
@@ -115,6 +129,7 @@ public class VoteServiceTest {
     @AfterEach
     void cleanup() {
         questionData.clear();
+        questionGroupTypeData.clear();
         userData.clear();
     }
 
@@ -195,7 +210,7 @@ public class VoteServiceTest {
     }
 
     @Test
-    void 투표하기_시_투표_10개_조회에_성공합니다() {
+    void 투표하기_시_투표_8개_조회에_성공합니다() {
         // given
         final Long userId = 1L;
 

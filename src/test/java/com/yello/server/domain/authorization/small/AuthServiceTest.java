@@ -30,7 +30,9 @@ import com.yello.server.domain.group.FakeUserGroupRepository;
 import com.yello.server.domain.group.entity.UserGroupType;
 import com.yello.server.domain.group.exception.GroupNotFoundException;
 import com.yello.server.domain.group.repository.UserGroupRepository;
+import com.yello.server.domain.question.FakeQuestionGroupTypeRepository;
 import com.yello.server.domain.question.FakeQuestionRepository;
+import com.yello.server.domain.question.repository.QuestionGroupTypeRepository;
 import com.yello.server.domain.question.repository.QuestionRepository;
 import com.yello.server.domain.user.FakeUserManager;
 import com.yello.server.domain.user.FakeUserRepository;
@@ -85,6 +87,8 @@ public class AuthServiceTest {
     private final UserRepository userRepository = new FakeUserRepository(friendRepository);
     private final UserManager userManager = new FakeUserManager(userRepository);
     private final FriendManager friendManager = new FakeFriendManager(userRepository);
+    private final QuestionGroupTypeRepository
+        questionGroupTypeRepository = new FakeQuestionGroupTypeRepository(questionRepository);
     private final NotificationService notificationService = NotificationFcmService.builder()
         .userRepository(userRepository)
         .tokenRepository(tokenRepository)
@@ -98,7 +102,8 @@ public class AuthServiceTest {
         userRepository,
         voteRepository,
         questionRepository,
-        friendRepository
+        friendRepository,
+        questionGroupTypeRepository
     );
     private final VoteManager voteManager = new FakeVoteManager(
         userRepository, questionRepository, voteRepository, friendRepository,

@@ -20,7 +20,9 @@ public interface QuestionRepository {
 
     Question save(Question question);
 
-    Optional<Question> findByQuestionContent(String nameHead, String nameFoot, String keywordHead, String keywordFoot);
+    Optional<Question> findByQuestionContent(String nameHead, String nameFoot, String keywordHead,
+        String keywordFoot);
 
     void delete(Question question);
+
 }
