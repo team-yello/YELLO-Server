@@ -6,8 +6,10 @@ import static org.assertj.core.api.Assertions.assertThat;
 import com.yello.server.domain.friend.FakeFriendRepository;
 import com.yello.server.domain.friend.repository.FriendRepository;
 import com.yello.server.domain.group.entity.UserGroupType;
+import com.yello.server.domain.question.FakeQuestionGroupTypeRepository;
 import com.yello.server.domain.question.FakeQuestionRepository;
 import com.yello.server.domain.question.entity.Question;
+import com.yello.server.domain.question.repository.QuestionGroupTypeRepository;
 import com.yello.server.domain.question.repository.QuestionRepository;
 import com.yello.server.domain.user.FakeUserManager;
 import com.yello.server.domain.user.FakeUserRepository;
@@ -38,11 +40,14 @@ public class VoteManagerTest {
     private final UserRepository userRepository = new FakeUserRepository(friendRepository);
     private final UserManager userManager = new FakeUserManager(userRepository);
     private final VoteRepository voteRepository = new FakeVoteRepository();
+    private final QuestionGroupTypeRepository
+        questionGroupTypeRepository = new FakeQuestionGroupTypeRepository(questionRepository);
     private final TestDataRepositoryUtil testDataUtil = new TestDataRepositoryUtil(
         userRepository,
         voteRepository,
         questionRepository,
-        friendRepository
+        friendRepository,
+        questionGroupTypeRepository
     );
     private VoteManager voteManager;
     private List<Question> questionData = new ArrayList<>();
