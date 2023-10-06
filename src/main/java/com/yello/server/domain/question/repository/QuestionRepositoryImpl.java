@@ -53,13 +53,16 @@ public class QuestionRepositoryImpl implements QuestionRepository {
     }
 
     @Override
-    public Optional<Question> findByQuestionContent(String nameHead, String nameFoot, String keywordHead,
+    public Optional<Question> findByQuestionContent(String nameHead, String nameFoot,
+        String keywordHead,
         String keywordFoot) {
-        return questionJpaRepository.findByQuestionContent(nameHead, nameFoot, keywordHead, keywordFoot);
+        return questionJpaRepository.findByQuestionContent(nameHead, nameFoot, keywordHead,
+            keywordFoot);
     }
 
     @Override
     public void delete(Question question) {
         questionJpaRepository.delete(question);
     }
+
 }

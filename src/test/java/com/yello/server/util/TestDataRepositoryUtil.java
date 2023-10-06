@@ -5,6 +5,8 @@ import com.yello.server.domain.friend.repository.FriendRepository;
 import com.yello.server.domain.group.entity.UserGroup;
 import com.yello.server.domain.group.entity.UserGroupType;
 import com.yello.server.domain.question.entity.Question;
+import com.yello.server.domain.question.entity.QuestionGroupType;
+import com.yello.server.domain.question.repository.QuestionGroupTypeRepository;
 import com.yello.server.domain.question.repository.QuestionRepository;
 import com.yello.server.domain.user.entity.Gender;
 import com.yello.server.domain.user.entity.Social;
@@ -21,14 +23,16 @@ public class TestDataRepositoryUtil implements TestDataUtil {
     private final VoteRepository voteRepository;
     private final QuestionRepository questionRepository;
     private final FriendRepository friendRepository;
+    private final QuestionGroupTypeRepository questionGroupTypeRepository;
 
     public TestDataRepositoryUtil(UserRepository userRepository, VoteRepository voteRepository,
         QuestionRepository questionRepository,
-        FriendRepository friendRepository) {
+        FriendRepository friendRepository, QuestionGroupTypeRepository questionGroupTypeRepository) {
         this.userRepository = userRepository;
         this.voteRepository = voteRepository;
         this.questionRepository = questionRepository;
         this.friendRepository = friendRepository;
+        this.questionGroupTypeRepository = questionGroupTypeRepository;
     }
 
     @Override
@@ -121,5 +125,16 @@ public class TestDataRepositoryUtil implements TestDataUtil {
             .subGroupName("테스트 하위 그룹 %d".formatted(index))
             .userGroupType(userGroupType)
             .build();
+    }
+
+    @Override
+    public QuestionGroupType generateQuestionGroupType(long index, Question question) {
+        return questionGroupTypeRepository.save(
+            QuestionGroupType.builder()
+                .id(index)
+                .userGroupType(UserGroupType.UNIVERSITY)
+                .question(question)
+                .build()
+        );
     }
 }
