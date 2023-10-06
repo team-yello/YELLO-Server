@@ -4,6 +4,7 @@ import com.yello.server.domain.friend.entity.Friend;
 import com.yello.server.domain.group.entity.UserGroup;
 import com.yello.server.domain.group.entity.UserGroupType;
 import com.yello.server.domain.question.entity.Question;
+import com.yello.server.domain.question.entity.QuestionGroupType;
 import com.yello.server.domain.user.entity.Gender;
 import com.yello.server.domain.user.entity.Social;
 import com.yello.server.domain.user.entity.Subscribe;
@@ -109,5 +110,13 @@ public class TestDataEntityUtil implements TestDataUtil {
             .subGroupName("테스트 하위 그룹 %d".formatted(index))
             .userGroupType(userGroupType)
             .build();
+    }
+
+    @Override
+    public QuestionGroupType generateQuestionGroupType(long index, Question question) {
+        return QuestionGroupType.builder()
+                .userGroupType(UserGroupType.UNIVERSITY)
+                .question(question)
+                .build();
     }
 }

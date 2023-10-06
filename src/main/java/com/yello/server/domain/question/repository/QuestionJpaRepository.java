@@ -13,6 +13,7 @@ public interface QuestionJpaRepository extends JpaRepository<Question, Long> {
         + "and (COALESCE(:nameFoot, '') = '' OR q.nameFoot is null OR q.nameFoot = :nameFoot) "
         + "and (COALESCE(:keywordHead, '') = '' OR q.keywordHead is null OR q.keywordHead = :keywordHead) "
         + "and (COALESCE(:keywordFoot, '') = '' OR q.keywordFoot is null OR q.keywordFoot = :keywordFoot)")
-    Optional<Question> findByQuestionContent(@Param("nameHead") String nameHead, @Param("nameFoot") String nameFoot,
+    Optional<Question> findByQuestionContent(@Param("nameHead") String nameHead,
+        @Param("nameFoot") String nameFoot,
         @Param("keywordHead") String keywordHead, @Param("keywordFoot") String keywordFoot);
 }

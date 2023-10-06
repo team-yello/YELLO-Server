@@ -27,7 +27,7 @@ public class UserGroupData extends AuditingTimeEntity {
     private Long id;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "group_name", referencedColumnName = "groupName")
+    @JoinColumn(name = "groupName", referencedColumnName = "groupName")
     private UserGroup group;
 
     @Convert(converter = UserGroupDataTagConterver.class)

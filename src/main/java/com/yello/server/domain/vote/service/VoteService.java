@@ -21,6 +21,7 @@ import com.yello.server.domain.keyword.dto.response.KeywordCheckResponse;
 import com.yello.server.domain.keyword.repository.KeywordRepository;
 import com.yello.server.domain.question.dto.response.QuestionForVoteResponse;
 import com.yello.server.domain.question.entity.Question;
+import com.yello.server.domain.question.repository.QuestionGroupTypeRepository;
 import com.yello.server.domain.question.repository.QuestionRepository;
 import com.yello.server.domain.user.entity.User;
 import com.yello.server.domain.user.repository.UserRepository;
@@ -63,6 +64,7 @@ public class VoteService {
     private final CooldownRepository cooldownRepository;
     private final VoteRepository voteRepository;
     private final KeywordRepository keywordRepository;
+    private final QuestionGroupTypeRepository questionGroupTypeRepository;
 
     private final VoteManager voteManager;
     private final ProducerService producerService;
@@ -105,7 +107,7 @@ public class VoteService {
         final Integer totalCount = voteRepository.countAllReceivedByFriends(userId);
         final List<VoteFriendVO> list = voteRepository.findAllReceivedByFriends(userId, pageable)
             .stream()
-            .filter(vote -> vote.getNameHint() != -3)
+            .filter(vote -> vote.getNameHint()!=-3)
             .map(VoteFriendVO::of)
             .toList();
         return VoteFriendResponse.of(totalCount, list);
@@ -123,21 +125,23 @@ public class VoteService {
         final User user = userRepository.getById(userId);
 
         final List<Friend> friends = friendRepository.findAllByUserId(user.getId());
-        if (friends.size() == NO_FRIEND_COUNT) {
+        if (friends.size()==NO_FRIEND_COUNT) {
             throw new FriendException(LACK_USER_EXCEPTION);
         }
 
         final Optional<Question> greetingQuestion = questionRepository.findByQuestionContent(
             null, GREETING_NAME_FOOT, null, GREETING_KEYWORD_FOOT);
-        final List<Question> questions = questionRepository.findAll().stream()
-            .filter(question -> {
-                if (greetingQuestion.isPresent()) {
-                    return !question.equals(greetingQuestion.get());
-                }
-                return true;
-            })
-            .filter(question -> !question.getId().equals(102L))
-            .toList();
+        final List<Question> questions =
+            questionGroupTypeRepository.findQuestionByGroupType(user.getGroup().getUserGroupType())
+                .stream()
+                .filter(question -> {
+                    if (greetingQuestion.isPresent()) {
+                        return !question.equals(greetingQuestion.get());
+                    }
+                    return true;
+                })
+                .filter(question -> !question.getId().equals(102L))
+                .toList();
         return voteManager.generateVoteQuestion(user, questions);
     }
 
@@ -146,7 +150,7 @@ public class VoteService {
         final String messageId = UUID.randomUUID().toString();
         final List<Friend> friends = friendRepository.findAllByUserId(user.getId());
 
-        if (friends.size() == NO_FRIEND_COUNT) {
+        if (friends.size()==NO_FRIEND_COUNT) {
             throw new FriendException(LACK_USER_EXCEPTION);
         }
 

@@ -8,7 +8,9 @@ import com.yello.server.domain.cooldown.repository.CooldownRepository;
 import com.yello.server.domain.friend.FakeFriendRepository;
 import com.yello.server.domain.friend.repository.FriendRepository;
 import com.yello.server.domain.group.entity.UserGroupType;
+import com.yello.server.domain.question.FakeQuestionGroupTypeRepository;
 import com.yello.server.domain.question.FakeQuestionRepository;
+import com.yello.server.domain.question.repository.QuestionGroupTypeRepository;
 import com.yello.server.domain.question.repository.QuestionRepository;
 import com.yello.server.domain.user.FakeUserRepository;
 import com.yello.server.domain.user.dto.response.UserDetailResponse;
@@ -39,11 +41,14 @@ class UserServiceTest {
     private final TokenRepository tokenRepository = new FakeTokenRepository();
     private final UserRepository userRepository = new FakeUserRepository(friendRepository);
     private final VoteRepository voteRepository = new FakeVoteRepository();
+    private final QuestionGroupTypeRepository
+        questionGroupTypeRepository = new FakeQuestionGroupTypeRepository(questionRepository);
     private final TestDataRepositoryUtil testDataUtil = new TestDataRepositoryUtil(
         userRepository,
         voteRepository,
         questionRepository,
-        friendRepository
+        friendRepository,
+        questionGroupTypeRepository
     );
     private UserService userService;
 
