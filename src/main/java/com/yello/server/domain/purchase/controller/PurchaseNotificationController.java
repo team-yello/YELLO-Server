@@ -34,7 +34,7 @@ public class PurchaseNotificationController {
     public BaseResponse<EmptyObject> googleNotification(
         @RequestBody Object request
     ) {
-        log.info(request.toString());
+        System.out.println("request = " + request);
         return BaseResponse.success(POST_GOOGLE_NOTIFICATION_SUCCESS);
     }
 }
