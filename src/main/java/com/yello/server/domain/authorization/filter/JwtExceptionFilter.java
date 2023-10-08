@@ -47,6 +47,7 @@ public class JwtExceptionFilter extends OncePerRequestFilter {
             || requestPath.startsWith("/actuator") || requestPath.startsWith("/prometheus")
             || requestPath.startsWith("/api/v1/admin/login")
             || requestPath.startsWith("/v2/apple/notifications")
+            || requestPath.startsWith("/v2/google/notifications")
             || (requestPath.startsWith("/api/v1/auth")
             && !requestPath.startsWith("/api/v1/auth/token/issue"))) {
             filterChain.doFilter(request, response);
@@ -60,8 +61,8 @@ public class JwtExceptionFilter extends OncePerRequestFilter {
                 log.info("Authorization-access : {}", accessHeader);
                 log.info("Authorization-refresh : {}", refreshHeader);
 
-                if (accessHeader==null || !accessHeader.startsWith(BEARER)
-                    || refreshHeader==null || !refreshHeader.startsWith(BEARER)) {
+                if (accessHeader == null || !accessHeader.startsWith(BEARER)
+                    || refreshHeader == null || !refreshHeader.startsWith(BEARER)) {
                     throw new CustomAuthenticationException(AUTHENTICATION_ERROR);
                 }
 
@@ -72,7 +73,7 @@ public class JwtExceptionFilter extends OncePerRequestFilter {
                 val accessHeader = request.getHeader(AUTHORIZATION);
                 log.info("Authorization : {}", accessHeader);
 
-                if (accessHeader==null || !accessHeader.startsWith(BEARER)) {
+                if (accessHeader == null || !accessHeader.startsWith(BEARER)) {
                     throw new CustomAuthenticationException(AUTHENTICATION_ERROR);
                 }
 
