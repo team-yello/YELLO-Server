@@ -174,6 +174,15 @@ public class User extends AuditingTimeEntity {
         this.ticketCount += ticketCount;
     }
 
+    public void subTicketCount(int ticketCount) {
+        if (this.ticketCount - ticketCount <= 0) {
+            this.ticketCount = 0;
+        } else {
+            this.ticketCount -= ticketCount;
+        }
+    }
+
+
     public String toGroupString() {
         /**
          * TODO 고등학교 중학교 처참함. groupAdmissionYear를 '입학년도'로 볼 것이 아닌,
