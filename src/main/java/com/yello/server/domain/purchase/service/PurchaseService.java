@@ -328,7 +328,7 @@ public class PurchaseService {
 
         AppleNotificationPayloadVO payloadVO =
             purchaseManager.decodeApplePayload(request.signedPayload());
-        
+
         ApplePurchaseVO purchaseData = purchaseManager.getPurchaseData(payloadVO);
         purchaseRepository.findByTransactionId(purchaseData.transactionId())
             .ifPresent((purchase) -> {
@@ -356,6 +356,7 @@ public class PurchaseService {
     @Transactional
     public void googleNotification(GooglePubSubNotificationRequest request) {
         if (!Objects.equals(request.subscription(), googlePubSubName)) {
+            log.info("BAD REQUEST by wrong pub-sub name");
             throw new GoogleBadRequestException(GOOGLE_NOTIFICATION_BAD_REQUEST_EXCEPTION);
         }
 
@@ -368,8 +369,10 @@ public class PurchaseService {
 
         final DeveloperNotification developerNotification = gson.fromJson(data, DeveloperNotification.class);
         if (ObjectUtils.isEmpty(developerNotification.getProductType())) {
+            log.info("BAD REQUEST by wrong pub-sub name");
             throw new GoogleBadRequestException(GOOGLE_NOTIFICATION_BAD_REQUEST_EXCEPTION);
         }
+        log.info(String.format("notification product type is %s", developerNotification.getProductType().toString()));
 
         final Optional<Purchase> purchase = purchaseRepository.findByPurchaseToken(
             developerNotification.subscriptionNotification().purchaseToken());

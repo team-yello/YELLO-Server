@@ -20,7 +20,7 @@ public record DeveloperNotification(
 ) {
 
     public ProductType getProductType() {
-        if (ObjectUtils.isEmpty(testNotification)) {
+        if (!ObjectUtils.isEmpty(testNotification)) {
             return ProductType.TEST;
         } else if (!ObjectUtils.isEmpty(subscriptionNotification)) {
             return ProductType.YELLO_PLUS;
