@@ -2,7 +2,7 @@ package com.yello.server.domain.purchase.dto.request.google;
 
 public record SubscriptionNotification(
     String version,
-    SubscriptionNotificationType subscriptionNotificationType,
+    SubscriptionNotificationType notificationType,
     String purchaseToken,
     String subscriptionId
 ) {
