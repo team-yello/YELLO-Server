@@ -368,14 +368,12 @@ public class PurchaseService {
         );
 
         final DeveloperNotification developerNotification = gson.fromJson(data, DeveloperNotification.class);
+
         if (ObjectUtils.isEmpty(developerNotification.getProductType())) {
             log.info("BAD REQUEST by wrong pub-sub name");
             throw new GoogleBadRequestException(GOOGLE_NOTIFICATION_BAD_REQUEST_EXCEPTION);
         }
         log.info(String.format("notification product type is %s", developerNotification.getProductType().toString()));
-
-        final Optional<Purchase> purchase = purchaseRepository.findByPurchaseToken(
-            developerNotification.subscriptionNotification().purchaseToken());
 
         switch (developerNotification.getProductType()) {
 
@@ -384,6 +382,9 @@ public class PurchaseService {
                 return;
             }
             case YELLO_PLUS -> {
+                final Optional<Purchase> purchase = purchaseRepository.findByPurchaseToken(
+                    developerNotification.subscriptionNotification().purchaseToken());
+
                 if (purchase.isEmpty()) {
                     log.info("notification is rejected by INVALID PurchaseToken");
                     throw new PurchaseNotFoundException(PURCHASE_TOKEN_NOT_FOUND_PURCHASE_EXCEPTION);
@@ -423,6 +424,9 @@ public class PurchaseService {
                 }
             }
             case ONE_TICKET, TWO_TICKET, FIVE_TICKET -> {
+                final Optional<Purchase> purchase = purchaseRepository.findByPurchaseToken(
+                    developerNotification.oneTimeProductNotification().purchaseToken());
+
                 if (purchase.isEmpty()) {
                     log.info("notification is rejected by INVALID PurchaseToken");
                     throw new PurchaseNotFoundException(PURCHASE_TOKEN_NOT_FOUND_PURCHASE_EXCEPTION);
