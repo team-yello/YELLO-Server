@@ -393,7 +393,7 @@ public class PurchaseService {
 
                 SubscriptionNotificationType subscriptionNotificationType = developerNotification
                     .subscriptionNotification()
-                    .subscriptionNotificationType();
+                    .notificationType();
 
                 log.info(String.format("notification is type of %s", subscriptionNotificationType.toString()));
                 switch (subscriptionNotificationType) {
