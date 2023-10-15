@@ -30,6 +30,11 @@ public class PurchaseRepositoryImpl implements PurchaseRepository {
     }
 
     @Override
+    public Optional<Purchase> findByPurchaseToken(String purchaseToken) {
+        return purchaseJpaRepository.findByPurchaseToken(purchaseToken);
+    }
+
+    @Override
     public List<Purchase> findAllByUser(User user) {
         return purchaseJpaRepository.findAllByUser(user);
     }
@@ -40,7 +45,7 @@ public class PurchaseRepositoryImpl implements PurchaseRepository {
         return purchaseJpaRepository.findTopByUserAndProductTypeOrderByCreatedAtDesc(user,
             productType);
     }
-    
+
     @Override
     public void delete(Purchase purchase) {
         purchaseJpaRepository.delete(purchase);

@@ -33,6 +33,10 @@ import org.hibernate.annotations.DynamicInsert;
             name = "transactionId_unique",
             columnNames = {"transactionId"}
         ),
+        @UniqueConstraint(
+            name = "puchaseToken_unique",
+            columnNames = {"purchaseToken"}
+        ),
     }
 )
 public class Purchase extends AuditingTimeEntity {
@@ -55,16 +59,29 @@ public class Purchase extends AuditingTimeEntity {
     @Convert(converter = GatewayConverter.class)
     private Gateway gateway;
 
+    @Column
+    private String purchaseToken;
+
+    @Column
+    @Convert(converter = PurchaseStateConverter.class)
+    private PurchaseState state;
+
+    @Column
+    private String rawData;
+
     @Column(nullable = false)
     @Convert(converter = ProductTypeConverter.class)
     private ProductType productType;
 
     public static Purchase of(User user, ProductType productType, Gateway gateway,
-        String transactionId) {
+        String transactionId, String purchaseToken, PurchaseState purchaseState, String rawData) {
         return Purchase.builder()
             .price(setPrice(productType.toString()))
             .user(user)
             .gateway(gateway)
+            .purchaseToken(purchaseToken)
+            .state(purchaseState)
+            .rawData(rawData)
             .productType(productType)
             .transactionId(transactionId)
             .build();
@@ -86,8 +103,16 @@ public class Purchase extends AuditingTimeEntity {
     }
 
     public static Purchase createPurchase(User user, ProductType productType, Gateway gateway,
-        String transactionId) {
-        return Purchase.of(user, productType, gateway, transactionId);
+        String transactionId, String purchaseToken, PurchaseState purchaseState, String rawData) {
+        return Purchase.of(user, productType, gateway, transactionId, purchaseToken, purchaseState, rawData);
+    }
+
+    public void setPurchaseState(PurchaseState state) {
+        this.state = state;
+    }
+
+    public void setRawData(String rawData) {
+        this.rawData = rawData;
     }
 
     public void setTransactionId(String transactionId) {

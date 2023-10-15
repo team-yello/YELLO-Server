@@ -11,6 +11,8 @@ public interface PurchaseJpaRepository extends JpaRepository<Purchase, Long> {
 
     Optional<Purchase> findByTransactionId(String transactionId);
 
+    Optional<Purchase> findByPurchaseToken(String purchaseToken);
+
     List<Purchase> findAllByUser(User user);
 
     Optional<Purchase> findTopByUserAndProductTypeOrderByCreatedAtDesc(User user,

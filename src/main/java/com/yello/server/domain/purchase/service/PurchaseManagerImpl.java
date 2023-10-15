@@ -16,6 +16,7 @@ import com.yello.server.domain.purchase.dto.response.AppleJwsTransactionResponse
 import com.yello.server.domain.purchase.entity.Gateway;
 import com.yello.server.domain.purchase.entity.ProductType;
 import com.yello.server.domain.purchase.entity.Purchase;
+import com.yello.server.domain.purchase.entity.PurchaseState;
 import com.yello.server.domain.purchase.exception.AppleTokenServerErrorException;
 import com.yello.server.domain.purchase.exception.PurchaseConflictException;
 import com.yello.server.domain.purchase.exception.PurchaseNotFoundException;
@@ -41,19 +42,21 @@ public class PurchaseManagerImpl implements PurchaseManager {
     private final UserRepository userRepository;
 
     @Override
-    public Purchase createSubscribe(User user, Gateway gateway, String transactionId) {
+    public Purchase createSubscribe(User user, Gateway gateway, String transactionId, String purchaseToken,
+        PurchaseState purchaseState, String rawData) {
         user.setSubscribe(Subscribe.ACTIVE);
         Purchase newPurchase =
-            Purchase.createPurchase(user, ProductType.YELLO_PLUS, gateway, transactionId);
+            Purchase.createPurchase(user, ProductType.YELLO_PLUS, gateway, transactionId, purchaseToken, purchaseState,
+                rawData);
         user.addTicketCount(3);
         return purchaseRepository.save(newPurchase);
     }
 
     @Override
-    public Purchase createTicket(User user, ProductType productType, Gateway gateway,
-        String transactionId) {
+    public Purchase createTicket(User user, ProductType productType, Gateway gateway, String transactionId,
+        String purchaseToken, PurchaseState purchaseState, String rawData) {
         Purchase newPurchase =
-            Purchase.createPurchase(user, productType, gateway, transactionId);
+            Purchase.createPurchase(user, productType, gateway, transactionId, purchaseToken, purchaseState, rawData);
         return purchaseRepository.save(newPurchase);
     }
 
@@ -80,11 +83,11 @@ public class PurchaseManagerImpl implements PurchaseManager {
 
         String notificationType = jsonPayload.get("notificationType").toString();
         String subtype =
-            (jsonPayload.get("subtype")!=null) ? jsonPayload.get("subtype").toString() : null;
+            (jsonPayload.get("subtype") != null) ? jsonPayload.get("subtype").toString() : null;
         Map<String, Object> data = (Map<String, Object>) jsonPayload.get("data");
 
         String notificationUUID =
-            (jsonPayload.get("notificationUUID")!=null) ? jsonPayload.get("notificationUUID")
+            (jsonPayload.get("notificationUUID") != null) ? jsonPayload.get("notificationUUID")
                 .toString() : null;
 
         ApplePayloadDataVO payloadVO = objectMapper.convertValue(data, ApplePayloadDataVO.class);
@@ -165,7 +168,8 @@ public class PurchaseManagerImpl implements PurchaseManager {
                 .orElseThrow(() -> new PurchaseConflictException(NOT_FOUND_TRANSACTION_EXCEPTION));
 
         Purchase reSubscribePurchase =
-            createSubscribe(purchase.getUser(), Gateway.APPLE, appleJwtDecode.transactionId());
+            createSubscribe(purchase.getUser(), Gateway.APPLE, appleJwtDecode.transactionId(), null,
+                PurchaseState.ACTIVE, appleJwtDecode.toString());
 
         purchaseRepository.save(reSubscribePurchase);
     }
@@ -176,6 +180,7 @@ public class PurchaseManagerImpl implements PurchaseManager {
         }
     }
 
+    @Override
     public ApplePurchaseVO getPurchaseData(AppleNotificationPayloadVO payloadVO) {
         String transactionId =
             decodeAppleNotificationData(

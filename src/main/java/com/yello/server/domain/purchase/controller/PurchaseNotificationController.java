@@ -4,6 +4,7 @@ import static com.yello.server.global.common.SuccessCode.POST_APPLE_NOTIFICATION
 import static com.yello.server.global.common.SuccessCode.POST_GOOGLE_NOTIFICATION_SUCCESS;
 
 import com.yello.server.domain.purchase.dto.request.AppleNotificationRequest;
+import com.yello.server.domain.purchase.dto.request.GooglePubSubNotificationRequest;
 import com.yello.server.domain.purchase.service.PurchaseService;
 import com.yello.server.global.common.dto.BaseResponse;
 import com.yello.server.global.common.dto.EmptyObject;
@@ -32,9 +33,9 @@ public class PurchaseNotificationController {
 
     @PostMapping("/v2/google/notifications")
     public BaseResponse<EmptyObject> googleNotification(
-        @RequestBody Object request
+        @RequestBody GooglePubSubNotificationRequest request
     ) {
-        System.out.println("request = " + request);
-        return BaseResponse.success(POST_GOOGLE_NOTIFICATION_SUCCESS);
+        purchaseService.googleNotification(request);
+        return BaseResponse.success(POST_GOOGLE_NOTIFICATION_SUCCESS, EmptyObject.builder().build());
     }
 }
