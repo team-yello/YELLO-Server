@@ -18,12 +18,12 @@ public class FakePurchaseRepository implements PurchaseRepository {
 
     @Override
     public Purchase save(Purchase purchase) {
-        if (purchase.getId()!=null && purchase.getId() > id) {
+        if (purchase.getId() != null && purchase.getId() > id) {
             id = purchase.getId();
         }
 
         final Purchase newPurchase = Purchase.builder()
-            .id(purchase.getId()==null ? ++id : purchase.getId())
+            .id(purchase.getId() == null ? ++id : purchase.getId())
             .price(purchase.getPrice())
             .user(purchase.getUser())
             .gateway(purchase.getGateway())
@@ -68,6 +68,13 @@ public class FakePurchaseRepository implements PurchaseRepository {
     public Optional<Purchase> findByTransactionId(String transactionId) {
         return data.stream()
             .filter(purchase -> purchase.getTransactionId().equals(transactionId))
+            .findFirst();
+    }
+
+    @Override
+    public Optional<Purchase> findByPurchaseToken(String purchaseToken) {
+        return data.stream()
+            .filter(purchase -> purchase.getPurchaseToken().equals(purchaseToken))
             .findFirst();
     }
 
