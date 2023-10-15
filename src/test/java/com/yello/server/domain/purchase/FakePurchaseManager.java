@@ -4,10 +4,12 @@ import static com.yello.server.global.common.ErrorCode.APPLE_TOKEN_SERVER_EXCEPT
 import static com.yello.server.global.common.ErrorCode.GOOGLE_SUBSCRIPTIONS_SUBSCRIPTION_EXCEPTION;
 
 import com.yello.server.domain.purchase.dto.apple.AppleNotificationPayloadVO;
+import com.yello.server.domain.purchase.dto.apple.ApplePurchaseVO;
 import com.yello.server.domain.purchase.dto.apple.TransactionInfoResponse;
 import com.yello.server.domain.purchase.entity.Gateway;
 import com.yello.server.domain.purchase.entity.ProductType;
 import com.yello.server.domain.purchase.entity.Purchase;
+import com.yello.server.domain.purchase.entity.PurchaseState;
 import com.yello.server.domain.purchase.exception.AppleTokenServerErrorException;
 import com.yello.server.domain.purchase.exception.PurchaseConflictException;
 import com.yello.server.domain.purchase.repository.PurchaseRepository;
@@ -26,19 +28,21 @@ public class FakePurchaseManager implements PurchaseManager {
     }
 
     @Override
-    public Purchase createSubscribe(User user, Gateway gateway, String transactionId) {
+    public Purchase createSubscribe(User user, Gateway gateway, String transactionId, String purchaseToken,
+        PurchaseState purchaseState, String rawData) {
         user.setSubscribe(Subscribe.ACTIVE);
         Purchase newPurchase =
-            Purchase.createPurchase(user, ProductType.YELLO_PLUS, gateway, transactionId);
+            Purchase.createPurchase(user, ProductType.YELLO_PLUS, gateway, transactionId, purchaseToken, purchaseState,
+                rawData);
 
         return purchaseRepository.save(newPurchase);
     }
 
     @Override
-    public Purchase createTicket(User user, ProductType productType, Gateway gateway,
-        String transactionId) {
+    public Purchase createTicket(User user, ProductType productType, Gateway gateway, String transactionId,
+        String purchaseToken, PurchaseState purchaseState, String rawData) {
         Purchase newPurchase =
-            Purchase.createPurchase(user, productType, gateway, transactionId);
+            Purchase.createPurchase(user, productType, gateway, transactionId, purchaseToken, purchaseState, rawData);
         return purchaseRepository.save(newPurchase);
     }
 
@@ -52,6 +56,11 @@ public class FakePurchaseManager implements PurchaseManager {
             .ifPresent(action -> {
                 throw new PurchaseConflictException(GOOGLE_SUBSCRIPTIONS_SUBSCRIPTION_EXCEPTION);
             });
+    }
+
+    @Override
+    public ApplePurchaseVO getPurchaseData(AppleNotificationPayloadVO payloadVO) {
+        return null;
     }
 
     @Override
