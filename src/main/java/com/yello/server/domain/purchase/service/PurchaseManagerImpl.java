@@ -29,6 +29,7 @@ import com.yello.server.global.common.factory.TokenFactory;
 import com.yello.server.global.common.util.ConstantUtil;
 import com.yello.server.infrastructure.slack.dto.response.SlackAppleNotificationResponse;
 import java.util.Map;
+import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
@@ -112,35 +113,47 @@ public class PurchaseManagerImpl implements PurchaseManager {
     public void changeSubscriptionStatus(AppleNotificationPayloadVO payloadVO) {
 
         ApplePurchaseVO purchaseData = getPurchaseData(payloadVO);
+        Purchase purchase =
+            purchaseRepository.findByTransactionId(purchaseData.transactionId())
+                .orElseThrow(() -> new PurchaseNotFoundException(NOT_FOUND_TRANSACTION_EXCEPTION));
         User user = purchaseData.purchase().getUser();
 
         if (payloadVO.subtype().equals(ConstantUtil.APPLE_SUBTYPE_AUTO_RENEW_DISABLED)
             && !user.getSubscribe().equals(Subscribe.NORMAL)) {
             user.setSubscribe(Subscribe.CANCELED);
+            purchase.setPurchaseState(PurchaseState.CANCELED);
         }
 
         if (payloadVO.subtype().equals(ConstantUtil.APPLE_SUBTYPE_VOLUNTARY)) {
             user.setSubscribe(Subscribe.NORMAL);
+            purchase.setPurchaseState(PurchaseState.PAUSED);
         }
     }
 
     @Override
     public void refundAppleInApp(AppleNotificationPayloadVO payloadVO) {
         ApplePurchaseVO purchaseData = getPurchaseData(payloadVO);
+        Purchase purchase =
+            purchaseRepository.findByTransactionId(purchaseData.transactionId())
+                .orElseThrow(() -> new PurchaseNotFoundException(NOT_FOUND_TRANSACTION_EXCEPTION));
         User user = purchaseData.purchase().getUser();
 
         switch (purchaseData.purchase().getProductType()) {
             case YELLO_PLUS -> {
                 user.setSubscribe(Subscribe.NORMAL);
+                purchase.setPurchaseState(PurchaseState.INACTIVE);
             }
             case ONE_TICKET -> {
                 validateTicketCount(REFUND_ONE_TICKET, user);
+                purchase.setPurchaseState(PurchaseState.INACTIVE);
             }
             case TWO_TICKET -> {
                 validateTicketCount(REFUND_TWO_TICKET, user);
+                purchase.setPurchaseState(PurchaseState.INACTIVE);
             }
             case FIVE_TICKET -> {
                 validateTicketCount(REFUND_FIVE_TICKET, user);
+                purchase.setPurchaseState(PurchaseState.INACTIVE);
             }
         }
     }
@@ -170,6 +183,9 @@ public class PurchaseManagerImpl implements PurchaseManager {
         Purchase reSubscribePurchase =
             createSubscribe(purchase.getUser(), Gateway.APPLE, appleJwtDecode.transactionId(), null,
                 PurchaseState.ACTIVE, appleJwtDecode.toString());
+
+        purchase.setPurchaseState(PurchaseState.INACTIVE);
+        reSubscribePurchase.setPurchaseState(PurchaseState.ACTIVE);
 
         purchaseRepository.save(reSubscribePurchase);
     }

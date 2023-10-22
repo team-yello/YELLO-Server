@@ -66,7 +66,7 @@ public class Purchase extends AuditingTimeEntity {
     @Convert(converter = PurchaseStateConverter.class)
     private PurchaseState state;
 
-    @Column
+    @Column(length = 15000)
     private String rawData;
 
     @Column(nullable = false)
