@@ -67,6 +67,9 @@ public class AuthManagerImpl implements AuthManager {
 
     @Override
     public void validateSignupRequest(SignUpRequest signUpRequest) {
+        // 회원가입 로그 (이슈 해결 후 제거)
+        System.out.println("회원가입 : " + signUpRequest.toString());
+
         userRepository.findByUuidNotFiltered(signUpRequest.uuid())
             .ifPresent(action -> {
                 throw new UserConflictException(UUID_CONFLICT_USER_EXCEPTION);
