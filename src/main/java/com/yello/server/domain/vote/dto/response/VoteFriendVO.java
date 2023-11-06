@@ -10,6 +10,7 @@ public record VoteFriendVO(
     Long id,
     String receiverName,
     String senderGender,
+    String receiverProfileImage,
     VoteContentVO vote,
     Boolean isHintUsed,
     String createdAt
@@ -20,6 +21,7 @@ public record VoteFriendVO(
             .id(vote.getId())
             .receiverName(vote.getReceiver().getName())
             .senderGender(vote.getSender().getGender().name())
+            .receiverProfileImage(vote.getReceiver().getProfileImage())
             .vote(VoteContentVO.of(vote))
             .isHintUsed(vote.getIsAnswerRevealed())
             .createdAt(toFormattedString(vote.getCreatedAt()))
