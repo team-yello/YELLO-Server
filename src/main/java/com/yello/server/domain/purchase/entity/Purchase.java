@@ -90,13 +90,13 @@ public class Purchase extends AuditingTimeEntity {
     public static int setPrice(String productType) {
         switch (productType) {
             case "YELLO_PLUS":
-                return ConstantUtil.YELLO_PLUS;
+                return ConstantUtil.SALE_YELLO_PLUS;
             case "ONE_TICKET":
-                return ConstantUtil.ONE_TICKET;
+                return ConstantUtil.SALE_ONE_TICKET;
             case "TWO_TICKET":
-                return ConstantUtil.TWO_TICKET;
+                return ConstantUtil.SALE_TWO_TICKET;
             case "FIVE_TICKET":
-                return ConstantUtil.FIVE_TICKET;
+                return ConstantUtil.SALE_FIVE_TICKET;
             default:
                 return 0;
         }
