@@ -52,8 +52,6 @@ dependencies {
     implementation group: 'io.jsonwebtoken', name: 'jjwt-impl', version: '0.11.2'
     implementation group: 'io.jsonwebtoken', name: 'jjwt-jackson', version: '0.11.2'
 
-    // p6spy
-    implementation 'com.github.gavlyukovskiy:p6spy-spring-boot-starter:1.5.7'
 
     // Http
     implementation 'org.springframework.boot:spring-boot-starter-webflux'
