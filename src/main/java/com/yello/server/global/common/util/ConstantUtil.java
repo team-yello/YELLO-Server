@@ -34,6 +34,10 @@ public class ConstantUtil {
     public static final int TWO_TICKET = 2800;
     public static final int FIVE_TICKET = 5900;
     public static final int YELLO_PLUS = 3900;
+    public static final int SALE_ONE_TICKET = 990;
+    public static final int SALE_TWO_TICKET = 1900;
+    public static final int SALE_FIVE_TICKET = 3900;
+    public static final int SALE_YELLO_PLUS = 2900;
     public static final int RECOMMEND_POINT = 100;
     public static final String GOOGLE_PURCHASE_SUBSCRIPTION_ACTIVE = "SUBSCRIPTION_STATE_ACTIVE";
     public static final String GOOGLE_PURCHASE_SUBSCRIPTION_CANCELED =
