@@ -24,7 +24,7 @@ public class UserData {
     private User user;
 
     @Column(nullable = false)
-    @Convert(converter = UserDataConverter.class)
+    @Convert(converter = UserDataTypeConverter.class)
     private UserDataType tag;
 
     @Column(nullable = false)
