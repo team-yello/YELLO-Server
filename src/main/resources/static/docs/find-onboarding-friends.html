@@ -483,6 +483,9 @@ Content-Length: 43
 <div class="listingblock">
 <div class="content">
 <pre class="highlight nowrap"><code class="language-http" data-lang="http">HTTP/1.1 200 OK
+Vary: Origin
+Vary: Access-Control-Request-Method
+Vary: Access-Control-Request-Headers
 Content-Type: application/json
 
 {
@@ -495,7 +498,7 @@ Content-Type: application/json
       "id" : 1,
       "name" : "name1",
       "profileImage" : "test image",
-      "groupName" : "테스트 대학교 1 테스트 학과 1"
+      "groupName" : "테스트 대학교 1 테스트 학과 1 20학번"
     } ]
   }
 }</code></pre>
@@ -508,7 +511,7 @@ Content-Type: application/json
 <div id="footer">
 <div id="footer-text">
 Version 0.0.1-SNAPSHOT<br>
-Last updated 2023-08-25 19:26:34 +0900
+Last updated 2023-08-26 23:23:32 +0900
 </div>
 </div>
 </body>
