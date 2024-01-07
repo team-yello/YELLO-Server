@@ -41,6 +41,7 @@ out/
 application.yml
 application-dev.yml
 application-apple.yml
+application-local.yml
 firebase*.json
 *client_secret*.json
 
