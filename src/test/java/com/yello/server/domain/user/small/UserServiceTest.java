@@ -14,6 +14,7 @@ import com.yello.server.domain.question.repository.QuestionGroupTypeRepository;
 import com.yello.server.domain.question.repository.QuestionRepository;
 import com.yello.server.domain.user.FakeUserRepository;
 import com.yello.server.domain.user.dto.response.UserDetailResponse;
+import com.yello.server.domain.user.dto.response.UserDetailV2Response;
 import com.yello.server.domain.user.dto.response.UserResponse;
 import com.yello.server.domain.user.entity.User;
 import com.yello.server.domain.user.exception.UserNotFoundException;
@@ -38,11 +39,11 @@ class UserServiceTest {
     private final CooldownRepository cooldownRepository = new FakeCooldownRepository();
     private final FriendRepository friendRepository = new FakeFriendRepository();
     private final QuestionRepository questionRepository = new FakeQuestionRepository();
+    private final QuestionGroupTypeRepository
+        questionGroupTypeRepository = new FakeQuestionGroupTypeRepository(questionRepository);
     private final TokenRepository tokenRepository = new FakeTokenRepository();
     private final UserRepository userRepository = new FakeUserRepository(friendRepository);
     private final VoteRepository voteRepository = new FakeVoteRepository();
-    private final QuestionGroupTypeRepository
-        questionGroupTypeRepository = new FakeQuestionGroupTypeRepository(questionRepository);
     private final TestDataRepositoryUtil testDataUtil = new TestDataRepositoryUtil(
         userRepository,
         voteRepository,
@@ -74,6 +75,19 @@ class UserServiceTest {
 
         // when
         final UserDetailResponse result = userService.findMyProfile(userId);
+
+        // then
+        assertThat(result.userId()).isEqualTo(userId);
+        assertThat(result.name()).isEqualTo("name1");
+    }
+
+    @Test
+    void 내_정보_조회_V2에_성공합니다() {
+        // given
+        final Long userId = 1L;
+
+        // when
+        final UserDetailV2Response result = userService.getUserDetailV2(userId);
 
         // then
         assertThat(result.userId()).isEqualTo(userId);
