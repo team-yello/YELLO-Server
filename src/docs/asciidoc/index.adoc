@@ -25,7 +25,9 @@
 
 === User API
 
-* link:check-user.html[내 정보 조회하기]
+* link:check-user.html[내 정보 조회하기 V1]
+
+* link:check-user-v2.html[내 정보 조회하기 V2, 2024-01-07]
 
 * link:check-user-by-id.html[특정 유저 정보 조회하기]
 
