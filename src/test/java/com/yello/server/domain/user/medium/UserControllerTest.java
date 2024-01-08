@@ -17,7 +17,6 @@ import com.yello.server.domain.authorization.filter.JwtExceptionFilter;
 import com.yello.server.domain.authorization.filter.JwtFilter;
 import com.yello.server.domain.group.entity.UserGroupType;
 import com.yello.server.domain.user.controller.UserController;
-import com.yello.server.domain.user.controller.UserV2Controller;
 import com.yello.server.domain.user.dto.request.UserDeviceTokenRequest;
 import com.yello.server.domain.user.dto.response.UserDetailResponse;
 import com.yello.server.domain.user.dto.response.UserDetailV2Response;
@@ -50,8 +49,7 @@ import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 @AutoConfigureRestDocs
 @WebMvcTest(
     controllers = {
-        UserController.class,
-        UserV2Controller.class
+        UserController.class
     },
     excludeFilters = {
         @ComponentScan.Filter(type = FilterType.ASSIGNABLE_TYPE, classes = JwtFilter.class),

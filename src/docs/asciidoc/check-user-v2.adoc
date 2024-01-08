@@ -8,6 +8,27 @@ include::{snippets}/api/v2/user/http-request.adoc[]
 
 include::{snippets}/api/v2/user/http-response.adoc[]
 
+*필드 타입*
+
+- "userId": Long
+- "name": String
+- "yelloId": String
+- "gender": "M" | "F"
+- "email": String
+- "profileImageUrl": String
+- "social": "KAKAO" | "APPLE"
+- "uuid": String(10)
+- "deviceToken": String
+- "group": String
+- "groupType": "UNIVERSITY" | "HIGH_SCHOOL" | "MIDDLE_SCHOOL" | "SOPT"
+- "groupName": String
+- "subGroupName": String
+- "groupAdmissionYear": Integer
+- "recommendCount": Long
+- "ticketCount": Integer
+- "point": Integer
+- "subscribe": "normal" | "active" | "canceled"
+
 === Note
 
 - 내 정보 조회하기 V1가 제공했던 단편적인 정보를 보완하기 위해 설계된 API입니다.
@@ -17,3 +38,4 @@ include::{snippets}/api/v2/user/http-response.adoc[]
 === CHANGELOG
 
 - 2024.01.07 첫 릴리즈
+- 2024.01.09 필드 타입 추가
