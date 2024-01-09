@@ -15,15 +15,20 @@ import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.yello.server.domain.authorization.filter.JwtExceptionFilter;
 import com.yello.server.domain.authorization.filter.JwtFilter;
+import com.yello.server.domain.group.entity.UserGroupType;
 import com.yello.server.domain.user.controller.UserController;
 import com.yello.server.domain.user.dto.request.UserDeviceTokenRequest;
 import com.yello.server.domain.user.dto.response.UserDetailResponse;
+import com.yello.server.domain.user.dto.response.UserDetailV2Response;
 import com.yello.server.domain.user.dto.response.UserResponse;
 import com.yello.server.domain.user.entity.User;
 import com.yello.server.domain.user.service.UserService;
 import com.yello.server.global.common.dto.EmptyObject;
 import com.yello.server.global.exception.ControllerExceptionAdvice;
+import com.yello.server.util.TestDataEntityUtil;
+import com.yello.server.util.TestDataUtil;
 import com.yello.server.util.WithAccessTokenUser;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.DisplayNameGeneration;
 import org.junit.jupiter.api.DisplayNameGenerator.ReplaceUnderscores;
@@ -43,7 +48,9 @@ import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 
 @AutoConfigureRestDocs
 @WebMvcTest(
-    controllers = UserController.class,
+    controllers = {
+        UserController.class
+    },
     excludeFilters = {
         @ComponentScan.Filter(type = FilterType.ASSIGNABLE_TYPE, classes = JwtFilter.class),
         @ComponentScan.Filter(type = FilterType.ASSIGNABLE_TYPE, classes = JwtExceptionFilter.class),
@@ -66,6 +73,14 @@ class UserControllerTest {
 
     @MockBean
     private UserService userService;
+
+    private TestDataUtil testDataUtil = new TestDataEntityUtil();
+    private User user;
+
+    @BeforeEach
+    void init() {
+        user = testDataUtil.generateUser(1L, 1L, UserGroupType.UNIVERSITY);
+    }
 
     @Test
     void 내_정보_조회에_성공합니다() throws Exception {
@@ -91,6 +106,31 @@ class UserControllerTest {
             )
             .andDo(print())
             .andDo(document("api/v1/user/findUser",
+                Preprocessors.preprocessRequest(prettyPrint(), removeHeaders(excludeRequestHeaders)),
+                Preprocessors.preprocessResponse(prettyPrint(), removeHeaders(excludeResponseHeaders)))
+            )
+            .andExpect(MockMvcResultMatchers.status().isOk());
+    }
+
+    @Test
+    void 내_정보_조회_V2에_성공합니다() throws Exception {
+        // given
+        UserDetailV2Response response = UserDetailV2Response.of(user, user.getGroup());
+
+        given(userService.getUserDetailV2(anyLong()))
+            .willReturn(response);
+
+        // when
+
+        // then
+        mockMvc
+            .perform(
+                RestDocumentationRequestBuilders
+                    .get("/api/v2/user")
+                    .header(HttpHeaders.AUTHORIZATION, "Bearer your-access-token")
+            )
+            .andDo(print())
+            .andDo(document("api/v2/user",
                 Preprocessors.preprocessRequest(prettyPrint(), removeHeaders(excludeRequestHeaders)),
                 Preprocessors.preprocessResponse(prettyPrint(), removeHeaders(excludeResponseHeaders)))
             )

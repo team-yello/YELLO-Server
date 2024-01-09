@@ -5,7 +5,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="generator" content="Asciidoctor 2.0.10">
-<title>Google 구독 구매 검증하기</title>
+<title>내 정보 조회하기 V2</title>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Open+Sans:300,300italic,400,400italic,600,600italic%7CNoto+Serif:400,400italic,700,700italic%7CDroid+Sans+Mono:400,700">
 <style>
 /* Asciidoctor default stylesheet | MIT License | https://asciidoctor.org */
@@ -441,28 +441,14 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 </div>
 <div id="content">
 <div class="sect1">
-<h2 id="_google_구독_구매_검증하기">Google 구독 구매 검증하기</h2>
+<h2 id="_내_정보_조회하기_v2">내 정보 조회하기 V2</h2>
 <div class="sectionbody">
 <div class="sect2">
 <h3 id="_요청">요청</h3>
 <div class="listingblock">
 <div class="content">
-<pre class="highlight nowrap"><code class="language-http" data-lang="http">POST /api/v1/purchase/google/verify/subscribe HTTP/1.1
-Content-Type: application/json;charset=UTF-8
-Authorization: Bearer your-access-token
-Content-Length: 239
-
-{
-  "orderId" : "orderId",
-  "packageName" : "packageName",
-  "productId" : "productId",
-  "purchaseTime" : 1,
-  "purchaseState" : 1,
-  "purchaseToken" : "purchaseToken",
-  "quantity" : 1,
-  "autoRenewing" : true,
-  "acknowledged" : true
-}</code></pre>
+<pre class="highlight nowrap"><code class="language-http" data-lang="http">GET /api/v2/user HTTP/1.1
+Authorization: Bearer your-access-token</code></pre>
 </div>
 </div>
 </div>
@@ -477,62 +463,120 @@ Vary: Access-Control-Request-Headers
 Content-Type: application/json
 
 {
-  "status" : 201,
-  "message" : "구글 구독 결제 검증 및 반영에 성공하였습니다.",
+  "status" : 200,
+  "message" : "유저 조회에 성공했습니다.",
   "data" : {
-    "productId" : "productId",
-    "expiredAt" : "2024-01-07T17:29:20.656319"
+    "userId" : 1,
+    "name" : "name1",
+    "yelloId" : "yelloId1",
+    "gender" : "M",
+    "email" : "test1@test.com",
+    "profileImageUrl" : "test image",
+    "social" : "KAKAO",
+    "uuid" : "1",
+    "deviceToken" : "deviceToken#1",
+    "group" : "테스트 대학교 1 테스트 학과 1 20학번",
+    "groupType" : "UNIVERSITY",
+    "groupName" : "테스트 대학교 1",
+    "subGroupName" : "테스트 학과 1",
+    "groupAdmissionYear" : 20,
+    "recommendCount" : 0,
+    "ticketCount" : 0,
+    "point" : 200,
+    "subscribe" : "normal"
   }
 }</code></pre>
 </div>
 </div>
+<div class="paragraph">
+<p><strong>필드 타입</strong></p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>"userId": Long</p>
+</li>
+<li>
+<p>"name": String</p>
+</li>
+<li>
+<p>"yelloId": String</p>
+</li>
+<li>
+<p>"gender": "M" | "F"</p>
+</li>
+<li>
+<p>"email": String</p>
+</li>
+<li>
+<p>"profileImageUrl": String</p>
+</li>
+<li>
+<p>"social": "KAKAO" | "APPLE"</p>
+</li>
+<li>
+<p>"uuid": String(10)</p>
+</li>
+<li>
+<p>"deviceToken": String</p>
+</li>
+<li>
+<p>"group": String</p>
+</li>
+<li>
+<p>"groupType": "UNIVERSITY" | "HIGH_SCHOOL" | "MIDDLE_SCHOOL" | "SOPT"</p>
+</li>
+<li>
+<p>"groupName": String</p>
+</li>
+<li>
+<p>"subGroupName": String</p>
+</li>
+<li>
+<p>"groupAdmissionYear": Integer</p>
+</li>
+<li>
+<p>"recommendCount": Long</p>
+</li>
+<li>
+<p>"ticketCount": Integer</p>
+</li>
+<li>
+<p>"point": Integer</p>
+</li>
+<li>
+<p>"subscribe": "normal" | "active" | "canceled"</p>
+</li>
+</ul>
 </div>
 </div>
-</div>
-<div class="sect1">
-<h2 id="_google_열람권_구매_검증하기">Google 열람권 구매 검증하기</h2>
-<div class="sectionbody">
 <div class="sect2">
-<h3 id="_요청_2">요청</h3>
-<div class="listingblock">
-<div class="content">
-<pre class="highlight nowrap"><code class="language-http" data-lang="http">POST /api/v1/purchase/google/verify/ticket HTTP/1.1
-Content-Type: application/json;charset=UTF-8
-Authorization: Bearer your-access-token
-Content-Length: 214
-
-{
-  "orderId" : "orderId",
-  "packageName" : "packageName",
-  "productId" : "productId",
-  "purchaseTime" : 1,
-  "purchaseState" : 1,
-  "purchaseToken" : "purchaseToken",
-  "quantity" : 1,
-  "acknowledged" : true
-}</code></pre>
-</div>
+<h3 id="_note">Note</h3>
+<div class="ulist">
+<ul>
+<li>
+<p>내 정보 조회하기 V1가 제공했던 단편적인 정보를 보완하기 위해 설계된 API입니다.</p>
+</li>
+<li>
+<p><code>Authroization</code> 헤더로 제공된 JWT Token에 담긴 유저의 정보가 응답으로 주어집니다.</p>
+</li>
+<li>
+<p>유저 정보가 필요하면 해당 API를 사용하세요!</p>
+</li>
+</ul>
 </div>
 </div>
 <div class="sect2">
-<h3 id="_응답_2">응답</h3>
-<div class="listingblock">
-<div class="content">
-<pre class="highlight nowrap"><code class="language-http" data-lang="http">HTTP/1.1 200 OK
-Vary: Origin
-Vary: Access-Control-Request-Method
-Vary: Access-Control-Request-Headers
-Content-Type: application/json
-
-{
-  "status" : 201,
-  "message" : "구글 인앱 결제 검증 및 반영에 성공하였습니다.",
-  "data" : {
-    "productId" : "productId",
-    "ticketCount" : 0
-  }
-}</code></pre>
-</div>
+<h3 id="_changelog">CHANGELOG</h3>
+<div class="ulist">
+<ul>
+<li>
+<p>2024.01.07 첫 릴리즈</p>
+</li>
+<li>
+<p>2024.01.09 필드 타입 추가</p>
+</li>
+</ul>
 </div>
 </div>
 </div>
@@ -541,7 +585,7 @@ Content-Type: application/json
 <div id="footer">
 <div id="footer-text">
 Version 0.0.1-SNAPSHOT<br>
-Last updated 2023-08-27 23:07:47 +0900
+Last updated 2024-01-09 01:01:12 +0900
 </div>
 </div>
 </body>
