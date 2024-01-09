@@ -1,0 +1,60 @@
+== 유저 프로필 수정 (명세)
+
+=== 요청
+
+[http,json]
+----
+POST /api/v1/user HTTP/1.1
+Authorization: Bearer your-access-token
+Content-Type: application/json
+
+{
+    "name": "name1",
+    "yelloId": "yelloId1",
+    "gender": "M",
+    "email": "test1@test.com",
+    "profileImageUrl": "test image",
+    "groupId": 30000,
+    "groupAdmissionYear" : 20
+}
+----
+
+*필드 타입*
+
+- "name": String
+- "yelloId": String
+- "gender": "M" | "F"
+- "email": String
+- "profileImageUrl": String
+- "groupId": Long
+* 대학교 검색 또는 고등학교 검색 API를 이용하여 유저가 선택한 groupId를 입력해주세요.
+* 해당 groupId에 해당하는 group이 고등학교면, 해당 유저는 고등학생 / 대학교면 대학생이 됩니다.
+- "groupAdmissionYear": Integer
+* 대학생이면 학번 / 고등학생이면 '반(class)'를 넣어주세요.
+
+=== 응답
+
+[http,json]
+----
+HTTP/1.1 200 OK
+Vary: Origin
+Vary: Access-Control-Request-Method
+Vary: Access-Control-Request-Headers
+Content-Type: application/json
+
+{
+  "status" : 200,
+  "message" : "유저 프로필 조회에 성공하였습니다."
+}
+----
+
+*필드 타입*
+
+=== NOTE
+
+- 포인트 / 구독정보 / 로그인 정보와 같이 user-pure하지 않은 정보는 수정할 수 없도록 설계하였습니다.
+* 해당 정보 수정API는 도메인 별로 만들 예정입니다.
+
+=== CHANGELOG
+
+- 2024.01.09 명세 작성

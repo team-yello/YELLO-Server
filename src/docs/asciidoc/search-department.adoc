@@ -2,12 +2,12 @@
 
 === 요청
 
-include::{snippets}/api/v1/auth/findDepartmentsByKeyword/http-request.adoc[]
+include::{snippets}/api/v1/auth/findAllUnivDepartmentName/http-request.adoc[]
 
 === 요청 파라미터
 
-include::{snippets}/api/v1/auth/findDepartmentsByKeyword/request-parameters.adoc[]
+include::{snippets}/api/v1/auth/findAllUnivDepartmentName/request-parameters.adoc[]
 
 === 응답
 
-include::{snippets}/api/v1/auth/findDepartmentsByKeyword/http-response.adoc[]
+include::{snippets}/api/v1/auth/findAllUnivDepartmentName/http-response.adoc[]
