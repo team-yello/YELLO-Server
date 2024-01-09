@@ -6,6 +6,7 @@ import static com.yello.server.global.common.SuccessCode.UPDATE_DEVICE_TOKEN_USE
 
 import com.yello.server.domain.user.dto.request.UserDeviceTokenRequest;
 import com.yello.server.domain.user.dto.response.UserDetailResponse;
+import com.yello.server.domain.user.dto.response.UserDetailV2Response;
 import com.yello.server.domain.user.dto.response.UserResponse;
 import com.yello.server.domain.user.entity.User;
 import com.yello.server.domain.user.service.UserService;
@@ -24,24 +25,30 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/api/v1/user")
+@RequestMapping("/api")
 public class UserController {
 
     private final UserService userService;
 
-    @GetMapping
+    @GetMapping("/v1/user")
     public BaseResponse<UserDetailResponse> findUser(@AccessTokenUser User user) {
         val data = userService.findMyProfile(user.getId());
         return BaseResponse.success(READ_USER_SUCCESS, data);
     }
 
-    @GetMapping("/{userId}")
+    @GetMapping("/v2/user")
+    public BaseResponse<UserDetailV2Response> getUser(@AccessTokenUser User user) {
+        val data = userService.getUserDetailV2(user.getId());
+        return BaseResponse.success(READ_USER_SUCCESS, data);
+    }
+
+    @GetMapping("/v1/user/{userId}")
     public BaseResponse<UserResponse> findUserById(@PathVariable Long userId) {
         val data = userService.findUserById(userId);
         return BaseResponse.success(READ_USER_SUCCESS, data);
     }
 
-    @PutMapping("/device")
+    @PutMapping("/v1/user/device")
     public BaseResponse<EmptyObject> putUserDeviceToken(
         @AccessTokenUser User user,
         @RequestBody UserDeviceTokenRequest request
@@ -50,7 +57,7 @@ public class UserController {
         return BaseResponse.success(UPDATE_DEVICE_TOKEN_USER_SUCCESS, data);
     }
 
-    @DeleteMapping
+    @DeleteMapping("/v1/user")
     public BaseResponse deleteUser(@AccessTokenUser User user) {
         userService.delete(user);
         return BaseResponse.success(DELETE_USER_SUCCESS);

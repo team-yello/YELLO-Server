@@ -7,9 +7,11 @@ import com.yello.server.domain.cooldown.entity.Cooldown;
 import com.yello.server.domain.cooldown.repository.CooldownRepository;
 import com.yello.server.domain.friend.entity.Friend;
 import com.yello.server.domain.friend.repository.FriendRepository;
+import com.yello.server.domain.group.repository.UserGroupRepository;
 import com.yello.server.domain.purchase.repository.PurchaseRepository;
 import com.yello.server.domain.user.dto.request.UserDeviceTokenRequest;
 import com.yello.server.domain.user.dto.response.UserDetailResponse;
+import com.yello.server.domain.user.dto.response.UserDetailV2Response;
 import com.yello.server.domain.user.dto.response.UserResponse;
 import com.yello.server.domain.user.entity.User;
 import com.yello.server.domain.user.exception.UserConflictException;
@@ -28,13 +30,14 @@ import org.springframework.transaction.annotation.Transactional;
 @Transactional(readOnly = true)
 public class UserService {
 
-    private final UserRepository userRepository;
-    private final FriendRepository friendRepository;
-    private final VoteRepository voteRepository;
     private final CooldownRepository cooldownRepository;
-    private final TokenRepository tokenRepository;
+    private final FriendRepository friendRepository;
     private final PurchaseRepository purchaseRepository;
+    private final TokenRepository tokenRepository;
     private final UserAdminRepository userAdminRepository;
+    private final UserGroupRepository userGroupRepository;
+    private final UserRepository userRepository;
+    private final VoteRepository voteRepository;
 
     public UserDetailResponse findMyProfile(Long userId) {
         final User user = userRepository.getById(userId);
@@ -42,6 +45,11 @@ public class UserService {
         final Integer friendCount = friendRepository.findAllByUserId(user.getId()).size();
 
         return UserDetailResponse.of(user, yelloCount, friendCount);
+    }
+
+    public UserDetailV2Response getUserDetailV2(Long userId) {
+        final User user = userRepository.getById(userId);
+        return UserDetailV2Response.of(user, user.getGroup());
     }
 
     public UserResponse findUserById(Long userId) {

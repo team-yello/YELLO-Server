@@ -5,7 +5,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="generator" content="Asciidoctor 2.0.10">
-<title>친구 투표 전체 조회</title>
+<title>친구 투표 전체 조회 (업데이트)</title>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Open+Sans:300,300italic,400,400italic,600,600italic%7CNoto+Serif:400,400italic,700,700italic%7CDroid+Sans+Mono:400,700">
 <style>
 /* Asciidoctor default stylesheet | MIT License | https://asciidoctor.org */
@@ -441,7 +441,7 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 </div>
 <div id="content">
 <div class="sect1">
-<h2 id="_친구_투표_전체_조회">친구 투표 전체 조회</h2>
+<h2 id="_친구_투표_전체_조회_업데이트">친구 투표 전체 조회 (업데이트)</h2>
 <div class="sectionbody">
 <div class="sect2">
 <h3 id="_요청">요청</h3>
@@ -472,12 +472,31 @@ Authorization: Bearer your-access-token</code></pre>
 </tr>
 </tbody>
 </table>
+<div class="paragraph">
+<p><strong>업데이트 예정</strong>
+- "type": "send" | null</p>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 50%;">
+<col style="width: 50%;">
+</colgroup>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>type</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">조회할 쪽지 종류</p></td>
+</tr>
+</tbody>
+</table>
 </div>
 <div class="sect2">
 <h3 id="_응답">응답</h3>
 <div class="listingblock">
 <div class="content">
 <pre class="highlight nowrap"><code class="language-http" data-lang="http">HTTP/1.1 200 OK
+Vary: Origin
+Vary: Access-Control-Request-Method
+Vary: Access-Control-Request-Headers
 Content-Type: application/json
 
 {
@@ -489,6 +508,7 @@ Content-Type: application/json
       "id" : 1,
       "receiverName" : "name2",
       "senderGender" : "MALE",
+      "receiverProfileImage" : "test image",
       "vote" : {
         "nameHead" : "나는",
         "nameFoot" : "와",
@@ -503,6 +523,102 @@ Content-Type: application/json
 }</code></pre>
 </div>
 </div>
+<div class="paragraph">
+<p><strong>필드 타입</strong></p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>"totalCount": Integer</p>
+</li>
+<li>
+<p>"friendVotes": <strong>FriendVote</strong>[]</p>
+</li>
+<li>
+<p><strong>FriendVote</strong></p>
+<div class="ulist">
+<ul>
+<li>
+<p>"id": Long</p>
+</li>
+<li>
+<p>"receiverName": String</p>
+</li>
+<li>
+<p>"senderGender": "MALE" | "FEMALE"</p>
+</li>
+<li>
+<p>"receiverProfileImage": String</p>
+</li>
+<li>
+<p>"vote": <strong>Vote</strong></p>
+</li>
+<li>
+<p>"isHintUsed": Boolean</p>
+</li>
+<li>
+<p>"createdAt": "{0}초 전" | "{0}분 전" | "{0}시간 전" | "{0}일 전"</p>
+</li>
+</ul>
+</div>
+</li>
+<li>
+<p><strong>Vote</strong></p>
+<div class="ulist">
+<ul>
+<li>
+<p>"nameHead": String</p>
+</li>
+<li>
+<p>"nameFoot": String</p>
+</li>
+<li>
+<p>"keywordHead": String</p>
+</li>
+<li>
+<p>"keyword": String</p>
+</li>
+<li>
+<p>"keywordFoot": String</p>
+</li>
+</ul>
+</div>
+</li>
+</ul>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_note">NOTE</h3>
+<div class="ulist">
+<ul>
+<li>
+<p>모든 종류의 쪽지를 조회할 때 <code>/api/v1/vote/friend?page=0</code> 으로 요청해주세요</p>
+<div class="ulist">
+<ul>
+<li>
+<p><code>type=</code> 을 명시하지 마세요</p>
+</li>
+</ul>
+</div>
+</li>
+<li>
+<p>내가 보낸 쪽지를 조회할 때 <code>/api/v1/vote/friend?page=0&amp;type=send</code> 으로 요청해주세요</p>
+</li>
+<li>
+<p><code>senderGender</code> 필드가 다른 API와 일관되지 못한점 미안해요</p>
+</li>
+</ul>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_changelog">CHANGELOG</h3>
+<div class="ulist">
+<ul>
+<li>
+<p>2024.01.09 <code>type</code> 명세 업데이트</p>
+</li>
+</ul>
+</div>
 </div>
 </div>
 </div>
@@ -510,7 +626,7 @@ Content-Type: application/json
 <div id="footer">
 <div id="footer-text">
 Version 0.0.1-SNAPSHOT<br>
-Last updated 2023-08-25 19:26:34 +0900
+Last updated 2024-01-09 23:42:38 +0900
 </div>
 </div>
 </body>

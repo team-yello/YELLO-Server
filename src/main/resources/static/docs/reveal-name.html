@@ -479,6 +479,9 @@ Authorization: Bearer your-access-token</code></pre>
 <div class="listingblock">
 <div class="content">
 <pre class="highlight nowrap"><code class="language-http" data-lang="http">HTTP/1.1 200 OK
+Vary: Origin
+Vary: Access-Control-Request-Method
+Vary: Access-Control-Request-Headers
 Content-Type: application/json
 
 {
@@ -498,7 +501,7 @@ Content-Type: application/json
 <div id="footer">
 <div id="footer-text">
 Version 0.0.1-SNAPSHOT<br>
-Last updated 2023-08-25 19:26:34 +0900
+Last updated 2023-08-26 23:23:32 +0900
 </div>
 </div>
 </body>

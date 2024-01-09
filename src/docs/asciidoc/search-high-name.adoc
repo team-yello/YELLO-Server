@@ -1,0 +1,13 @@
+== 고등학교 이름 검색하기
+
+=== 요청
+
+include::{snippets}/api/v1/auth/findAllHighSchoolName/http-request.adoc[]
+
+=== 요청 파라미터
+
+include::{snippets}/api/v1/auth/findAllHighSchoolName/request-parameters.adoc[]
+
+=== 응답
+
+include::{snippets}/api/v1/auth/findAllHighSchoolName/http-response.adoc[]
