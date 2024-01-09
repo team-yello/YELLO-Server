@@ -5,7 +5,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="generator" content="Asciidoctor 2.0.10">
-<title>YELL:O API 문서</title>
+<title>고등학교 이름 검색하기</title>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Open+Sans:300,300italic,400,400italic,600,600italic%7CNoto+Serif:400,400italic,700,700italic%7CDroid+Sans+Mono:400,700">
 <style>
 /* Asciidoctor default stylesheet | MIT License | https://asciidoctor.org */
@@ -435,206 +435,66 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 #footer-text{color:rgba(0,0,0,.6);font-size:.9em}}
 @media amzn-kf8{#header,#content,#footnotes,#footer{padding:0}}
 </style>
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
 </head>
-<body class="book toc2 toc-left">
+<body class="article">
 <div id="header">
-<h1>YELL:O API 문서</h1>
-<div class="details">
-<span id="revnumber">version 0.0.1-SNAPSHOT</span>
-</div>
-<div id="toc" class="toc2">
-<div id="toctitle">Table of Contents</div>
-<ul class="sectlevel1">
-<li><a href="#API-List">APIs</a>
-<ul class="sectlevel2">
-<li><a href="#_auth_api">Auth API</a></li>
-<li><a href="#_user_api">User API</a></li>
-<li><a href="#_vote_api">Vote API</a></li>
-<li><a href="#_friend_api">Friend API</a></li>
-<li><a href="#_purchase_api">Purchase API</a></li>
-<li><a href="#_pay_api">Pay API</a></li>
-<li><a href="#_notice_api">Notice API</a></li>
-</ul>
-</li>
-</ul>
-</div>
 </div>
 <div id="content">
 <div class="sect1">
-<h2 id="API-List"><a class="link" href="#API-List">APIs</a></h2>
+<h2 id="_고등학교_이름_검색하기">고등학교 이름 검색하기</h2>
 <div class="sectionbody">
 <div class="sect2">
-<h3 id="_auth_api"><a class="link" href="#_auth_api">Auth API</a></h3>
-<div class="ulist">
-<ul>
-<li>
-<p><a href="login.html">로그인</a></p>
-</li>
-<li>
-<p><a href="signup.html">회원가입</a></p>
-</li>
-<li>
-<p><a href="find-onboarding-friends.html">가입한 친구 목록 불러오기</a></p>
-</li>
-<li>
-<p><a href="search-school.html">대학교 검색하기</a></p>
-</li>
-<li>
-<p><a href="search-department.html">대학교 학과 검색하기</a></p>
-</li>
-<li>
-<p><a href="search-high-name.html">고등학교 이름 검색하기</a></p>
-</li>
-<li>
-<p><a href="search-high-class.html">고등학교 이름으로 학반 검색하기</a></p>
-</li>
-<li>
-<p><a href="reissue-token.html">토큰 재발급</a></p>
-</li>
-</ul>
+<h3 id="_요청">요청</h3>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight nowrap"><code class="language-http" data-lang="http">GET /api/v1/auth/group/high/name?page=0&amp;keyword=keyword+here HTTP/1.1</code></pre>
+</div>
 </div>
 </div>
 <div class="sect2">
-<h3 id="_user_api"><a class="link" href="#_user_api">User API</a></h3>
-<div class="ulist">
-<ul>
-<li>
-<p><a href="check-user.html">내 정보 조회하기 V1</a></p>
-</li>
-<li>
-<p>🆕 <a href="check-user-v2.html">내 정보 조회하기 V2, 2024-01-07</a></p>
-</li>
-<li>
-<p>🆕 <a href="edit-user.html">유저 정보 수정 (명세), 2024-01-09</a></p>
-</li>
-<li>
-<p>🆕 <a href="user-data-get.html">프로필 수정 가능 여부 조회 (명세), 2024-01-09</a></p>
-</li>
-<li>
-<p>🆕 <a href="user-data-post.html">탈퇴 사유 저장 (명세), 2024-01-09</a></p>
-</li>
-<li>
-<p><a href="check-user-by-id.html">특정 유저 정보 조회하기</a></p>
-</li>
-<li>
-<p><a href="device-token.html">디바이스 토큰 수정하기</a></p>
-</li>
-<li>
-<p><a href="delete-user.html">유저 탈퇴</a></p>
-</li>
-</ul>
-</div>
+<h3 id="_요청_파라미터">요청 파라미터</h3>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 50%;">
+<col style="width: 50%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Parameter</th>
+<th class="tableblock halign-left valign-top">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>page</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">페이지네이션 페이지 번호</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>keyword</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">검색할 쿼리</p></td>
+</tr>
+</tbody>
+</table>
 </div>
 <div class="sect2">
-<h3 id="_vote_api"><a class="link" href="#_vote_api">Vote API</a></h3>
-<div class="ulist">
-<ul>
-<li>
-<p><a href="find-votes.html">내 투표 전체 조회하기</a></p>
-</li>
-<li>
-<p>⬆️ <a href="find-friend-votes.html">친구 투표 전체 조회하기, 2024-01-09</a></p>
-</li>
-<li>
-<p><a href="get-unread-vote.html">읽지 않은 쪽지 개수 조회하기</a></p>
-</li>
-<li>
-<p><a href="find-vote.html">투표 상세 조회하기</a></p>
-</li>
-<li>
-<p><a href="find-question.html">투표 질문 조회하기</a></p>
-</li>
-<li>
-<p><a href="check-vote-available.html">투표 가능 여부 조회하기</a></p>
-</li>
-<li>
-<p><a href="create-vote.html">투표 생성하기</a></p>
-</li>
-<li>
-<p><a href="reveal-name.html">투표 이름 부분 조회하기</a></p>
-</li>
-<li>
-<p><a href="reveal-full-name.html">투표 이름 전체 조회하기</a></p>
-</li>
-</ul>
+<h3 id="_응답">응답</h3>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight nowrap"><code class="language-http" data-lang="http">HTTP/1.1 200 OK
+Vary: Origin
+Vary: Access-Control-Request-Method
+Vary: Access-Control-Request-Headers
+Content-Type: application/json
+
+{
+  "status" : 200,
+  "message" : "학교 이름 검색에 성공했습니다.",
+  "data" : {
+    "totalCount" : 0,
+    "groupNameList" : [ "groupName" ]
+  }
+}</code></pre>
 </div>
-</div>
-<div class="sect2">
-<h3 id="_friend_api"><a class="link" href="#_friend_api">Friend API</a></h3>
-<div class="ulist">
-<ul>
-<li>
-<p><a href="add-friend.html">친구 추가하기</a></p>
-</li>
-<li>
-<p><a href="find-friends.html">친구 전체 조회하기</a></p>
-</li>
-<li>
-<p><a href="shuffle-friends.html">셔플된 친구 조회하기</a></p>
-</li>
-<li>
-<p><a href="find-group-friends.html">그룹 추천 친구 조회하기</a></p>
-</li>
-<li>
-<p><a href="find-kakao-friends.html">카카오 추천 친구 조회하기</a></p>
-</li>
-<li>
-<p><a href="delete-friend.html">친구 끊기</a></p>
-</li>
-<li>
-<p><a href="search-friend.html">친구 검색하기</a></p>
-</li>
-</ul>
-</div>
-</div>
-<div class="sect2">
-<h3 id="_purchase_api"><a class="link" href="#_purchase_api">Purchase API</a></h3>
-<div class="ulist">
-<ul>
-<li>
-<p>🆕 <a href="purchase-info.html">유저 구독 정보 (명세), 2024-01-09</a></p>
-</li>
-<li>
-<p><a href="apple.html">Apple 결제 관련 API</a></p>
-</li>
-<li>
-<p><a href="google.html">Google 결제 관련 API</a></p>
-</li>
-<li>
-<p><a href="sub-check.html">구독 연장 유도 필요 여부 확인하기</a></p>
-</li>
-<li>
-<p><a href="purchase-check.html">구독 상태 및 열람권 개수 조회하기</a></p>
-</li>
-</ul>
-</div>
-</div>
-<div class="sect2">
-<h3 id="_pay_api"><a class="link" href="#_pay_api">Pay API</a></h3>
-<div class="ulist">
-<ul>
-<li>
-<p>@Deprecated at 2024.03</p>
-<div class="ulist">
-<ul>
-<li>
-<p><a href="pay.html">결제 전환율 체크</a></p>
-</li>
-</ul>
-</div>
-</li>
-</ul>
-</div>
-</div>
-<div class="sect2">
-<h3 id="_notice_api"><a class="link" href="#_notice_api">Notice API</a></h3>
-<div class="ulist">
-<ul>
-<li>
-<p>🆕 <a href="find-notice.html">공지 조회 (명세), 2024-01-09</a></p>
-</li>
-</ul>
 </div>
 </div>
 </div>
@@ -643,11 +503,8 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <div id="footer">
 <div id="footer-text">
 Version 0.0.1-SNAPSHOT<br>
-Last updated 2024-01-10 00:06:17 +0900
+Last updated 2024-01-10 00:01:23 +0900
 </div>
 </div>
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.15.6/styles/github.min.css">
-<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.15.6/highlight.min.js"></script>
-<script>hljs.initHighlighting()</script>
 </body>
 </html>
