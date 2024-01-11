@@ -27,10 +27,12 @@ public record UserDetailV2Response(
     Long recommendCount,
     Integer ticketCount,
     Integer point,
-    String subscribe
+    String subscribe,
+    Integer yelloCount,
+    Integer friendCount
 ) {
 
-    public static UserDetailV2Response of(User user, UserGroup userGroup) {
+    public static UserDetailV2Response of(User user, UserGroup userGroup, Integer yelloCount, Integer friendCount) {
         return UserDetailV2Response.builder()
             .userId(user.getId())
             .name(user.getName())
@@ -50,6 +52,8 @@ public record UserDetailV2Response(
             .ticketCount(user.getTicketCount())
             .point(user.getPoint())
             .subscribe(user.getSubscribe().getIntial())
+            .yelloCount(yelloCount)
+            .friendCount(friendCount)
             .build();
     }
 }
