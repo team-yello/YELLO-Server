@@ -28,6 +28,8 @@ include::{snippets}/api/v2/user/http-response.adoc[]
 - "ticketCount": Integer
 - "point": Integer
 - "subscribe": "normal" | "active" | "canceled"
+- "yelloCount": Integer
+- "friendCount": Integer
 
 === Note
 

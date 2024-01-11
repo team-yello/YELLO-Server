@@ -49,7 +49,10 @@ public class UserService {
 
     public UserDetailV2Response getUserDetailV2(Long userId) {
         final User user = userRepository.getById(userId);
-        return UserDetailV2Response.of(user, user.getGroup());
+        final Integer yelloCount = voteRepository.countAllByReceiverUserId(user.getId());
+        final Integer friendCount = friendRepository.findAllByUserId(user.getId()).size();
+
+        return UserDetailV2Response.of(user, user.getGroup(), yelloCount, friendCount);
     }
 
     public UserResponse findUserById(Long userId) {
