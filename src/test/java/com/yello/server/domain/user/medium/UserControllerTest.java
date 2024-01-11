@@ -115,7 +115,7 @@ class UserControllerTest {
     @Test
     void 내_정보_조회_V2에_성공합니다() throws Exception {
         // given
-        UserDetailV2Response response = UserDetailV2Response.of(user, user.getGroup());
+        UserDetailV2Response response = UserDetailV2Response.of(user, user.getGroup(), 100, 200);
 
         given(userService.getUserDetailV2(anyLong()))
             .willReturn(response);
