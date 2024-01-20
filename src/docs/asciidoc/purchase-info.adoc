@@ -4,7 +4,7 @@
 
 [http]
 ----
-GET /api/v1/purchase/subscribe HTTP/1.1
+GET /api/v1/user/subscribe HTTP/1.1
 Authorization: Bearer your-access-token
 ----
 
