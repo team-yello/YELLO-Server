@@ -11,6 +11,8 @@ import com.yello.server.domain.group.entity.UserGroupType;
 import com.yello.server.domain.keyword.FakeKeywordRepository;
 import com.yello.server.domain.keyword.dto.response.KeywordCheckResponse;
 import com.yello.server.domain.keyword.repository.KeywordRepository;
+import com.yello.server.domain.purchase.FakePurchaseRepository;
+import com.yello.server.domain.purchase.repository.PurchaseRepository;
 import com.yello.server.domain.question.FakeQuestionGroupTypeRepository;
 import com.yello.server.domain.question.FakeQuestionRepository;
 import com.yello.server.domain.question.dto.response.QuestionForVoteResponse;
@@ -62,7 +64,7 @@ public class VoteServiceTest {
     private final VoteRepository voteRepository = new FakeVoteRepository();
     private final QuestionRepository questionRepository = new FakeQuestionRepository();
     private final QuestionGroupTypeRepository questionGroupTypeRepository = new FakeQuestionGroupTypeRepository(questionRepository);
-
+    private final PurchaseRepository purchaseRepository = new FakePurchaseRepository();
     private final VoteManager voteManager = new FakeVoteManager(
         userRepository,
         questionRepository,
@@ -75,7 +77,8 @@ public class VoteServiceTest {
         voteRepository,
         questionRepository,
         friendRepository,
-        questionGroupTypeRepository
+        questionGroupTypeRepository,
+        purchaseRepository
     );
     private final CooldownRepository cooldownRepository = new FakeCooldownRepository();
     private final KeywordRepository keywordRepository = new FakeKeywordRepository();

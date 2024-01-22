@@ -21,6 +21,7 @@ import com.yello.server.domain.user.dto.request.UserDeviceTokenRequest;
 import com.yello.server.domain.user.dto.response.UserDetailResponse;
 import com.yello.server.domain.user.dto.response.UserDetailV2Response;
 import com.yello.server.domain.user.dto.response.UserResponse;
+import com.yello.server.domain.user.dto.response.UserSubscribeDetailResponse;
 import com.yello.server.domain.user.entity.User;
 import com.yello.server.domain.user.service.UserService;
 import com.yello.server.global.common.dto.EmptyObject;
@@ -209,6 +210,31 @@ class UserControllerTest {
                 Preprocessors.preprocessResponse(prettyPrint(), removeHeaders(excludeResponseHeaders)))
             )
             .andExpect(MockMvcResultMatchers.status().isOk());
+    }
+
+    @Test
+    void 유저_구독_정보_조회에_성공합니다() throws Exception {
+        // given
+
+        final UserSubscribeDetailResponse userSubscribeDetailResponse = UserSubscribeDetailResponse.of(user, testDataUtil.generatePurchase(1L, user));
+        // when
+        given(userService.getUserSubscribe(anyLong()))
+            .willReturn(userSubscribeDetailResponse);
+
+        // then
+        mockMvc.perform(RestDocumentationRequestBuilders
+                .get("/api/v1/user/subscribe")
+                .header(HttpHeaders.AUTHORIZATION, "Bearer your-access-token")
+            )
+            .andDo(print())
+            .andDo(document("api/v1/user/subscribe",
+                Preprocessors.preprocessRequest(prettyPrint(),
+                    removeHeaders(excludeRequestHeaders)),
+                Preprocessors.preprocessResponse(prettyPrint(),
+                    removeHeaders(excludeResponseHeaders)))
+            )
+            .andExpect(MockMvcResultMatchers.status().isOk());
+
     }
 
 }
