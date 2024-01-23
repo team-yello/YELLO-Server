@@ -1,9 +1,16 @@
+buildscript {
+    ext {
+        queryDslVersion = "5.0.0"
+    }
+}
+
 plugins {
     id 'java'
     id 'org.springframework.boot' version '2.7.4'
     id 'io.spring.dependency-management' version '1.0.15.RELEASE'
     id "org.asciidoctor.jvm.convert" version "3.3.2"
     id 'jacoco'
+    id "com.ewerk.gradle.plugins.querydsl" version "1.0.10"
 }
 
 group = 'com.yello'
@@ -88,6 +95,11 @@ dependencies {
 
     // AOP
     implementation 'org.springframework.boot:spring-boot-starter-aop'
+
+    // querydsl
+    implementation "com.querydsl:querydsl-jpa:${queryDslVersion}"
+    implementation "com.querydsl:querydsl-apt:${queryDslVersion}"
+    implementation "com.querydsl:querydsl-core:${queryDslVersion}"
 }
 
 asciidoctor {
@@ -112,6 +124,7 @@ configurations {
     compileOnly {
         extendsFrom annotationProcessor
     }
+    querydsl.extendsFrom compileClasspath
 }
 
 jar.enabled = false
@@ -128,6 +141,22 @@ jacocoTestReport {
     }
 //    finalizedBy 'jacocoTestCoverageVerification'
 }
+
+// QueryDsl
+def querydslDir = "$buildDir/generated/querydsl"
+
+querydsl {
+    jpa = true
+    querydslSourcesDir = querydslDir
+}
+sourceSets {
+    main.java.srcDir querydslDir
+}
+
+compileQuerydsl {
+    options.annotationProcessorPath = configurations.querydsl
+}
+
 //jacocoTestCoverageVerification {
 //    violationRules {
 //        rule {

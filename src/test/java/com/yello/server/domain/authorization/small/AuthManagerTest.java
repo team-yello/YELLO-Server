@@ -15,6 +15,8 @@ import com.yello.server.domain.cooldown.repository.CooldownRepository;
 import com.yello.server.domain.friend.FakeFriendRepository;
 import com.yello.server.domain.friend.repository.FriendRepository;
 import com.yello.server.domain.group.entity.UserGroupType;
+import com.yello.server.domain.purchase.FakePurchaseRepository;
+import com.yello.server.domain.purchase.repository.PurchaseRepository;
 import com.yello.server.domain.question.FakeQuestionGroupTypeRepository;
 import com.yello.server.domain.question.FakeQuestionRepository;
 import com.yello.server.domain.question.repository.QuestionGroupTypeRepository;
@@ -48,12 +50,14 @@ public class AuthManagerTest {
     private final UserRepository userRepository = new FakeUserRepository(friendRepository);
     private final VoteRepository voteRepository = new FakeVoteRepository();
     private final QuestionGroupTypeRepository questionGroupTypeRepository = new FakeQuestionGroupTypeRepository(questionRepository);
+    private final PurchaseRepository purchaseRepository = new FakePurchaseRepository();
     private final TestDataRepositoryUtil testDataUtil = new TestDataRepositoryUtil(
         userRepository,
         voteRepository,
         questionRepository,
         friendRepository,
-        questionGroupTypeRepository
+        questionGroupTypeRepository,
+        purchaseRepository
     );
     private AuthManager authManager;
 

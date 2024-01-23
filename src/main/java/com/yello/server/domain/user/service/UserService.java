@@ -8,11 +8,13 @@ import com.yello.server.domain.cooldown.repository.CooldownRepository;
 import com.yello.server.domain.friend.entity.Friend;
 import com.yello.server.domain.friend.repository.FriendRepository;
 import com.yello.server.domain.group.repository.UserGroupRepository;
+import com.yello.server.domain.purchase.entity.Purchase;
 import com.yello.server.domain.purchase.repository.PurchaseRepository;
 import com.yello.server.domain.user.dto.request.UserDeviceTokenRequest;
 import com.yello.server.domain.user.dto.response.UserDetailResponse;
 import com.yello.server.domain.user.dto.response.UserDetailV2Response;
 import com.yello.server.domain.user.dto.response.UserResponse;
+import com.yello.server.domain.user.dto.response.UserSubscribeDetailResponse;
 import com.yello.server.domain.user.entity.User;
 import com.yello.server.domain.user.exception.UserConflictException;
 import com.yello.server.domain.user.repository.UserRepository;
@@ -88,5 +90,12 @@ public class UserService {
 
         cooldownRepository.findByUserId(target.getId())
             .ifPresent(Cooldown::delete);
+    }
+
+    public UserSubscribeDetailResponse getUserSubscribe(Long userId) {
+        final User user = userRepository.getById(userId);
+        final Purchase purchase = purchaseRepository.getTopByStateAndUserId(user);
+
+        return UserSubscribeDetailResponse.of(purchase);
     }
 }

@@ -3,6 +3,10 @@ package com.yello.server.util;
 import com.yello.server.domain.friend.entity.Friend;
 import com.yello.server.domain.group.entity.UserGroup;
 import com.yello.server.domain.group.entity.UserGroupType;
+import com.yello.server.domain.purchase.entity.Gateway;
+import com.yello.server.domain.purchase.entity.ProductType;
+import com.yello.server.domain.purchase.entity.Purchase;
+import com.yello.server.domain.purchase.entity.PurchaseState;
 import com.yello.server.domain.question.entity.Question;
 import com.yello.server.domain.question.entity.QuestionGroupType;
 import com.yello.server.domain.user.entity.Gender;
@@ -118,5 +122,18 @@ public class TestDataEntityUtil implements TestDataUtil {
                 .userGroupType(UserGroupType.UNIVERSITY)
                 .question(question)
                 .build();
+    }
+
+    @Override
+    public Purchase generatePurchase(long index, User user) {
+        return Purchase.builder()
+            .id(index)
+            .gateway(Gateway.APPLE)
+            .price(1000)
+            .productType(ProductType.YELLO_PLUS)
+            .user(user)
+            .transactionId("111")
+            .state(PurchaseState.ACTIVE)
+            .build();
     }
 }

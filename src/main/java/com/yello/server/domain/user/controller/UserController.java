@@ -1,6 +1,7 @@
 package com.yello.server.domain.user.controller;
 
 import static com.yello.server.global.common.SuccessCode.DELETE_USER_SUCCESS;
+import static com.yello.server.global.common.SuccessCode.READ_USER_SUBSCRIBE_SUCCESS;
 import static com.yello.server.global.common.SuccessCode.READ_USER_SUCCESS;
 import static com.yello.server.global.common.SuccessCode.UPDATE_DEVICE_TOKEN_USER_SUCCESS;
 
@@ -8,6 +9,7 @@ import com.yello.server.domain.user.dto.request.UserDeviceTokenRequest;
 import com.yello.server.domain.user.dto.response.UserDetailResponse;
 import com.yello.server.domain.user.dto.response.UserDetailV2Response;
 import com.yello.server.domain.user.dto.response.UserResponse;
+import com.yello.server.domain.user.dto.response.UserSubscribeDetailResponse;
 import com.yello.server.domain.user.entity.User;
 import com.yello.server.domain.user.service.UserService;
 import com.yello.server.global.common.annotation.AccessTokenUser;
@@ -61,5 +63,11 @@ public class UserController {
     public BaseResponse deleteUser(@AccessTokenUser User user) {
         userService.delete(user);
         return BaseResponse.success(DELETE_USER_SUCCESS);
+    }
+
+    @GetMapping("/v1/user/subscribe")
+    public BaseResponse<UserSubscribeDetailResponse> getUserSubscribe(@AccessTokenUser User user) {
+        val data = userService.getUserSubscribe(user.getId());
+        return BaseResponse.success(READ_USER_SUBSCRIBE_SUCCESS, data);
     }
 }

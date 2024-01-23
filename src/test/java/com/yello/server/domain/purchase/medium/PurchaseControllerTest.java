@@ -25,6 +25,7 @@ import com.yello.server.domain.purchase.dto.response.GoogleSubscriptionGetRespon
 import com.yello.server.domain.purchase.dto.response.GoogleTicketGetResponse;
 import com.yello.server.domain.purchase.dto.response.UserSubscribeNeededResponse;
 import com.yello.server.domain.purchase.service.PurchaseService;
+import com.yello.server.domain.user.dto.response.UserSubscribeDetailResponse;
 import com.yello.server.domain.user.entity.User;
 import com.yello.server.global.exception.ControllerExceptionAdvice;
 import com.yello.server.util.TestDataEntityUtil;
@@ -63,8 +64,9 @@ import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 class PurchaseControllerTest {
 
     final String[] excludeRequestHeaders = {"X-CSRF-TOKEN", "Host"};
-    final String[] excludeResponseHeaders = {"X-Content-Type-Options", "X-XSS-Protection", "Cache-Control", "Pragma",
-        "Expires", "X-Frame-Options", "Content-Length"};
+    final String[] excludeResponseHeaders =
+        {"X-Content-Type-Options", "X-XSS-Protection", "Cache-Control", "Pragma",
+            "Expires", "X-Frame-Options", "Content-Length"};
 
     @Autowired
     private MockMvc mockMvc;
@@ -83,6 +85,7 @@ class PurchaseControllerTest {
     void init() {
         user = testDataUtil.generateUser(1L, 1L, UserGroupType.UNIVERSITY);
         target = testDataUtil.generateUser(2L, 1L, UserGroupType.UNIVERSITY);
+
     }
 
     @Test
@@ -95,15 +98,18 @@ class PurchaseControllerTest {
 
         // when
         // then
-        mockMvc.perform(RestDocumentationRequestBuilders.post("/api/v1/purchase/apple/verify/subscribe")
-                .with(csrf().asHeader())
-                .header(HttpHeaders.AUTHORIZATION, "Bearer your-access-token")
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(objectMapper.writeValueAsString(appleTransaction)))
+        mockMvc.perform(
+                RestDocumentationRequestBuilders.post("/api/v1/purchase/apple/verify/subscribe")
+                    .with(csrf().asHeader())
+                    .header(HttpHeaders.AUTHORIZATION, "Bearer your-access-token")
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .content(objectMapper.writeValueAsString(appleTransaction)))
             .andDo(print())
             .andDo(document("api/v1/purchase/verifyAppleSubscriptionTransaction",
-                Preprocessors.preprocessRequest(prettyPrint(), removeHeaders(excludeRequestHeaders)),
-                Preprocessors.preprocessResponse(prettyPrint(), removeHeaders(excludeResponseHeaders)))
+                Preprocessors.preprocessRequest(prettyPrint(),
+                    removeHeaders(excludeRequestHeaders)),
+                Preprocessors.preprocessResponse(prettyPrint(),
+                    removeHeaders(excludeResponseHeaders)))
             )
             .andExpect(MockMvcResultMatchers.status().isOk());
 
@@ -121,15 +127,18 @@ class PurchaseControllerTest {
 
         // when
         // then
-        mockMvc.perform(RestDocumentationRequestBuilders.post("/api/v1/purchase/apple/verify/ticket")
-                .with(csrf().asHeader())
-                .header(HttpHeaders.AUTHORIZATION, "Bearer your-access-token")
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(objectMapper.writeValueAsString(appleTransaction)))
+        mockMvc.perform(
+                RestDocumentationRequestBuilders.post("/api/v1/purchase/apple/verify/ticket")
+                    .with(csrf().asHeader())
+                    .header(HttpHeaders.AUTHORIZATION, "Bearer your-access-token")
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .content(objectMapper.writeValueAsString(appleTransaction)))
             .andDo(print())
             .andDo(document("api/v1/purchase/verifyAppleTicketTransaction",
-                Preprocessors.preprocessRequest(prettyPrint(), removeHeaders(excludeRequestHeaders)),
-                Preprocessors.preprocessResponse(prettyPrint(), removeHeaders(excludeResponseHeaders)))
+                Preprocessors.preprocessRequest(prettyPrint(),
+                    removeHeaders(excludeRequestHeaders)),
+                Preprocessors.preprocessResponse(prettyPrint(),
+                    removeHeaders(excludeResponseHeaders)))
             )
             .andExpect(MockMvcResultMatchers.status().isOk());
 
@@ -140,35 +149,40 @@ class PurchaseControllerTest {
     @Test
     void Google_구독_구매_검증에_성공합니다() throws Exception {
         // given
-        final GoogleSubscriptionGetRequest googleSubscriptionGetRequest = GoogleSubscriptionGetRequest.builder()
-            .orderId("orderId")
-            .packageName("packageName")
-            .productId("productId")
-            .purchaseTime(1L)
-            .purchaseState(1)
-            .purchaseToken("purchaseToken")
-            .quantity(1)
-            .autoRenewing(true)
-            .acknowledged(true)
-            .build();
+        final GoogleSubscriptionGetRequest googleSubscriptionGetRequest =
+            GoogleSubscriptionGetRequest.builder()
+                .orderId("orderId")
+                .packageName("packageName")
+                .productId("productId")
+                .purchaseTime(1L)
+                .purchaseState(1)
+                .purchaseToken("purchaseToken")
+                .quantity(1)
+                .autoRenewing(true)
+                .acknowledged(true)
+                .build();
 
         final GoogleSubscriptionGetResponse response = GoogleSubscriptionGetResponse.of(
             "productId");
 
-        given(purchaseService.verifyGoogleSubscriptionTransaction(anyLong(), any(GoogleSubscriptionGetRequest.class)))
+        given(purchaseService.verifyGoogleSubscriptionTransaction(anyLong(),
+            any(GoogleSubscriptionGetRequest.class)))
             .willReturn(response);
 
         // when
         // then
-        mockMvc.perform(RestDocumentationRequestBuilders.post("/api/v1/purchase/google/verify/subscribe")
-                .with(csrf().asHeader())
-                .header(HttpHeaders.AUTHORIZATION, "Bearer your-access-token")
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(objectMapper.writeValueAsString(googleSubscriptionGetRequest)))
+        mockMvc.perform(
+                RestDocumentationRequestBuilders.post("/api/v1/purchase/google/verify/subscribe")
+                    .with(csrf().asHeader())
+                    .header(HttpHeaders.AUTHORIZATION, "Bearer your-access-token")
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .content(objectMapper.writeValueAsString(googleSubscriptionGetRequest)))
             .andDo(print())
             .andDo(document("api/v1/purchase/verifyGoogleSubscriptionTransaction",
-                Preprocessors.preprocessRequest(prettyPrint(), removeHeaders(excludeRequestHeaders)),
-                Preprocessors.preprocessResponse(prettyPrint(), removeHeaders(excludeResponseHeaders)))
+                Preprocessors.preprocessRequest(prettyPrint(),
+                    removeHeaders(excludeRequestHeaders)),
+                Preprocessors.preprocessResponse(prettyPrint(),
+                    removeHeaders(excludeResponseHeaders)))
             )
             .andExpect(MockMvcResultMatchers.status().isOk());
     }
@@ -192,20 +206,24 @@ class PurchaseControllerTest {
             user
         );
 
-        given(purchaseService.verifyGoogleTicketTransaction(anyLong(), any(GoogleTicketGetRequest.class)))
+        given(purchaseService.verifyGoogleTicketTransaction(anyLong(),
+            any(GoogleTicketGetRequest.class)))
             .willReturn(response);
 
         // when
         // then
-        mockMvc.perform(RestDocumentationRequestBuilders.post("/api/v1/purchase/google/verify/ticket")
-                .with(csrf().asHeader())
-                .header(HttpHeaders.AUTHORIZATION, "Bearer your-access-token")
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(objectMapper.writeValueAsString(googleTicketGetRequest)))
+        mockMvc.perform(
+                RestDocumentationRequestBuilders.post("/api/v1/purchase/google/verify/ticket")
+                    .with(csrf().asHeader())
+                    .header(HttpHeaders.AUTHORIZATION, "Bearer your-access-token")
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .content(objectMapper.writeValueAsString(googleTicketGetRequest)))
             .andDo(print())
             .andDo(document("api/v1/purchase/verifyGoogleTicketTransaction",
-                Preprocessors.preprocessRequest(prettyPrint(), removeHeaders(excludeRequestHeaders)),
-                Preprocessors.preprocessResponse(prettyPrint(), removeHeaders(excludeResponseHeaders)))
+                Preprocessors.preprocessRequest(prettyPrint(),
+                    removeHeaders(excludeRequestHeaders)),
+                Preprocessors.preprocessResponse(prettyPrint(),
+                    removeHeaders(excludeResponseHeaders)))
             )
             .andExpect(MockMvcResultMatchers.status().isOk());
     }
@@ -227,8 +245,10 @@ class PurchaseControllerTest {
                 .header(HttpHeaders.AUTHORIZATION, "Bearer your-access-token"))
             .andDo(print())
             .andDo(document("api/v1/purchase/getUserSubscribeNeeded",
-                Preprocessors.preprocessRequest(prettyPrint(), removeHeaders(excludeRequestHeaders)),
-                Preprocessors.preprocessResponse(prettyPrint(), removeHeaders(excludeResponseHeaders)))
+                Preprocessors.preprocessRequest(prettyPrint(),
+                    removeHeaders(excludeRequestHeaders)),
+                Preprocessors.preprocessResponse(prettyPrint(),
+                    removeHeaders(excludeResponseHeaders)))
             )
             .andExpect(MockMvcResultMatchers.status().isOk());
     }
@@ -247,8 +267,10 @@ class PurchaseControllerTest {
                 .header(HttpHeaders.AUTHORIZATION, "Bearer your-access-token"))
             .andDo(print())
             .andDo(document("api/v1/purchase/refundInAppApple",
-                Preprocessors.preprocessRequest(prettyPrint(), removeHeaders(excludeRequestHeaders)),
-                Preprocessors.preprocessResponse(prettyPrint(), removeHeaders(excludeResponseHeaders)))
+                Preprocessors.preprocessRequest(prettyPrint(),
+                    removeHeaders(excludeRequestHeaders)),
+                Preprocessors.preprocessResponse(prettyPrint(),
+                    removeHeaders(excludeResponseHeaders)))
             )
             .andExpect(MockMvcResultMatchers.status().isOk());
     }
@@ -262,8 +284,10 @@ class PurchaseControllerTest {
                 .header(HttpHeaders.AUTHORIZATION, "Bearer your-access-token"))
             .andDo(print())
             .andDo(document("api/v1/purchase/getUserPurchaseInfo",
-                Preprocessors.preprocessRequest(prettyPrint(), removeHeaders(excludeRequestHeaders)),
-                Preprocessors.preprocessResponse(prettyPrint(), removeHeaders(excludeResponseHeaders)))
+                Preprocessors.preprocessRequest(prettyPrint(),
+                    removeHeaders(excludeRequestHeaders)),
+                Preprocessors.preprocessResponse(prettyPrint(),
+                    removeHeaders(excludeResponseHeaders)))
             )
             .andExpect(MockMvcResultMatchers.status().isOk());
     }

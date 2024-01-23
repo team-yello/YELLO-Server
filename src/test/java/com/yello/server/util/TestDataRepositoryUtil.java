@@ -4,6 +4,11 @@ import com.yello.server.domain.friend.entity.Friend;
 import com.yello.server.domain.friend.repository.FriendRepository;
 import com.yello.server.domain.group.entity.UserGroup;
 import com.yello.server.domain.group.entity.UserGroupType;
+import com.yello.server.domain.purchase.entity.Gateway;
+import com.yello.server.domain.purchase.entity.ProductType;
+import com.yello.server.domain.purchase.entity.Purchase;
+import com.yello.server.domain.purchase.entity.PurchaseState;
+import com.yello.server.domain.purchase.repository.PurchaseRepository;
 import com.yello.server.domain.question.entity.Question;
 import com.yello.server.domain.question.entity.QuestionGroupType;
 import com.yello.server.domain.question.repository.QuestionGroupTypeRepository;
@@ -24,15 +29,18 @@ public class TestDataRepositoryUtil implements TestDataUtil {
     private final QuestionRepository questionRepository;
     private final FriendRepository friendRepository;
     private final QuestionGroupTypeRepository questionGroupTypeRepository;
+    private final PurchaseRepository purchaseRepository;
 
     public TestDataRepositoryUtil(UserRepository userRepository, VoteRepository voteRepository,
         QuestionRepository questionRepository,
-        FriendRepository friendRepository, QuestionGroupTypeRepository questionGroupTypeRepository) {
+        FriendRepository friendRepository, QuestionGroupTypeRepository questionGroupTypeRepository,
+        PurchaseRepository purchaseRepository) {
         this.userRepository = userRepository;
         this.voteRepository = voteRepository;
         this.questionRepository = questionRepository;
         this.friendRepository = friendRepository;
         this.questionGroupTypeRepository = questionGroupTypeRepository;
+        this.purchaseRepository = purchaseRepository;
     }
 
     @Override
@@ -134,6 +142,21 @@ public class TestDataRepositoryUtil implements TestDataUtil {
                 .id(index)
                 .userGroupType(UserGroupType.UNIVERSITY)
                 .question(question)
+                .build()
+        );
+    }
+
+    @Override
+    public Purchase generatePurchase(long index, User user) {
+        return purchaseRepository.save(
+            Purchase.builder()
+                .id(index)
+                .gateway(Gateway.APPLE)
+                .price(1000)
+                .productType(ProductType.YELLO_PLUS)
+                .user(user)
+                .transactionId("111")
+                .state(PurchaseState.ACTIVE)
                 .build()
         );
     }
