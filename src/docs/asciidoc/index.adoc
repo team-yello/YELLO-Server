@@ -83,7 +83,7 @@
 
 === Purchase API
 
-* 🆕 link:purchase-info.html[유저 구독 정보 (명세), 2024-01-09]
+* 🆕 link:purchase-info.html[유저 구독 정보, 2024-01-23]
 
 * link:apple.html[Apple 결제 관련 API]
 

@@ -22,4 +22,6 @@ public interface PurchaseRepository {
         ProductType productType);
 
     void delete(Purchase purchase);
+
+    Purchase getTopByStateAndUserId(User user);
 }
