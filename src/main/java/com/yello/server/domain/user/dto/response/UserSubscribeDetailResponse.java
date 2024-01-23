@@ -13,10 +13,10 @@ public record UserSubscribeDetailResponse(
     Subscribe subscribe,
     String expiredData
 ) {
-    public static UserSubscribeDetailResponse of(User user, Purchase purchase) {
+    public static UserSubscribeDetailResponse of(Purchase purchase) {
         return UserSubscribeDetailResponse.builder()
-            .id(user.getId())
-            .subscribe(user.getSubscribe())
+            .id(purchase.getUser().getId())
+            .subscribe(purchase.getUser().getSubscribe())
             .expiredData(toYearAndMonthFormattedString(purchase.getUpdatedAt()))
             .build();
     }

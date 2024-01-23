@@ -216,7 +216,7 @@ class UserControllerTest {
     void 유저_구독_정보_조회에_성공합니다() throws Exception {
         // given
 
-        final UserSubscribeDetailResponse userSubscribeDetailResponse = UserSubscribeDetailResponse.of(user, testDataUtil.generatePurchase(1L, user));
+        final UserSubscribeDetailResponse userSubscribeDetailResponse = UserSubscribeDetailResponse.of(testDataUtil.generatePurchase(1L, user));
         // when
         given(userService.getUserSubscribe(anyLong()))
             .willReturn(userSubscribeDetailResponse);

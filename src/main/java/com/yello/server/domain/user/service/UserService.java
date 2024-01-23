@@ -96,6 +96,6 @@ public class UserService {
         final User user = userRepository.getById(userId);
         final Purchase purchase = purchaseRepository.getTopByStateAndUserId(user);
 
-        return UserSubscribeDetailResponse.of(user, purchase);
+        return UserSubscribeDetailResponse.of(purchase);
     }
 }
