@@ -56,7 +56,7 @@ public class PurchaseRepositoryImpl implements PurchaseRepository {
     }
 
     @Override
-    public Purchase findEndByStateAndUserId(User user) {
+    public Purchase getEndByStateAndUserId(User user) {
         return purchaseJpaRepository.findTopByStateAndUser(user)
             .orElseThrow(() -> new PurchaseNotFoundException(NOT_FOUND_USER_SUBSCRIBE_EXCEPTION));
     }

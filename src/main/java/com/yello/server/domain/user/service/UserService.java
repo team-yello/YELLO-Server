@@ -94,7 +94,7 @@ public class UserService {
 
     public UserSubscribeDetailResponse getUserSubscribe(Long userId) {
         final User user = userRepository.getById(userId);
-        final Purchase purchase = purchaseRepository.findEndByStateAndUserId(user);
+        final Purchase purchase = purchaseRepository.getEndByStateAndUserId(user);
 
         return UserSubscribeDetailResponse.of(user, purchase);
     }

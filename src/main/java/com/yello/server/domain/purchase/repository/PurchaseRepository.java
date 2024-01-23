@@ -23,5 +23,5 @@ public interface PurchaseRepository {
 
     void delete(Purchase purchase);
 
-    Purchase findEndByStateAndUserId(User user);
+    Purchase getEndByStateAndUserId(User user);
 }
