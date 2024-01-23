@@ -4,6 +4,7 @@ import static com.yello.server.global.common.ErrorCode.NOT_FOUND_USER_SUBSCRIBE_
 
 import com.yello.server.domain.purchase.entity.ProductType;
 import com.yello.server.domain.purchase.entity.Purchase;
+import com.yello.server.domain.purchase.entity.PurchaseState;
 import com.yello.server.domain.purchase.exception.PurchaseNotFoundException;
 import com.yello.server.domain.purchase.repository.PurchaseRepository;
 import com.yello.server.domain.user.entity.User;
@@ -92,8 +93,8 @@ public class FakePurchaseRepository implements PurchaseRepository {
         return data.stream()
             .filter(purchase -> {
                 return purchase.getUser().equals(user) &&
-                    purchase.getProductType().equals("yello_plus") &&
-                    purchase.getState().equals("active");
+                    purchase.getProductType().equals(ProductType.YELLO_PLUS) &&
+                    purchase.getState().equals(PurchaseState.ACTIVE);
             })
             .sorted(Comparator.comparing(Purchase::getUpdatedAt).reversed())
             .findFirst()
