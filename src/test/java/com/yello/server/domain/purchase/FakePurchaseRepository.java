@@ -89,7 +89,7 @@ public class FakePurchaseRepository implements PurchaseRepository {
     }
 
     @Override
-    public Purchase getEndByStateAndUserId(User user) {
+    public Purchase getTopByStateAndUserId(User user) {
         return data.stream()
             .filter(purchase -> {
                 return purchase.getUser().equals(user) &&
