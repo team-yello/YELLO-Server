@@ -1,3 +1,4 @@
+:reproducible:
 == Apple 구독 구매 검증하기
 
 === 요청
