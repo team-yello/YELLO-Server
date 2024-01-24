@@ -8,7 +8,6 @@ import com.yello.server.domain.purchase.entity.PurchaseState;
 import com.yello.server.domain.purchase.exception.PurchaseNotFoundException;
 import com.yello.server.domain.purchase.repository.PurchaseRepository;
 import com.yello.server.domain.user.entity.User;
-import com.yello.server.global.common.ErrorCode;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
@@ -29,13 +28,16 @@ public class FakePurchaseRepository implements PurchaseRepository {
 
         final Purchase newPurchase = Purchase.builder()
             .id(purchase.getId() == null ? ++id : purchase.getId())
+            .transactionId(purchase.getTransactionId())
             .price(purchase.getPrice())
             .user(purchase.getUser())
             .gateway(purchase.getGateway())
+            .purchaseToken(purchase.getPurchaseToken())
+            .state(purchase.getState())
+            .rawData(purchase.getRawData())
             .productType(purchase.getProductType())
             .createdAt(purchase.getCreatedAt())
             .updatedAt(purchase.getUpdatedAt())
-            .transactionId(purchase.getTransactionId())
             .build();
 
         data.add(newPurchase);
@@ -99,6 +101,5 @@ public class FakePurchaseRepository implements PurchaseRepository {
             .sorted(Comparator.comparing(Purchase::getUpdatedAt).reversed())
             .findFirst()
             .orElseThrow(() -> new PurchaseNotFoundException(NOT_FOUND_USER_SUBSCRIBE_EXCEPTION));
-
     }
 }

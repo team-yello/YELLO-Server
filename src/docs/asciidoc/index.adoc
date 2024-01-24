@@ -39,6 +39,8 @@
 
 * 🆕 link:user-data-post.html[탈퇴 사유 저장 (명세), 2024-01-09]
 
+* 🆕 link:purchase-info.html[유저 구독 정보, 2024-01-25]
+
 * link:check-user-by-id.html[특정 유저 정보 조회하기]
 
 * link:device-token.html[디바이스 토큰 수정하기]
@@ -82,8 +84,6 @@
 * link:search-friend.html[친구 검색하기]
 
 === Purchase API
-
-* 🆕 link:purchase-info.html[유저 구독 정보, 2024-01-23]
 
 * link:apple.html[Apple 결제 관련 API]
 

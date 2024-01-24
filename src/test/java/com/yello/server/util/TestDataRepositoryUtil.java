@@ -24,12 +24,12 @@ import java.time.LocalDateTime;
 
 public class TestDataRepositoryUtil implements TestDataUtil {
 
+    private final FriendRepository friendRepository;
+    private final PurchaseRepository purchaseRepository;
+    private final QuestionGroupTypeRepository questionGroupTypeRepository;
+    private final QuestionRepository questionRepository;
     private final UserRepository userRepository;
     private final VoteRepository voteRepository;
-    private final QuestionRepository questionRepository;
-    private final FriendRepository friendRepository;
-    private final QuestionGroupTypeRepository questionGroupTypeRepository;
-    private final PurchaseRepository purchaseRepository;
 
     public TestDataRepositoryUtil(UserRepository userRepository, VoteRepository voteRepository,
         QuestionRepository questionRepository,
@@ -151,12 +151,16 @@ public class TestDataRepositoryUtil implements TestDataUtil {
         return purchaseRepository.save(
             Purchase.builder()
                 .id(index)
-                .gateway(Gateway.APPLE)
-                .price(1000)
-                .productType(ProductType.YELLO_PLUS)
-                .user(user)
                 .transactionId("111")
+                .price(1000)
+                .user(user)
+                .gateway(Gateway.APPLE)
+                .purchaseToken(null)
                 .state(PurchaseState.ACTIVE)
+                .rawData(null)
+                .productType(ProductType.YELLO_PLUS)
+                .createdAt(LocalDateTime.now())
+                .updatedAt(LocalDateTime.now())
                 .build()
         );
     }
