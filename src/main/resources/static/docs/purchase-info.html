@@ -447,8 +447,8 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <h3 id="_요청">요청</h3>
 <div class="listingblock">
 <div class="content">
-<pre>GET /api/v1/user/subscribe HTTP/1.1
-Authorization: Bearer your-access-token</pre>
+<pre class="highlight nowrap"><code class="language-http" data-lang="http">GET /api/v1/user/subscribe HTTP/1.1
+Authorization: Bearer your-access-token</code></pre>
 </div>
 </div>
 </div>
@@ -456,7 +456,7 @@ Authorization: Bearer your-access-token</pre>
 <h3 id="_응답">응답</h3>
 <div class="listingblock">
 <div class="content">
-<pre>HTTP/1.1 200 OK
+<pre class="highlight nowrap"><code class="language-http" data-lang="http">HTTP/1.1 200 OK
 Vary: Origin
 Vary: Access-Control-Request-Method
 Vary: Access-Control-Request-Headers
@@ -466,11 +466,11 @@ Content-Type: application/json
   "status" : 200,
   "message" : "구독 정보 조회에 성공하였습니다.",
   "data" : {
-    "id": 5,
-    "subscribe": "active",
-    "expiredDate": "2023-02-12"
+    "id" : 1,
+    "subscribe" : "normal",
+    "expiredDate" : "2024-02-01"
   }
-}</pre>
+}</code></pre>
 </div>
 </div>
 <div class="paragraph">
@@ -506,6 +506,9 @@ Content-Type: application/json
 <div class="ulist">
 <ul>
 <li>
+<p>2024.01.25 expiredDate 필드명 및 subscribe 소문자 오류 수정</p>
+</li>
+<li>
 <p>2024.01.23 API 릴리즈</p>
 </li>
 <li>
@@ -520,7 +523,6 @@ Content-Type: application/json
 <div id="footer">
 <div id="footer-text">
 Version 0.0.1-SNAPSHOT<br>
-Last updated 2024-01-23 01:26:43 +0900
 </div>
 </div>
 </body>

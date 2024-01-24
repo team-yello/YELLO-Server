@@ -134,6 +134,8 @@ public class TestDataEntityUtil implements TestDataUtil {
             .user(user)
             .transactionId("111")
             .state(PurchaseState.ACTIVE)
+            .createdAt(LocalDateTime.now())
+            .updatedAt(LocalDateTime.now())
             .build();
     }
 }
