@@ -21,7 +21,7 @@ public interface PurchaseJpaRepository extends JpaRepository<Purchase, Long> {
         ProductType productType);
 
     @Query("select p from Purchase p "
-        + "where p.state = 'active' "
+        + "where p.state = 'ACTIVE' "
         + "and p.user = :user "
         + "and p.productType = 'yello_plus' "
         + "order by p.updatedAt DESC")

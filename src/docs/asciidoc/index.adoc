@@ -5,6 +5,8 @@
 :toc: left
 :toclevels: 3
 :sectlinks:
+:nofooter:
+:nofootnotes:
 
 [[API-List]]
 == APIs
@@ -38,6 +40,8 @@
 * 🆕 link:user-data-get.html[프로필 수정 가능 여부 조회 (명세), 2024-01-09]
 
 * 🆕 link:user-data-post.html[탈퇴 사유 저장 (명세), 2024-01-09]
+
+* 🆕 link:purchase-info.html[유저 구독 정보, 2024-01-25]
 
 * link:check-user-by-id.html[특정 유저 정보 조회하기]
 
@@ -82,8 +86,6 @@
 * link:search-friend.html[친구 검색하기]
 
 === Purchase API
-
-* 🆕 link:purchase-info.html[유저 구독 정보, 2024-01-23]
 
 * link:apple.html[Apple 결제 관련 API]
 
