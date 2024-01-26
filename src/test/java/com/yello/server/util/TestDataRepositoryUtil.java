@@ -172,13 +172,13 @@ public class TestDataRepositoryUtil implements TestDataUtil {
 
     @Override
     public Notice genereateNotice(long index) {
-        return Notice.builder()
+        return noticeRepository.save(Notice.builder()
             .id(index)
             .endDate(ZonedDateTime.now().plusDays(3))
             .imageUrl("imageUrl")
             .startDate(ZonedDateTime.now().minusDays(4))
             .redirectUrl("redirectUrl")
             .isAvailable(true)
-            .build();
+            .build());
     }
 }

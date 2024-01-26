@@ -145,9 +145,9 @@ public class TestDataEntityUtil implements TestDataUtil {
     public Notice genereateNotice(long index) {
         return Notice.builder()
             .id(index)
-            .endDate(ZonedDateTime.now().minusHours(3))
+            .endDate(ZonedDateTime.now().minusDays(3))
             .imageUrl("imageUrl")
-            .startDate(ZonedDateTime.now().minusHours(10))
+            .startDate(ZonedDateTime.now().minusDays(10))
             .redirectUrl("redirectUrl")
             .isAvailable(true)
             .build();
