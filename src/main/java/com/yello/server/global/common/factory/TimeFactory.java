@@ -2,6 +2,7 @@ package com.yello.server.global.common.factory;
 
 import java.time.Duration;
 import java.time.LocalDateTime;
+import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
 
 public class TimeFactory {
@@ -61,5 +62,9 @@ public class TimeFactory {
         return dateTimePlusSevenDays.format(dateTimeFormatter);
     }
 
+    public static Boolean compareNowAndEndData(ZonedDateTime localDateTime) {
+        ZonedDateTime now = ZonedDateTime.now();
+        return now.isBefore(localDateTime);
+    }
 
 }
