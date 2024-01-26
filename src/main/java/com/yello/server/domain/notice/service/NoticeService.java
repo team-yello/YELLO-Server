@@ -24,7 +24,7 @@ public class NoticeService {
     public NoticeDataResponse findNotice(Long userId) {
         final User user = userRepository.getById(userId);
         Notice noticeData = noticeRepository.getTopNotice();
-        return NoticeDataResponse.of(noticeData, compareNowAndEndData(noticeData.getEndDate()));
+        return NoticeDataResponse.of(noticeData, compareNowAndEndData(noticeData.getEndDate()) && noticeData.getIsAvailable());
     }
 
 
