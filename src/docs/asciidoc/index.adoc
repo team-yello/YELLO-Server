@@ -53,7 +53,9 @@
 
 * link:find-votes.html[내 투표 전체 조회하기]
 
-* ⬆️ link:find-friend-votes.html[친구 투표 전체 조회하기 (명세), 2024-01-09]
+* link:find-friend-votes.html[친구 투표 전체 조회하기, 2024-01-09]
+
+* ⬆️ link:find-friend-votes-v2.html[친구 투표 전체 조회하기 v2 (명세), 2024-01-26]
 
 * link:get-unread-vote.html[읽지 않은 쪽지 개수 조회하기]
 
