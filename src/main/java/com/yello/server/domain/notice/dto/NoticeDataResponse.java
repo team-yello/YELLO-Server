@@ -19,7 +19,7 @@ public record NoticeDataResponse(
         return NoticeDataResponse.builder()
                 .imageUrl(notice.getImageUrl())
                 .redirectUrl(notice.getRedirectUrl())
-                .startDate(toYearAndMonthFormattedString(notice.getCreatedAt()))
+                .startDate(toYearAndMonthFormattedString(notice.getStartDate().toLocalDateTime()))
                 .endDate(toYearAndMonthFormattedString(notice.getEndDate().toLocalDateTime()))
                 .isAvailable(isAvailable)
                 .build();
