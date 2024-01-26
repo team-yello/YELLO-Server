@@ -1,0 +1,98 @@
+:reproducible:
+== 친구 투표 전체 조회 (명세)
+
+=== 요청
+
+[http]
+
+----
+
+GET /v2/vote/friend?page={}&type={} HTTP/1.1
+Authorization: Bearer your-access-token
+Content-Type: application-json
+
+----
+
+*업데이트 예정*
+- "type": "send" | null
+
+|===
+|`+type+`| 조회할 쪽지 종류 (null -> 모든쪽지, send-> 보낸쪽지)
+|===
+
+=== 응답
+
+[http, json]
+----
+
+{
+  "status" : 200,
+  "message" : "투표 조회에 성공했습니다.",
+  "data" : {
+    "totalCount" : 1,
+    "friendVotes" : [ {
+            "id" : 1,
+			"senderId" : 1,
+			"senderName" : "name1",
+			"senderGender" : "MALE",
+			"senderYelloId" : "MALE",
+            "senderProfileImage": "imageUrl",
+			"receiverId" : 2,
+            "receiverName" : "name2",
+			"receiverGender" : "MALE",
+			"receiverYelloId" : "MALE",
+			"receiverProfileImage" : "test image",
+            "vote" : {
+                "nameHead" : "나는",
+                "nameFoot" : "와",
+                "keywordHead" : "멋진",
+                "keyword" : "test",
+                "keywordFoot" : "에서 놀고싶어"
+            },
+            "isHintUsed" : false,
+            "createdAt" : "0초 전"
+            "isUserSenderVote" : true
+    } ]
+  }
+}
+
+----
+
+*필드 타입*
+
+- "totalCount": Integer
+- "friendVotes": *FriendVote*[]
+- "isUserSenderVote" : Boolean (내가 보냈는지 여부)
+- *FriendVote*
+* "id": Long
+* "senderId" : Long
+* "senderName" : String
+* "senderYelloId" : String
+* "senderGender": "MALE" | "FEMALE"
+* "senderProfileImage" : String
+* "receiverId" : Long
+* "receiverName": String
+* "receiverYelloId" : String
+* "receiverGender": "MALE" | "FEMALE"
+* "receiverProfileImage": String
+* "vote": *Vote*
+* "isHintUsed": Boolean
+* "createdAt": "{0}초 전" | "{0}분 전" | "{0}시간 전" | "{0}일 전"
+
+- *Vote*
+* "nameHead": String
+* "nameFoot": String
+* "keywordHead": String
+* "keyword": String
+* "keywordFoot": String
+
+=== NOTE
+
+- 모든 종류의 쪽지를 조회할 때 `/api/v1/vote/friend?page=0` 으로 요청해주세요
+* `type=` 을 명시하지 마세요
+- 내가 보낸 쪽지를 조회할 때 `/api/v1/vote/friend?page=0&type=send` 으로 요청해주세요
+- `senderGender` 필드가 다른 API와 일관되지 못한점 미안해요 ㅠ
+
+=== CHANGELOG
+- 2024.01.26 필드 명세 업데이트
+- 2024.01.09 `type` 명세 업데이트

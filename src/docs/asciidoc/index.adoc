@@ -53,7 +53,7 @@
 
 * link:find-votes.html[내 투표 전체 조회하기]
 
-* ⬆️ link:find-friend-votes.html[친구 투표 전체 조회하기, 2024-01-09]
+* ⬆️ link:find-friend-votes.html[친구 투표 전체 조회하기 (명세), 2024-01-09]
 
 * link:get-unread-vote.html[읽지 않은 쪽지 개수 조회하기]
 
@@ -102,4 +102,4 @@
 
 === Notice API
 
-* 🆕 link:find-notice.html[공지 조회 (명세), 2024-01-09]
+* 🆕 link:find-notice.html[공지 조회, 2024-01-26]
