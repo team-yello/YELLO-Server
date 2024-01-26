@@ -5,7 +5,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="generator" content="Asciidoctor 2.0.10">
-<title>공지 조회 (명세)</title>
+<title>공지 조회</title>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Open+Sans:300,300italic,400,400italic,600,600italic%7CNoto+Serif:400,400italic,700,700italic%7CDroid+Sans+Mono:400,700">
 <style>
 /* Asciidoctor default stylesheet | MIT License | https://asciidoctor.org */
@@ -441,14 +441,14 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 </div>
 <div id="content">
 <div class="sect1">
-<h2 id="_공지_조회_명세">공지 조회 (명세)</h2>
+<h2 id="_공지_조회">공지 조회</h2>
 <div class="sectionbody">
 <div class="sect2">
 <h3 id="_요청">요청</h3>
 <div class="listingblock">
 <div class="content">
-<pre>GET /api/v1/notice HTTP/1.1
-Authorization: Bearer your-access-token</pre>
+<pre class="highlight nowrap"><code class="language-http" data-lang="http">GET /api/v1/notice HTTP/1.1
+Authorization: Bearer your-access-token</code></pre>
 </div>
 </div>
 </div>
@@ -456,23 +456,23 @@ Authorization: Bearer your-access-token</pre>
 <h3 id="_응답">응답</h3>
 <div class="listingblock">
 <div class="content">
-<pre>HTTP/1.1 200 OK
+<pre class="highlight nowrap"><code class="language-http" data-lang="http">HTTP/1.1 200 OK
 Vary: Origin
 Vary: Access-Control-Request-Method
 Vary: Access-Control-Request-Headers
 Content-Type: application/json
 
 {
-    "status": 200,
-    "message": "공지 조회에 성공하였습니다.",
-    "data": {
-		"imageUrl" : "url here",
-		"redirectUrl": "redirect url here",
-		"startDate": "2021.01.12",
-		"endDate": "2021.01.17",
-		"isAvailable": true
-	}
-}</pre>
+  "status" : 200,
+  "message" : "공지 조회에 성공하였습니다.",
+  "data" : {
+    "imageUrl" : "imageUrl",
+    "redirectUrl" : "redirectUrl",
+    "startDate" : "2024-01-16",
+    "endDate" : "2024-01-23",
+    "isAvailable" : true
+  }
+}</code></pre>
 </div>
 </div>
 <div class="paragraph">
@@ -534,7 +534,7 @@ Content-Type: application/json
 <p>공지 정보를 조회하는 API입니다.</p>
 </li>
 <li>
-<p>유효한 1개의 공지를 반환합니다.</p>
+<p>isAvailable true일 때, 유효한 1개의 공지를 반환합니다.</p>
 <div class="ulist">
 <ul>
 <li>
@@ -553,6 +553,9 @@ Content-Type: application/json
 <h3 id="_changelog">CHANGELOG</h3>
 <div class="ulist">
 <ul>
+<li>
+<p>2024.01.26 API 릴리즈</p>
+</li>
 <li>
 <p>2024.01.09 명세 작성</p>
 </li>
