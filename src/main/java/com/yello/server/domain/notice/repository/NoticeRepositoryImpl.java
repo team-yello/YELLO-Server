@@ -2,8 +2,6 @@ package com.yello.server.domain.notice.repository;
 
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import com.yello.server.domain.notice.entity.Notice;
-import com.yello.server.domain.purchase.exception.PurchaseConflictException;
-import com.yello.server.global.common.ErrorCode;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
@@ -27,4 +25,10 @@ public class NoticeRepositoryImpl implements NoticeRepository {
                 .orderBy(notice.endDate.desc())
                 .fetchFirst();
     }
+
+    @Override
+    public Notice save(Notice notice) {
+        return null;
+    }
+
 }

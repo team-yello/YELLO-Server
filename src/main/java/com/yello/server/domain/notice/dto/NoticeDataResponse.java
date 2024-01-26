@@ -6,6 +6,7 @@ import lombok.Builder;
 import java.time.LocalDateTime;
 
 import static com.yello.server.global.common.factory.TimeFactory.toYearAndMonthFormattedString;
+import static com.yello.server.global.common.util.ConstantUtil.PLUS_BASIC_TIME;
 
 @Builder
 public record NoticeDataResponse(
@@ -19,8 +20,8 @@ public record NoticeDataResponse(
         return NoticeDataResponse.builder()
                 .imageUrl(notice.getImageUrl())
                 .redirectUrl(notice.getRedirectUrl())
-                .startDate(toYearAndMonthFormattedString(notice.getStartDate().toLocalDateTime()))
-                .endDate(toYearAndMonthFormattedString(notice.getEndDate().toLocalDateTime()))
+                .startDate(toYearAndMonthFormattedString(notice.getStartDate().toLocalDateTime(), PLUS_BASIC_TIME))
+                .endDate(toYearAndMonthFormattedString(notice.getEndDate().toLocalDateTime(), PLUS_BASIC_TIME))
                 .isAvailable(isAvailable)
                 .build();
     }

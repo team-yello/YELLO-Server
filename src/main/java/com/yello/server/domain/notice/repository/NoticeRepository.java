@@ -7,5 +7,6 @@ import java.util.Optional;
 public interface NoticeRepository {
 
     Notice getTopNotice();
+    Notice save(Notice notice);
 
 }

@@ -53,11 +53,11 @@ public class TimeFactory {
         return localDateTime.minusMinutes(time);
     }
 
-    public static String toYearAndMonthFormattedString(LocalDateTime localDateTime) {
+    public static String toYearAndMonthFormattedString(LocalDateTime localDateTime, int time) {
         if (localDateTime == null) {
             return "";
         }
-        LocalDateTime dateTimePlusSevenDays = localDateTime.plusDays(7);
+        LocalDateTime dateTimePlusSevenDays = localDateTime.plusDays(time);
         DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
         return dateTimePlusSevenDays.format(dateTimeFormatter);
     }

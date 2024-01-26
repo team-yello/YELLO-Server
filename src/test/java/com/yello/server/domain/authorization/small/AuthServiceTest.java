@@ -30,6 +30,8 @@ import com.yello.server.domain.group.FakeUserGroupRepository;
 import com.yello.server.domain.group.entity.UserGroupType;
 import com.yello.server.domain.group.exception.GroupNotFoundException;
 import com.yello.server.domain.group.repository.UserGroupRepository;
+import com.yello.server.domain.notice.FakeNoticeRepository;
+import com.yello.server.domain.notice.repository.NoticeRepository;
 import com.yello.server.domain.purchase.FakePurchaseRepository;
 import com.yello.server.domain.purchase.repository.PurchaseRepository;
 import com.yello.server.domain.question.FakeQuestionGroupTypeRepository;
@@ -101,13 +103,15 @@ public class AuthServiceTest {
     );
     private final VoteRepository voteRepository = new FakeVoteRepository();
     private final PurchaseRepository purchaseRepository = new FakePurchaseRepository();
+    private final NoticeRepository noticeRepository = new FakeNoticeRepository();
     private final TestDataRepositoryUtil testDataUtil = new TestDataRepositoryUtil(
         userRepository,
         voteRepository,
         questionRepository,
         friendRepository,
         questionGroupTypeRepository,
-        purchaseRepository
+        purchaseRepository,
+        noticeRepository
     );
     private final VoteManager voteManager = new FakeVoteManager(
         userRepository, questionRepository, voteRepository, friendRepository,

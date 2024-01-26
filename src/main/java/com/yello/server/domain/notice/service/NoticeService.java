@@ -5,6 +5,7 @@ import com.yello.server.domain.notice.entity.Notice;
 import com.yello.server.domain.notice.repository.NoticeRepository;
 import com.yello.server.domain.user.entity.User;
 import com.yello.server.domain.user.repository.UserRepository;
+import lombok.Builder;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -15,6 +16,7 @@ import java.util.Optional;
 import static com.yello.server.global.common.factory.TimeFactory.compareNowAndEndData;
 
 @Service
+@Builder
 @RequiredArgsConstructor
 @Transactional(readOnly = true)
 public class NoticeService {
