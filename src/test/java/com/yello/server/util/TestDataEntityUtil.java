@@ -16,6 +16,7 @@ import com.yello.server.domain.user.entity.Subscribe;
 import com.yello.server.domain.user.entity.User;
 import com.yello.server.domain.vote.entity.Vote;
 import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.time.ZonedDateTime;
 
 public class TestDataEntityUtil implements TestDataUtil {
@@ -143,11 +144,13 @@ public class TestDataEntityUtil implements TestDataUtil {
 
     @Override
     public Notice genereateNotice(long index) {
+        ZoneId zoneId = ZoneId.of("Asia/Seoul");
+        ZonedDateTime now = ZonedDateTime.now(zoneId);
         return Notice.builder()
             .id(index)
-            .endDate(ZonedDateTime.now().minusDays(3))
+            .endDate(now.plusDays(3))
             .imageUrl("imageUrl")
-            .startDate(ZonedDateTime.now().minusDays(10))
+            .startDate(now.minusDays(3))
             .redirectUrl("redirectUrl")
             .isAvailable(true)
             .build();

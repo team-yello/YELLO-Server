@@ -2,6 +2,7 @@ package com.yello.server.global.common.factory;
 
 import java.time.Duration;
 import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
 
@@ -53,18 +54,19 @@ public class TimeFactory {
         return localDateTime.minusMinutes(time);
     }
 
-    public static String toYearAndMonthFormattedString(LocalDateTime localDateTime, int time) {
+    public static String toYearAndMonthFormattedString(LocalDateTime localDateTime) {
         if (localDateTime == null) {
             return "";
         }
-        LocalDateTime dateTimePlusSevenDays = localDateTime.plusDays(time);
         DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
-        return dateTimePlusSevenDays.format(dateTimeFormatter);
+        return localDateTime.format(dateTimeFormatter);
     }
 
-    public static Boolean compareNowAndEndData(ZonedDateTime localDateTime) {
-        ZonedDateTime now = ZonedDateTime.now();
-        return now.isBefore(localDateTime);
+    public static Boolean compareNowAndEndData(ZonedDateTime zonedDateTime) {
+        ZoneId zoneId = ZoneId.of("Asia/Seoul");
+        ZonedDateTime now = ZonedDateTime.now(zoneId);
+
+        return now.isBefore(zonedDateTime);
     }
 
 }

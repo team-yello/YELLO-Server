@@ -5,6 +5,7 @@ import static com.yello.server.global.common.ErrorCode.NOT_FOUND_NOTICE_EXCEPTIO
 import com.yello.server.domain.notice.entity.Notice;
 import com.yello.server.domain.notice.exception.NoticeNotFoundException;
 import com.yello.server.domain.notice.repository.NoticeRepository;
+import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.Comparator;
@@ -17,7 +18,15 @@ public class FakeNoticeRepository implements NoticeRepository {
 
     @Override
     public Notice getTopNotice() {
+        ZoneId zoneId = ZoneId.of("Asia/Seoul");
+        ZonedDateTime now = ZonedDateTime.now(zoneId);
+
         return data.stream()
+            .filter(notice ->
+                notice.getIsAvailable().equals(true) &&
+                    !notice.getStartDate().isAfter(now) &&
+                    !notice.getEndDate().isBefore(now)
+            )
             .sorted(Comparator.comparing(Notice::getEndDate).reversed())
             .findFirst()
             .orElseThrow(() -> new NoticeNotFoundException(NOT_FOUND_NOTICE_EXCEPTION));

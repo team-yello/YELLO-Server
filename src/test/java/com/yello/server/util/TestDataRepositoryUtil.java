@@ -23,6 +23,7 @@ import com.yello.server.domain.user.repository.UserRepository;
 import com.yello.server.domain.vote.entity.Vote;
 import com.yello.server.domain.vote.repository.VoteRepository;
 import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.time.ZonedDateTime;
 
 public class TestDataRepositoryUtil implements TestDataUtil {
@@ -172,11 +173,13 @@ public class TestDataRepositoryUtil implements TestDataUtil {
 
     @Override
     public Notice genereateNotice(long index) {
+        ZoneId zoneId = ZoneId.of("Asia/Seoul");
+        ZonedDateTime now = ZonedDateTime.now(zoneId);
         return noticeRepository.save(Notice.builder()
             .id(index)
-            .endDate(ZonedDateTime.now().plusDays(3))
+            .endDate(now.plusDays(3))
             .imageUrl("imageUrl")
-            .startDate(ZonedDateTime.now().minusDays(4))
+            .startDate(now.minusDays(3))
             .redirectUrl("redirectUrl")
             .isAvailable(true)
             .build());

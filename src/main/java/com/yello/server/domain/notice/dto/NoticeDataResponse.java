@@ -20,8 +20,8 @@ public record NoticeDataResponse(
         return NoticeDataResponse.builder()
                 .imageUrl(notice.getImageUrl())
                 .redirectUrl(notice.getRedirectUrl())
-                .startDate(toYearAndMonthFormattedString(notice.getStartDate().toLocalDateTime(), PLUS_BASIC_TIME))
-                .endDate(toYearAndMonthFormattedString(notice.getEndDate().toLocalDateTime(), PLUS_BASIC_TIME))
+                .startDate(toYearAndMonthFormattedString(notice.getStartDate().toLocalDateTime()))
+                .endDate(toYearAndMonthFormattedString(notice.getEndDate().toLocalDateTime()))
                 .isAvailable(isAvailable)
                 .build();
     }

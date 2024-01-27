@@ -1,7 +1,7 @@
 package com.yello.server.domain.user.dto.response;
 
 import static com.yello.server.global.common.factory.TimeFactory.toYearAndMonthFormattedString;
-import static com.yello.server.global.common.util.ConstantUtil.PLUS_SEVEN_TIME;
+import static com.yello.server.global.common.util.ConstantUtil.SUBSCRIBE_DAYS;
 
 import com.yello.server.domain.purchase.entity.Purchase;
 import lombok.Builder;
@@ -17,7 +17,8 @@ public record UserSubscribeDetailResponse(
         return UserSubscribeDetailResponse.builder()
             .id(purchase.getUser().getId())
             .subscribe(purchase.getUser().getSubscribe().getIntial())
-            .expiredDate(toYearAndMonthFormattedString(purchase.getUpdatedAt(), PLUS_SEVEN_TIME))
+            .expiredDate(
+                toYearAndMonthFormattedString(purchase.getUpdatedAt().plusDays(SUBSCRIBE_DAYS)))
             .build();
     }
 }
