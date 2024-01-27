@@ -529,6 +529,31 @@ Content-Type: application/json
 </div>
 </div>
 <div class="sect2">
+<h3 id="_주의">주의</h3>
+<div class="paragraph">
+<p><strong>유효한 날짜의 공지가 존재하지 않는 경우</strong></p>
+</div>
+<div class="paragraph">
+<p>&#8594; isAvailable은 false로 오고 날짜 제외한 나머지 값은 빈값으로 전달</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre>{
+    "status": 200,
+    "message": "공지 조회에 성공하였습니다.",
+    "data": {
+    "imageUrl": "",
+    "redirectUrl": "",
+    "startDate": "2024-01-27",
+    "endDate": "2024-01-27",
+    "isAvailable": false,
+    "type": null,
+    "title": ""
+}</pre>
+</div>
+</div>
+</div>
+<div class="sect2">
 <h3 id="_note">NOTE</h3>
 <div class="ulist">
 <ul>

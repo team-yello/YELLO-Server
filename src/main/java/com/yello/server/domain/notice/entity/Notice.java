@@ -3,6 +3,7 @@ package com.yello.server.domain.notice.entity;
 import com.yello.server.global.common.dto.AuditingTimeEntity;
 import java.time.ZonedDateTime;
 import javax.persistence.Column;
+import javax.persistence.Convert;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -40,6 +41,7 @@ public class Notice extends AuditingTimeEntity {
     private Boolean isAvailable;
 
     @Column(nullable = false)
+    @Convert(converter = TypeConverter.class)
     private String type;
 
     @Column(nullable = false)
