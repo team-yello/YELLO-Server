@@ -48,6 +48,7 @@ public enum SuccessCode {
     DELETE_QUESTION_ADMIN_SUCCESS(OK, "어드민 권환으로 질문지 삭제에 성공하였습니다."),
     CLASS_NAME_SEARCH_BY_SCHOOL_NAME_SCHOOL_SUCCESS(OK, "학반 검색에 성공했습니다."),
     READ_USER_SUBSCRIBE_SUCCESS(OK, "구독 정보 조회에 성공하였습니다."),
+    READ_NOTICE_SUCCESS(OK, "공지 조회에 성공하였습니다."),
 
     /**
      * 201 CREATED

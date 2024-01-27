@@ -23,6 +23,7 @@ import com.yello.server.domain.authorization.exception.OAuthException;
 import com.yello.server.domain.friend.exception.FriendException;
 import com.yello.server.domain.friend.exception.FriendNotFoundException;
 import com.yello.server.domain.group.exception.GroupNotFoundException;
+import com.yello.server.domain.notice.exception.NoticeNotFoundException;
 import com.yello.server.domain.purchase.exception.AppleBadRequestException;
 import com.yello.server.domain.purchase.exception.AppleTokenServerErrorException;
 import com.yello.server.domain.purchase.exception.GoogleBadRequestException;
@@ -189,7 +190,8 @@ public class ControllerExceptionAdvice {
         RedisNotFoundException.class,
         PurchaseNotFoundException.class,
         GoogleTokenNotFoundException.class,
-        UserAdminNotFoundException.class
+        UserAdminNotFoundException.class,
+        NoticeNotFoundException.class
     })
     public ResponseEntity<BaseResponse> NotFoundException(CustomException exception) {
         return ResponseEntity.status(NOT_FOUND)

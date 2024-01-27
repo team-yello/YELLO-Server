@@ -90,6 +90,7 @@ public enum ErrorCode {
     NOT_EQUAL_TRANSACTION_EXCEPTION(NOT_FOUND, "동일하지 않은 거래입니다."),
     NOT_FOUND_NOTIFICATION_TYPE_EXCEPTION(NOT_FOUND, "존재하지 않는 알림 타입 입니다"),
     NOT_FOUND_USER_SUBSCRIBE_EXCEPTION(NOT_FOUND, "유저의 구독정보가 존재하지 않습니다."),
+    NOT_FOUND_NOTICE_EXCEPTION(NOT_FOUND, "공지가 존재하지 않습니다."),
 
     /**
      * 409 CONFLICT

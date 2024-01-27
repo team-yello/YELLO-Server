@@ -1,44 +1,52 @@
-package com.yello.server.infrastructure.firebase.small;
+package com.yello.server.domain.notice.small;
+
+
+import static org.assertj.core.api.Assertions.assertThat;
 
 import com.yello.server.domain.friend.FakeFriendRepository;
 import com.yello.server.domain.friend.repository.FriendRepository;
 import com.yello.server.domain.group.entity.UserGroupType;
 import com.yello.server.domain.notice.FakeNoticeRepository;
+import com.yello.server.domain.notice.dto.NoticeDataResponse;
+import com.yello.server.domain.notice.entity.Notice;
 import com.yello.server.domain.notice.repository.NoticeRepository;
+import com.yello.server.domain.notice.service.NoticeService;
 import com.yello.server.domain.purchase.FakePurchaseRepository;
 import com.yello.server.domain.purchase.repository.PurchaseRepository;
 import com.yello.server.domain.question.FakeQuestionGroupTypeRepository;
 import com.yello.server.domain.question.FakeQuestionRepository;
-import com.yello.server.domain.question.entity.Question;
 import com.yello.server.domain.question.repository.QuestionGroupTypeRepository;
 import com.yello.server.domain.question.repository.QuestionRepository;
 import com.yello.server.domain.user.FakeUserRepository;
+import com.yello.server.domain.user.entity.Subscribe;
 import com.yello.server.domain.user.entity.User;
 import com.yello.server.domain.user.repository.UserRepository;
 import com.yello.server.domain.vote.FakeVoteRepository;
 import com.yello.server.domain.vote.repository.VoteRepository;
-import com.yello.server.infrastructure.firebase.dto.request.NotificationMessage;
-import com.yello.server.infrastructure.firebase.manager.FCMManager;
-import com.yello.server.infrastructure.firebase.manager.FCMManagerImpl;
 import com.yello.server.util.TestDataRepositoryUtil;
+import java.time.LocalDateTime;
+import java.time.ZonedDateTime;
+import java.time.format.DateTimeFormatter;
+import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.DisplayNameGeneration;
 import org.junit.jupiter.api.DisplayNameGenerator.ReplaceUnderscores;
 import org.junit.jupiter.api.Test;
 
-@DisplayName("FcmManager 에서")
+@DisplayName("NoticeService 에서")
 @DisplayNameGeneration(ReplaceUnderscores.class)
-public class FcmManagerTest {
-
-    private final VoteRepository voteRepository = new FakeVoteRepository();
-    private final QuestionRepository questionRepository = new FakeQuestionRepository();
+public class NoticeServiceTest {
+    private final NoticeRepository noticeRepository = new FakeNoticeRepository();
     private final FriendRepository friendRepository = new FakeFriendRepository();
     private final UserRepository userRepository = new FakeUserRepository(friendRepository);
+    private final QuestionRepository questionRepository = new FakeQuestionRepository();
+    private final VoteRepository voteRepository = new FakeVoteRepository();
     private final QuestionGroupTypeRepository
         questionGroupTypeRepository = new FakeQuestionGroupTypeRepository(questionRepository);
     private final PurchaseRepository purchaseRepository = new FakePurchaseRepository();
-    private final NoticeRepository noticeRepository = new FakeNoticeRepository();
+    private NoticeService noticeService;
+    private User user1;
     private final TestDataRepositoryUtil testDataUtil = new TestDataRepositoryUtil(
         userRepository,
         voteRepository,
@@ -49,41 +57,29 @@ public class FcmManagerTest {
         noticeRepository
     );
 
-    private FCMManager fcmManager;
-
     @BeforeEach
     void init() {
-        this.fcmManager = FCMManagerImpl.builder()
-            .voteRepository(voteRepository)
+        this.noticeService = NoticeService.builder()
+            .noticeRepository(noticeRepository)
+            .userRepository(userRepository)
             .build();
 
-        User user = testDataUtil.generateUser(1L, 1L, UserGroupType.UNIVERSITY);
-        User target = testDataUtil.generateUser(2L, 1L, UserGroupType.UNIVERSITY);
-        Question question = testDataUtil.generateQuestion(1L);
-        testDataUtil.generateVote(1L, user, target, question);
+        final User user = testDataUtil.generateUser(1L, 1L, UserGroupType.HIGH_SCHOOL);
+        user.setSubscribe(Subscribe.ACTIVE);
+        final Notice notice = testDataUtil.genereateNotice(1L);
+        noticeRepository.save(notice);
     }
 
     @Test
-    void path를_제외한_메세지_객체_생성에_성공합니다() {
+    void 공지_조회에_성공합니다() {
         // given
-        final String testDeviceToken = "testDeviceToken";
-        final NotificationMessage notificationMessage = NotificationMessage.toVoteAvailableNotificationContent();
+        final Long userId = 1L;
 
         // when
+        final NoticeDataResponse notice = noticeService.findNotice(userId);
+
         // then
-        fcmManager.createMessage(testDeviceToken, notificationMessage);
+        assertThat(notice.isAvailable()).isTrue();
+
     }
-
-    @Test
-    void path를_포함한_메세지_객체_생성에_성공합니다() {
-        // given
-        final String path = "/api/v1/vote/1";
-        final String testDeviceToken = "deviceToken#2";
-        final NotificationMessage notificationMessage = NotificationMessage.toVoteAvailableNotificationContent();
-
-        // when
-        // then
-        fcmManager.createMessage(testDeviceToken, notificationMessage, path);
-    }
-
 }

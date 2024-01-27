@@ -17,6 +17,8 @@ import com.yello.server.domain.friend.exception.FriendNotFoundException;
 import com.yello.server.domain.friend.repository.FriendRepository;
 import com.yello.server.domain.friend.service.FriendService;
 import com.yello.server.domain.group.entity.UserGroupType;
+import com.yello.server.domain.notice.FakeNoticeRepository;
+import com.yello.server.domain.notice.repository.NoticeRepository;
 import com.yello.server.domain.purchase.FakePurchaseRepository;
 import com.yello.server.domain.purchase.repository.PurchaseRepository;
 import com.yello.server.domain.question.FakeQuestionGroupTypeRepository;
@@ -58,13 +60,15 @@ class FriendServiceTest {
         new FakeVoteManager(userRepository, questionRepository, voteRepository, friendRepository,
             userManager);
     private final PurchaseRepository purchaseRepository = new FakePurchaseRepository();
+    private final NoticeRepository noticeRepository = new FakeNoticeRepository();
     private final TestDataRepositoryUtil testDataUtil = new TestDataRepositoryUtil(
         userRepository,
         voteRepository,
         questionRepository,
         friendRepository,
         questionGroupTypeRepository,
-        purchaseRepository
+        purchaseRepository,
+        noticeRepository
     );
     private FriendService friendService;
     private User user1;
