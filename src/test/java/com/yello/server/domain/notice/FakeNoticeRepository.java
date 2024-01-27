@@ -10,6 +10,7 @@ import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
+import java.util.Optional;
 
 public class FakeNoticeRepository implements NoticeRepository {
 
@@ -17,7 +18,7 @@ public class FakeNoticeRepository implements NoticeRepository {
     private Long id = 0L;
 
     @Override
-    public Notice getTopNotice() {
+    public Optional<Notice> findTopNotice() {
         ZoneId zoneId = ZoneId.of("Asia/Seoul");
         ZonedDateTime now = ZonedDateTime.now(zoneId);
 
@@ -28,8 +29,7 @@ public class FakeNoticeRepository implements NoticeRepository {
                     !notice.getEndDate().isBefore(now)
             )
             .sorted(Comparator.comparing(Notice::getEndDate).reversed())
-            .findFirst()
-            .orElseThrow(() -> new NoticeNotFoundException(NOT_FOUND_NOTICE_EXCEPTION));
+            .findFirst();
     }
 
     @Override
@@ -41,6 +41,8 @@ public class FakeNoticeRepository implements NoticeRepository {
             .startDate(notice.getStartDate())
             .redirectUrl(notice.getRedirectUrl())
             .isAvailable(notice.getIsAvailable())
+            .type(notice.getType())
+            .title(notice.getTitle())
             .build();
 
         data.add(newNotice);

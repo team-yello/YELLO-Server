@@ -153,6 +153,8 @@ public class TestDataEntityUtil implements TestDataUtil {
             .startDate(now.minusDays(3))
             .redirectUrl("redirectUrl")
             .isAvailable(true)
+            .type("event")
+            .title("notice title")
             .build();
     }
 }

@@ -21,6 +21,31 @@ include::{snippets}/api/v1/notice/http-response.adoc[]
 * YYYY-MM-DD (ISO-8601)
 - "isAvailable": Boolean
 
+
+=== 주의
+
+[http, json]
+
+*유효한 날짜의 공지가 존재하지 않는 경우*
+
+-> isAvailable은 false로 오고 날짜 제외한 나머지 값은 빈값으로 전달
+
+----
+{
+    "status": 200,
+    "message": "공지 조회에 성공하였습니다.",
+    "data": {
+    "imageUrl": "",
+    "redirectUrl": "",
+    "startDate": "2024-01-27",
+    "endDate": "2024-01-27",
+    "isAvailable": false,
+    "type": null,
+    "title": ""
+}
+
+----
+
 === NOTE
 
 - 공지 정보를 조회하는 API입니다.

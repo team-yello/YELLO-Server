@@ -1,32 +1,37 @@
 package com.yello.server.domain.notice.service;
 
+import static com.yello.server.global.common.factory.TimeFactory.compareNowAndEndData;
+
 import com.yello.server.domain.notice.dto.NoticeDataResponse;
 import com.yello.server.domain.notice.entity.Notice;
 import com.yello.server.domain.notice.repository.NoticeRepository;
-import com.yello.server.domain.user.entity.User;
 import com.yello.server.domain.user.repository.UserRepository;
+import java.time.ZoneId;
+import java.time.ZonedDateTime;
 import lombok.Builder;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import java.time.LocalDateTime;
-import java.util.Optional;
-
-import static com.yello.server.global.common.factory.TimeFactory.compareNowAndEndData;
 
 @Service
 @Builder
 @RequiredArgsConstructor
 @Transactional(readOnly = true)
 public class NoticeService {
+
     private final NoticeRepository noticeRepository;
     private final UserRepository userRepository;
 
     public NoticeDataResponse findNotice(Long userId) {
-        final User user = userRepository.getById(userId);
-        Notice noticeData = noticeRepository.getTopNotice();
-        return NoticeDataResponse.of(noticeData, compareNowAndEndData(noticeData.getEndDate()) && noticeData.getIsAvailable());
+        ZoneId zoneId = ZoneId.of("Asia/Seoul");
+        ZonedDateTime now = ZonedDateTime.now(zoneId);
+        userRepository.findById(userId);
+        Notice noticeData =
+            noticeRepository.findTopNotice().orElseGet(
+                () -> Notice.builder().imageUrl("").redirectUrl("").title("").type("").endDate(now)
+                    .startDate(now).isAvailable(false).build());
+        return NoticeDataResponse.of(noticeData,
+            compareNowAndEndData(noticeData.getEndDate()) && noticeData.getIsAvailable());
     }
 
 

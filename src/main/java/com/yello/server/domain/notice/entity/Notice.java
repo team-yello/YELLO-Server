@@ -38,4 +38,10 @@ public class Notice extends AuditingTimeEntity {
 
     @Column(nullable = false)
     private Boolean isAvailable;
+
+    @Column(nullable = false)
+    private String type;
+
+    @Column(nullable = false)
+    private String title;
 }
