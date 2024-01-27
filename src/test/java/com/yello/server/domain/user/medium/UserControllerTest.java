@@ -4,6 +4,7 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.BDDMockito.given;
+import static org.mockito.Mockito.doNothing;
 import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document;
 import static org.springframework.restdocs.operation.preprocess.Preprocessors.prettyPrint;
 import static org.springframework.restdocs.operation.preprocess.Preprocessors.removeHeaders;
@@ -17,6 +18,7 @@ import com.yello.server.domain.authorization.filter.JwtExceptionFilter;
 import com.yello.server.domain.authorization.filter.JwtFilter;
 import com.yello.server.domain.group.entity.UserGroupType;
 import com.yello.server.domain.user.controller.UserController;
+import com.yello.server.domain.user.dto.request.UserDeleteReasonRequest;
 import com.yello.server.domain.user.dto.request.UserDeviceTokenRequest;
 import com.yello.server.domain.user.dto.response.UserDetailResponse;
 import com.yello.server.domain.user.dto.response.UserDetailV2Response;
@@ -63,8 +65,9 @@ import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 class UserControllerTest {
 
     final String[] excludeRequestHeaders = {"X-CSRF-TOKEN", "Host"};
-    final String[] excludeResponseHeaders = {"X-Content-Type-Options", "X-XSS-Protection", "Cache-Control", "Pragma",
-        "Expires", "X-Frame-Options", "Content-Length"};
+    final String[] excludeResponseHeaders =
+        {"X-Content-Type-Options", "X-XSS-Protection", "Cache-Control", "Pragma",
+            "Expires", "X-Frame-Options", "Content-Length"};
 
     @Autowired
     private MockMvc mockMvc;
@@ -107,8 +110,10 @@ class UserControllerTest {
             )
             .andDo(print())
             .andDo(document("api/v1/user/findUser",
-                Preprocessors.preprocessRequest(prettyPrint(), removeHeaders(excludeRequestHeaders)),
-                Preprocessors.preprocessResponse(prettyPrint(), removeHeaders(excludeResponseHeaders)))
+                Preprocessors.preprocessRequest(prettyPrint(),
+                    removeHeaders(excludeRequestHeaders)),
+                Preprocessors.preprocessResponse(prettyPrint(),
+                    removeHeaders(excludeResponseHeaders)))
             )
             .andExpect(MockMvcResultMatchers.status().isOk());
     }
@@ -132,8 +137,10 @@ class UserControllerTest {
             )
             .andDo(print())
             .andDo(document("api/v2/user",
-                Preprocessors.preprocessRequest(prettyPrint(), removeHeaders(excludeRequestHeaders)),
-                Preprocessors.preprocessResponse(prettyPrint(), removeHeaders(excludeResponseHeaders)))
+                Preprocessors.preprocessRequest(prettyPrint(),
+                    removeHeaders(excludeRequestHeaders)),
+                Preprocessors.preprocessResponse(prettyPrint(),
+                    removeHeaders(excludeResponseHeaders)))
             )
             .andExpect(MockMvcResultMatchers.status().isOk());
     }
@@ -162,8 +169,10 @@ class UserControllerTest {
             )
             .andDo(print())
             .andDo(document("api/v1/user/findUserById",
-                Preprocessors.preprocessRequest(prettyPrint(), removeHeaders(excludeRequestHeaders)),
-                Preprocessors.preprocessResponse(prettyPrint(), removeHeaders(excludeResponseHeaders)),
+                Preprocessors.preprocessRequest(prettyPrint(),
+                    removeHeaders(excludeRequestHeaders)),
+                Preprocessors.preprocessResponse(prettyPrint(),
+                    removeHeaders(excludeResponseHeaders)),
                 pathParameters(parameterWithName("userId").description("유저 아이디 값")))
             )
             .andExpect(MockMvcResultMatchers.status().isOk());
@@ -189,8 +198,10 @@ class UserControllerTest {
                 .content(objectMapper.writeValueAsString(userDeviceTokenRequest)))
             .andDo(print())
             .andDo(document("api/v1/user/updateUserDeviceToken",
-                Preprocessors.preprocessRequest(prettyPrint(), removeHeaders(excludeRequestHeaders)),
-                Preprocessors.preprocessResponse(prettyPrint(), removeHeaders(excludeResponseHeaders)))
+                Preprocessors.preprocessRequest(prettyPrint(),
+                    removeHeaders(excludeRequestHeaders)),
+                Preprocessors.preprocessResponse(prettyPrint(),
+                    removeHeaders(excludeResponseHeaders)))
             )
             .andExpect(MockMvcResultMatchers.status().isOk());
     }
@@ -206,8 +217,10 @@ class UserControllerTest {
             )
             .andDo(print())
             .andDo(document("api/v1/user/deleteUser",
-                Preprocessors.preprocessRequest(prettyPrint(), removeHeaders(excludeRequestHeaders)),
-                Preprocessors.preprocessResponse(prettyPrint(), removeHeaders(excludeResponseHeaders)))
+                Preprocessors.preprocessRequest(prettyPrint(),
+                    removeHeaders(excludeRequestHeaders)),
+                Preprocessors.preprocessResponse(prettyPrint(),
+                    removeHeaders(excludeResponseHeaders)))
             )
             .andExpect(MockMvcResultMatchers.status().isOk());
     }
@@ -216,7 +229,8 @@ class UserControllerTest {
     void 유저_구독_정보_조회에_성공합니다() throws Exception {
         // given
 
-        final UserSubscribeDetailResponse userSubscribeDetailResponse = UserSubscribeDetailResponse.of(testDataUtil.generatePurchase(1L, user));
+        final UserSubscribeDetailResponse userSubscribeDetailResponse =
+            UserSubscribeDetailResponse.of(testDataUtil.generatePurchase(1L, user));
         // when
         given(userService.getUserSubscribe(anyLong()))
             .willReturn(userSubscribeDetailResponse);
@@ -235,6 +249,32 @@ class UserControllerTest {
             )
             .andExpect(MockMvcResultMatchers.status().isOk());
 
+    }
+
+    @Test
+    void 유저_탈퇴_v2_성공합니다() throws Exception {
+        // given
+        final UserDeleteReasonRequest request =
+            UserDeleteReasonRequest.builder().value("오류가 많아서").build();
+/*
+        doNothing()
+            .when(userService)
+            .deleteUserWithReason(anyLong(), request);*/
+        // when
+        // then
+        mockMvc.perform(RestDocumentationRequestBuilders.delete("/api/v2/user")
+                .with(csrf().asHeader())
+                .header(HttpHeaders.AUTHORIZATION, "Bearer your-access-token")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(request)))
+            .andDo(print())
+            .andDo(document("api/v2/user",
+                Preprocessors.preprocessRequest(prettyPrint(),
+                    removeHeaders(excludeRequestHeaders)),
+                Preprocessors.preprocessResponse(prettyPrint(),
+                    removeHeaders(excludeResponseHeaders)))
+            )
+            .andExpect(MockMvcResultMatchers.status().isOk());
     }
 
 }

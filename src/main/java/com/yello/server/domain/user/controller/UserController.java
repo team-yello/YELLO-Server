@@ -5,6 +5,7 @@ import static com.yello.server.global.common.SuccessCode.READ_USER_SUBSCRIBE_SUC
 import static com.yello.server.global.common.SuccessCode.READ_USER_SUCCESS;
 import static com.yello.server.global.common.SuccessCode.UPDATE_DEVICE_TOKEN_USER_SUCCESS;
 
+import com.yello.server.domain.user.dto.request.UserDeleteReasonRequest;
 import com.yello.server.domain.user.dto.request.UserDeviceTokenRequest;
 import com.yello.server.domain.user.dto.response.UserDetailResponse;
 import com.yello.server.domain.user.dto.response.UserDetailV2Response;
@@ -69,5 +70,12 @@ public class UserController {
     public BaseResponse<UserSubscribeDetailResponse> getUserSubscribe(@AccessTokenUser User user) {
         val data = userService.getUserSubscribe(user.getId());
         return BaseResponse.success(READ_USER_SUBSCRIBE_SUCCESS, data);
+    }
+
+    @DeleteMapping("/v2/user")
+    public BaseResponse deleteUserWithReason(@AccessTokenUser User user, @RequestBody
+    UserDeleteReasonRequest request) {
+        userService.deleteUserWithReason(user.getId(), request);
+        return BaseResponse.success(DELETE_USER_SUCCESS);
     }
 }

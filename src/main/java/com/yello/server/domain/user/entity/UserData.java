@@ -36,4 +36,12 @@ public class UserData {
 
     @Column(nullable = false)
     private String value;
+
+    public static UserData of(UserDataType tag, String value, User user) {
+        return UserData.builder()
+            .tag(tag)
+            .user(user)
+            .value(value)
+            .build();
+    }
 }
