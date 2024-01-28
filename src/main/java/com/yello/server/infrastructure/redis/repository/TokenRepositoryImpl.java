@@ -3,9 +3,8 @@ package com.yello.server.infrastructure.redis.repository;
 import com.yello.server.domain.authorization.dto.ServiceTokenVO;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.redis.core.ValueOperations;
-import org.springframework.stereotype.Repository;
 
-@Repository
+//@Repository
 @RequiredArgsConstructor
 public class TokenRepositoryImpl implements TokenRepository {
 

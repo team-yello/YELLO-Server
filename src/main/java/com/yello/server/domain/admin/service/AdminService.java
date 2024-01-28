@@ -1,5 +1,7 @@
 package com.yello.server.domain.admin.service;
 
+import static com.yello.server.domain.admin.entity.AdminConfigurationType.ADMIN_SITE_PASSWORD;
+import static com.yello.server.global.common.ErrorCode.ADMIN_CONFIGURATION_NOT_FOUND_EXCEPTION;
 import static com.yello.server.global.common.ErrorCode.DEVICE_TOKEN_CONFLICT_USER_EXCEPTION;
 import static com.yello.server.global.common.ErrorCode.USER_ADMIN_BAD_REQUEST_EXCEPTION;
 import static com.yello.server.global.common.ErrorCode.USER_ADMIN_NOT_FOUND_EXCEPTION;
@@ -9,6 +11,7 @@ import static com.yello.server.global.common.ErrorCode.YELLOID_CONFLICT_USER_EXC
 import com.yello.server.domain.admin.dto.request.AdminLoginRequest;
 import com.yello.server.domain.admin.dto.request.AdminQuestionVoteRequest;
 import com.yello.server.domain.admin.dto.request.AdminUserDetailRequest;
+import com.yello.server.domain.admin.dto.response.AdminConfigurationResponse;
 import com.yello.server.domain.admin.dto.response.AdminCooldownContentVO;
 import com.yello.server.domain.admin.dto.response.AdminCooldownResponse;
 import com.yello.server.domain.admin.dto.response.AdminLoginResponse;
@@ -18,10 +21,14 @@ import com.yello.server.domain.admin.dto.response.AdminQuestionResponse;
 import com.yello.server.domain.admin.dto.response.AdminUserContentVO;
 import com.yello.server.domain.admin.dto.response.AdminUserDetailResponse;
 import com.yello.server.domain.admin.dto.response.AdminUserResponse;
+import com.yello.server.domain.admin.entity.AdminConfiguration;
+import com.yello.server.domain.admin.entity.AdminConfigurationType;
+import com.yello.server.domain.admin.exception.AdminConfigurationNotFoundException;
 import com.yello.server.domain.admin.exception.UserAdminBadRequestException;
 import com.yello.server.domain.admin.exception.UserAdminNotFoundException;
+import com.yello.server.domain.admin.repository.AdminConfigurationRepository;
 import com.yello.server.domain.admin.repository.UserAdminRepository;
-import com.yello.server.domain.authorization.service.TokenProvider;
+import com.yello.server.domain.authorization.service.AuthManager;
 import com.yello.server.domain.cooldown.entity.Cooldown;
 import com.yello.server.domain.cooldown.repository.CooldownRepository;
 import com.yello.server.domain.question.entity.Question;
@@ -39,7 +46,6 @@ import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -49,24 +55,30 @@ import org.springframework.transaction.annotation.Transactional;
 @Transactional(readOnly = true)
 public class AdminService {
 
-    private final UserRepository userRepository;
-    private final UserManager userManager;
-    private final TokenProvider tokenProvider;
+    private final AdminConfigurationRepository adminConfigurationRepository;
+    private final AuthManager authManager;
     private final CooldownRepository cooldownRepository;
     private final QuestionRepository questionRepository;
-    private final VoteRepository voteRepository;
     private final UserAdminRepository userAdminRepository;
+    private final UserManager userManager;
+    private final UserRepository userRepository;
+    private final VoteRepository voteRepository;
 
-    @Value("${admin.password}")
-    String adminPassword;
-
+    @Transactional
     public AdminLoginResponse login(AdminLoginRequest request) {
-        String accessToken;
+        final List<AdminConfiguration> list = adminConfigurationRepository.getConfigurations(
+            ADMIN_SITE_PASSWORD);
+        if (list.isEmpty()) {
+            throw new AdminConfigurationNotFoundException(ADMIN_CONFIGURATION_NOT_FOUND_EXCEPTION);
+        }
 
-        if (request.password().equals(adminPassword)) {
+        String accessToken;
+        String adminPassWord = list.get(0).getValue();
+
+        if (request.password().equals(adminPassWord)) {
             final User user = userManager.getOfficialUser(Gender.FEMALE);
 
-            accessToken = tokenProvider.createAccessToken(user.getId(), user.getUuid());
+            accessToken = authManager.issueToken(user).accessToken();
         } else {
             throw new UserAdminNotFoundException(USER_ADMIN_NOT_FOUND_EXCEPTION);
         }
@@ -279,5 +291,34 @@ public class AdminService {
 
         // logic
         questionRepository.delete(question);
+    }
+
+    public AdminConfigurationResponse getConfigurations(Long adminId, AdminConfigurationType tag) {
+        // exception
+        final User admin = userRepository.getById(adminId);
+        userAdminRepository.getByUser(admin);
+
+        final List<AdminConfiguration> configurations = adminConfigurationRepository.getConfigurations(tag);
+
+        if (configurations.isEmpty()) {
+            throw new AdminConfigurationNotFoundException(ADMIN_CONFIGURATION_NOT_FOUND_EXCEPTION);
+        }
+
+        // logic
+        return AdminConfigurationResponse.builder()
+            .tag(String.valueOf(tag))
+            .value(configurations.get(0).getValue())
+            .build();
+    }
+
+    @Transactional
+    public EmptyObject updateConfigurations(Long adminId, AdminConfigurationType tag, String value) {
+        // exception
+        final User admin = userRepository.getById(adminId);
+        userAdminRepository.getByUser(admin);
+
+        adminConfigurationRepository.setConfigurations(tag, value);
+
+        return EmptyObject.builder().build();
     }
 }

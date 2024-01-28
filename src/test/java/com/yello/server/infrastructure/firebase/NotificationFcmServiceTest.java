@@ -30,11 +30,10 @@ import org.junit.jupiter.api.Test;
 @DisplayNameGeneration(ReplaceUnderscores.class)
 class NotificationFcmServiceTest {
 
-    private final FriendRepository friendRepository = new FakeFriendRepository();
-    private final UserRepository userRepository = new FakeUserRepository(friendRepository);
-    private final TokenRepository tokenRepository = new FakeTokenRepository();
     private final FCMManager fcmManager = new FakeFcmManger();
-
+    private final FriendRepository friendRepository = new FakeFriendRepository();
+    private final TokenRepository tokenRepository = new FakeTokenRepository();
+    private final UserRepository userRepository = new FakeUserRepository(friendRepository);
     private NotificationService notificationService;
 
     private User user;
@@ -45,7 +44,6 @@ class NotificationFcmServiceTest {
     void init() {
         this.notificationService = NotificationFcmService.builder()
             .userRepository(userRepository)
-            .tokenRepository(tokenRepository)
             .fcmManager(fcmManager)
             .build();
         UserGroup userGroup = UserGroup.builder()

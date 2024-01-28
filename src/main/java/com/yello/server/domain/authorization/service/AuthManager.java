@@ -9,9 +9,11 @@ public interface AuthManager {
 
     User getSignedInUserByUuid(String uuid);
 
-    ServiceTokenVO registerToken(User user);
+    ServiceTokenVO issueToken(User user);
 
-    ServiceTokenVO setNewAccessToken(String refreshToken);
+    boolean isExpired(String token);
+
+    String issueNewAccessToken(String refreshToken);
 
     void validateSignupRequest(SignUpRequest signUpRequest);
 

@@ -47,6 +47,7 @@ class UserServiceTest {
 
     private final CooldownRepository cooldownRepository = new FakeCooldownRepository();
     private final FriendRepository friendRepository = new FakeFriendRepository();
+    private final NoticeRepository noticeRepository = new FakeNoticeRepository();
     private final PurchaseRepository purchaseRepository = new FakePurchaseRepository();
     private final QuestionRepository questionRepository = new FakeQuestionRepository();
     private final QuestionGroupTypeRepository
@@ -54,7 +55,6 @@ class UserServiceTest {
     private final TokenRepository tokenRepository = new FakeTokenRepository();
     private final UserRepository userRepository = new FakeUserRepository(friendRepository);
     private final VoteRepository voteRepository = new FakeVoteRepository();
-    private final NoticeRepository noticeRepository = new FakeNoticeRepository();
     private final TestDataRepositoryUtil testDataUtil = new TestDataRepositoryUtil(
         userRepository,
         voteRepository,
@@ -73,7 +73,6 @@ class UserServiceTest {
             .friendRepository(friendRepository)
             .voteRepository(voteRepository)
             .cooldownRepository(cooldownRepository)
-            .tokenRepository(tokenRepository)
             .purchaseRepository(purchaseRepository)
             .build();
 

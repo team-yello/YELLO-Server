@@ -1,9 +1,13 @@
 package com.yello.server.domain.authorization.small;
 
+import static com.yello.server.domain.admin.entity.AdminConfigurationType.ACCESS_TOKEN_TIME;
+import static com.yello.server.domain.admin.entity.AdminConfigurationType.REFRESH_TOKEN_TIME;
 import static com.yello.server.global.common.ErrorCode.NOT_SIGNIN_USER_EXCEPTION;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
+import com.yello.server.domain.admin.FakeAdminConfigurationRepository;
+import com.yello.server.domain.admin.repository.AdminConfigurationRepository;
 import com.yello.server.domain.authorization.dto.ServiceTokenVO;
 import com.yello.server.domain.authorization.exception.NotSignedInException;
 import com.yello.server.domain.authorization.service.AuthManager;
@@ -42,18 +46,20 @@ import org.junit.jupiter.api.Test;
 @DisplayNameGeneration(ReplaceUnderscores.class)
 public class AuthManagerTest {
 
+    private final AdminConfigurationRepository adminConfigurationRepository = new FakeAdminConfigurationRepository();
     private final CooldownRepository cooldownRepository = new FakeCooldownRepository();
     private final FriendRepository friendRepository = new FakeFriendRepository();
+    private final NoticeRepository noticeRepository = new FakeNoticeRepository();
+    private final PurchaseRepository purchaseRepository = new FakePurchaseRepository();
     private final QuestionRepository questionRepository = new FakeQuestionRepository();
+    private final QuestionGroupTypeRepository questionGroupTypeRepository = new FakeQuestionGroupTypeRepository(
+        questionRepository);
     private final String secretKey = Base64.getEncoder().encodeToString(
         "keyForTestkeyForTestkeyForTestkeyForTestkeyForTestkeyForTestkeyForTestkeyForTestkeyForTest".getBytes());
     private final TokenProvider tokenProvider = new TokenJwtProvider(secretKey);
     private final TokenRepository tokenRepository = new FakeTokenRepository();
     private final UserRepository userRepository = new FakeUserRepository(friendRepository);
     private final VoteRepository voteRepository = new FakeVoteRepository();
-    private final QuestionGroupTypeRepository questionGroupTypeRepository = new FakeQuestionGroupTypeRepository(questionRepository);
-    private final PurchaseRepository purchaseRepository = new FakePurchaseRepository();
-    private final NoticeRepository noticeRepository = new FakeNoticeRepository();
     private final TestDataRepositoryUtil testDataUtil = new TestDataRepositoryUtil(
         userRepository,
         voteRepository,
@@ -68,10 +74,10 @@ public class AuthManagerTest {
     @BeforeEach
     void init() {
         this.authManager = AuthManagerImpl.builder()
+            .adminConfigurationRepository(adminConfigurationRepository)
             .friendRepository(friendRepository)
             .cooldownRepository(cooldownRepository)
             .userRepository(userRepository)
-            .tokenRepository(tokenRepository)
             .tokenProvider(tokenProvider)
             .build();
 
@@ -81,6 +87,9 @@ public class AuthManagerTest {
         for (int i = 1; i <= 3; i++) {
             testDataUtil.generateUser(i, 1L, UserGroupType.UNIVERSITY);
         }
+
+        adminConfigurationRepository.setConfigurations(ACCESS_TOKEN_TIME, String.valueOf(30L));
+        adminConfigurationRepository.setConfigurations(REFRESH_TOKEN_TIME, String.valueOf(10080L));
     }
 
     @Test
@@ -113,7 +122,7 @@ public class AuthManagerTest {
         final User user = userRepository.getById(1L);
 
         // when
-        final ServiceTokenVO serviceTokenVO = authManager.registerToken(user);
+        final ServiceTokenVO serviceTokenVO = authManager.issueToken(user);
 
         // then
         assertThat(serviceTokenVO.accessToken()).isNotEmpty();
