@@ -2,6 +2,8 @@ package com.yello.server.global.common.factory;
 
 import java.time.Duration;
 import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
 
 public class TimeFactory {
@@ -56,10 +58,16 @@ public class TimeFactory {
         if (localDateTime == null) {
             return "";
         }
-        LocalDateTime dateTimePlusSevenDays = localDateTime.plusDays(7);
         DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
-        return dateTimePlusSevenDays.format(dateTimeFormatter);
+        return localDateTime.format(dateTimeFormatter);
     }
 
+    public static Boolean compareNowAndEndData(ZonedDateTime zonedDateTime) {
+        ZoneId zoneId = ZoneId.of("Asia/Seoul");
+        ZonedDateTime now = ZonedDateTime.now(zoneId);
+
+        System.out.println(now + " sfsdfsd");
+        return now.isBefore(zonedDateTime);
+    }
 
 }

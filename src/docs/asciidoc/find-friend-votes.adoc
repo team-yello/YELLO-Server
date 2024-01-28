@@ -1,5 +1,5 @@
 :reproducible:
-== 친구 투표 전체 조회 (업데이트)
+== 친구 투표 전체 조회 (최신버전 -> v2 확인)
 
 === 요청
 
@@ -8,13 +8,6 @@ include::{snippets}/api/v1/vote/findAllFriendVotes/http-request.adoc[]
 === 요청 파라미터
 
 include::{snippets}/api/v1/vote/findAllFriendVotes/request-parameters.adoc[]
-
-*업데이트 예정*
-- "type": "send" | null
-
-|===
-|`+type+`|조회할 쪽지 종류
-|===
 
 === 응답
 
@@ -41,11 +34,8 @@ include::{snippets}/api/v1/vote/findAllFriendVotes/http-response.adoc[]
 
 === NOTE
 
-- 모든 종류의 쪽지를 조회할 때 `/api/v1/vote/friend?page=0` 으로 요청해주세요
-* `type=` 을 명시하지 마세요
-- 내가 보낸 쪽지를 조회할 때 `/api/v1/vote/friend?page=0&type=send` 으로 요청해주세요
-- `senderGender` 필드가 다른 API와 일관되지 못한점 미안해요
+- 최신버전 v2를 확인해주세요
 
 === CHANGELOG
 
-- 2024.01.09 `type` 명세 업데이트
+- 2024.01.09 `type` 최신버전 확인 바람

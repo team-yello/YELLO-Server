@@ -4,6 +4,8 @@ import com.yello.server.domain.friend.entity.Friend;
 import com.yello.server.domain.friend.repository.FriendRepository;
 import com.yello.server.domain.group.entity.UserGroup;
 import com.yello.server.domain.group.entity.UserGroupType;
+import com.yello.server.domain.notice.entity.Notice;
+import com.yello.server.domain.notice.repository.NoticeRepository;
 import com.yello.server.domain.purchase.entity.Gateway;
 import com.yello.server.domain.purchase.entity.ProductType;
 import com.yello.server.domain.purchase.entity.Purchase;
@@ -21,6 +23,8 @@ import com.yello.server.domain.user.repository.UserRepository;
 import com.yello.server.domain.vote.entity.Vote;
 import com.yello.server.domain.vote.repository.VoteRepository;
 import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.time.ZonedDateTime;
 
 public class TestDataRepositoryUtil implements TestDataUtil {
 
@@ -30,17 +34,19 @@ public class TestDataRepositoryUtil implements TestDataUtil {
     private final QuestionRepository questionRepository;
     private final UserRepository userRepository;
     private final VoteRepository voteRepository;
+    private final NoticeRepository noticeRepository;
 
     public TestDataRepositoryUtil(UserRepository userRepository, VoteRepository voteRepository,
         QuestionRepository questionRepository,
         FriendRepository friendRepository, QuestionGroupTypeRepository questionGroupTypeRepository,
-        PurchaseRepository purchaseRepository) {
+        PurchaseRepository purchaseRepository, NoticeRepository noticeRepository) {
         this.userRepository = userRepository;
         this.voteRepository = voteRepository;
         this.questionRepository = questionRepository;
         this.friendRepository = friendRepository;
         this.questionGroupTypeRepository = questionGroupTypeRepository;
         this.purchaseRepository = purchaseRepository;
+        this.noticeRepository = noticeRepository;
     }
 
     @Override
@@ -163,5 +169,21 @@ public class TestDataRepositoryUtil implements TestDataUtil {
                 .updatedAt(LocalDateTime.now())
                 .build()
         );
+    }
+
+    @Override
+    public Notice genereateNotice(long index) {
+        ZoneId zoneId = ZoneId.of("Asia/Seoul");
+        ZonedDateTime now = ZonedDateTime.now(zoneId);
+        return noticeRepository.save(Notice.builder()
+            .id(index)
+            .endDate(now.plusDays(3))
+            .imageUrl("imageUrl")
+            .startDate(now.minusDays(3))
+            .redirectUrl("redirectUrl")
+            .isAvailable(true)
+            .type("event")
+            .title("notice title")
+            .build());
     }
 }
