@@ -104,4 +104,4 @@
 
 === Notice API
 
-* 🆕 link:find-notice.html[공지 조회, 2024-01-26]
+* 🆕 link:find-notice.html[공지 조회, 2024-01-29]
