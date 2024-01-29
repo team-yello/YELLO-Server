@@ -41,8 +41,8 @@ public class Notice extends AuditingTimeEntity {
     private Boolean isAvailable;
 
     @Column(nullable = false)
-    @Convert(converter = TypeConverter.class)
-    private String type;
+    @Convert(converter = NoticeTypeConverter.class)
+    private NoticeType tag;
 
     @Column(nullable = false)
     private String title;
