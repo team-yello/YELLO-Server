@@ -447,10 +447,32 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <h3 id="_요청">요청</h3>
 <div class="listingblock">
 <div class="content">
-<pre class="highlight nowrap"><code class="language-http" data-lang="http">GET /api/v1/notice HTTP/1.1
+<pre class="highlight nowrap"><code class="language-http" data-lang="http">GET /api/v1/notice/NOTICE HTTP/1.1
 Authorization: Bearer your-access-token</code></pre>
 </div>
 </div>
+</div>
+<div class="sect2">
+<h3 id="_요청_파라미터">요청 파라미터</h3>
+<table class="tableblock frame-all grid-all stretch">
+<caption class="title">Table 1. /api/v1/notice/{tag}</caption>
+<colgroup>
+<col style="width: 50%;">
+<col style="width: 50%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Parameter</th>
+<th class="tableblock halign-left valign-top">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>tag</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">공지의 종류</p></td>
+</tr>
+</tbody>
+</table>
 </div>
 <div class="sect2">
 <h3 id="_응답">응답</h3>
@@ -468,72 +490,22 @@ Content-Type: application/json
   "data" : {
     "imageUrl" : "imageUrl",
     "redirectUrl" : "redirectUrl",
-    "startDate" : "2024-01-24",
-    "endDate" : "2024-01-30",
+    "startDate" : "2024-01-26",
+    "endDate" : "2024-02-01",
     "isAvailable" : true,
-    "type" : "event",
+    "type" : "NOTICE",
     "title" : "notice title"
   }
 }</code></pre>
 </div>
 </div>
 <div class="paragraph">
-<p><strong>필드 타입</strong></p>
+<p><strong>path variable</strong></p>
 </div>
 <div class="ulist">
 <ul>
 <li>
-<p>"imageUrl": String</p>
-<div class="ulist">
-<ul>
-<li>
-<p>공지로 보여줄 이미지 URL입니다.</p>
-</li>
-</ul>
-</div>
-</li>
-<li>
-<p>"redirectUrl: String</p>
-<div class="ulist">
-<ul>
-<li>
-<p>클릭시 이동할 웹 URL입니다.</p>
-</li>
-</ul>
-</div>
-</li>
-<li>
-<p>"startDate": String(10)</p>
-<div class="ulist">
-<ul>
-<li>
-<p>YYYY-MM-DD (ISO-8601)</p>
-</li>
-</ul>
-</div>
-</li>
-<li>
-<p>"endDate": String(10)</p>
-<div class="ulist">
-<ul>
-<li>
-<p>YYYY-MM-DD (ISO-8601)</p>
-</li>
-</ul>
-</div>
-</li>
-<li>
-<p>"isAvailable": Boolean</p>
-</li>
-<li>
-<p>"type" : String</p>
-<div class="ulist">
-<ul>
-<li>
-<p>ENUM 값 &#8594; "NOTICE" | "BANNER"</p>
-</li>
-</ul>
-</div>
+<p>tag(ENUM 값) &#8594; "NOTICE" | "BANNER"</p>
 </li>
 </ul>
 </div>
@@ -590,6 +562,9 @@ Content-Type: application/json
 <h3 id="_changelog">CHANGELOG</h3>
 <div class="ulist">
 <ul>
+<li>
+<p>2024.01.29 API tag 추가 및 수정</p>
+</li>
 <li>
 <p>2024.01.26 API 릴리즈</p>
 </li>
