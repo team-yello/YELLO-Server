@@ -1,5 +1,6 @@
 package com.yello.server.domain.user.service;
 
+import static com.yello.server.domain.user.entity.UserDataType.*;
 import static com.yello.server.global.common.ErrorCode.DEVICE_TOKEN_CONFLICT_USER_EXCEPTION;
 
 import com.yello.server.domain.admin.repository.UserAdminRepository;
@@ -10,13 +11,17 @@ import com.yello.server.domain.friend.repository.FriendRepository;
 import com.yello.server.domain.group.repository.UserGroupRepository;
 import com.yello.server.domain.purchase.entity.Purchase;
 import com.yello.server.domain.purchase.repository.PurchaseRepository;
+import com.yello.server.domain.user.dto.request.UserDeleteReasonRequest;
 import com.yello.server.domain.user.dto.request.UserDeviceTokenRequest;
 import com.yello.server.domain.user.dto.response.UserDetailResponse;
 import com.yello.server.domain.user.dto.response.UserDetailV2Response;
 import com.yello.server.domain.user.dto.response.UserResponse;
 import com.yello.server.domain.user.dto.response.UserSubscribeDetailResponse;
 import com.yello.server.domain.user.entity.User;
+import com.yello.server.domain.user.entity.UserData;
+import com.yello.server.domain.user.entity.UserDataType;
 import com.yello.server.domain.user.exception.UserConflictException;
+import com.yello.server.domain.user.repository.UserDataRepository;
 import com.yello.server.domain.user.repository.UserRepository;
 import com.yello.server.domain.vote.repository.VoteRepository;
 import com.yello.server.global.common.dto.EmptyObject;
@@ -40,6 +45,7 @@ public class UserService {
     private final UserGroupRepository userGroupRepository;
     private final UserRepository userRepository;
     private final VoteRepository voteRepository;
+    private final UserDataRepository userDataRepository;
 
     public UserDetailResponse findMyProfile(Long userId) {
         final User user = userRepository.getById(userId);
@@ -97,5 +103,23 @@ public class UserService {
         final Purchase purchase = purchaseRepository.getTopByStateAndUserId(user);
 
         return UserSubscribeDetailResponse.of(purchase);
+    }
+
+    @Transactional
+    public void deleteUserWithReason(Long userId, UserDeleteReasonRequest request) {
+        final User target = userRepository.getById(userId);
+        target.delete();
+
+        friendRepository.findAllByUserId(target.getId())
+            .forEach(Friend::delete);
+
+        friendRepository.findAllByTargetId(target.getId())
+            .forEach(Friend::delete);
+
+        cooldownRepository.findByUserId(target.getId())
+            .ifPresent(Cooldown::delete);
+
+        userDataRepository.save(UserData.of(WITHDRAW_REASON, request.value(), target));
+
     }
 }
