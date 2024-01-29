@@ -68,6 +68,7 @@ public class ConstantUtil {
     public static final int SUBSCRIBE_DAYS = 7;
     public static final int PLUS_BASIC_TIME = 0;
     public static final String USER_VOTE_TYPE = "send";
+    public static final String ALL_VOTE_TYPE = "all";
 
 
     private ConstantUtil() {

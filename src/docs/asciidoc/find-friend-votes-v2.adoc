@@ -48,6 +48,19 @@ include::{snippets}/api/v2/vote/friend/http-response.adoc[]
 * "keyword": String
 * "keywordFoot": String
 
+
+=== Excpetion
+
+- 잘못된 type을 queryString에 보내는 경우
+
+[http,json]
+----
+{
+    "status": 403,
+    "message": "[VoteForbiddenException] 잘못된 투표 유형입니다."
+}
+----
+
 === NOTE
 
 - 모든 종류의 쪽지를 조회할 때 `/api/v1/vote/friend?page=0&type=null` 으로 요청해주세요

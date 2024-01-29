@@ -64,6 +64,7 @@ public enum ErrorCode {
         "유효하지 않는 Google OAuth 2.0 refreshToken입니다. DBA에게 문의해주세요."),
     GOOGLE_SUBSCRIPTIONS_FORBIDDEN_EXCEPTION(FORBIDDEN, "이미 YELLO: PLUS를 구독한 상태입니다."),
     GOOGLE_SUBSCRIPTION_TRANSACTION_EXPIRED_EXCEPTION(FORBIDDEN, "이미 만료된 결제 내역의 영수증입니다."),
+    WRONG_VOTE_TYPE_FORBIDDEN(FORBIDDEN, "잘못된 투표 유형입니다."),
 
     /**
      * 404 NOT FOUND

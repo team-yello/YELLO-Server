@@ -5,7 +5,9 @@ import static com.yello.server.domain.vote.service.VoteManagerImpl.GREETING_NAME
 import static com.yello.server.global.common.ErrorCode.LACK_TICKET_COUNT_EXCEPTION;
 import static com.yello.server.global.common.ErrorCode.LACK_USER_EXCEPTION;
 import static com.yello.server.global.common.ErrorCode.REVEAL_FULL_NAME_VOTE_EXCEPTION;
+import static com.yello.server.global.common.ErrorCode.WRONG_VOTE_TYPE_FORBIDDEN;
 import static com.yello.server.global.common.factory.TimeFactory.minusTime;
+import static com.yello.server.global.common.util.ConstantUtil.ALL_VOTE_TYPE;
 import static com.yello.server.global.common.util.ConstantUtil.CHECK_FULL_NAME;
 import static com.yello.server.global.common.util.ConstantUtil.COOL_DOWN_TIME;
 import static com.yello.server.global.common.util.ConstantUtil.MINUS_TICKET_COUNT;
@@ -44,6 +46,7 @@ import com.yello.server.domain.vote.entity.Vote;
 import com.yello.server.domain.vote.exception.VoteForbiddenException;
 import com.yello.server.domain.vote.exception.VoteNotFoundException;
 import com.yello.server.domain.vote.repository.VoteRepository;
+import com.yello.server.global.common.ErrorCode;
 import com.yello.server.infrastructure.rabbitmq.service.ProducerService;
 import java.time.LocalDateTime;
 import java.util.List;
@@ -129,14 +132,17 @@ public class VoteService {
                     .toList();
             return VoteFriendAndUserResponse.of(totalCount,list);
         }
+        if(type.equals(ALL_VOTE_TYPE)) {
+            final Long totalCount = Long.valueOf(voteRepository.countAllReceivedByFriends(userId));
+            final List<VoteFriendAndUserVO> list = voteRepository.findAllReceivedByFriends(userId, pageable)
+                .stream()
+                .filter(vote -> vote.getNameHint()!=-3)
+                .map(vote -> VoteFriendAndUserVO.of(vote, vote.getSender().getId().equals(userId)))
+                .toList();
+            return VoteFriendAndUserResponse.of(totalCount, list);
+        }
 
-        final Long totalCount = Long.valueOf(voteRepository.countAllReceivedByFriends(userId));
-        final List<VoteFriendAndUserVO> list = voteRepository.findAllReceivedByFriends(userId, pageable)
-            .stream()
-            .filter(vote -> vote.getNameHint()!=-3)
-            .map(vote -> VoteFriendAndUserVO.of(vote, vote.getSender().getId().equals(userId)))
-            .toList();
-        return VoteFriendAndUserResponse.of(totalCount, list);
+        throw new VoteForbiddenException(WRONG_VOTE_TYPE_FORBIDDEN);
     }
 
     @Transactional
