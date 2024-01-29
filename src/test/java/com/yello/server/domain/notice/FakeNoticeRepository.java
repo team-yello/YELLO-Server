@@ -1,6 +1,7 @@
 package com.yello.server.domain.notice;
 
 import com.yello.server.domain.notice.entity.Notice;
+import com.yello.server.domain.notice.entity.NoticeType;
 import com.yello.server.domain.notice.repository.NoticeRepository;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
@@ -15,7 +16,7 @@ public class FakeNoticeRepository implements NoticeRepository {
     private Long id = 0L;
 
     @Override
-    public Optional<Notice> findTopNotice() {
+    public Optional<Notice> findTopNotice(NoticeType tag) {
         ZoneId zoneId = ZoneId.of("Asia/Seoul");
         ZonedDateTime now = ZonedDateTime.now(zoneId);
 
@@ -23,7 +24,8 @@ public class FakeNoticeRepository implements NoticeRepository {
             .filter(notice ->
                 notice.getIsAvailable().equals(true) &&
                     !notice.getStartDate().isAfter(now) &&
-                    !notice.getEndDate().isBefore(now)
+                    !notice.getEndDate().isBefore(now) &&
+                        notice.getTag().equals(tag)
             )
             .sorted(Comparator.comparing(Notice::getEndDate).reversed())
             .findFirst();

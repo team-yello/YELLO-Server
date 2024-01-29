@@ -9,6 +9,7 @@ import com.yello.server.domain.group.entity.UserGroupType;
 import com.yello.server.domain.notice.FakeNoticeRepository;
 import com.yello.server.domain.notice.dto.NoticeDataResponse;
 import com.yello.server.domain.notice.entity.Notice;
+import com.yello.server.domain.notice.entity.NoticeType;
 import com.yello.server.domain.notice.repository.NoticeRepository;
 import com.yello.server.domain.notice.service.NoticeService;
 import com.yello.server.domain.purchase.FakePurchaseRepository;
@@ -74,9 +75,10 @@ public class NoticeServiceTest {
     void 공지_조회에_성공합니다() {
         // given
         final Long userId = 1L;
+        final NoticeType tag = NoticeType.NOTICE;
 
         // when
-        final NoticeDataResponse notice = noticeService.findNotice(userId);
+        final NoticeDataResponse notice = noticeService.findNotice(userId, tag);
 
         // then
         assertThat(notice.isAvailable()).isTrue();

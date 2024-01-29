@@ -2,10 +2,13 @@ package com.yello.server.domain.notice.medium;
 
 
 import static org.mockito.ArgumentMatchers.anyLong;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.BDDMockito.given;
 import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document;
 import static org.springframework.restdocs.operation.preprocess.Preprocessors.prettyPrint;
 import static org.springframework.restdocs.operation.preprocess.Preprocessors.removeHeaders;
+import static org.springframework.restdocs.request.RequestDocumentation.parameterWithName;
+import static org.springframework.restdocs.request.RequestDocumentation.pathParameters;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -15,6 +18,7 @@ import com.yello.server.domain.group.entity.UserGroupType;
 import com.yello.server.domain.notice.controller.NoticeController;
 import com.yello.server.domain.notice.dto.NoticeDataResponse;
 import com.yello.server.domain.notice.entity.Notice;
+import com.yello.server.domain.notice.entity.NoticeType;
 import com.yello.server.domain.notice.service.NoticeService;
 import com.yello.server.domain.purchase.controller.PurchaseController;
 import com.yello.server.domain.user.entity.User;
@@ -81,21 +85,22 @@ public class NoticeControllerTest {
     void 공지_조회하기_검증에_성공합니다() throws Exception {
         // given
         final NoticeDataResponse noticeDataResponse = NoticeDataResponse.of(notice, true);
-
-        given(noticeService.findNotice(anyLong()))
+        NoticeType tag = NoticeType.NOTICE;
+        given(noticeService.findNotice(anyLong(), eq(tag)))
             .willReturn(noticeDataResponse);
 
         // when
         // then
         mockMvc.perform(RestDocumentationRequestBuilders
-                .get("/api/v1/notice")
+                .get("/api/v1/notice/{tag}", "NOTICE")
                 .header(HttpHeaders.AUTHORIZATION, "Bearer your-access-token"))
             .andDo(print())
             .andDo(document("api/v1/notice",
                 Preprocessors.preprocessRequest(prettyPrint(),
                     removeHeaders(excludeRequestHeaders)),
                 Preprocessors.preprocessResponse(prettyPrint(),
-                    removeHeaders(excludeResponseHeaders)))
+                    removeHeaders(excludeResponseHeaders)),
+                    pathParameters(parameterWithName("tag").description("공지의 종류")))
             )
             .andExpect(MockMvcResultMatchers.status().isOk());
     }
