@@ -4,6 +4,7 @@ import com.yello.server.domain.friend.entity.Friend;
 import com.yello.server.domain.group.entity.UserGroup;
 import com.yello.server.domain.group.entity.UserGroupType;
 import com.yello.server.domain.notice.entity.Notice;
+import com.yello.server.domain.notice.entity.NoticeType;
 import com.yello.server.domain.purchase.entity.Gateway;
 import com.yello.server.domain.purchase.entity.ProductType;
 import com.yello.server.domain.purchase.entity.Purchase;
@@ -122,9 +123,9 @@ public class TestDataEntityUtil implements TestDataUtil {
     @Override
     public QuestionGroupType generateQuestionGroupType(long index, Question question) {
         return QuestionGroupType.builder()
-                .userGroupType(UserGroupType.UNIVERSITY)
-                .question(question)
-                .build();
+            .userGroupType(UserGroupType.UNIVERSITY)
+            .question(question)
+            .build();
     }
 
     @Override
@@ -153,7 +154,7 @@ public class TestDataEntityUtil implements TestDataUtil {
             .startDate(now.minusDays(3))
             .redirectUrl("redirectUrl")
             .isAvailable(true)
-            .type("event")
+            .tag(NoticeType.NOTICE)
             .title("notice title")
             .build();
     }

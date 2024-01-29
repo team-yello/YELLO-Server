@@ -5,6 +5,7 @@ import com.yello.server.domain.friend.repository.FriendRepository;
 import com.yello.server.domain.group.entity.UserGroup;
 import com.yello.server.domain.group.entity.UserGroupType;
 import com.yello.server.domain.notice.entity.Notice;
+import com.yello.server.domain.notice.entity.NoticeType;
 import com.yello.server.domain.notice.repository.NoticeRepository;
 import com.yello.server.domain.purchase.entity.Gateway;
 import com.yello.server.domain.purchase.entity.ProductType;
@@ -29,12 +30,12 @@ import java.time.ZonedDateTime;
 public class TestDataRepositoryUtil implements TestDataUtil {
 
     private final FriendRepository friendRepository;
+    private final NoticeRepository noticeRepository;
     private final PurchaseRepository purchaseRepository;
     private final QuestionGroupTypeRepository questionGroupTypeRepository;
     private final QuestionRepository questionRepository;
     private final UserRepository userRepository;
     private final VoteRepository voteRepository;
-    private final NoticeRepository noticeRepository;
 
     public TestDataRepositoryUtil(UserRepository userRepository, VoteRepository voteRepository,
         QuestionRepository questionRepository,
@@ -182,7 +183,7 @@ public class TestDataRepositoryUtil implements TestDataUtil {
             .startDate(now.minusDays(3))
             .redirectUrl("redirectUrl")
             .isAvailable(true)
-            .type("event")
+            .tag(NoticeType.NOTICE)
             .title("notice title")
             .build());
     }

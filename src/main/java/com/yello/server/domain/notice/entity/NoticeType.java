@@ -7,14 +7,14 @@ import lombok.RequiredArgsConstructor;
 
 @Getter
 @RequiredArgsConstructor
-public enum Type {
+public enum NoticeType {
     NOTICE("NOTICE"),
     BANNER("BANNER");
 
     private final String intial;
 
-    public static Type fromCode(String dbData) {
-        return Arrays.stream(Type.values())
+    public static NoticeType fromCode(String dbData) {
+        return Arrays.stream(NoticeType.values())
             .filter(v -> v.getIntial().equals(dbData))
             .findAny()
             .orElseThrow(() -> new IllegalArgumentException(
