@@ -23,13 +23,13 @@ public class NoticeService {
     private final NoticeRepository noticeRepository;
     private final UserRepository userRepository;
 
-    public NoticeDataResponse findNotice(Long userId) {
+    public NoticeDataResponse findNotice(Long userId, NoticeType tag) {
         ZoneId zoneId = ZoneId.of("Asia/Seoul");
         ZonedDateTime now = ZonedDateTime.now(zoneId);
         userRepository.findById(userId);
         Notice noticeData =
             noticeRepository.findTopNotice().orElseGet(
-                () -> Notice.builder().imageUrl("").redirectUrl("").title("").tag(NoticeType.NOTICE).endDate(now)
+                () -> Notice.builder().imageUrl("").redirectUrl("").title("").tag(tag).endDate(now)
                     .startDate(now).isAvailable(false).build());
         return NoticeDataResponse.of(noticeData,
             compareNowAndEndData(noticeData.getEndDate()) && noticeData.getIsAvailable());
