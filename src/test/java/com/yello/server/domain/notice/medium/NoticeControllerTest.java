@@ -2,10 +2,13 @@ package com.yello.server.domain.notice.medium;
 
 
 import static org.mockito.ArgumentMatchers.anyLong;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.BDDMockito.given;
 import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document;
 import static org.springframework.restdocs.operation.preprocess.Preprocessors.prettyPrint;
 import static org.springframework.restdocs.operation.preprocess.Preprocessors.removeHeaders;
+import static org.springframework.restdocs.request.RequestDocumentation.parameterWithName;
+import static org.springframework.restdocs.request.RequestDocumentation.pathParameters;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -83,20 +86,21 @@ public class NoticeControllerTest {
         // given
         final NoticeDataResponse noticeDataResponse = NoticeDataResponse.of(notice, true);
         NoticeType tag = NoticeType.NOTICE;
-        given(noticeService.findNotice(anyLong(), tag))
+        given(noticeService.findNotice(anyLong(), eq(tag)))
             .willReturn(noticeDataResponse);
 
         // when
         // then
         mockMvc.perform(RestDocumentationRequestBuilders
-                .get("/api/v1/notice")
+                .get("/api/v1/notice/{tag}", "NOTICE")
                 .header(HttpHeaders.AUTHORIZATION, "Bearer your-access-token"))
             .andDo(print())
             .andDo(document("api/v1/notice",
                 Preprocessors.preprocessRequest(prettyPrint(),
                     removeHeaders(excludeRequestHeaders)),
                 Preprocessors.preprocessResponse(prettyPrint(),
-                    removeHeaders(excludeResponseHeaders)))
+                    removeHeaders(excludeResponseHeaders)),
+                    pathParameters(parameterWithName("tag").description("공지의 종류")))
             )
             .andExpect(MockMvcResultMatchers.status().isOk());
     }

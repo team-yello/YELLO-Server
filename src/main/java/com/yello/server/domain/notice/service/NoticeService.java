@@ -28,7 +28,7 @@ public class NoticeService {
         ZonedDateTime now = ZonedDateTime.now(zoneId);
         userRepository.findById(userId);
         Notice noticeData =
-            noticeRepository.findTopNotice().orElseGet(
+            noticeRepository.findTopNotice(tag).orElseGet(
                 () -> Notice.builder().imageUrl("").redirectUrl("").title("").tag(tag).endDate(now)
                     .startDate(now).isAvailable(false).build());
         return NoticeDataResponse.of(noticeData,
