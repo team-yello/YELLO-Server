@@ -21,7 +21,7 @@ include::{snippets}/api/v1/notice/http-response.adoc[]
 * YYYY-MM-DD (ISO-8601)
 - "isAvailable": Boolean
 - "type" : String
-* ENUM 값 -> "NOTICE" | "BANNER"
+* tag(ENUM 값) -> "NOTICE" | "BANNER"
 
 
 === 주의
