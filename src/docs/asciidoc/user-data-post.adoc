@@ -1,40 +1,20 @@
 :reproducible:
-== 탈퇴 사유 저장 (명세)
+== 탈퇴 & 사유 저장 v2
 
 === 요청
 
-[http]
-----
-POST /api/v1/user/data/withdraw-reason HTTP/1.1
-Authorization: Bearer your-access-token
-Content-Type: application-json
-
-{
-    "value": "오류가 많아서"
-}
-----
-
-*필드 타입*
-
-- "tag": "withdraw-reason" | "account-update-at" | "recommended"
-- "value": String
-* withdraw-reason 자리가 ENUM으로 대체될 예정입니다.
+include::{snippets}/api/v2/user/http-request.adoc[]
 
 === 응답
 
-[http,json]
-----
-HTTP/1.1 200 OK
-Vary: Origin
-Vary: Access-Control-Request-Method
-Vary: Access-Control-Request-Headers
-Content-Type: application/json
+include::{snippets}/api/v2/user/http-response.adoc[]
 
-{
-  "status" : 200,
-  "message" : "탈퇴 사유 정보 저장에 성공하였습니다."
-}
-----
+
+*필드 타입*
+
+- "value": String
+* value는 탈퇴 사유를 보내주시면 됩니다.
+
 
 *필드 타입*
 
@@ -46,4 +26,5 @@ Content-Type: application/json
 
 === CHANGELOG
 
+- 2024.01.27 API 릴리즈
 - 2024.01.09 명세 작성
