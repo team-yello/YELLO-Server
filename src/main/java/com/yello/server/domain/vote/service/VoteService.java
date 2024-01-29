@@ -11,6 +11,7 @@ import static com.yello.server.global.common.util.ConstantUtil.COOL_DOWN_TIME;
 import static com.yello.server.global.common.util.ConstantUtil.MINUS_TICKET_COUNT;
 import static com.yello.server.global.common.util.ConstantUtil.NO_FRIEND_COUNT;
 import static com.yello.server.global.common.util.ConstantUtil.RANDOM_COUNT;
+import static com.yello.server.global.common.util.ConstantUtil.USER_VOTE_TYPE;
 
 import com.yello.server.domain.cooldown.entity.Cooldown;
 import com.yello.server.domain.cooldown.repository.CooldownRepository;
@@ -32,6 +33,8 @@ import com.yello.server.domain.vote.dto.response.VoteAvailableResponse;
 import com.yello.server.domain.vote.dto.response.VoteCountVO;
 import com.yello.server.domain.vote.dto.response.VoteCreateVO;
 import com.yello.server.domain.vote.dto.response.VoteDetailResponse;
+import com.yello.server.domain.vote.dto.response.VoteFriendAndUserResponse;
+import com.yello.server.domain.vote.dto.response.VoteFriendAndUserVO;
 import com.yello.server.domain.vote.dto.response.VoteFriendResponse;
 import com.yello.server.domain.vote.dto.response.VoteFriendVO;
 import com.yello.server.domain.vote.dto.response.VoteListResponse;
@@ -111,6 +114,29 @@ public class VoteService {
             .map(VoteFriendVO::of)
             .toList();
         return VoteFriendResponse.of(totalCount, list);
+    }
+
+    public VoteFriendAndUserResponse findAllFriendVotesWithType(Long userId, Pageable pageable, String type) {
+
+        if(type.equals(USER_VOTE_TYPE)) {
+            final Long totalCount = voteRepository.countUserSendReceivedByFriends(userId);
+
+            List<VoteFriendAndUserVO> list =
+                voteRepository.findUserSendReceivedByFriends(userId, pageable)
+                    .stream()
+                    .filter(vote -> vote.getNameHint()!=-3)
+                    .map(vote -> VoteFriendAndUserVO.of(vote, vote.getSender().getId().equals(userId)))
+                    .toList();
+            return VoteFriendAndUserResponse.of(totalCount,list);
+        }
+
+        final Long totalCount = Long.valueOf(voteRepository.countAllReceivedByFriends(userId));
+        final List<VoteFriendAndUserVO> list = voteRepository.findAllReceivedByFriends(userId, pageable)
+            .stream()
+            .filter(vote -> vote.getNameHint()!=-3)
+            .map(vote -> VoteFriendAndUserVO.of(vote, vote.getSender().getId().equals(userId)))
+            .toList();
+        return VoteFriendAndUserResponse.of(totalCount, list);
     }
 
     @Transactional
