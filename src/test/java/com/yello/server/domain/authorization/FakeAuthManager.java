@@ -55,9 +55,9 @@ public class FakeAuthManager implements AuthManager {
 
     @Override
     public ServiceTokenVO issueToken(User user) {
-        final List<AdminConfiguration> accessTokenTime = adminConfigurationRepository.getConfigurations(
+        final List<AdminConfiguration> accessTokenTime = adminConfigurationRepository.findConfigurations(
             AdminConfigurationType.ACCESS_TOKEN_TIME);
-        final List<AdminConfiguration> refreshTokenTime = adminConfigurationRepository.getConfigurations(
+        final List<AdminConfiguration> refreshTokenTime = adminConfigurationRepository.findConfigurations(
             AdminConfigurationType.REFRESH_TOKEN_TIME);
 
         if (accessTokenTime.isEmpty() || refreshTokenTime.isEmpty()) {
@@ -87,7 +87,7 @@ public class FakeAuthManager implements AuthManager {
     public String issueNewAccessToken(String refreshToken) {
         final Long userId = tokenProvider.getUserId(refreshToken);
         final String uuid = tokenProvider.getUserUuid(refreshToken);
-        final List<AdminConfiguration> accessTokenTime = adminConfigurationRepository.getConfigurations(
+        final List<AdminConfiguration> accessTokenTime = adminConfigurationRepository.findConfigurations(
             AdminConfigurationType.ACCESS_TOKEN_TIME);
 
         userRepository.getById(userId);

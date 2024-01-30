@@ -27,7 +27,7 @@ public class FakeAdminConfigurationRepository implements AdminConfigurationRepos
     }
 
     @Override
-    public List<AdminConfiguration> getConfigurations(AdminConfigurationType tag) {
+    public List<AdminConfiguration> findConfigurations(AdminConfigurationType tag) {
         return data.stream()
             .filter(adminConfiguration -> adminConfiguration.getTag().equals(tag))
             .toList();
@@ -35,7 +35,7 @@ public class FakeAdminConfigurationRepository implements AdminConfigurationRepos
 
     @Override
     public void setConfigurations(AdminConfigurationType tag, String value) {
-        final List<AdminConfiguration> configurations = getConfigurations(tag);
+        final List<AdminConfiguration> configurations = findConfigurations(tag);
 
         if (configurations.isEmpty()) {
             jpaSave(AdminConfiguration.builder()
@@ -48,7 +48,7 @@ public class FakeAdminConfigurationRepository implements AdminConfigurationRepos
 
         for (int i = 0; i < configurations.size(); i++) {
             final AdminConfiguration configuration = data.get(i);
-            
+
             if (configuration.getTag().equals(tag)) {
                 data.set(i,
                     AdminConfiguration.builder()

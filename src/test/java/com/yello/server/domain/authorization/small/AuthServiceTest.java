@@ -62,8 +62,6 @@ import com.yello.server.infrastructure.firebase.service.NotificationFcmService;
 import com.yello.server.infrastructure.firebase.service.NotificationService;
 import com.yello.server.infrastructure.rabbitmq.FakeMessageQueueRepository;
 import com.yello.server.infrastructure.rabbitmq.repository.MessageQueueRepository;
-import com.yello.server.infrastructure.redis.FakeTokenRepository;
-import com.yello.server.infrastructure.redis.repository.TokenRepository;
 import com.yello.server.util.TestDataRepositoryUtil;
 import java.util.ArrayList;
 import java.util.Base64;
@@ -95,7 +93,6 @@ public class AuthServiceTest {
     private final String secretKey = Base64.getEncoder().encodeToString(
         "keyForTestkeyForTestkeyForTestkeyForTestkeyForTestkeyForTestkeyForTestkeyForTestkeyForTest".getBytes());
     private final TokenProvider tokenProvider = new TokenJwtProvider(secretKey);
-    private final TokenRepository tokenRepository = new FakeTokenRepository();
     private final UserGroupRepository userGroupRepository = new FakeUserGroupRepository();
     private final UserRepository userRepository = new FakeUserRepository(friendRepository);
     private final UserManager userManager = new FakeUserManager(userRepository);

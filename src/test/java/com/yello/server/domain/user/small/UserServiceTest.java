@@ -29,8 +29,6 @@ import com.yello.server.domain.user.repository.UserRepository;
 import com.yello.server.domain.user.service.UserService;
 import com.yello.server.domain.vote.FakeVoteRepository;
 import com.yello.server.domain.vote.repository.VoteRepository;
-import com.yello.server.infrastructure.redis.FakeTokenRepository;
-import com.yello.server.infrastructure.redis.repository.TokenRepository;
 import com.yello.server.util.TestDataRepositoryUtil;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
@@ -52,7 +50,6 @@ class UserServiceTest {
     private final QuestionRepository questionRepository = new FakeQuestionRepository();
     private final QuestionGroupTypeRepository
         questionGroupTypeRepository = new FakeQuestionGroupTypeRepository(questionRepository);
-    private final TokenRepository tokenRepository = new FakeTokenRepository();
     private final UserRepository userRepository = new FakeUserRepository(friendRepository);
     private final VoteRepository voteRepository = new FakeVoteRepository();
     private final TestDataRepositoryUtil testDataUtil = new TestDataRepositoryUtil(

@@ -32,8 +32,6 @@ import com.yello.server.domain.user.entity.User;
 import com.yello.server.domain.user.repository.UserRepository;
 import com.yello.server.domain.vote.FakeVoteRepository;
 import com.yello.server.domain.vote.repository.VoteRepository;
-import com.yello.server.infrastructure.redis.FakeTokenRepository;
-import com.yello.server.infrastructure.redis.repository.TokenRepository;
 import com.yello.server.util.TestDataRepositoryUtil;
 import java.util.Base64;
 import org.junit.jupiter.api.BeforeEach;
@@ -57,7 +55,6 @@ public class AuthManagerTest {
     private final String secretKey = Base64.getEncoder().encodeToString(
         "keyForTestkeyForTestkeyForTestkeyForTestkeyForTestkeyForTestkeyForTestkeyForTestkeyForTest".getBytes());
     private final TokenProvider tokenProvider = new TokenJwtProvider(secretKey);
-    private final TokenRepository tokenRepository = new FakeTokenRepository();
     private final UserRepository userRepository = new FakeUserRepository(friendRepository);
     private final VoteRepository voteRepository = new FakeVoteRepository();
     private final TestDataRepositoryUtil testDataUtil = new TestDataRepositoryUtil(

@@ -17,8 +17,6 @@ import com.yello.server.domain.vote.entity.Vote;
 import com.yello.server.infrastructure.firebase.manager.FCMManager;
 import com.yello.server.infrastructure.firebase.service.NotificationFcmService;
 import com.yello.server.infrastructure.firebase.service.NotificationService;
-import com.yello.server.infrastructure.redis.FakeTokenRepository;
-import com.yello.server.infrastructure.redis.repository.TokenRepository;
 import java.time.LocalDateTime;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -32,7 +30,6 @@ class NotificationFcmServiceTest {
 
     private final FCMManager fcmManager = new FakeFcmManger();
     private final FriendRepository friendRepository = new FakeFriendRepository();
-    private final TokenRepository tokenRepository = new FakeTokenRepository();
     private final UserRepository userRepository = new FakeUserRepository(friendRepository);
     private NotificationService notificationService;
 
