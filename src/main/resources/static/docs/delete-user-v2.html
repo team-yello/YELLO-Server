@@ -5,7 +5,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="generator" content="Asciidoctor 2.0.10">
-<title>유저 기타 정보 저장 (명세)</title>
+<title>탈퇴 &amp; 사유 저장 v2</title>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Open+Sans:300,300italic,400,400italic,600,600italic%7CNoto+Serif:400,400italic,700,700italic%7CDroid+Sans+Mono:400,700">
 <style>
 /* Asciidoctor default stylesheet | MIT License | https://asciidoctor.org */
@@ -441,19 +441,37 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 </div>
 <div id="content">
 <div class="sect1">
-<h2 id="_유저_기타_정보_저장_명세">유저 기타 정보 저장 (명세)</h2>
+<h2 id="_탈퇴_사유_저장_v2">탈퇴 &amp; 사유 저장 v2</h2>
 <div class="sectionbody">
 <div class="sect2">
 <h3 id="_요청">요청</h3>
 <div class="listingblock">
 <div class="content">
-<pre>POST /api/v1/user/data/recommended HTTP/1.1
+<pre class="highlight nowrap"><code class="language-http" data-lang="http">DELETE /api/v2/user HTTP/1.1
+Content-Type: application/json;charset=UTF-8
 Authorization: Bearer your-access-token
-Content-Type: application-json
+Content-Length: 37
 
 {
-    "value": "true"
-}</pre>
+  "value" : "오류가 많아서"
+}</code></pre>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_응답">응답</h3>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight nowrap"><code class="language-http" data-lang="http">HTTP/1.1 200 OK
+Vary: Origin
+Vary: Access-Control-Request-Method
+Vary: Access-Control-Request-Headers
+Content-Type: application/json
+
+{
+  "status" : 200,
+  "message" : "유저 탈퇴에 성공했습니다."
+}</code></pre>
 </div>
 </div>
 <div class="paragraph">
@@ -462,36 +480,19 @@ Content-Type: application-json
 <div class="ulist">
 <ul>
 <li>
-<p>"tag": "withdraw-reason" | "account-update-at" | "recommended"</p>
+<p>"value": String</p>
 <div class="ulist">
 <ul>
 <li>
-<p>withdraw-reason 자리가 ENUM으로 대체될 예정입니다.</p>
+<p>value는 탈퇴 사유를 보내주시면 됩니다.</p>
 </li>
 </ul>
 </div>
 </li>
-<li>
-<p>"value": String</p>
-</li>
 </ul>
 </div>
-</div>
-<div class="sect2">
-<h3 id="_응답">응답</h3>
-<div class="listingblock">
-<div class="content">
-<pre>HTTP/1.1 200 OK
-Vary: Origin
-Vary: Access-Control-Request-Method
-Vary: Access-Control-Request-Headers
-Content-Type: application/json
-
-{
-  "status" : 200,
-  "message" : "탈퇴 사유 정보 저장에 성공하였습니다."
-}</pre>
-</div>
+<div class="paragraph">
+<p><strong>필드 타입</strong></p>
 </div>
 </div>
 <div class="sect2">
@@ -499,14 +500,7 @@ Content-Type: application/json
 <div class="ulist">
 <ul>
 <li>
-<p>User의 다양한 정보를 저장하는 API로 범용적인 확장할 예정입니다.</p>
-<div class="ulist">
-<ul>
-<li>
-<p>차후에 tag에 들어갈 수 있는 ENUM의 종류를 다양화 할 예정입니다.</p>
-</li>
-</ul>
-</div>
+<p>AccessToken에 해당하는 User의 탈퇴 처리 및 탈퇴 사유를 저장하는 API입니다.</p>
 </li>
 </ul>
 </div>
@@ -516,7 +510,7 @@ Content-Type: application/json
 <div class="ulist">
 <ul>
 <li>
-<p>2024.01.30 탈퇴 v2 분리로 인한 명세 업데이트</p>
+<p>2024.01.27 API 릴리즈</p>
 </li>
 <li>
 <p>2024.01.09 명세 작성</p>
