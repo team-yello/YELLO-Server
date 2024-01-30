@@ -1,30 +1,28 @@
 package com.yello.server.domain.authorization.service;
 
 import static io.jsonwebtoken.SignatureAlgorithm.HS256;
-import static java.time.Duration.ofMinutes;
-import static java.time.Duration.ofSeconds;
 
-import com.yello.server.domain.authorization.dto.ServiceTokenVO;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.JwtParser;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.MalformedJwtException;
 import io.jsonwebtoken.security.SignatureException;
+import java.time.Duration;
 import java.util.Date;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
+/**
+ * 해당 객체는 secretKey를 제외한 State를 가지지 않도록 합니다.
+ */
 @Log4j2
 @Component
 public class TokenJwtProvider implements TokenProvider {
 
     public static final String ACCESS_TOKEN = "accessToken";
     public static final String REFRESH_TOKEN = "refreshToken";
-
-    private static final Long ACCESS_TOKEN_VALID_TIME = ofSeconds(30).toMillis();
-    private static final Long REFRESH_TOKEN_VALID_TIME = ofMinutes(1).toMillis();
 
     public String secretKey;
 
@@ -76,25 +74,16 @@ public class TokenJwtProvider implements TokenProvider {
     }
 
     @Override
-    public String createAccessToken(Long userId, String uuid) {
-        return createJwt(userId, uuid, ACCESS_TOKEN_VALID_TIME, ACCESS_TOKEN);
+    public String createAccessToken(Long userId, String uuid, Duration duration) {
+        return createJwt(userId, uuid, duration, ACCESS_TOKEN);
     }
 
     @Override
-    public String createRefreshToken(Long userId, String uuid) {
-        return createJwt(userId, uuid, REFRESH_TOKEN_VALID_TIME, REFRESH_TOKEN);
+    public String createRefreshToken(Long userId, String uuid, Duration duration) {
+        return createJwt(userId, uuid, duration, REFRESH_TOKEN);
     }
 
-    @Override
-    public ServiceTokenVO createServiceToken(Long userId, String uuid) {
-        return ServiceTokenVO.of(
-            createAccessToken(userId, uuid),
-            createRefreshToken(userId, uuid)
-        );
-    }
-
-    @Override
-    public String createJwt(Long userId, String uuid, Long tokenValidTime, String tokenType) {
+    private String createJwt(Long userId, String uuid, Duration duration, String tokenType) {
         Claims claims = Jwts.claims()
             .setSubject(uuid)
             .setId(String.valueOf(userId));
@@ -103,7 +92,7 @@ public class TokenJwtProvider implements TokenProvider {
             .setClaims(claims)
             .setHeaderParam("type", tokenType)
             .setIssuedAt(new Date(System.currentTimeMillis()))
-            .setExpiration(new Date(System.currentTimeMillis() + tokenValidTime))
+            .setExpiration(new Date(System.currentTimeMillis() + duration.toMillis()))
             .signWith(HS256, secretKey.getBytes())
             .compact();
     }

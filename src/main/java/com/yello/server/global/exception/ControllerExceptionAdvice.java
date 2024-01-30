@@ -6,10 +6,10 @@ import static com.yello.server.global.common.ErrorCode.QUERY_STRING_REQUIRED_EXC
 import static org.springframework.http.HttpStatus.BAD_REQUEST;
 import static org.springframework.http.HttpStatus.CONFLICT;
 import static org.springframework.http.HttpStatus.FORBIDDEN;
-import static org.springframework.http.HttpStatus.INTERNAL_SERVER_ERROR;
 import static org.springframework.http.HttpStatus.NOT_FOUND;
 import static org.springframework.http.HttpStatus.UNAUTHORIZED;
 
+import com.yello.server.domain.admin.exception.AdminConfigurationNotFoundException;
 import com.yello.server.domain.admin.exception.UserAdminBadRequestException;
 import com.yello.server.domain.admin.exception.UserAdminNotFoundException;
 import com.yello.server.domain.authorization.exception.AuthBadRequestException;
@@ -25,10 +25,8 @@ import com.yello.server.domain.friend.exception.FriendNotFoundException;
 import com.yello.server.domain.group.exception.GroupNotFoundException;
 import com.yello.server.domain.notice.exception.NoticeNotFoundException;
 import com.yello.server.domain.purchase.exception.AppleBadRequestException;
-import com.yello.server.domain.purchase.exception.AppleTokenServerErrorException;
 import com.yello.server.domain.purchase.exception.GoogleBadRequestException;
 import com.yello.server.domain.purchase.exception.GoogleTokenNotFoundException;
-import com.yello.server.domain.purchase.exception.GoogleTokenServerErrorException;
 import com.yello.server.domain.purchase.exception.PurchaseConflictException;
 import com.yello.server.domain.purchase.exception.PurchaseException;
 import com.yello.server.domain.purchase.exception.PurchaseNotFoundException;
@@ -42,8 +40,6 @@ import com.yello.server.domain.user.exception.UserNotFoundException;
 import com.yello.server.domain.vote.exception.VoteForbiddenException;
 import com.yello.server.domain.vote.exception.VoteNotFoundException;
 import com.yello.server.global.common.dto.BaseResponse;
-import com.yello.server.infrastructure.redis.exception.RedisException;
-import com.yello.server.infrastructure.redis.exception.RedisNotFoundException;
 import com.yello.server.infrastructure.slack.factory.SlackWebhookMessageFactory;
 import javax.servlet.http.HttpServletRequest;
 import net.gpedro.integrations.slack.SlackApi;
@@ -187,11 +183,11 @@ public class ControllerExceptionAdvice {
         GroupNotFoundException.class,
         FriendNotFoundException.class,
         QuestionNotFoundException.class,
-        RedisNotFoundException.class,
         PurchaseNotFoundException.class,
         GoogleTokenNotFoundException.class,
         UserAdminNotFoundException.class,
-        NoticeNotFoundException.class
+        NoticeNotFoundException.class,
+        AdminConfigurationNotFoundException.class
     })
     public ResponseEntity<BaseResponse> NotFoundException(CustomException exception) {
         return ResponseEntity.status(NOT_FOUND)
@@ -208,19 +204,6 @@ public class ControllerExceptionAdvice {
     })
     public ResponseEntity<BaseResponse> ConflictException(CustomException exception) {
         return ResponseEntity.status(CONFLICT)
-            .body(BaseResponse.error(exception.getError(), exception.getMessage()));
-    }
-
-    /**
-     * 500 INTERNAL SERVER ERROR
-     */
-    @ExceptionHandler({
-        RedisException.class,
-        GoogleTokenServerErrorException.class,
-        AppleTokenServerErrorException.class
-    })
-    public ResponseEntity<BaseResponse> InternalServerException(CustomException exception) {
-        return ResponseEntity.status(INTERNAL_SERVER_ERROR)
             .body(BaseResponse.error(exception.getError(), exception.getMessage()));
     }
 }

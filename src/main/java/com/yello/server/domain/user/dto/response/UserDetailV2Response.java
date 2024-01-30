@@ -18,6 +18,7 @@ public record UserDetailV2Response(
     String uuid,
     String deviceToken,
     /* Group */
+    Long groupId,
     String group,
     String groupType,
     String groupName,
@@ -43,6 +44,7 @@ public record UserDetailV2Response(
             .social(user.getSocial().toString())
             .uuid(user.getUuid())
             .deviceToken(user.getDeviceToken())
+            .groupId(userGroup.getId())
             .group(user.toGroupString())
             .groupType(userGroup.getUserGroupType().getIntial())
             .groupName(userGroup.getGroupName())
