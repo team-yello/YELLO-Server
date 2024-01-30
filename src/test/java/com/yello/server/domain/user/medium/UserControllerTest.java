@@ -268,7 +268,7 @@ class UserControllerTest {
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(request)))
             .andDo(print())
-            .andDo(document("api/v2/user",
+            .andDo(document("api/v2/user/deleteUser",
                 Preprocessors.preprocessRequest(prettyPrint(),
                     removeHeaders(excludeRequestHeaders)),
                 Preprocessors.preprocessResponse(prettyPrint(),
