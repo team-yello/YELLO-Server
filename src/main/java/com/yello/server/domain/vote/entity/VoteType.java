@@ -8,7 +8,7 @@ import lombok.RequiredArgsConstructor;
 @Getter
 @RequiredArgsConstructor
 public enum VoteType {
-    send("send");
+    SEND("send");
 
     private final String intial;
 

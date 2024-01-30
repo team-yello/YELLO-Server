@@ -121,9 +121,9 @@ public class VoteService {
         return VoteFriendResponse.of(totalCount, list);
     }
 
-    public VoteFriendAndUserResponse findAllFriendVotesWithType(Long userId, Pageable pageable, String type) {
+    public VoteFriendAndUserResponse findAllFriendVotesWithType(Long userId, Pageable pageable, String voteType) {
 
-        if(!StringUtils.hasText(type)) {
+        if(!StringUtils.hasText(voteType)) {
             final Long totalCount = Long.valueOf(voteRepository.countAllReceivedByFriends(userId));
             final List<VoteFriendAndUserVO> list = voteRepository.findAllReceivedByFriends(userId, pageable)
                 .stream()
@@ -133,8 +133,8 @@ public class VoteService {
             return VoteFriendAndUserResponse.of(totalCount, list);
         }
 
-        switch(VoteType.valueOf(type)) {
-            case send -> {
+        switch(VoteType.fromCode(voteType)) {
+            case SEND -> {
                 final Long totalCount = voteRepository.countUserSendReceivedByFriends(userId);
                 List<VoteFriendAndUserVO> list =
                     voteRepository.findUserSendReceivedByFriends(userId, pageable)
