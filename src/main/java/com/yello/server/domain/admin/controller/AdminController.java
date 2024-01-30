@@ -29,7 +29,6 @@ import com.yello.server.domain.admin.dto.response.AdminQuestionResponse;
 import com.yello.server.domain.admin.dto.response.AdminUserDetailResponse;
 import com.yello.server.domain.admin.dto.response.AdminUserResponse;
 import com.yello.server.domain.admin.entity.AdminConfigurationType;
-import com.yello.server.domain.admin.repository.AdminConfigurationRepository;
 import com.yello.server.domain.admin.service.AdminService;
 import com.yello.server.domain.user.entity.User;
 import com.yello.server.global.common.annotation.AccessTokenUser;
@@ -54,7 +53,6 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/api/v1/admin")
 public class AdminController {
 
-    private final AdminConfigurationRepository adminConfigurationRepository;
     private final AdminService adminService;
     private final NotificationService notificationService;
 
@@ -155,12 +153,8 @@ public class AdminController {
     @GetMapping("/configuration")
     public BaseResponse<AdminConfigurationResponse> getConfigurations(@RequestParam("tag") String tag,
         @AccessTokenUser User user) {
-//        final AdminConfigurationType configurationType = AdminConfigurationType.fromCode(tag);
-//        val data = adminService.getConfigurations(user.getId(), configurationType);
-        val data = adminConfigurationRepository.findConfigurations(AdminConfigurationType.REFRESH_TOKEN_TIME);
-        System.out.println("data = " + data.size());
-        System.out.println("data = " + data);
-//        System.out.println("data.get(0) = " + data.get(0));
+        final AdminConfigurationType configurationType = AdminConfigurationType.fromCode(tag);
+        val data = adminService.getConfigurations(user.getId(), configurationType);
         return BaseResponse.success(CONFIGURATION_READ_ADMIN_SUCCESS, null);
     }
 
