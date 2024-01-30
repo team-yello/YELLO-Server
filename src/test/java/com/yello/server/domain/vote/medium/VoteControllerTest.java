@@ -2,6 +2,7 @@ package com.yello.server.domain.vote.medium;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyLong;
+import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.doNothing;
@@ -35,12 +36,15 @@ import com.yello.server.domain.vote.dto.response.VoteCountVO;
 import com.yello.server.domain.vote.dto.response.VoteCreateResponse;
 import com.yello.server.domain.vote.dto.response.VoteCreateVO;
 import com.yello.server.domain.vote.dto.response.VoteDetailResponse;
+import com.yello.server.domain.vote.dto.response.VoteFriendAndUserResponse;
+import com.yello.server.domain.vote.dto.response.VoteFriendAndUserVO;
 import com.yello.server.domain.vote.dto.response.VoteFriendResponse;
 import com.yello.server.domain.vote.dto.response.VoteFriendVO;
 import com.yello.server.domain.vote.dto.response.VoteListResponse;
 import com.yello.server.domain.vote.dto.response.VoteResponse;
 import com.yello.server.domain.vote.dto.response.VoteUnreadCountResponse;
 import com.yello.server.domain.vote.entity.Vote;
+import com.yello.server.domain.vote.entity.VoteType;
 import com.yello.server.domain.vote.service.VoteService;
 import com.yello.server.global.exception.ControllerExceptionAdvice;
 import com.yello.server.infrastructure.firebase.service.NotificationService;
@@ -186,6 +190,35 @@ class VoteControllerTest {
                 Preprocessors.preprocessResponse(prettyPrint(),
                     removeHeaders(excludeResponseHeaders)),
                 requestParameters(parameterWithName("page").description("페이지네이션 페이지 번호")))
+            )
+            .andExpect(MockMvcResultMatchers.status().isOk());
+    }
+
+    @Test
+    void 친구_투표_조회_v2에_성공합니다() throws Exception {
+        final Vote vote =
+            testDataUtil.generateVote(1L, user, target, testDataUtil.generateQuestion(1L));
+        final VoteFriendAndUserVO voteFriendAndUserVO = VoteFriendAndUserVO.of(vote, true);
+        final VoteFriendAndUserResponse voteFriendResponse =
+            VoteFriendAndUserResponse.of(1L, Arrays.asList(voteFriendAndUserVO));
+
+        given(voteService.findAllFriendVotesWithType(anyLong(), any(Pageable.class),
+            anyString()))
+            .willReturn(voteFriendResponse);
+
+        // when
+        // then
+        mockMvc.perform(RestDocumentationRequestBuilders.get("/api/v2/vote/friend")
+                .header(HttpHeaders.AUTHORIZATION, "Bearer your-access-token")
+                .param("page", "0")
+                .param("type", "send"))
+            .andDo(print())
+            .andDo(document("api/v2/vote/friend",
+                Preprocessors.preprocessRequest(prettyPrint(),
+                    removeHeaders(excludeRequestHeaders)),
+                Preprocessors.preprocessResponse(prettyPrint(),
+                    removeHeaders(excludeResponseHeaders)),
+                requestParameters(parameterWithName("page").description("페이지네이션 페이지 번호"),parameterWithName("type").description("쪽지 유형 선택")))
             )
             .andExpect(MockMvcResultMatchers.status().isOk());
     }
