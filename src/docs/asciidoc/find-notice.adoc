@@ -5,24 +5,17 @@
 
 include::{snippets}/api/v1/notice/http-request.adoc[]
 
+=== 요청 파라미터
+
+include::{snippets}/api/v1/notice/path-parameters.adoc[]
+
 === 응답
 
 include::{snippets}/api/v1/notice/http-response.adoc[]
 
-*필드 타입*
+*path variable*
 
-- "imageUrl": String
-* 공지로 보여줄 이미지 URL입니다.
-- "redirectUrl: String
-* 클릭시 이동할 웹 URL입니다.
-- "startDate": String(10)
-* YYYY-MM-DD (ISO-8601)
-- "endDate": String(10)
-* YYYY-MM-DD (ISO-8601)
-- "isAvailable": Boolean
-- "type" : String
-* ENUM 값 -> "NOTICE" | "BANNER"
-
+- tag(ENUM 값) -> "NOTICE" | "BANNER"
 
 === 주의
 
@@ -57,5 +50,6 @@ include::{snippets}/api/v1/notice/http-response.adoc[]
 
 === CHANGELOG
 
+- 2024.01.29 API tag 추가 및 수정
 - 2024.01.26 API 릴리즈
 - 2024.01.09 명세 작성

@@ -256,10 +256,10 @@ class UserControllerTest {
         // given
         final UserDeleteReasonRequest request =
             UserDeleteReasonRequest.builder().value("오류가 많아서").build();
-/*
+
         doNothing()
             .when(userService)
-            .deleteUserWithReason(anyLong(), request);*/
+            .deleteUserWithReason(anyLong(), eq(request));
         // when
         // then
         mockMvc.perform(RestDocumentationRequestBuilders.delete("/api/v2/user")
