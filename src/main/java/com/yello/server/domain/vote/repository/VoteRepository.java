@@ -32,4 +32,8 @@ public interface VoteRepository {
     Integer countOpenNameByReceiverUserId(Long userId);
 
     Integer countOpenFullNameByReceiverUserId(Long userId);
+
+    List<Vote> findUserSendReceivedByFriends(Long userId, Pageable pageable);
+
+    Long countUserSendReceivedByFriends(Long userId);
 }

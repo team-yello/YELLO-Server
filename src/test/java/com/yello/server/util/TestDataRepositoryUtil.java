@@ -176,6 +176,7 @@ public class TestDataRepositoryUtil implements TestDataUtil {
     public Notice genereateNotice(long index) {
         ZoneId zoneId = ZoneId.of("Asia/Seoul");
         ZonedDateTime now = ZonedDateTime.now(zoneId);
+
         return noticeRepository.save(Notice.builder()
             .id(index)
             .endDate(now.plusDays(3))

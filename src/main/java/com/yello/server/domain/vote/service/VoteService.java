@@ -5,12 +5,15 @@ import static com.yello.server.domain.vote.service.VoteManagerImpl.GREETING_NAME
 import static com.yello.server.global.common.ErrorCode.LACK_TICKET_COUNT_EXCEPTION;
 import static com.yello.server.global.common.ErrorCode.LACK_USER_EXCEPTION;
 import static com.yello.server.global.common.ErrorCode.REVEAL_FULL_NAME_VOTE_EXCEPTION;
+import static com.yello.server.global.common.ErrorCode.WRONG_VOTE_TYPE_FORBIDDEN;
 import static com.yello.server.global.common.factory.TimeFactory.minusTime;
+import static com.yello.server.global.common.util.ConstantUtil.ALL_VOTE_TYPE;
 import static com.yello.server.global.common.util.ConstantUtil.CHECK_FULL_NAME;
 import static com.yello.server.global.common.util.ConstantUtil.COOL_DOWN_TIME;
 import static com.yello.server.global.common.util.ConstantUtil.MINUS_TICKET_COUNT;
 import static com.yello.server.global.common.util.ConstantUtil.NO_FRIEND_COUNT;
 import static com.yello.server.global.common.util.ConstantUtil.RANDOM_COUNT;
+import static com.yello.server.global.common.util.ConstantUtil.USER_VOTE_TYPE;
 
 import com.yello.server.domain.cooldown.entity.Cooldown;
 import com.yello.server.domain.cooldown.repository.CooldownRepository;
@@ -32,15 +35,19 @@ import com.yello.server.domain.vote.dto.response.VoteAvailableResponse;
 import com.yello.server.domain.vote.dto.response.VoteCountVO;
 import com.yello.server.domain.vote.dto.response.VoteCreateVO;
 import com.yello.server.domain.vote.dto.response.VoteDetailResponse;
+import com.yello.server.domain.vote.dto.response.VoteFriendAndUserResponse;
+import com.yello.server.domain.vote.dto.response.VoteFriendAndUserVO;
 import com.yello.server.domain.vote.dto.response.VoteFriendResponse;
 import com.yello.server.domain.vote.dto.response.VoteFriendVO;
 import com.yello.server.domain.vote.dto.response.VoteListResponse;
 import com.yello.server.domain.vote.dto.response.VoteResponse;
 import com.yello.server.domain.vote.dto.response.VoteUnreadCountResponse;
 import com.yello.server.domain.vote.entity.Vote;
+import com.yello.server.domain.vote.entity.VoteType;
 import com.yello.server.domain.vote.exception.VoteForbiddenException;
 import com.yello.server.domain.vote.exception.VoteNotFoundException;
 import com.yello.server.domain.vote.repository.VoteRepository;
+import com.yello.server.global.common.ErrorCode;
 import com.yello.server.infrastructure.rabbitmq.service.ProducerService;
 import java.time.LocalDateTime;
 import java.util.List;
@@ -51,6 +58,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.StringUtils;
 
 @Service
 @Builder
@@ -111,6 +119,34 @@ public class VoteService {
             .map(VoteFriendVO::of)
             .toList();
         return VoteFriendResponse.of(totalCount, list);
+    }
+
+    public VoteFriendAndUserResponse findAllFriendVotesWithType(Long userId, Pageable pageable, String voteType) {
+
+        if(!StringUtils.hasText(voteType)) {
+            final Long totalCount = Long.valueOf(voteRepository.countAllReceivedByFriends(userId));
+            final List<VoteFriendAndUserVO> list = voteRepository.findAllReceivedByFriends(userId, pageable)
+                .stream()
+                .filter(vote -> vote.getNameHint()!=-3)
+                .map(vote -> VoteFriendAndUserVO.of(vote, vote.getSender().getId().equals(userId)))
+                .toList();
+            return VoteFriendAndUserResponse.of(totalCount, list);
+        }
+
+        switch(VoteType.fromCode(voteType)) {
+            case SEND -> {
+                final Long totalCount = voteRepository.countUserSendReceivedByFriends(userId);
+                List<VoteFriendAndUserVO> list =
+                    voteRepository.findUserSendReceivedByFriends(userId, pageable)
+                        .stream()
+                        .filter(vote -> vote.getNameHint()!=-3)
+                        .map(vote -> VoteFriendAndUserVO.of(vote, vote.getSender().getId().equals(userId)))
+                        .toList();
+                return VoteFriendAndUserResponse.of(totalCount,list);
+            }
+        }
+
+        throw new VoteForbiddenException(WRONG_VOTE_TYPE_FORBIDDEN);
     }
 
     @Transactional

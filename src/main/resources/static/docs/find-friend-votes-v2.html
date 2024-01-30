@@ -5,7 +5,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="generator" content="Asciidoctor 2.0.10">
-<title>친구 투표 전체 조회 (명세)</title>
+<title>친구 투표 전체 조회 v2</title>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Open+Sans:300,300italic,400,400italic,600,600italic%7CNoto+Serif:400,400italic,700,700italic%7CDroid+Sans+Mono:400,700">
 <style>
 /* Asciidoctor default stylesheet | MIT License | https://asciidoctor.org */
@@ -441,20 +441,83 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 </div>
 <div id="content">
 <div class="sect1">
-<h2 id="_친구_투표_전체_조회_명세">친구 투표 전체 조회 (명세)</h2>
+<h2 id="_친구_투표_전체_조회_v2">친구 투표 전체 조회 v2</h2>
 <div class="sectionbody">
 <div class="sect2">
 <h3 id="_요청">요청</h3>
 <div class="listingblock">
 <div class="content">
-<pre>GET /v2/vote/friend?page={}&amp;type={} HTTP/1.1
-Authorization: Bearer your-access-token
-Content-Type: application-json</pre>
+<pre class="highlight nowrap"><code class="language-http" data-lang="http">GET /api/v2/vote/friend?page=0&amp;type=send HTTP/1.1
+Authorization: Bearer your-access-token</code></pre>
 </div>
 </div>
-<div class="paragraph">
-<p><strong>업데이트 예정</strong>
-- "type": "send" | null</p>
+</div>
+<div class="sect2">
+<h3 id="_요청_파라미터">요청 파라미터</h3>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 50%;">
+<col style="width: 50%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Parameter</th>
+<th class="tableblock halign-left valign-top">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>page</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">페이지네이션 페이지 번호</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>type</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">쪽지 유형 선택</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="sect2">
+<h3 id="_응답">응답</h3>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight nowrap"><code class="language-http" data-lang="http">HTTP/1.1 200 OK
+Vary: Origin
+Vary: Access-Control-Request-Method
+Vary: Access-Control-Request-Headers
+Content-Type: application/json
+
+{
+  "status" : 200,
+  "message" : "투표 조회에 성공했습니다.",
+  "data" : {
+    "totalCount" : 1,
+    "friendVotes" : [ {
+      "id" : 1,
+      "senderId" : 1,
+      "senderName" : "name1",
+      "senderGender" : "MALE",
+      "senderYelloId" : "yelloId1",
+      "senderProfileImage" : "test image",
+      "receiverId" : 2,
+      "receiverName" : "name2",
+      "receiverGender" : "MALE",
+      "receiverYelloId" : "yelloId2",
+      "receiverProfileImage" : "test image",
+      "vote" : {
+        "nameHead" : "나는",
+        "nameFoot" : "와",
+        "keywordHead" : "멋진",
+        "keyword" : "test",
+        "keywordFoot" : "에서 놀고싶어"
+      },
+      "isHintUsed" : false,
+      "createdAt" : "0초 전",
+      "isUserSenderVote" : true
+    } ]
+  }
+}</code></pre>
+</div>
 </div>
 <table class="tableblock frame-all grid-all stretch">
 <colgroup>
@@ -468,43 +531,6 @@ Content-Type: application-json</pre>
 </tr>
 </tbody>
 </table>
-</div>
-<div class="sect2">
-<h3 id="_응답">응답</h3>
-<div class="listingblock">
-<div class="content">
-<pre>{
-  "status" : 200,
-  "message" : "투표 조회에 성공했습니다.",
-  "data" : {
-    "totalCount" : 1,
-    "friendVotes" : [ {
-            "id" : 1,
-			"senderId" : 1,
-			"senderName" : "name1",
-			"senderGender" : "MALE",
-			"senderYelloId" : "MALE",
-            "senderProfileImage": "imageUrl",
-			"receiverId" : 2,
-            "receiverName" : "name2",
-			"receiverGender" : "MALE",
-			"receiverYelloId" : "MALE",
-			"receiverProfileImage" : "test image",
-            "vote" : {
-                "nameHead" : "나는",
-                "nameFoot" : "와",
-                "keywordHead" : "멋진",
-                "keyword" : "test",
-                "keywordFoot" : "에서 놀고싶어"
-            },
-            "isHintUsed" : false,
-            "createdAt" : "0초 전"
-            "isUserSenderVote" : true
-    } ]
-  }
-}</pre>
-</div>
-</div>
 <div class="paragraph">
 <p><strong>필드 타입</strong></p>
 </div>
@@ -594,6 +620,24 @@ Content-Type: application-json</pre>
 </div>
 </div>
 <div class="sect2">
+<h3 id="_excpetion">Excpetion</h3>
+<div class="ulist">
+<ul>
+<li>
+<p>잘못된 type을 queryString에 보내는 경우</p>
+</li>
+</ul>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre>{
+    "status": 403,
+    "message": "[VoteForbiddenException] 잘못된 투표 유형입니다."
+}</pre>
+</div>
+</div>
+</div>
+<div class="sect2">
 <h3 id="_note">NOTE</h3>
 <div class="ulist">
 <ul>
@@ -602,7 +646,7 @@ Content-Type: application-json</pre>
 <div class="ulist">
 <ul>
 <li>
-<p><code>type=</code> 을 명시하지 마세요</p>
+<p>type을 명시하지 마세요</p>
 </li>
 </ul>
 </div>
@@ -620,6 +664,9 @@ Content-Type: application-json</pre>
 <h3 id="_changelog">CHANGELOG</h3>
 <div class="ulist">
 <ul>
+<li>
+<p>2924.01.30 API 릴리즈</p>
+</li>
 <li>
 <p>2024.01.26 필드 명세 업데이트</p>
 </li>
