@@ -1,5 +1,7 @@
 package com.yello.server.domain.admin.controller;
 
+import static com.yello.server.global.common.SuccessCode.CONFIGURATION_READ_ADMIN_SUCCESS;
+import static com.yello.server.global.common.SuccessCode.CONFIGURATION_UPDATE_ADMIN_SUCCESS;
 import static com.yello.server.global.common.SuccessCode.CREATE_VOTE_SUCCESS;
 import static com.yello.server.global.common.SuccessCode.DELETE_COOLDOWN_ADMIN_SUCCESS;
 import static com.yello.server.global.common.SuccessCode.DELETE_QUESTION_ADMIN_SUCCESS;
@@ -18,12 +20,15 @@ import static com.yello.server.global.common.factory.PaginationFactory.createPag
 import com.yello.server.domain.admin.dto.request.AdminLoginRequest;
 import com.yello.server.domain.admin.dto.request.AdminQuestionVoteRequest;
 import com.yello.server.domain.admin.dto.request.AdminUserDetailRequest;
+import com.yello.server.domain.admin.dto.response.AdminConfigurationResponse;
+import com.yello.server.domain.admin.dto.response.AdminConfigurationUpdateRequest;
 import com.yello.server.domain.admin.dto.response.AdminCooldownResponse;
 import com.yello.server.domain.admin.dto.response.AdminLoginResponse;
 import com.yello.server.domain.admin.dto.response.AdminQuestionDetailResponse;
 import com.yello.server.domain.admin.dto.response.AdminQuestionResponse;
 import com.yello.server.domain.admin.dto.response.AdminUserDetailResponse;
 import com.yello.server.domain.admin.dto.response.AdminUserResponse;
+import com.yello.server.domain.admin.entity.AdminConfigurationType;
 import com.yello.server.domain.admin.service.AdminService;
 import com.yello.server.domain.user.entity.User;
 import com.yello.server.global.common.annotation.AccessTokenUser;
@@ -62,7 +67,7 @@ public class AdminController {
         @RequestParam Integer page,
         @Nullable @RequestParam String field,
         @Nullable @RequestParam String value) {
-        val data = (field==null && value==null)
+        val data = (field == null && value == null)
             ? adminService.findUser(user.getId(), createPageableByNameSortDescLimitTen(page))
             : adminService.findUserContaining(user.getId(),
                 createPageableByNameSortDescLimitTen(page),
@@ -94,7 +99,7 @@ public class AdminController {
     public BaseResponse<AdminCooldownResponse> getCooldownAdmin(@AccessTokenUser User user,
         @RequestParam Integer page,
         @Nullable @RequestParam String yelloId) {
-        val data = yelloId==null
+        val data = yelloId == null
             ? adminService.findCooldown(user.getId(), createPageableLimitTen(page))
             : adminService.findCooldownContaining(user.getId(), createPageableLimitTen(page),
                 yelloId);
@@ -143,5 +148,24 @@ public class AdminController {
         val data = notificationService.adminSendCustomNotification(user.getId(), request);
 
         return BaseResponse.success(CREATE_VOTE_SUCCESS, data);
+    }
+
+    @GetMapping("/configuration")
+    public BaseResponse<AdminConfigurationResponse> getConfigurations(@RequestParam("tag") String tag,
+        @AccessTokenUser User user) {
+        final AdminConfigurationType configurationType = AdminConfigurationType.fromCode(tag);
+        val data = adminService.getConfigurations(user.getId(), configurationType);
+        return BaseResponse.success(CONFIGURATION_READ_ADMIN_SUCCESS, null);
+    }
+
+    @PostMapping("/configuration")
+    public BaseResponse<EmptyObject> postConfigurations(
+        @RequestBody AdminConfigurationUpdateRequest request,
+        @AccessTokenUser User user) {
+        final AdminConfigurationType configurationType = AdminConfigurationType.fromCode(request.tag());
+
+        val data = adminService.updateConfigurations(user.getId(), configurationType, request.value());
+
+        return BaseResponse.success(CONFIGURATION_UPDATE_ADMIN_SUCCESS, data);
     }
 }

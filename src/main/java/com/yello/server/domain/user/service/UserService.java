@@ -1,6 +1,6 @@
 package com.yello.server.domain.user.service;
 
-import static com.yello.server.domain.user.entity.UserDataType.*;
+import static com.yello.server.domain.user.entity.UserDataType.WITHDRAW_REASON;
 import static com.yello.server.global.common.ErrorCode.DEVICE_TOKEN_CONFLICT_USER_EXCEPTION;
 
 import com.yello.server.domain.admin.repository.UserAdminRepository;
@@ -19,13 +19,11 @@ import com.yello.server.domain.user.dto.response.UserResponse;
 import com.yello.server.domain.user.dto.response.UserSubscribeDetailResponse;
 import com.yello.server.domain.user.entity.User;
 import com.yello.server.domain.user.entity.UserData;
-import com.yello.server.domain.user.entity.UserDataType;
 import com.yello.server.domain.user.exception.UserConflictException;
 import com.yello.server.domain.user.repository.UserDataRepository;
 import com.yello.server.domain.user.repository.UserRepository;
 import com.yello.server.domain.vote.repository.VoteRepository;
 import com.yello.server.global.common.dto.EmptyObject;
-import com.yello.server.infrastructure.redis.repository.TokenRepository;
 import lombok.Builder;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -40,12 +38,11 @@ public class UserService {
     private final CooldownRepository cooldownRepository;
     private final FriendRepository friendRepository;
     private final PurchaseRepository purchaseRepository;
-    private final TokenRepository tokenRepository;
     private final UserAdminRepository userAdminRepository;
+    private final UserDataRepository userDataRepository;
     private final UserGroupRepository userGroupRepository;
     private final UserRepository userRepository;
     private final VoteRepository voteRepository;
-    private final UserDataRepository userDataRepository;
 
     public UserDetailResponse findMyProfile(Long userId) {
         final User user = userRepository.getById(userId);
