@@ -66,7 +66,7 @@ public class AdminService {
 
     @Transactional
     public AdminLoginResponse login(AdminLoginRequest request) {
-        final List<AdminConfiguration> list = adminConfigurationRepository.getConfigurations(
+        final List<AdminConfiguration> list = adminConfigurationRepository.findConfigurations(
             ADMIN_SITE_PASSWORD);
         if (list.isEmpty()) {
             throw new AdminConfigurationNotFoundException(ADMIN_CONFIGURATION_NOT_FOUND_EXCEPTION);
@@ -298,7 +298,7 @@ public class AdminService {
         final User admin = userRepository.getById(adminId);
         userAdminRepository.getByUser(admin);
 
-        final List<AdminConfiguration> configurations = adminConfigurationRepository.getConfigurations(tag);
+        final List<AdminConfiguration> configurations = adminConfigurationRepository.findConfigurations(tag);
 
         if (configurations.isEmpty()) {
             throw new AdminConfigurationNotFoundException(ADMIN_CONFIGURATION_NOT_FOUND_EXCEPTION);

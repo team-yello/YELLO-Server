@@ -6,7 +6,7 @@ import java.util.List;
 
 public interface AdminConfigurationRepository {
 
-    List<AdminConfiguration> getConfigurations(AdminConfigurationType tag);
+    List<AdminConfiguration> findConfigurations(AdminConfigurationType tag);
 
     void setConfigurations(AdminConfigurationType tag, String value);
 

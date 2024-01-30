@@ -19,7 +19,7 @@ public class AdminConfigurationRepositoryImpl implements AdminConfigurationRepos
     private final JPAQueryFactory jpaQueryFactory;
 
     @Override
-    public List<AdminConfiguration> getConfigurations(AdminConfigurationType tag) {
+    public List<AdminConfiguration> findConfigurations(AdminConfigurationType tag) {
         return jpaQueryFactory
             .selectFrom(adminConfiguration)
             .where(adminConfiguration.tag.eq(tag))
