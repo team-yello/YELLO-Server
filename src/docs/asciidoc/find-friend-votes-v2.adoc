@@ -1,7 +1,6 @@
 :reproducible:
 == 친구 투표 전체 조회 v2
 
-
 === 요청
 
 include::{snippets}/api/v2/vote/friend/http-request.adoc[]

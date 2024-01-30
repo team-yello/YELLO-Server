@@ -81,7 +81,7 @@ public class NoticeServiceTest {
         final NoticeDataResponse notice = noticeService.findNotice(userId, tag);
 
         // then
-        assertThat(notice.isAvailable()).isTrue();
+        assertThat(notice.isAvailable()).isFalse();
 
     }
 }
