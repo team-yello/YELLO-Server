@@ -33,13 +33,13 @@
 
 * link:check-user.html[내 정보 조회하기 V1]
 
-* 🆕 link:check-user-v2.html[내 정보 조회하기 V2, 2024-01-07]
+* 🆕 link:check-user-v2.html[내 정보 조회하기 V2, 2024-01-30]
 
 * 🆕 link:edit-user.html[유저 정보 수정 (명세), 2024-01-09]
 
 * 🆕 link:user-data-get.html[프로필 수정 가능 여부 조회 (명세), 2024-01-09]
 
-* 🆕 link:user-data-post.html[탈퇴 사유 저장 (명세), 2024-01-09]
+* 🆕 link:user-data-post.html[유저 기타 정보 저장 (명세), 2024-01-30]
 
 * 🆕 link:purchase-info.html[유저 구독 정보, 2024-01-25]
 
@@ -48,6 +48,8 @@
 * link:device-token.html[디바이스 토큰 수정하기]
 
 * link:delete-user.html[유저 탈퇴]
+
+* 🆕 link:delete-user-v2.html[유저 탈퇴 V2, 2024-01-30]
 
 === Vote API
 
