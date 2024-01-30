@@ -139,4 +139,21 @@ public class FakeVoteRepository implements VoteRepository {
             .toList()
             .size();
     }
+
+    @Override
+    public List<Vote> findUserSendReceivedByFriends(Long userId, Pageable pageable) {
+        return data.stream()
+            .filter(vote -> vote.getSender().getId().equals(userId))
+            .skip(pageable.getOffset())
+            .limit(pageable.getPageSize())
+            .toList();
+    }
+
+    @Override
+    public Long countUserSendReceivedByFriends(Long userId) {
+        return (long) data.stream()
+            .filter(vote -> vote.getSender().getId().equals(userId))
+            .toList()
+            .size();
+    }
 }

@@ -85,7 +85,7 @@ public class NoticeControllerTest {
     @Test
     void 공지_조회하기_검증에_성공합니다() throws Exception {
         // given
-        final NoticeDataResponse noticeDataResponse = NoticeDataResponse.of(notice, true);
+        final NoticeDataResponse noticeDataResponse = NoticeDataResponse.of(notice, false);
         NoticeType tag = NoticeType.NOTICE;
         given(noticeService.findNotice(anyLong(), eq(tag)))
             .willReturn(noticeDataResponse);
