@@ -175,14 +175,14 @@ public class TestDataRepositoryUtil implements TestDataUtil {
     @Override
     public Notice genereateNotice(long index) {
         ZoneId zoneId = ZoneId.of("Asia/Seoul");
-        ZonedDateTime now = ZonedDateTime.now(zoneId);
+        ZonedDateTime now = ZonedDateTime.of(2023, 1, 20, 22, 26, 50, 0, zoneId);
         return noticeRepository.save(Notice.builder()
             .id(index)
             .endDate(now.plusDays(3))
             .imageUrl("imageUrl")
             .startDate(now.minusDays(3))
             .redirectUrl("redirectUrl")
-            .isAvailable(true)
+            .isAvailable(false)
             .tag(NoticeType.NOTICE)
             .title("notice title")
             .build());

@@ -20,7 +20,6 @@ import com.yello.server.domain.notice.dto.NoticeDataResponse;
 import com.yello.server.domain.notice.entity.Notice;
 import com.yello.server.domain.notice.entity.NoticeType;
 import com.yello.server.domain.notice.service.NoticeService;
-import com.yello.server.domain.purchase.controller.PurchaseController;
 import com.yello.server.domain.user.entity.User;
 import com.yello.server.global.exception.ControllerExceptionAdvice;
 import com.yello.server.util.TestDataEntityUtil;
@@ -84,7 +83,7 @@ public class NoticeControllerTest {
     @Test
     void 공지_조회하기_검증에_성공합니다() throws Exception {
         // given
-        final NoticeDataResponse noticeDataResponse = NoticeDataResponse.of(notice, true);
+        final NoticeDataResponse noticeDataResponse = NoticeDataResponse.of(notice, false);
         NoticeType tag = NoticeType.NOTICE;
         given(noticeService.findNotice(anyLong(), eq(tag)))
             .willReturn(noticeDataResponse);
@@ -100,7 +99,7 @@ public class NoticeControllerTest {
                     removeHeaders(excludeRequestHeaders)),
                 Preprocessors.preprocessResponse(prettyPrint(),
                     removeHeaders(excludeResponseHeaders)),
-                    pathParameters(parameterWithName("tag").description("공지의 종류")))
+                pathParameters(parameterWithName("tag").description("공지의 종류")))
             )
             .andExpect(MockMvcResultMatchers.status().isOk());
     }
