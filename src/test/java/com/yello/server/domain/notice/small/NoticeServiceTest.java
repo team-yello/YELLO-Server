@@ -2,6 +2,8 @@ package com.yello.server.domain.notice.small;
 
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import com.yello.server.domain.friend.FakeFriendRepository;
 import com.yello.server.domain.friend.repository.FriendRepository;
@@ -26,6 +28,7 @@ import com.yello.server.domain.vote.FakeVoteRepository;
 import com.yello.server.domain.vote.repository.VoteRepository;
 import com.yello.server.util.TestDataRepositoryUtil;
 import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
 import org.assertj.core.api.Assertions;
@@ -48,6 +51,7 @@ public class NoticeServiceTest {
     private final PurchaseRepository purchaseRepository = new FakePurchaseRepository();
     private NoticeService noticeService;
     private User user1;
+    private Notice notice;
     private final TestDataRepositoryUtil testDataUtil = new TestDataRepositoryUtil(
         userRepository,
         voteRepository,
@@ -67,7 +71,7 @@ public class NoticeServiceTest {
 
         final User user = testDataUtil.generateUser(1L, 1L, UserGroupType.HIGH_SCHOOL);
         user.setSubscribe(Subscribe.ACTIVE);
-        final Notice notice = testDataUtil.genereateNotice(1L);
+        notice = testDataUtil.genereateNotice(1L);
         noticeRepository.save(notice);
     }
 
@@ -76,12 +80,17 @@ public class NoticeServiceTest {
         // given
         final Long userId = 1L;
         final NoticeType tag = NoticeType.NOTICE;
+        ZoneId zoneId = ZoneId.of("Asia/Seoul");
+        ZonedDateTime now = ZonedDateTime.now(zoneId);
 
         // when
-        final NoticeDataResponse notice = noticeService.findNotice(userId, tag);
+        final NoticeDataResponse noticeResponse = noticeService.findNotice(userId, tag);
+        System.out.println(noticeResponse.title() + ", " + noticeResponse.isAvailable());
 
         // then
-        assertThat(notice.isAvailable()).isFalse();
+        assertThat(noticeResponse.isAvailable()).isTrue();
+        assertEquals(true, now.isAfter(notice.getStartDate()));
+        assertEquals(true, now.isBefore(notice.getEndDate()));
 
     }
 }

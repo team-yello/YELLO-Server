@@ -146,7 +146,7 @@ public class TestDataEntityUtil implements TestDataUtil {
     @Override
     public Notice genereateNotice(long index) {
         ZoneId zoneId = ZoneId.of("Asia/Seoul");
-        ZonedDateTime now = ZonedDateTime.of(2024, 1, 20, 22, 26, 50, 0, zoneId);
+        ZonedDateTime now = ZonedDateTime.now(zoneId);
 
         return Notice.builder()
             .id(index)
@@ -154,7 +154,7 @@ public class TestDataEntityUtil implements TestDataUtil {
             .imageUrl("imageUrl")
             .startDate(now.minusDays(3))
             .redirectUrl("redirectUrl")
-            .isAvailable(false)
+            .isAvailable(true)
             .tag(NoticeType.NOTICE)
             .title("notice title")
             .build();
