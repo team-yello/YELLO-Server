@@ -31,6 +31,7 @@ import com.yello.server.domain.friend.FakeFriendRepository;
 import com.yello.server.domain.friend.repository.FriendRepository;
 import com.yello.server.domain.friend.service.FriendManager;
 import com.yello.server.domain.group.FakeUserGroupRepository;
+import com.yello.server.domain.group.entity.UserGroup;
 import com.yello.server.domain.group.entity.UserGroupType;
 import com.yello.server.domain.group.exception.GroupNotFoundException;
 import com.yello.server.domain.group.repository.UserGroupRepository;
@@ -62,6 +63,7 @@ import com.yello.server.infrastructure.firebase.service.NotificationFcmService;
 import com.yello.server.infrastructure.firebase.service.NotificationService;
 import com.yello.server.infrastructure.rabbitmq.FakeMessageQueueRepository;
 import com.yello.server.infrastructure.rabbitmq.repository.MessageQueueRepository;
+import com.yello.server.util.TestDataEntityUtil;
 import com.yello.server.util.TestDataRepositoryUtil;
 import java.util.ArrayList;
 import java.util.Base64;
@@ -92,6 +94,7 @@ public class AuthServiceTest {
         questionGroupTypeRepository = new FakeQuestionGroupTypeRepository(questionRepository);
     private final String secretKey = Base64.getEncoder().encodeToString(
         "keyForTestkeyForTestkeyForTestkeyForTestkeyForTestkeyForTestkeyForTestkeyForTestkeyForTest".getBytes());
+    private final TestDataEntityUtil testDataEntityUtil = new TestDataEntityUtil();
     private final TokenProvider tokenProvider = new TokenJwtProvider(secretKey);
     private final UserGroupRepository userGroupRepository = new FakeUserGroupRepository();
     private final UserRepository userRepository = new FakeUserRepository(friendRepository);
@@ -106,13 +109,15 @@ public class AuthServiceTest {
     );
     private final VoteRepository voteRepository = new FakeVoteRepository();
     private final TestDataRepositoryUtil testDataUtil = new TestDataRepositoryUtil(
-        userRepository,
-        voteRepository,
-        questionRepository,
         friendRepository,
-        questionGroupTypeRepository,
+        noticeRepository,
         purchaseRepository,
-        noticeRepository
+        questionGroupTypeRepository,
+        questionRepository,
+        testDataEntityUtil,
+        userGroupRepository,
+        userRepository,
+        voteRepository
     );
     private final VoteManager voteManager = new FakeVoteManager(
         userRepository, questionRepository, voteRepository, friendRepository,
@@ -134,13 +139,13 @@ public class AuthServiceTest {
             .notificationService(notificationService)
             .build();
 
-        userGroupRepository.save(testDataUtil.generateGroup(1L, UserGroupType.UNIVERSITY));
+        final UserGroup userGroup = testDataUtil.generateGroup(1L, UserGroupType.UNIVERSITY);
 
         // soft-deleted User
-        testDataUtil.generateDeletedUser(0L, 1L, UserGroupType.UNIVERSITY);
+        testDataUtil.generateDeletedUser(0L, userGroup);
 
         for (int i = 1; i <= 3; i++) {
-            testDataUtil.generateUser(i, 1L, UserGroupType.UNIVERSITY);
+            testDataUtil.generateUser(i, userGroup);
         }
 
         adminConfigurationRepository.setConfigurations(ACCESS_TOKEN_TIME, String.valueOf(30L));

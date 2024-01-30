@@ -3,6 +3,7 @@ package com.yello.server.domain.user.small;
 import static com.yello.server.global.common.util.ConstantUtil.RECOMMEND_POINT;
 import static org.assertj.core.api.Assertions.assertThat;
 
+import com.yello.server.domain.group.entity.UserGroup;
 import com.yello.server.domain.group.entity.UserGroupType;
 import com.yello.server.domain.user.entity.Subscribe;
 import com.yello.server.domain.user.entity.User;
@@ -24,8 +25,9 @@ public class UserTest {
 
     @BeforeEach
     void init() {
-        user = testDataEntityUtil.generateUser(1L, 1L, UserGroupType.UNIVERSITY);
-        deletedUser = testDataEntityUtil.generateDeletedUser(2L, 1L, UserGroupType.UNIVERSITY);
+        final UserGroup userGroup = testDataEntityUtil.generateGroup(1L, UserGroupType.UNIVERSITY);
+        user = testDataEntityUtil.generateUser(1L, userGroup);
+        deletedUser = testDataEntityUtil.generateDeletedUser(2L, userGroup);
     }
 
     @Test
@@ -62,7 +64,7 @@ public class UserTest {
         // given
         // when
         // then
-        assertThat(user.toGroupString()).isEqualTo("테스트 대학교 1 테스트 학과 1 20학번");
+        assertThat(user.toGroupString()).isEqualTo("테스트 그룹 1 테스트 하위 그룹 1 20학번");
     }
 
     @Test

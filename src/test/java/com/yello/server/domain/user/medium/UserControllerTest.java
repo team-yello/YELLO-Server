@@ -16,10 +16,12 @@ import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.yello.server.domain.authorization.filter.JwtExceptionFilter;
 import com.yello.server.domain.authorization.filter.JwtFilter;
+import com.yello.server.domain.group.entity.UserGroup;
 import com.yello.server.domain.group.entity.UserGroupType;
 import com.yello.server.domain.user.controller.UserController;
 import com.yello.server.domain.user.dto.request.UserDeleteReasonRequest;
 import com.yello.server.domain.user.dto.request.UserDeviceTokenRequest;
+import com.yello.server.domain.user.dto.request.UserUpdateRequest;
 import com.yello.server.domain.user.dto.response.UserDetailResponse;
 import com.yello.server.domain.user.dto.response.UserDetailV2Response;
 import com.yello.server.domain.user.dto.response.UserResponse;
@@ -83,7 +85,8 @@ class UserControllerTest {
 
     @BeforeEach
     void init() {
-        user = testDataUtil.generateUser(1L, 1L, UserGroupType.UNIVERSITY);
+        final UserGroup userGroup = testDataUtil.generateGroup(1L, UserGroupType.UNIVERSITY);
+        user = testDataUtil.generateUser(1L, userGroup);
     }
 
     @Test
@@ -277,4 +280,38 @@ class UserControllerTest {
             .andExpect(MockMvcResultMatchers.status().isOk());
     }
 
+    @Test
+    void 유저_정보_수정에_성공합니다() throws Exception {
+        // given
+        final UserUpdateRequest request =
+            UserUpdateRequest.builder()
+                .name("after")
+                .email("afterupdate@yello.com")
+                .yelloId("afterupdate")
+                .gender("M")
+                .profileImageUrl("https://after.com")
+                .groupId(1L)
+                .groupAdmissionYear(24)
+                .build();
+
+        doNothing()
+            .when(userService)
+            .update(any(Long.class), eq(request));
+        // when
+
+        // then
+        mockMvc.perform(RestDocumentationRequestBuilders.delete("/api/v1/user")
+                .with(csrf().asHeader())
+                .header(HttpHeaders.AUTHORIZATION, "Bearer your-access-token")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(request)))
+            .andDo(print())
+            .andDo(document("api/v1/user/update",
+                Preprocessors.preprocessRequest(prettyPrint(),
+                    removeHeaders(excludeRequestHeaders)),
+                Preprocessors.preprocessResponse(prettyPrint(),
+                    removeHeaders(excludeResponseHeaders)))
+            )
+            .andExpect(MockMvcResultMatchers.status().isOk());
+    }
 }

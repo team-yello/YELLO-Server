@@ -5,7 +5,10 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 import com.yello.server.domain.friend.FakeFriendRepository;
 import com.yello.server.domain.friend.repository.FriendRepository;
+import com.yello.server.domain.group.FakeUserGroupRepository;
+import com.yello.server.domain.group.entity.UserGroup;
 import com.yello.server.domain.group.entity.UserGroupType;
+import com.yello.server.domain.group.repository.UserGroupRepository;
 import com.yello.server.domain.notice.FakeNoticeRepository;
 import com.yello.server.domain.notice.dto.NoticeDataResponse;
 import com.yello.server.domain.notice.entity.Notice;
@@ -24,11 +27,8 @@ import com.yello.server.domain.user.entity.User;
 import com.yello.server.domain.user.repository.UserRepository;
 import com.yello.server.domain.vote.FakeVoteRepository;
 import com.yello.server.domain.vote.repository.VoteRepository;
+import com.yello.server.util.TestDataEntityUtil;
 import com.yello.server.util.TestDataRepositoryUtil;
-import java.time.LocalDateTime;
-import java.time.ZonedDateTime;
-import java.time.format.DateTimeFormatter;
-import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.DisplayNameGeneration;
@@ -38,25 +38,30 @@ import org.junit.jupiter.api.Test;
 @DisplayName("NoticeService 에서")
 @DisplayNameGeneration(ReplaceUnderscores.class)
 public class NoticeServiceTest {
-    private final NoticeRepository noticeRepository = new FakeNoticeRepository();
+
     private final FriendRepository friendRepository = new FakeFriendRepository();
-    private final UserRepository userRepository = new FakeUserRepository(friendRepository);
+    private final NoticeRepository noticeRepository = new FakeNoticeRepository();
+    private final PurchaseRepository purchaseRepository = new FakePurchaseRepository();
     private final QuestionRepository questionRepository = new FakeQuestionRepository();
-    private final VoteRepository voteRepository = new FakeVoteRepository();
     private final QuestionGroupTypeRepository
         questionGroupTypeRepository = new FakeQuestionGroupTypeRepository(questionRepository);
-    private final PurchaseRepository purchaseRepository = new FakePurchaseRepository();
+    private final TestDataEntityUtil testDataEntityUtil = new TestDataEntityUtil();
+    private final UserGroupRepository userGroupRepository = new FakeUserGroupRepository();
+    private final UserRepository userRepository = new FakeUserRepository(friendRepository);
+    private final VoteRepository voteRepository = new FakeVoteRepository();
+    private final TestDataRepositoryUtil testDataUtil = new TestDataRepositoryUtil(
+        friendRepository,
+        noticeRepository,
+        purchaseRepository,
+        questionGroupTypeRepository,
+        questionRepository,
+        testDataEntityUtil,
+        userGroupRepository,
+        userRepository,
+        voteRepository
+    );
     private NoticeService noticeService;
     private User user1;
-    private final TestDataRepositoryUtil testDataUtil = new TestDataRepositoryUtil(
-        userRepository,
-        voteRepository,
-        questionRepository,
-        friendRepository,
-        questionGroupTypeRepository,
-        purchaseRepository,
-        noticeRepository
-    );
 
     @BeforeEach
     void init() {
@@ -65,7 +70,8 @@ public class NoticeServiceTest {
             .userRepository(userRepository)
             .build();
 
-        final User user = testDataUtil.generateUser(1L, 1L, UserGroupType.HIGH_SCHOOL);
+        final UserGroup userGroup = testDataUtil.generateGroup(1L, UserGroupType.UNIVERSITY);
+        final User user = testDataUtil.generateUser(1L, userGroup);
         user.setSubscribe(Subscribe.ACTIVE);
         final Notice notice = testDataUtil.genereateNotice(1L);
         noticeRepository.save(notice);

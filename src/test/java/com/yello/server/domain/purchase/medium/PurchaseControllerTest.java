@@ -15,6 +15,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.yello.server.domain.authorization.filter.JwtExceptionFilter;
 import com.yello.server.domain.authorization.filter.JwtFilter;
+import com.yello.server.domain.group.entity.UserGroup;
 import com.yello.server.domain.group.entity.UserGroupType;
 import com.yello.server.domain.purchase.controller.PurchaseController;
 import com.yello.server.domain.purchase.dto.apple.AppleTransaction;
@@ -25,7 +26,6 @@ import com.yello.server.domain.purchase.dto.response.GoogleSubscriptionGetRespon
 import com.yello.server.domain.purchase.dto.response.GoogleTicketGetResponse;
 import com.yello.server.domain.purchase.dto.response.UserSubscribeNeededResponse;
 import com.yello.server.domain.purchase.service.PurchaseService;
-import com.yello.server.domain.user.dto.response.UserSubscribeDetailResponse;
 import com.yello.server.domain.user.entity.User;
 import com.yello.server.global.exception.ControllerExceptionAdvice;
 import com.yello.server.util.TestDataEntityUtil;
@@ -83,9 +83,9 @@ class PurchaseControllerTest {
 
     @BeforeEach
     void init() {
-        user = testDataUtil.generateUser(1L, 1L, UserGroupType.UNIVERSITY);
-        target = testDataUtil.generateUser(2L, 1L, UserGroupType.UNIVERSITY);
-
+        final UserGroup userGroup = testDataUtil.generateGroup(1L, UserGroupType.UNIVERSITY);
+        user = testDataUtil.generateUser(1L, userGroup);
+        target = testDataUtil.generateUser(2L, userGroup);
     }
 
     @Test

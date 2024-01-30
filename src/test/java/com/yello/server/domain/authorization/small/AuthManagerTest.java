@@ -18,7 +18,10 @@ import com.yello.server.domain.cooldown.FakeCooldownRepository;
 import com.yello.server.domain.cooldown.repository.CooldownRepository;
 import com.yello.server.domain.friend.FakeFriendRepository;
 import com.yello.server.domain.friend.repository.FriendRepository;
+import com.yello.server.domain.group.FakeUserGroupRepository;
+import com.yello.server.domain.group.entity.UserGroup;
 import com.yello.server.domain.group.entity.UserGroupType;
+import com.yello.server.domain.group.repository.UserGroupRepository;
 import com.yello.server.domain.notice.FakeNoticeRepository;
 import com.yello.server.domain.notice.repository.NoticeRepository;
 import com.yello.server.domain.purchase.FakePurchaseRepository;
@@ -32,6 +35,7 @@ import com.yello.server.domain.user.entity.User;
 import com.yello.server.domain.user.repository.UserRepository;
 import com.yello.server.domain.vote.FakeVoteRepository;
 import com.yello.server.domain.vote.repository.VoteRepository;
+import com.yello.server.util.TestDataEntityUtil;
 import com.yello.server.util.TestDataRepositoryUtil;
 import java.util.Base64;
 import org.junit.jupiter.api.BeforeEach;
@@ -54,17 +58,21 @@ public class AuthManagerTest {
         questionRepository);
     private final String secretKey = Base64.getEncoder().encodeToString(
         "keyForTestkeyForTestkeyForTestkeyForTestkeyForTestkeyForTestkeyForTestkeyForTestkeyForTest".getBytes());
+    private final TestDataEntityUtil testDataEntityUtil = new TestDataEntityUtil();
     private final TokenProvider tokenProvider = new TokenJwtProvider(secretKey);
+    private final UserGroupRepository userGroupRepository = new FakeUserGroupRepository();
     private final UserRepository userRepository = new FakeUserRepository(friendRepository);
     private final VoteRepository voteRepository = new FakeVoteRepository();
     private final TestDataRepositoryUtil testDataUtil = new TestDataRepositoryUtil(
-        userRepository,
-        voteRepository,
-        questionRepository,
         friendRepository,
-        questionGroupTypeRepository,
+        noticeRepository,
         purchaseRepository,
-        noticeRepository
+        questionGroupTypeRepository,
+        questionRepository,
+        testDataEntityUtil,
+        userGroupRepository,
+        userRepository,
+        voteRepository
     );
     private AuthManager authManager;
 
@@ -78,11 +86,12 @@ public class AuthManagerTest {
             .tokenProvider(tokenProvider)
             .build();
 
+        final UserGroup userGroup = testDataUtil.generateGroup(1L, UserGroupType.UNIVERSITY);
         // soft-deleted User
-        testDataUtil.generateDeletedUser(0L, 1L, UserGroupType.UNIVERSITY);
+        testDataUtil.generateDeletedUser(0L, userGroup);
 
         for (int i = 1; i <= 3; i++) {
-            testDataUtil.generateUser(i, 1L, UserGroupType.UNIVERSITY);
+            testDataUtil.generateUser(i, userGroup);
         }
 
         adminConfigurationRepository.setConfigurations(ACCESS_TOKEN_TIME, String.valueOf(30L));

@@ -23,14 +23,7 @@ import java.time.ZonedDateTime;
 public class TestDataEntityUtil implements TestDataUtil {
 
     @Override
-    public User generateUser(long index, long schoolIndex, UserGroupType userGroupType) {
-        UserGroup userGroup = UserGroup.builder()
-            .id(schoolIndex)
-            .groupName("테스트 대학교 %d".formatted(index))
-            .subGroupName("테스트 학과 %d".formatted(index))
-            .userGroupType(userGroupType)
-            .build();
-
+    public User generateUser(long index, UserGroup userGroup) {
         return User.builder()
             .id((index))
             .recommendCount(0L)
@@ -52,32 +45,11 @@ public class TestDataEntityUtil implements TestDataUtil {
     }
 
     @Override
-    public User generateDeletedUser(long index, long schoolIndex, UserGroupType userGroupType) {
-        UserGroup userGroup = UserGroup.builder()
-            .id(schoolIndex)
-            .groupName("테스트 대학교 %d".formatted(index))
-            .subGroupName("테스트 학과 %d".formatted(index))
-            .userGroupType(userGroupType)
-            .build();
+    public User generateDeletedUser(long index, UserGroup userGroup) {
+        final User user = generateUser(index, userGroup);
+        user.delete();
 
-        return User.builder()
-            .id(index)
-            .recommendCount(0L)
-            .name("name%d".formatted(index))
-            .yelloId("yelloId%d".formatted(index))
-            .gender(Gender.MALE)
-            .point(0)
-            .social(Social.KAKAO)
-            .profileImage("test image")
-            .uuid("%d".formatted(index))
-            .deletedAt(LocalDateTime.now())
-            .group(userGroup)
-            .groupAdmissionYear(20)
-            .deviceToken(null)
-            .subscribe(Subscribe.NORMAL)
-            .ticketCount(0)
-            .email("test%d@test.com".formatted(index))
-            .build();
+        return user;
     }
 
     @Override

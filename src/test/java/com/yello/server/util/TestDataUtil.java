@@ -12,9 +12,9 @@ import com.yello.server.domain.vote.entity.Vote;
 
 public interface TestDataUtil {
 
-    User generateUser(long index, long groupIndex, UserGroupType userGroupType);
+    User generateUser(long index, UserGroup userGroup);
 
-    User generateDeletedUser(long index, long groupIndex, UserGroupType userGroupType);
+    User generateDeletedUser(long index, UserGroup userGroup);
 
     Friend generateFriend(User user, User target);
 

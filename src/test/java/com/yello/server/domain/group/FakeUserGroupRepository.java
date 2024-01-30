@@ -26,6 +26,7 @@ public class FakeUserGroupRepository implements UserGroupRepository {
             .id(group.getId() == null ? ++id : group.getId())
             .groupName(group.getGroupName())
             .subGroupName(group.getSubGroupName())
+            .userGroupType(group.getUserGroupType())
             .build();
 
         data.add(newUserGroup);

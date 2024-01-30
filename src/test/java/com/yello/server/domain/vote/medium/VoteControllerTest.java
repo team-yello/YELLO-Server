@@ -20,6 +20,7 @@ import com.yello.server.domain.authorization.filter.JwtFilter;
 import com.yello.server.domain.cooldown.entity.Cooldown;
 import com.yello.server.domain.friend.dto.response.FriendShuffleResponse;
 import com.yello.server.domain.friend.entity.Friend;
+import com.yello.server.domain.group.entity.UserGroup;
 import com.yello.server.domain.group.entity.UserGroupType;
 import com.yello.server.domain.keyword.dto.response.KeywordCheckResponse;
 import com.yello.server.domain.question.dto.response.QuestionForVoteResponse;
@@ -106,8 +107,9 @@ class VoteControllerTest {
 
     @BeforeEach
     void init() {
-        user = testDataUtil.generateUser(1L, 1L, UserGroupType.UNIVERSITY);
-        target = testDataUtil.generateUser(2L, 1L, UserGroupType.UNIVERSITY);
+        final UserGroup userGroup = testDataUtil.generateGroup(1L, UserGroupType.UNIVERSITY);
+        user = testDataUtil.generateUser(1L, userGroup);
+        target = testDataUtil.generateUser(2L, userGroup);
     }
 
     @Test

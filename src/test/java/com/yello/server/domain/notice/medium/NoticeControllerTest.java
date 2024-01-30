@@ -14,13 +14,13 @@ import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.yello.server.domain.authorization.filter.JwtExceptionFilter;
 import com.yello.server.domain.authorization.filter.JwtFilter;
+import com.yello.server.domain.group.entity.UserGroup;
 import com.yello.server.domain.group.entity.UserGroupType;
 import com.yello.server.domain.notice.controller.NoticeController;
 import com.yello.server.domain.notice.dto.NoticeDataResponse;
 import com.yello.server.domain.notice.entity.Notice;
 import com.yello.server.domain.notice.entity.NoticeType;
 import com.yello.server.domain.notice.service.NoticeService;
-import com.yello.server.domain.purchase.controller.PurchaseController;
 import com.yello.server.domain.user.entity.User;
 import com.yello.server.global.exception.ControllerExceptionAdvice;
 import com.yello.server.util.TestDataEntityUtil;
@@ -77,7 +77,8 @@ public class NoticeControllerTest {
 
     @BeforeEach
     void init() {
-        user = testDataUtil.generateUser(1L, 1L, UserGroupType.HIGH_SCHOOL);
+        final UserGroup userGroup = testDataUtil.generateGroup(1L, UserGroupType.UNIVERSITY);
+        user = testDataUtil.generateUser(1L, userGroup);
         notice = testDataUtil.genereateNotice(1L);
     }
 
@@ -100,7 +101,7 @@ public class NoticeControllerTest {
                     removeHeaders(excludeRequestHeaders)),
                 Preprocessors.preprocessResponse(prettyPrint(),
                     removeHeaders(excludeResponseHeaders)),
-                    pathParameters(parameterWithName("tag").description("공지의 종류")))
+                pathParameters(parameterWithName("tag").description("공지의 종류")))
             )
             .andExpect(MockMvcResultMatchers.status().isOk());
     }
