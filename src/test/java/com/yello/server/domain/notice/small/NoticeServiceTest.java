@@ -3,7 +3,6 @@ package com.yello.server.domain.notice.small;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import com.yello.server.domain.friend.FakeFriendRepository;
 import com.yello.server.domain.friend.repository.FriendRepository;
@@ -31,11 +30,9 @@ import com.yello.server.domain.vote.FakeVoteRepository;
 import com.yello.server.domain.vote.repository.VoteRepository;
 import com.yello.server.util.TestDataEntityUtil;
 import com.yello.server.util.TestDataRepositoryUtil;
-import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
-import java.time.format.DateTimeFormatter;
-import org.assertj.core.api.Assertions;
+import java.util.Optional;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.DisplayNameGeneration;
@@ -56,11 +53,6 @@ public class NoticeServiceTest {
     private final UserGroupRepository userGroupRepository = new FakeUserGroupRepository();
     private final UserRepository userRepository = new FakeUserRepository(friendRepository);
     private final VoteRepository voteRepository = new FakeVoteRepository();
-    private final PurchaseRepository purchaseRepository = new FakePurchaseRepository();
-    private NoticeService noticeService;
-    private User user1;
-    private Notice notice;
-  
     private final TestDataRepositoryUtil testDataUtil = new TestDataRepositoryUtil(
         friendRepository,
         noticeRepository,
@@ -73,7 +65,6 @@ public class NoticeServiceTest {
         voteRepository
     );
     private NoticeService noticeService;
-    private User user1;
 
     @BeforeEach
     void init() {
@@ -85,8 +76,7 @@ public class NoticeServiceTest {
         final UserGroup userGroup = testDataUtil.generateGroup(1L, UserGroupType.UNIVERSITY);
         final User user = testDataUtil.generateUser(1L, userGroup);
         user.setSubscribe(Subscribe.ACTIVE);
-        notice = testDataUtil.genereateNotice(1L);
-        noticeRepository.save(notice);
+        testDataUtil.generateNotice(1L, NoticeType.NOTICE);
     }
 
     @Test
@@ -97,14 +87,14 @@ public class NoticeServiceTest {
         ZoneId zoneId = ZoneId.of("Asia/Seoul");
         ZonedDateTime now = ZonedDateTime.now(zoneId);
 
+        final Optional<Notice> notice = noticeRepository.findTopNotice(tag);
+
         // when
         final NoticeDataResponse noticeResponse = noticeService.findNotice(userId, tag);
-        System.out.println(noticeResponse.title() + ", " + noticeResponse.isAvailable());
 
         // then
         assertThat(noticeResponse.isAvailable()).isTrue();
-        assertEquals(true, now.isAfter(notice.getStartDate()));
-        assertEquals(true, now.isBefore(notice.getEndDate()));
-
+        assertEquals(true, now.isAfter(notice.get().getStartDate()));
+        assertEquals(true, now.isBefore(notice.get().getEndDate()));
     }
 }

@@ -4,6 +4,7 @@ import com.yello.server.domain.friend.entity.Friend;
 import com.yello.server.domain.group.entity.UserGroup;
 import com.yello.server.domain.group.entity.UserGroupType;
 import com.yello.server.domain.notice.entity.Notice;
+import com.yello.server.domain.notice.entity.NoticeType;
 import com.yello.server.domain.purchase.entity.Purchase;
 import com.yello.server.domain.question.entity.Question;
 import com.yello.server.domain.question.entity.QuestionGroupType;
@@ -28,6 +29,6 @@ public interface TestDataUtil {
 
     Purchase generatePurchase(long index, User user);
 
-    Notice genereateNotice(long index);
+    Notice generateNotice(long index, NoticeType noticeType);
 }
 

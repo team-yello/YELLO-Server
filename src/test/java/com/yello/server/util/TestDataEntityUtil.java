@@ -116,7 +116,7 @@ public class TestDataEntityUtil implements TestDataUtil {
     }
 
     @Override
-    public Notice genereateNotice(long index) {
+    public Notice generateNotice(long index, NoticeType noticeType) {
         ZoneId zoneId = ZoneId.of("Asia/Seoul");
         ZonedDateTime now = ZonedDateTime.now(zoneId);
 
@@ -127,7 +127,7 @@ public class TestDataEntityUtil implements TestDataUtil {
             .startDate(now.minusDays(3))
             .redirectUrl("redirectUrl")
             .isAvailable(true)
-            .tag(NoticeType.NOTICE)
+            .tag(noticeType)
             .title("notice title")
             .build();
     }

@@ -6,6 +6,7 @@ import com.yello.server.domain.group.entity.UserGroup;
 import com.yello.server.domain.group.entity.UserGroupType;
 import com.yello.server.domain.group.repository.UserGroupRepository;
 import com.yello.server.domain.notice.entity.Notice;
+import com.yello.server.domain.notice.entity.NoticeType;
 import com.yello.server.domain.notice.repository.NoticeRepository;
 import com.yello.server.domain.purchase.entity.Purchase;
 import com.yello.server.domain.purchase.repository.PurchaseRepository;
@@ -86,7 +87,7 @@ public class TestDataRepositoryUtil implements TestDataUtil {
     }
 
     @Override
-    public Notice genereateNotice(long index) {
-        return noticeRepository.save(testDataEntityUtil.genereateNotice(index));
+    public Notice generateNotice(long index, NoticeType noticeType) {
+        return noticeRepository.save(testDataEntityUtil.generateNotice(index, noticeType));
     }
 }

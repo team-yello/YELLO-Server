@@ -79,7 +79,7 @@ public class NoticeControllerTest {
     void init() {
         final UserGroup userGroup = testDataUtil.generateGroup(1L, UserGroupType.UNIVERSITY);
         user = testDataUtil.generateUser(1L, userGroup);
-        notice = testDataUtil.genereateNotice(1L);
+        notice = testDataUtil.generateNotice(1L, NoticeType.NOTICE);
     }
 
     @Test
