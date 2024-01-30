@@ -20,6 +20,7 @@ include::{snippets}/api/v2/user/http-response.adoc[]
 - "social": "KAKAO" | "APPLE"
 - "uuid": String(10)
 - "deviceToken": String
+- "groupId": Long
 - "group": String
 - "groupType": "UNIVERSITY" | "HIGH_SCHOOL" | "MIDDLE_SCHOOL" | "SOPT"
 - "groupName": String
@@ -42,3 +43,4 @@ include::{snippets}/api/v2/user/http-response.adoc[]
 
 - 2024.01.07 첫 릴리즈
 - 2024.01.09 필드 타입 추가
+- 2024.01.30 groupId 필드 추가
