@@ -43,6 +43,7 @@ import com.yello.server.domain.vote.dto.response.VoteListResponse;
 import com.yello.server.domain.vote.dto.response.VoteResponse;
 import com.yello.server.domain.vote.dto.response.VoteUnreadCountResponse;
 import com.yello.server.domain.vote.entity.Vote;
+import com.yello.server.domain.vote.entity.VoteType;
 import com.yello.server.domain.vote.exception.VoteForbiddenException;
 import com.yello.server.domain.vote.exception.VoteNotFoundException;
 import com.yello.server.domain.vote.repository.VoteRepository;
@@ -57,6 +58,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.StringUtils;
 
 @Service
 @Builder
@@ -121,18 +123,7 @@ public class VoteService {
 
     public VoteFriendAndUserResponse findAllFriendVotesWithType(Long userId, Pageable pageable, String type) {
 
-        if(type.equals(USER_VOTE_TYPE)) {
-            final Long totalCount = voteRepository.countUserSendReceivedByFriends(userId);
-
-            List<VoteFriendAndUserVO> list =
-                voteRepository.findUserSendReceivedByFriends(userId, pageable)
-                    .stream()
-                    .filter(vote -> vote.getNameHint()!=-3)
-                    .map(vote -> VoteFriendAndUserVO.of(vote, vote.getSender().getId().equals(userId)))
-                    .toList();
-            return VoteFriendAndUserResponse.of(totalCount,list);
-        }
-        if(type.equals(ALL_VOTE_TYPE)) {
+        if(!StringUtils.hasText(type)) {
             final Long totalCount = Long.valueOf(voteRepository.countAllReceivedByFriends(userId));
             final List<VoteFriendAndUserVO> list = voteRepository.findAllReceivedByFriends(userId, pageable)
                 .stream()
@@ -140,6 +131,19 @@ public class VoteService {
                 .map(vote -> VoteFriendAndUserVO.of(vote, vote.getSender().getId().equals(userId)))
                 .toList();
             return VoteFriendAndUserResponse.of(totalCount, list);
+        }
+
+        switch(VoteType.valueOf(type)) {
+            case send -> {
+                final Long totalCount = voteRepository.countUserSendReceivedByFriends(userId);
+                List<VoteFriendAndUserVO> list =
+                    voteRepository.findUserSendReceivedByFriends(userId, pageable)
+                        .stream()
+                        .filter(vote -> vote.getNameHint()!=-3)
+                        .map(vote -> VoteFriendAndUserVO.of(vote, vote.getSender().getId().equals(userId)))
+                        .toList();
+                return VoteFriendAndUserResponse.of(totalCount,list);
+            }
         }
 
         throw new VoteForbiddenException(WRONG_VOTE_TYPE_FORBIDDEN);

@@ -20,6 +20,7 @@ import com.yello.server.domain.vote.dto.response.VoteFriendAndUserResponse;
 import com.yello.server.domain.vote.dto.response.VoteFriendResponse;
 import com.yello.server.domain.vote.dto.response.VoteListResponse;
 import com.yello.server.domain.vote.dto.response.VoteUnreadCountResponse;
+import com.yello.server.domain.vote.entity.VoteType;
 import com.yello.server.domain.vote.service.VoteService;
 import com.yello.server.global.common.SuccessCode;
 import com.yello.server.global.common.annotation.AccessTokenUser;
@@ -74,7 +75,7 @@ public class VoteController {
 
     @GetMapping("/v2/vote/friend")
     public BaseResponse<VoteFriendAndUserResponse> findAllFriendVotesWithType(
-        @RequestParam("page") Integer page, @RequestParam("type") String type,
+        @RequestParam("page") Integer page, @RequestParam(value = "type", required = false) String type,
         @AccessTokenUser User user) {
         val data = voteService.findAllFriendVotesWithType(user.getId(), createPageableLimitTen(page), type);
         return BaseResponse.success(READ_VOTE_SUCCESS, data);

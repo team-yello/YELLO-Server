@@ -44,6 +44,7 @@ import com.yello.server.domain.vote.dto.response.VoteListResponse;
 import com.yello.server.domain.vote.dto.response.VoteResponse;
 import com.yello.server.domain.vote.dto.response.VoteUnreadCountResponse;
 import com.yello.server.domain.vote.entity.Vote;
+import com.yello.server.domain.vote.entity.VoteType;
 import com.yello.server.domain.vote.service.VoteService;
 import com.yello.server.global.exception.ControllerExceptionAdvice;
 import com.yello.server.infrastructure.firebase.service.NotificationService;
@@ -201,7 +202,8 @@ class VoteControllerTest {
         final VoteFriendAndUserResponse voteFriendResponse =
             VoteFriendAndUserResponse.of(1L, Arrays.asList(voteFriendAndUserVO));
 
-        given(voteService.findAllFriendVotesWithType(anyLong(), any(Pageable.class), anyString()))
+        given(voteService.findAllFriendVotesWithType(anyLong(), any(Pageable.class),
+            anyString()))
             .willReturn(voteFriendResponse);
 
         // when
