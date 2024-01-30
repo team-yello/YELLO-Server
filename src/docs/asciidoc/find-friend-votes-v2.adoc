@@ -63,7 +63,8 @@ include::{snippets}/api/v2/vote/friend/http-response.adoc[]
 
 === NOTE
 
-- 모든 종류의 쪽지를 조회할 때 `/api/v1/vote/friend?page=0&type=null` 으로 요청해주세요
+- 모든 종류의 쪽지를 조회할 때 `/api/v1/vote/friend?page=0` 으로 요청해주세요
+* type을 명시하지 마세요
 - 내가 보낸 쪽지를 조회할 때 `/api/v1/vote/friend?page=0&type=send` 으로 요청해주세요
 - `senderGender` 필드가 다른 API와 일관되지 못한점 미안해요 ㅠ
 
