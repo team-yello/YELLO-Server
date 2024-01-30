@@ -3,6 +3,7 @@ package com.yello.server.domain.user.entity;
 import com.yello.server.domain.admin.dto.request.AdminUserDetailRequest;
 import com.yello.server.domain.authorization.dto.request.SignUpRequest;
 import com.yello.server.domain.group.entity.UserGroup;
+import com.yello.server.domain.user.dto.request.UserUpdateRequest;
 import com.yello.server.global.common.dto.AuditingTimeEntity;
 import java.time.LocalDateTime;
 import java.util.Objects;
@@ -128,16 +129,6 @@ public class User extends AuditingTimeEntity {
             .build();
     }
 
-    public void delete() {
-        this.deletedAt = LocalDateTime.now();
-        this.point = 0;
-        this.deviceToken = null;
-    }
-
-    public void renew() {
-        this.deletedAt = null;
-    }
-
     public void update(AdminUserDetailRequest request) {
         this.recommendCount = request.recommendCount();
         this.name = request.name();
@@ -153,6 +144,27 @@ public class User extends AuditingTimeEntity {
         this.deviceToken = request.deviceToken();
         this.subscribe = request.subscribe();
     }
+
+    public void update(UserUpdateRequest request, Gender gender, UserGroup userGroup) {
+        this.name = request.name();
+        this.yelloId = request.yelloId();
+        this.gender = gender;
+        this.email = request.email();
+        this.profileImage = request.profileImageUrl();
+        this.group = userGroup;
+        this.groupAdmissionYear = request.groupAdmissionYear();
+    }
+
+    public void delete() {
+        this.deletedAt = LocalDateTime.now();
+        this.point = 0;
+        this.deviceToken = null;
+    }
+
+    public void renew() {
+        this.deletedAt = null;
+    }
+
 
     public void addPoint(Integer point) {
         if (this.getSubscribe() == Subscribe.NORMAL) {

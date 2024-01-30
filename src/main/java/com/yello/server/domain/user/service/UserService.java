@@ -8,15 +8,18 @@ import com.yello.server.domain.cooldown.entity.Cooldown;
 import com.yello.server.domain.cooldown.repository.CooldownRepository;
 import com.yello.server.domain.friend.entity.Friend;
 import com.yello.server.domain.friend.repository.FriendRepository;
+import com.yello.server.domain.group.entity.UserGroup;
 import com.yello.server.domain.group.repository.UserGroupRepository;
 import com.yello.server.domain.purchase.entity.Purchase;
 import com.yello.server.domain.purchase.repository.PurchaseRepository;
 import com.yello.server.domain.user.dto.request.UserDeleteReasonRequest;
 import com.yello.server.domain.user.dto.request.UserDeviceTokenRequest;
+import com.yello.server.domain.user.dto.request.UserUpdateRequest;
 import com.yello.server.domain.user.dto.response.UserDetailResponse;
 import com.yello.server.domain.user.dto.response.UserDetailV2Response;
 import com.yello.server.domain.user.dto.response.UserResponse;
 import com.yello.server.domain.user.dto.response.UserSubscribeDetailResponse;
+import com.yello.server.domain.user.entity.Gender;
 import com.yello.server.domain.user.entity.User;
 import com.yello.server.domain.user.entity.UserData;
 import com.yello.server.domain.user.exception.UserConflictException;
@@ -118,5 +121,16 @@ public class UserService {
 
         userDataRepository.save(UserData.of(WITHDRAW_REASON, request.value(), target));
 
+    }
+
+    @Transactional
+    public void update(Long userId, UserUpdateRequest request) {
+        // exception
+        User user = userRepository.getById(userId);
+        final UserGroup userGroup = userGroupRepository.getById(request.groupId());
+        final Gender gender = Gender.fromCode(request.gender());
+
+        // logic
+        user.update(request, gender, userGroup);
     }
 }

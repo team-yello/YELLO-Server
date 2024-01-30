@@ -3,22 +3,7 @@
 
 === 요청
 
-[http,json]
-----
-POST /api/v1/user HTTP/1.1
-Authorization: Bearer your-access-token
-Content-Type: application/json
-
-{
-    "name": "name1",
-    "yelloId": "yelloId1",
-    "gender": "M",
-    "email": "test1@test.com",
-    "profileImageUrl": "test image",
-    "groupId": 30000,
-    "groupAdmissionYear" : 20
-}
-----
+include::{snippets}/api/v1/user/update/http-request.adoc[]
 
 *필드 타입*
 
@@ -35,19 +20,7 @@ Content-Type: application/json
 
 === 응답
 
-[http,json]
-----
-HTTP/1.1 200 OK
-Vary: Origin
-Vary: Access-Control-Request-Method
-Vary: Access-Control-Request-Headers
-Content-Type: application/json
-
-{
-  "status" : 200,
-  "message" : "유저 프로필 조회에 성공하였습니다."
-}
-----
+include::{snippets}/api/v1/user/update/http-response.adoc[]
 
 *필드 타입*
 

@@ -447,19 +447,20 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <h3 id="_요청">요청</h3>
 <div class="listingblock">
 <div class="content">
-<pre>POST /api/v1/user HTTP/1.1
+<pre class="highlight nowrap"><code class="language-http" data-lang="http">DELETE /api/v1/user HTTP/1.1
+Content-Type: application/json;charset=UTF-8
 Authorization: Bearer your-access-token
-Content-Type: application/json
+Content-Length: 195
 
 {
-    "name": "name1",
-    "yelloId": "yelloId1",
-    "gender": "M",
-    "email": "test1@test.com",
-    "profileImageUrl": "test image",
-    "groupId": 30000,
-    "groupAdmissionYear" : 20
-}</pre>
+  "name" : "after",
+  "yelloId" : "afterupdate",
+  "gender" : "M",
+  "email" : "afterupdate@yello.com",
+  "profileImageUrl" : "https://after.com",
+  "groupId" : 1,
+  "groupAdmissionYear" : 24
+}</code></pre>
 </div>
 </div>
 <div class="paragraph">
@@ -512,7 +513,7 @@ Content-Type: application/json
 <h3 id="_응답">응답</h3>
 <div class="listingblock">
 <div class="content">
-<pre>HTTP/1.1 200 OK
+<pre class="highlight nowrap"><code class="language-http" data-lang="http">HTTP/1.1 200 OK
 Vary: Origin
 Vary: Access-Control-Request-Method
 Vary: Access-Control-Request-Headers
@@ -520,8 +521,8 @@ Content-Type: application/json
 
 {
   "status" : 200,
-  "message" : "유저 프로필 조회에 성공하였습니다."
-}</pre>
+  "message" : "유저 탈퇴에 성공했습니다."
+}</code></pre>
 </div>
 </div>
 <div class="paragraph">

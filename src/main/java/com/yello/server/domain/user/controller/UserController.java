@@ -4,9 +4,11 @@ import static com.yello.server.global.common.SuccessCode.DELETE_USER_SUCCESS;
 import static com.yello.server.global.common.SuccessCode.READ_USER_SUBSCRIBE_SUCCESS;
 import static com.yello.server.global.common.SuccessCode.READ_USER_SUCCESS;
 import static com.yello.server.global.common.SuccessCode.UPDATE_DEVICE_TOKEN_USER_SUCCESS;
+import static com.yello.server.global.common.SuccessCode.UPDATE_USER_DETAIL_SUCCESS;
 
 import com.yello.server.domain.user.dto.request.UserDeleteReasonRequest;
 import com.yello.server.domain.user.dto.request.UserDeviceTokenRequest;
+import com.yello.server.domain.user.dto.request.UserUpdateRequest;
 import com.yello.server.domain.user.dto.response.UserDetailResponse;
 import com.yello.server.domain.user.dto.response.UserDetailV2Response;
 import com.yello.server.domain.user.dto.response.UserResponse;
@@ -21,6 +23,7 @@ import lombok.val;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -70,6 +73,12 @@ public class UserController {
     public BaseResponse<UserSubscribeDetailResponse> getUserSubscribe(@AccessTokenUser User user) {
         val data = userService.getUserSubscribe(user.getId());
         return BaseResponse.success(READ_USER_SUBSCRIBE_SUCCESS, data);
+    }
+
+    @PostMapping("/v1/user")
+    public BaseResponse postUser(@AccessTokenUser User user, @RequestBody UserUpdateRequest request) {
+        userService.update(user.getId(), request);
+        return BaseResponse.success(UPDATE_USER_DETAIL_SUCCESS);
     }
 
     @DeleteMapping("/v2/user")
