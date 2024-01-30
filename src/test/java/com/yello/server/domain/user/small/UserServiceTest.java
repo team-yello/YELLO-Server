@@ -29,8 +29,6 @@ import com.yello.server.domain.user.repository.UserRepository;
 import com.yello.server.domain.user.service.UserService;
 import com.yello.server.domain.vote.FakeVoteRepository;
 import com.yello.server.domain.vote.repository.VoteRepository;
-import com.yello.server.infrastructure.redis.FakeTokenRepository;
-import com.yello.server.infrastructure.redis.repository.TokenRepository;
 import com.yello.server.util.TestDataRepositoryUtil;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
@@ -47,14 +45,13 @@ class UserServiceTest {
 
     private final CooldownRepository cooldownRepository = new FakeCooldownRepository();
     private final FriendRepository friendRepository = new FakeFriendRepository();
+    private final NoticeRepository noticeRepository = new FakeNoticeRepository();
     private final PurchaseRepository purchaseRepository = new FakePurchaseRepository();
     private final QuestionRepository questionRepository = new FakeQuestionRepository();
     private final QuestionGroupTypeRepository
         questionGroupTypeRepository = new FakeQuestionGroupTypeRepository(questionRepository);
-    private final TokenRepository tokenRepository = new FakeTokenRepository();
     private final UserRepository userRepository = new FakeUserRepository(friendRepository);
     private final VoteRepository voteRepository = new FakeVoteRepository();
-    private final NoticeRepository noticeRepository = new FakeNoticeRepository();
     private final TestDataRepositoryUtil testDataUtil = new TestDataRepositoryUtil(
         userRepository,
         voteRepository,
@@ -73,7 +70,6 @@ class UserServiceTest {
             .friendRepository(friendRepository)
             .voteRepository(voteRepository)
             .cooldownRepository(cooldownRepository)
-            .tokenRepository(tokenRepository)
             .purchaseRepository(purchaseRepository)
             .build();
 

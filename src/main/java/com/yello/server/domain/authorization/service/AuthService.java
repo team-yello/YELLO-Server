@@ -51,19 +51,16 @@ import org.springframework.transaction.annotation.Transactional;
 @Transactional(readOnly = true)
 public class AuthService {
 
-    private final UserRepository userRepository;
-    private final UserGroupRepository userGroupRepository;
-    private final FriendRepository friendRepository;
-    private final CooldownRepository cooldownRepository;
-    private final MessageQueueRepository messageQueueRepository;
-
     private final AuthManager authManager;
-    private final FriendManager friendManager;
     private final ConnectionManager connectionManager;
-    private final VoteManager voteManager;
-    private final TokenProvider tokenProvider;
-
+    private final CooldownRepository cooldownRepository;
+    private final FriendManager friendManager;
+    private final FriendRepository friendRepository;
+    private final MessageQueueRepository messageQueueRepository;
     private final NotificationService notificationService;
+    private final UserGroupRepository userGroupRepository;
+    private final UserRepository userRepository;
+    private final VoteManager voteManager;
 
     @Transactional
     public OAuthResponse oauthLogin(OAuthRequest oAuthRequest) {
@@ -71,7 +68,7 @@ public class AuthService {
             connectionManager.getKakaoTokenInfo(oAuthRequest.accessToken());
 
         final User user = authManager.getSignedInUserByUuid(response.getBody().id().toString());
-        final ServiceTokenVO serviceTokenVO = authManager.registerToken(user);
+        final ServiceTokenVO serviceTokenVO = authManager.issueToken(user);
 
         final Boolean isResigned = authManager.renewUserData(user);
         user.setDeviceToken(oAuthRequest.deviceToken());
@@ -96,7 +93,7 @@ public class AuthService {
 
         this.recommendUser(signUpRequest.recommendId(), signUpRequest.yelloId());
 
-        final ServiceTokenVO signUpToken = authManager.registerToken(newUser);
+        final ServiceTokenVO signUpToken = authManager.issueToken(newUser);
 
         this.makeFriend(newUser, signUpRequest.friends());
 
@@ -172,8 +169,8 @@ public class AuthService {
 
     @Transactional
     public ServiceTokenVO reIssueToken(@NotNull ServiceTokenVO tokens) {
-        boolean isAccessTokenExpired = tokenProvider.isExpired(tokens.accessToken());
-        boolean isRefreshTokenExpired = tokenProvider.isExpired(tokens.refreshToken());
+        boolean isAccessTokenExpired = authManager.isExpired(tokens.accessToken());
+        boolean isRefreshTokenExpired = authManager.isExpired(tokens.refreshToken());
 
         if (isAccessTokenExpired) {
 
@@ -181,8 +178,8 @@ public class AuthService {
                 throw new NotExpiredTokenForbiddenException(TOKEN_ALL_EXPIRED_AUTH_EXCEPTION);
             }
 
-            final String refreshToken = tokens.refreshToken();
-            return authManager.setNewAccessToken(refreshToken);
+            String newAccessToken = authManager.issueNewAccessToken(tokens.refreshToken());
+            return ServiceTokenVO.of(newAccessToken, tokens.refreshToken());
         }
 
         throw new NotExpiredTokenForbiddenException(TOKEN_NOT_EXPIRED_AUTH_EXCEPTION);

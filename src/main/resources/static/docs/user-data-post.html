@@ -5,7 +5,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="generator" content="Asciidoctor 2.0.10">
-<title>탈퇴 사유 저장 (명세)</title>
+<title>탈퇴 &amp; 사유 저장 v2</title>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Open+Sans:300,300italic,400,400italic,600,600italic%7CNoto+Serif:400,400italic,700,700italic%7CDroid+Sans+Mono:400,700">
 <style>
 /* Asciidoctor default stylesheet | MIT License | https://asciidoctor.org */
@@ -441,19 +441,53 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 </div>
 <div id="content">
 <div class="sect1">
-<h2 id="_탈퇴_사유_저장_명세">탈퇴 사유 저장 (명세)</h2>
+<h2 id="_탈퇴_사유_저장_v2">탈퇴 &amp; 사유 저장 v2</h2>
 <div class="sectionbody">
 <div class="sect2">
 <h3 id="_요청">요청</h3>
 <div class="listingblock">
 <div class="content">
-<pre>POST /api/v1/user/data/withdraw-reason HTTP/1.1
-Authorization: Bearer your-access-token
-Content-Type: application-json
+<pre class="highlight nowrap"><code class="language-http" data-lang="http">GET /api/v2/user HTTP/1.1
+Authorization: Bearer your-access-token</code></pre>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_응답">응답</h3>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight nowrap"><code class="language-http" data-lang="http">HTTP/1.1 200 OK
+Vary: Origin
+Vary: Access-Control-Request-Method
+Vary: Access-Control-Request-Headers
+Content-Type: application/json
 
 {
-    "value": "오류가 많아서"
-}</pre>
+  "status" : 200,
+  "message" : "유저 조회에 성공했습니다.",
+  "data" : {
+    "userId" : 1,
+    "name" : "name1",
+    "yelloId" : "yelloId1",
+    "gender" : "M",
+    "email" : "test1@test.com",
+    "profileImageUrl" : "test image",
+    "social" : "KAKAO",
+    "uuid" : "1",
+    "deviceToken" : "deviceToken#1",
+    "group" : "테스트 대학교 1 테스트 학과 1 20학번",
+    "groupType" : "UNIVERSITY",
+    "groupName" : "테스트 대학교 1",
+    "subGroupName" : "테스트 학과 1",
+    "groupAdmissionYear" : 20,
+    "recommendCount" : 0,
+    "ticketCount" : 0,
+    "point" : 200,
+    "subscribe" : "normal",
+    "yelloCount" : 100,
+    "friendCount" : 200
+  }
+}</code></pre>
 </div>
 </div>
 <div class="paragraph">
@@ -462,36 +496,16 @@ Content-Type: application-json
 <div class="ulist">
 <ul>
 <li>
-<p>"tag": "withdraw-reason" | "account-update-at" | "recommended"</p>
-</li>
-<li>
 <p>"value": String</p>
 <div class="ulist">
 <ul>
 <li>
-<p>withdraw-reason 자리가 ENUM으로 대체될 예정입니다.</p>
+<p>value는 탈퇴 사유를 보내주시면 됩니다.</p>
 </li>
 </ul>
 </div>
 </li>
 </ul>
-</div>
-</div>
-<div class="sect2">
-<h3 id="_응답">응답</h3>
-<div class="listingblock">
-<div class="content">
-<pre>HTTP/1.1 200 OK
-Vary: Origin
-Vary: Access-Control-Request-Method
-Vary: Access-Control-Request-Headers
-Content-Type: application/json
-
-{
-  "status" : 200,
-  "message" : "탈퇴 사유 정보 저장에 성공하였습니다."
-}</pre>
-</div>
 </div>
 <div class="paragraph">
 <p><strong>필드 타입</strong></p>
@@ -521,6 +535,9 @@ Content-Type: application/json
 <h3 id="_changelog">CHANGELOG</h3>
 <div class="ulist">
 <ul>
+<li>
+<p>2024.01.27 API 릴리즈</p>
+</li>
 <li>
 <p>2024.01.09 명세 작성</p>
 </li>

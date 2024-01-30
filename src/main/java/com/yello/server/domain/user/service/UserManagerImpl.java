@@ -35,7 +35,7 @@ public class UserManagerImpl implements UserManager {
         List<User> users = new ArrayList<>();
         users.add(getOfficialUser(Gender.FEMALE));
         users.add(getOfficialUser(Gender.MALE));
-        
+
         return users;
     }
 
