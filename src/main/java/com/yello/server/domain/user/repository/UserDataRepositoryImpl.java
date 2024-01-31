@@ -37,16 +37,16 @@ public class UserDataRepositoryImpl implements UserDataRepository {
 
     @Override
     public UserData getByUserIdAndTag(Long userId, UserDataType tag) {
-        final UserData data = jpaQueryFactory.selectFrom(userData)
+        final Optional<UserData> data = Optional.ofNullable(jpaQueryFactory.selectFrom(userData)
             .where(userData.user.id.eq(userId))
             .where(userData.tag.eq(tag))
-            .fetchFirst();
+            .fetchFirst());
 
-        if (data == null) {
+        if (data.isEmpty()) {
             throw new UserDataNotFoundException(USER_DATA_NOT_FOUND_EXCEPTION);
         }
 
-        return data;
+        return data.get();
     }
 
     @Override

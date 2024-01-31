@@ -44,4 +44,8 @@ public class UserData {
             .value(value)
             .build();
     }
+
+    public void setValue(String value) {
+        this.value = value;
+    }
 }

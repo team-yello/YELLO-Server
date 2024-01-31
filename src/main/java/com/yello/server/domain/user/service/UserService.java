@@ -144,9 +144,7 @@ public class UserService {
             UserDataType.ACCOUNT_UPDATED_AT);
 
         if (userData.isPresent()) {
-            userDataRepository.update(
-                userId,
-                ACCOUNT_UPDATED_AT,
+            userData.get().setValue(
                 ZonedDateTime.now(ConstantUtil.GlobalZoneId).format(DateTimeFormatter.ISO_OFFSET_DATE_TIME)
             );
         } else {

@@ -100,7 +100,7 @@ public class UserController {
     }
 
     @PostMapping("/v1/user/data/{tag}")
-    public BaseResponse postUserData(@AccessTokenUser User user, @PathVariable("tag") String tag,
+    public BaseResponse updateUserData(@AccessTokenUser User user, @PathVariable("tag") String tag,
         @RequestBody UserDataUpdateRequest request) {
         userService.updateUserData(user.getId(), UserDataType.fromCode(tag), request);
         return BaseResponse.success(UPDATE_USER_DATA_SUCCESS);
