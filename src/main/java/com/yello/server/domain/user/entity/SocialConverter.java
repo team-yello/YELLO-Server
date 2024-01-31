@@ -13,7 +13,7 @@ public class SocialConverter implements AttributeConverter<Social, String> {
         if (social == null) {
             return null;
         }
-        return social.getIntial();
+        return social.name();
     }
 
     @Override
@@ -21,11 +21,7 @@ public class SocialConverter implements AttributeConverter<Social, String> {
         if (dbData == null) {
             return null;
         }
-        try {
-            return Social.fromCode(dbData);
-        } catch (IllegalArgumentException exception) {
-            log.error("failure to convert cause unexpected code" + dbData + exception);
-            throw exception;
-        }
+
+        return Social.fromName(dbData);
     }
 }

@@ -13,7 +13,7 @@ public class AdminConfigurationTypeConverter implements AttributeConverter<Admin
         if (type == null) {
             return null;
         }
-        return type.getIntial();
+        return type.name();
     }
 
     @Override
@@ -21,11 +21,7 @@ public class AdminConfigurationTypeConverter implements AttributeConverter<Admin
         if (dbData == null) {
             return null;
         }
-        try {
-            return AdminConfigurationType.fromCode(dbData);
-        } catch (IllegalArgumentException exception) {
-            log.error("failure to convert cause unexpected code" + dbData + exception);
-            throw exception;
-        }
+
+        return AdminConfigurationType.fromName(dbData);
     }
 }

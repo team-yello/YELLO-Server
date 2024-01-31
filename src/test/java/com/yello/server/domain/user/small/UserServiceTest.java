@@ -20,6 +20,7 @@ import com.yello.server.domain.question.FakeQuestionGroupTypeRepository;
 import com.yello.server.domain.question.FakeQuestionRepository;
 import com.yello.server.domain.question.repository.QuestionGroupTypeRepository;
 import com.yello.server.domain.question.repository.QuestionRepository;
+import com.yello.server.domain.user.FakeUserDataRepository;
 import com.yello.server.domain.user.FakeUserRepository;
 import com.yello.server.domain.user.dto.request.UserUpdateRequest;
 import com.yello.server.domain.user.dto.response.UserDetailResponse;
@@ -30,6 +31,7 @@ import com.yello.server.domain.user.entity.Gender;
 import com.yello.server.domain.user.entity.Subscribe;
 import com.yello.server.domain.user.entity.User;
 import com.yello.server.domain.user.exception.UserNotFoundException;
+import com.yello.server.domain.user.repository.UserDataRepository;
 import com.yello.server.domain.user.repository.UserRepository;
 import com.yello.server.domain.user.service.UserService;
 import com.yello.server.domain.vote.FakeVoteRepository;
@@ -57,6 +59,7 @@ class UserServiceTest {
     private final QuestionGroupTypeRepository
         questionGroupTypeRepository = new FakeQuestionGroupTypeRepository(questionRepository);
     private final TestDataEntityUtil testDataEntityUtil = new TestDataEntityUtil();
+    private final UserDataRepository userDataRepository = new FakeUserDataRepository();
     private final UserGroupRepository userGroupRepository = new FakeUserGroupRepository();
     private final UserRepository userRepository = new FakeUserRepository(friendRepository);
     private final VoteRepository voteRepository = new FakeVoteRepository();
@@ -67,6 +70,7 @@ class UserServiceTest {
         questionGroupTypeRepository,
         questionRepository,
         testDataEntityUtil,
+        userDataRepository,
         userGroupRepository,
         userRepository,
         voteRepository
@@ -82,6 +86,7 @@ class UserServiceTest {
             .cooldownRepository(cooldownRepository)
             .purchaseRepository(purchaseRepository)
             .userGroupRepository(userGroupRepository)
+            .userDataRepository(userDataRepository)
             .build();
 
         final UserGroup userGroup = testDataUtil.generateGroup(1L, UserGroupType.UNIVERSITY);
@@ -174,7 +179,7 @@ class UserServiceTest {
 
         // then
         assertThat(response.id()).isEqualTo(userId);
-        assertThat(response.subscribe()).isEqualTo(Subscribe.ACTIVE.getIntial());
+        assertThat(response.subscribe()).isEqualTo(Subscribe.ACTIVE.getInitial());
         assertThat(response.expiredDate()).isEqualTo(
             purchase.get()
                 .getUpdatedAt()
