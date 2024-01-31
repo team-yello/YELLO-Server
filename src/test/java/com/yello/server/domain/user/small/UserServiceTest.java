@@ -199,7 +199,7 @@ class UserServiceTest {
             .build();
 
         // when
-        userService.update(userId, request);
+        userService.updateUserProfile(userId, request);
 
         // then
         assertThat(user.getName()).isEqualTo(request.name());

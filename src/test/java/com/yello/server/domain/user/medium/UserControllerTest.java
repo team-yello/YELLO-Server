@@ -296,11 +296,11 @@ class UserControllerTest {
 
         doNothing()
             .when(userService)
-            .update(any(Long.class), eq(request));
+            .updateUserProfile(any(Long.class), eq(request));
         // when
 
         // then
-        mockMvc.perform(RestDocumentationRequestBuilders.delete("/api/v1/user")
+        mockMvc.perform(RestDocumentationRequestBuilders.post("/api/v1/user")
                 .with(csrf().asHeader())
                 .header(HttpHeaders.AUTHORIZATION, "Bearer your-access-token")
                 .contentType(MediaType.APPLICATION_JSON)

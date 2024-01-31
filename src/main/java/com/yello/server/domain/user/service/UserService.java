@@ -124,7 +124,7 @@ public class UserService {
     }
 
     @Transactional
-    public void update(Long userId, UserUpdateRequest request) {
+    public void updateUserProfile(Long userId, UserUpdateRequest request) {
         // exception
         User user = userRepository.getById(userId);
         final UserGroup userGroup = userGroupRepository.getById(request.groupId());

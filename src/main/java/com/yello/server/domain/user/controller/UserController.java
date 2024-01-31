@@ -77,7 +77,7 @@ public class UserController {
 
     @PostMapping("/v1/user")
     public BaseResponse postUser(@AccessTokenUser User user, @RequestBody UserUpdateRequest request) {
-        userService.update(user.getId(), request);
+        userService.updateUserProfile(user.getId(), request);
         return BaseResponse.success(UPDATE_USER_DETAIL_SUCCESS);
     }
 
