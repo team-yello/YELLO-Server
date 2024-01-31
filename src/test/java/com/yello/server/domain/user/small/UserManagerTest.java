@@ -47,7 +47,7 @@ public class UserManagerTest {
 
         // then
         assertThat(officialUser.getUuid()).isEqualTo(OFFICIAL_FEMALE_ID);
-        assertThat(officialUser.getGender().getIntial()).isEqualTo("F");
+        assertThat(officialUser.getGender().getInitial()).isEqualTo("F");
     }
 
     @Test
@@ -61,7 +61,7 @@ public class UserManagerTest {
 
         // then
         assertThat(officialUser.getUuid()).isEqualTo(OFFICIAL_MALE_ID);
-        assertThat(officialUser.getGender().getIntial()).isEqualTo("M");
+        assertThat(officialUser.getGender().getInitial()).isEqualTo("M");
     }
 
     @Test
@@ -74,7 +74,7 @@ public class UserManagerTest {
 
         // then
         assertThat(officialUser.getUuid()).isEqualTo(OFFICIAL_MALE_ID);
-        assertThat(officialUser.getGender().getIntial()).isEqualTo("M");
+        assertThat(officialUser.getGender().getInitial()).isEqualTo("M");
     }
 
 
