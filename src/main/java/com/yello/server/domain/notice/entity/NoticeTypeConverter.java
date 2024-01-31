@@ -13,7 +13,7 @@ public class NoticeTypeConverter implements AttributeConverter<NoticeType, Strin
         if (type == null) {
             return null;
         }
-        return type.getIntial();
+        return type.name();
     }
 
     @Override
@@ -21,11 +21,7 @@ public class NoticeTypeConverter implements AttributeConverter<NoticeType, Strin
         if (dbData == null) {
             return null;
         }
-        try {
-            return NoticeType.fromCode(dbData);
-        } catch (IllegalArgumentException exception) {
-            log.error("failure to convert cause unexpected code" + dbData + exception);
-            throw exception;
-        }
+
+        return NoticeType.fromName(dbData);
     }
 }

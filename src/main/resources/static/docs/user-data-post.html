@@ -447,13 +447,14 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <h3 id="_요청">요청</h3>
 <div class="listingblock">
 <div class="content">
-<pre>POST /api/v1/user/data/recommended HTTP/1.1
+<pre class="highlight nowrap"><code class="language-http" data-lang="http">POST /api/v1/user/data/withdraw-reason HTTP/1.1
+Content-Type: application/json;charset=UTF-8
 Authorization: Bearer your-access-token
-Content-Type: application-json
+Content-Length: 34
 
 {
-    "value": "true"
-}</pre>
+  "value" : "바꿀 값임요"
+}</code></pre>
 </div>
 </div>
 <div class="paragraph">
@@ -462,17 +463,27 @@ Content-Type: application-json
 <div class="ulist">
 <ul>
 <li>
-<p>"tag": "withdraw-reason" | "account-update-at" | "recommended"</p>
+<p>"TAG": "withdraw-reason" | "account-update-at" | "recommended"</p>
+</li>
+<li>
+<p>"value": String</p>
 <div class="ulist">
 <ul>
 <li>
-<p>withdraw-reason 자리가 ENUM으로 대체될 예정입니다.</p>
+<p><code>withdraw-reason</code> 일 때, 255byte 이내의 string</p>
+</li>
+<li>
+<p><code>account-update-at</code> 또는 <code>recommended</code> 일 때, ISO-8601 + ZoneInfo</p>
+<div class="ulist">
+<ul>
+<li>
+<p>예시) <code>2011-12-03T10:15:30+01:00</code></p>
 </li>
 </ul>
 </div>
 </li>
-<li>
-<p>"value": String</p>
+</ul>
+</div>
 </li>
 </ul>
 </div>
@@ -481,7 +492,7 @@ Content-Type: application-json
 <h3 id="_응답">응답</h3>
 <div class="listingblock">
 <div class="content">
-<pre>HTTP/1.1 200 OK
+<pre class="highlight nowrap"><code class="language-http" data-lang="http">HTTP/1.1 200 OK
 Vary: Origin
 Vary: Access-Control-Request-Method
 Vary: Access-Control-Request-Headers
@@ -489,8 +500,8 @@ Content-Type: application/json
 
 {
   "status" : 200,
-  "message" : "탈퇴 사유 정보 저장에 성공하였습니다."
-}</pre>
+  "message" : "유저 데이터 수정에 성공하였습니다."
+}</code></pre>
 </div>
 </div>
 </div>
@@ -499,14 +510,17 @@ Content-Type: application/json
 <div class="ulist">
 <ul>
 <li>
-<p>User의 다양한 정보를 저장하는 API로 범용적인 확장할 예정입니다.</p>
+<p><code>account-update-at</code> 및 <code>recommended</code> 기능은 <a href="edit-user.html">유저 정보 수정</a> 및 <a href="signup.html">회원가입</a>에 통합되어있습니다</p>
 <div class="ulist">
 <ul>
 <li>
-<p>차후에 tag에 들어갈 수 있는 ENUM의 종류를 다양화 할 예정입니다.</p>
+<p>정말 필요에 의해 값을 수정해야하는 경우만 사용해주세요.</p>
 </li>
 </ul>
 </div>
+</li>
+<li>
+<p>User의 다양한 정보를 저장하는 API로 범용적인 확장할 예정입니다.</p>
 </li>
 </ul>
 </div>
@@ -515,6 +529,9 @@ Content-Type: application/json
 <h3 id="_changelog">CHANGELOG</h3>
 <div class="ulist">
 <ul>
+<li>
+<p>2024.01.31 릴리즈</p>
+</li>
 <li>
 <p>2024.01.30 탈퇴 v2 분리로 인한 명세 업데이트</p>
 </li>

@@ -13,7 +13,7 @@ public class GenderConverter implements AttributeConverter<Gender, String> {
         if (gender == null) {
             return null;
         }
-        return gender.getIntial();
+        return gender.name();
     }
 
     @Override
@@ -21,11 +21,7 @@ public class GenderConverter implements AttributeConverter<Gender, String> {
         if (dbData == null) {
             return null;
         }
-        try {
-            return Gender.fromCode(dbData);
-        } catch (IllegalArgumentException exception) {
-            log.error("failure to convert cause unexpected code" + dbData + exception);
-            throw exception;
-        }
+
+        return Gender.fromName(dbData);
     }
 }

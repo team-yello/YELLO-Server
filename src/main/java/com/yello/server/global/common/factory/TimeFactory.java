@@ -66,7 +66,6 @@ public class TimeFactory {
         ZoneId zoneId = ZoneId.of("Asia/Seoul");
         ZonedDateTime now = ZonedDateTime.now(zoneId);
 
-        System.out.println(now + " sfsdfsd");
         return now.isBefore(zonedDateTime);
     }
 

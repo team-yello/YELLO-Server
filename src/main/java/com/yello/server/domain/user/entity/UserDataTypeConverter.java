@@ -11,7 +11,7 @@ public class UserDataTypeConverter implements AttributeConverter<UserDataType, S
         if (userData == null) {
             return null;
         }
-        return userData.getIntial();
+        return userData.name();
     }
 
     @Override
@@ -19,12 +19,7 @@ public class UserDataTypeConverter implements AttributeConverter<UserDataType, S
         if (dbData == null) {
             return null;
         }
-        try {
-            return UserDataType.fromCode(dbData);
-        } catch (IllegalArgumentException exception) {
-            log.error("failure to convert cause unexpected code" + dbData + exception);
-            throw exception;
-        }
-    }
 
+        return UserDataType.fromName(dbData);
+    }
 }
