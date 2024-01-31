@@ -5,7 +5,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="generator" content="Asciidoctor 2.0.10">
-<title>프로필 수정 가능 여부 조회 (명세)</title>
+<title>프로필 수정 가능 여부 조회</title>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Open+Sans:300,300italic,400,400italic,600,600italic%7CNoto+Serif:400,400italic,700,700italic%7CDroid+Sans+Mono:400,700">
 <style>
 /* Asciidoctor default stylesheet | MIT License | https://asciidoctor.org */
@@ -441,15 +441,15 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 </div>
 <div id="content">
 <div class="sect1">
-<h2 id="_프로필_수정_가능_여부_조회_명세">프로필 수정 가능 여부 조회 (명세)</h2>
+<h2 id="_프로필_수정_가능_여부_조회">프로필 수정 가능 여부 조회</h2>
 <div class="sectionbody">
 <div class="sect2">
 <h3 id="_요청">요청</h3>
 <div class="listingblock">
 <div class="content">
-<pre>GET /api/v1/user/data/account-update-at HTTP/1.1
-Authorization: Bearer your-access-token
-Content-Type: application-json</pre>
+<pre class="highlight nowrap"><code class="language-http" data-lang="http">GET /api/v1/user/data/account-updated-at HTTP/1.1
+Content-Type: application/json;charset=UTF-8
+Authorization: Bearer your-access-token</code></pre>
 </div>
 </div>
 <div class="paragraph">
@@ -458,14 +458,7 @@ Content-Type: application-json</pre>
 <div class="ulist">
 <ul>
 <li>
-<p>"tag": "account-update-at"</p>
-<div class="ulist">
-<ul>
-<li>
-<p>account-update-at 자리가 ENUM으로 대체될 예정입니다.</p>
-</li>
-</ul>
-</div>
+<p>"TAG": "account-updated-at" | "recommended" | "withdraw-reason"</p>
 </li>
 </ul>
 </div>
@@ -474,7 +467,7 @@ Content-Type: application-json</pre>
 <h3 id="_응답">응답</h3>
 <div class="listingblock">
 <div class="content">
-<pre>HTTP/1.1 200 OK
+<pre class="highlight nowrap"><code class="language-http" data-lang="http">HTTP/1.1 200 OK
 Vary: Origin
 Vary: Access-Control-Request-Method
 Vary: Access-Control-Request-Headers
@@ -482,12 +475,12 @@ Content-Type: application/json
 
 {
   "status" : 200,
-  "message" : "프로필 수정 가능 여부 조회에 성공하였습니다.",
-  "data": {
-    "tag": "ACCOUNT_UPDATE_AT",
-    "value": "false|2024-01-09|2023-10-20"
+  "message" : "유저 데이터 조회에 성공하였습니다.",
+  "data" : {
+    "tag" : "account-updated-at",
+    "value" : "false|2024-01-31|2024-01-31"
   }
-}</pre>
+}</code></pre>
 </div>
 </div>
 <div class="paragraph">
@@ -496,20 +489,24 @@ Content-Type: application/json
 <div class="ulist">
 <ul>
 <li>
-<p>"tag": "ACCOUNT_UPDATE_AT"</p>
+<p>"tag": "ACCOUNT_UPDATED_AT" | "RECOMMENDED" | "WITHDRAW_REASON"</p>
 </li>
 <li>
 <p>"value": String</p>
 <div class="ulist">
 <ul>
 <li>
-<p>ACCOUNT_UPDATE_AT의 경우 <code>{boolean}|{updated_at}|{created_at}</code> 를 반환합니다.</p>
-</li>
+<p>ACCOUNT_UPDATED_AT일 때, <code>{boolean}|{updated_at}|{created_at}</code> 를 반환합니다.</p>
+<div class="ulist">
+<ul>
 <li>
 <p>boolean 및 updated_at 값을 parse하여 사용해주세요.</p>
 </li>
 <li>
-<p>날짜의 경우 YYYY-MM-DD (ISO-8601)</p>
+<p>예시) <strong>"false|2024-01-31|2024-01-31"</strong></p>
+</li>
+</ul>
+</div>
 </li>
 </ul>
 </div>
@@ -522,17 +519,10 @@ Content-Type: application/json
 <div class="ulist">
 <ul>
 <li>
-<p>AccessToken에 해당하는 User의 프로필 수정 가능 여부 조회를 조회하는 API입니다.</p>
+<p>User의 다양한 정보를 조회하는 범용적인 API입니다.</p>
 </li>
 <li>
-<p>User의 다양한 정보를 조회하는 API로 범용적인 확장할 예정입니다.</p>
-<div class="ulist">
-<ul>
-<li>
-<p>차후에 tag에 들어갈 수 있는 ENUM의 종류를 다양화 할 예정입니다.</p>
-</li>
-</ul>
-</div>
+<p><code>account-updated-at</code> 을 통해 AccessToken에 해당하는 User의 프로필 수정 가능 여부 조회를 조회하세요.</p>
 </li>
 </ul>
 </div>
@@ -541,6 +531,9 @@ Content-Type: application/json
 <h3 id="_changelog">CHANGELOG</h3>
 <div class="ulist">
 <ul>
+<li>
+<p>2024.01.30 릴리즈</p>
+</li>
 <li>
 <p>2024.01.09 명세 작성</p>
 </li>

@@ -13,7 +13,7 @@ public class PurchaseStateConverter implements AttributeConverter<PurchaseState,
         if (purchaseState == null) {
             return null;
         }
-        return purchaseState.getIntial();
+        return purchaseState.name();
     }
 
     @Override
@@ -21,12 +21,7 @@ public class PurchaseStateConverter implements AttributeConverter<PurchaseState,
         if (dbData == null) {
             return null;
         }
-        try {
-            return PurchaseState.fromCode(dbData);
-        } catch (IllegalArgumentException exception) {
-            log.error("failure to convert cause unexpected code" + dbData + exception);
-            throw exception;
-        }
-    }
 
+        return PurchaseState.fromName(dbData);
+    }
 }

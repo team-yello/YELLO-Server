@@ -23,7 +23,7 @@ public record NoticeDataResponse(
             .startDate(toYearAndMonthFormattedString(notice.getStartDate().toLocalDateTime()))
             .endDate(toYearAndMonthFormattedString(notice.getEndDate().toLocalDateTime()))
             .isAvailable(isAvailable)
-            .type(notice.getTag().getIntial())
+            .type(notice.getTag().getInitial())
             .title(notice.getTitle())
             .build();
     }

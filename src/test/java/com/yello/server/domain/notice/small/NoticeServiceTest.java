@@ -2,7 +2,7 @@ package com.yello.server.domain.notice.small;
 
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.mockito.ArgumentMatchers.any;
 
 import com.yello.server.domain.friend.FakeFriendRepository;
 import com.yello.server.domain.friend.repository.FriendRepository;
@@ -22,9 +22,11 @@ import com.yello.server.domain.question.FakeQuestionGroupTypeRepository;
 import com.yello.server.domain.question.FakeQuestionRepository;
 import com.yello.server.domain.question.repository.QuestionGroupTypeRepository;
 import com.yello.server.domain.question.repository.QuestionRepository;
+import com.yello.server.domain.user.FakeUserDataRepository;
 import com.yello.server.domain.user.FakeUserRepository;
 import com.yello.server.domain.user.entity.Subscribe;
 import com.yello.server.domain.user.entity.User;
+import com.yello.server.domain.user.repository.UserDataRepository;
 import com.yello.server.domain.user.repository.UserRepository;
 import com.yello.server.domain.vote.FakeVoteRepository;
 import com.yello.server.domain.vote.repository.VoteRepository;
@@ -33,11 +35,14 @@ import com.yello.server.util.TestDataRepositoryUtil;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.util.Optional;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.DisplayNameGeneration;
 import org.junit.jupiter.api.DisplayNameGenerator.ReplaceUnderscores;
 import org.junit.jupiter.api.Test;
+import org.mockito.MockedStatic;
+import org.mockito.Mockito;
 
 @DisplayName("NoticeService 에서")
 @DisplayNameGeneration(ReplaceUnderscores.class)
@@ -50,6 +55,7 @@ public class NoticeServiceTest {
     private final QuestionGroupTypeRepository
         questionGroupTypeRepository = new FakeQuestionGroupTypeRepository(questionRepository);
     private final TestDataEntityUtil testDataEntityUtil = new TestDataEntityUtil();
+    private final UserDataRepository userDataRepository = new FakeUserDataRepository();
     private final UserGroupRepository userGroupRepository = new FakeUserGroupRepository();
     private final UserRepository userRepository = new FakeUserRepository(friendRepository);
     private final VoteRepository voteRepository = new FakeVoteRepository();
@@ -60,6 +66,7 @@ public class NoticeServiceTest {
         questionGroupTypeRepository,
         questionRepository,
         testDataEntityUtil,
+        userDataRepository,
         userGroupRepository,
         userRepository,
         voteRepository
@@ -73,10 +80,15 @@ public class NoticeServiceTest {
             .userRepository(userRepository)
             .build();
 
+        ZonedDateTime fixedDateTime = ZonedDateTime.of(2024, 1, 1, 10, 0, 0, 0, ZoneId.of("Asia/Seoul"));
+        try (MockedStatic<ZonedDateTime> topZonedDateTimeUtilMock = Mockito.mockStatic(ZonedDateTime.class)) {
+            topZonedDateTimeUtilMock.when(() -> ZonedDateTime.now(any(ZoneId.class))).thenReturn(fixedDateTime);
+        }
+
         final UserGroup userGroup = testDataUtil.generateGroup(1L, UserGroupType.UNIVERSITY);
         final User user = testDataUtil.generateUser(1L, userGroup);
         user.setSubscribe(Subscribe.ACTIVE);
-        testDataUtil.generateNotice(1L, NoticeType.NOTICE);
+        testDataUtil.generateNotice(1L, NoticeType.NOTICE, ZonedDateTime.now(ZoneId.of("Asia/Seoul")));
     }
 
     @Test
@@ -84,17 +96,16 @@ public class NoticeServiceTest {
         // given
         final Long userId = 1L;
         final NoticeType tag = NoticeType.NOTICE;
-        ZoneId zoneId = ZoneId.of("Asia/Seoul");
-        ZonedDateTime now = ZonedDateTime.now(zoneId);
 
         final Optional<Notice> notice = noticeRepository.findTopNotice(tag);
+        final ZonedDateTime now = ZonedDateTime.now(ZoneId.of("Asia/Seoul"));
 
         // when
         final NoticeDataResponse noticeResponse = noticeService.findNotice(userId, tag);
 
         // then
         assertThat(noticeResponse.isAvailable()).isTrue();
-        assertEquals(true, now.isAfter(notice.get().getStartDate()));
-        assertEquals(true, now.isBefore(notice.get().getEndDate()));
+        Assertions.assertEquals(true, now.isAfter(notice.get().getStartDate()));
+        Assertions.assertEquals(true, now.isBefore(notice.get().getEndDate()));
     }
 }

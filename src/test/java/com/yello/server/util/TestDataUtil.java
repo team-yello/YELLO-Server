@@ -10,6 +10,7 @@ import com.yello.server.domain.question.entity.Question;
 import com.yello.server.domain.question.entity.QuestionGroupType;
 import com.yello.server.domain.user.entity.User;
 import com.yello.server.domain.vote.entity.Vote;
+import java.time.ZonedDateTime;
 
 public interface TestDataUtil {
 
@@ -29,6 +30,6 @@ public interface TestDataUtil {
 
     Purchase generatePurchase(long index, User user);
 
-    Notice generateNotice(long index, NoticeType noticeType);
+    Notice generateNotice(long index, NoticeType noticeType, ZonedDateTime createdAt);
 }
 

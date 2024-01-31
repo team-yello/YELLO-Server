@@ -1,6 +1,8 @@
 package com.yello.server.domain.user.entity;
 
-import java.text.MessageFormat;
+import static com.yello.server.global.common.ErrorCode.ENUM_BAD_REQUEST_EXCEPTION;
+
+import com.yello.server.global.exception.EnumIllegalArgumentException;
 import java.util.Arrays;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
@@ -12,18 +14,19 @@ public enum Subscribe {
     ACTIVE("active"),
     CANCELED("canceled");
 
-    private final String intial;
+    private final String initial;
 
     public static Subscribe fromCode(String dbData) {
         return Arrays.stream(Subscribe.values())
-            .filter(v -> v.getIntial().equals(dbData))
+            .filter(v -> v.getInitial().equals(dbData))
             .findAny()
-            .orElseThrow(() -> new IllegalArgumentException(
-                MessageFormat.format("잘못된 구독입니다. {0}", dbData)));
+            .orElseThrow(() -> new EnumIllegalArgumentException(ENUM_BAD_REQUEST_EXCEPTION));
     }
 
-    public String intial() {
-        return intial;
+    public static Subscribe fromName(String name) {
+        return Arrays.stream(Subscribe.values())
+            .filter(v -> v.name().equals(name))
+            .findAny()
+            .orElseThrow(() -> new EnumIllegalArgumentException(ENUM_BAD_REQUEST_EXCEPTION));
     }
-
 }

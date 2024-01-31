@@ -43,12 +43,14 @@ import com.yello.server.domain.question.FakeQuestionGroupTypeRepository;
 import com.yello.server.domain.question.FakeQuestionRepository;
 import com.yello.server.domain.question.repository.QuestionGroupTypeRepository;
 import com.yello.server.domain.question.repository.QuestionRepository;
+import com.yello.server.domain.user.FakeUserDataRepository;
 import com.yello.server.domain.user.FakeUserManager;
 import com.yello.server.domain.user.FakeUserRepository;
 import com.yello.server.domain.user.entity.Gender;
 import com.yello.server.domain.user.entity.Social;
 import com.yello.server.domain.user.entity.User;
 import com.yello.server.domain.user.exception.UserConflictException;
+import com.yello.server.domain.user.repository.UserDataRepository;
 import com.yello.server.domain.user.repository.UserRepository;
 import com.yello.server.domain.user.service.UserManager;
 import com.yello.server.domain.vote.FakeVoteManager;
@@ -96,6 +98,7 @@ public class AuthServiceTest {
         "keyForTestkeyForTestkeyForTestkeyForTestkeyForTestkeyForTestkeyForTestkeyForTestkeyForTest".getBytes());
     private final TestDataEntityUtil testDataEntityUtil = new TestDataEntityUtil();
     private final TokenProvider tokenProvider = new TokenJwtProvider(secretKey);
+    private final UserDataRepository userDataRepository = new FakeUserDataRepository();
     private final UserGroupRepository userGroupRepository = new FakeUserGroupRepository();
     private final UserRepository userRepository = new FakeUserRepository(friendRepository);
     private final UserManager userManager = new FakeUserManager(userRepository);
@@ -115,6 +118,7 @@ public class AuthServiceTest {
         questionGroupTypeRepository,
         questionRepository,
         testDataEntityUtil,
+        userDataRepository,
         userGroupRepository,
         userRepository,
         voteRepository
@@ -129,6 +133,7 @@ public class AuthServiceTest {
         this.authService = AuthService.builder()
             .userRepository(userRepository)
             .userGroupRepository(userGroupRepository)
+            .userDataRepository(userDataRepository)
             .friendRepository(friendRepository)
             .cooldownRepository(cooldownRepository)
             .messageQueueRepository(messageQueueRepository)

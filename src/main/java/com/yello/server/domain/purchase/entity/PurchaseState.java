@@ -1,6 +1,8 @@
 package com.yello.server.domain.purchase.entity;
 
-import java.text.MessageFormat;
+import static com.yello.server.global.common.ErrorCode.ENUM_BAD_REQUEST_EXCEPTION;
+
+import com.yello.server.global.exception.EnumIllegalArgumentException;
 import java.util.Arrays;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
@@ -13,17 +15,19 @@ public enum PurchaseState {
     PAUSED("PAUSED"),
     INACTIVE("INACTIVE");
 
-    private final String intial;
+    private final String initial;
 
     public static PurchaseState fromCode(String dbData) {
         return Arrays.stream(PurchaseState.values())
-            .filter(v -> v.getIntial().equals(dbData))
+            .filter(v -> v.getInitial().equals(dbData))
             .findAny()
-            .orElseThrow(() -> new IllegalArgumentException(
-                MessageFormat.format("존재하지 않는 결제 상태입니다. {0}", dbData)));
+            .orElseThrow(() -> new EnumIllegalArgumentException(ENUM_BAD_REQUEST_EXCEPTION));
     }
 
-    public String intial() {
-        return intial;
+    public static PurchaseState fromName(String name) {
+        return Arrays.stream(PurchaseState.values())
+            .filter(v -> v.name().equals(name))
+            .findAny()
+            .orElseThrow(() -> new EnumIllegalArgumentException(ENUM_BAD_REQUEST_EXCEPTION));
     }
 }

@@ -15,8 +15,10 @@ import com.yello.server.domain.question.FakeQuestionRepository;
 import com.yello.server.domain.question.entity.Question;
 import com.yello.server.domain.question.repository.QuestionGroupTypeRepository;
 import com.yello.server.domain.question.repository.QuestionRepository;
+import com.yello.server.domain.user.FakeUserDataRepository;
 import com.yello.server.domain.user.FakeUserRepository;
 import com.yello.server.domain.user.entity.User;
+import com.yello.server.domain.user.repository.UserDataRepository;
 import com.yello.server.domain.user.repository.UserRepository;
 import com.yello.server.domain.vote.FakeVoteRepository;
 import com.yello.server.domain.vote.repository.VoteRepository;
@@ -42,6 +44,7 @@ public class FcmManagerTest {
     private final QuestionGroupTypeRepository
         questionGroupTypeRepository = new FakeQuestionGroupTypeRepository(questionRepository);
     private final TestDataEntityUtil testDataEntityUtil = new TestDataEntityUtil();
+    private final UserDataRepository userDataRepository = new FakeUserDataRepository();
     private final UserGroupRepository userGroupRepository = new FakeUserGroupRepository();
     private final UserRepository userRepository = new FakeUserRepository(friendRepository);
     private final VoteRepository voteRepository = new FakeVoteRepository();
@@ -52,6 +55,7 @@ public class FcmManagerTest {
         questionGroupTypeRepository,
         questionRepository,
         testDataEntityUtil,
+        userDataRepository,
         userGroupRepository,
         userRepository,
         voteRepository

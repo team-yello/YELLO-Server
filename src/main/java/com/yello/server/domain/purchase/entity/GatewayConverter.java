@@ -13,7 +13,7 @@ public class GatewayConverter implements AttributeConverter<Gateway, String> {
         if (gateway == null) {
             return null;
         }
-        return gateway.getIntial();
+        return gateway.name();
     }
 
     @Override
@@ -21,11 +21,7 @@ public class GatewayConverter implements AttributeConverter<Gateway, String> {
         if (dbData == null) {
             return null;
         }
-        try {
-            return Gateway.fromCode(dbData);
-        } catch (IllegalArgumentException exception) {
-            log.error("failure to convert cause unexpected code" + dbData + exception);
-            throw exception;
-        }
+
+        return Gateway.fromName(dbData);
     }
 }

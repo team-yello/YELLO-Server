@@ -25,9 +25,11 @@ import com.yello.server.domain.question.entity.Question;
 import com.yello.server.domain.question.entity.QuestionGroupType;
 import com.yello.server.domain.question.repository.QuestionGroupTypeRepository;
 import com.yello.server.domain.question.repository.QuestionRepository;
+import com.yello.server.domain.user.FakeUserDataRepository;
 import com.yello.server.domain.user.FakeUserManager;
 import com.yello.server.domain.user.FakeUserRepository;
 import com.yello.server.domain.user.entity.User;
+import com.yello.server.domain.user.repository.UserDataRepository;
 import com.yello.server.domain.user.repository.UserRepository;
 import com.yello.server.domain.user.service.UserManager;
 import com.yello.server.domain.vote.FakeVoteManager;
@@ -75,6 +77,7 @@ public class VoteServiceTest {
     private final QuestionGroupTypeRepository questionGroupTypeRepository = new FakeQuestionGroupTypeRepository(
         questionRepository);
     private final TestDataEntityUtil testDataEntityUtil = new TestDataEntityUtil();
+    private final UserDataRepository userDataRepository = new FakeUserDataRepository();
     private final UserGroupRepository userGroupRepository = new FakeUserGroupRepository();
     private final UserRepository userRepository = new FakeUserRepository(friendRepository);
     private final UserManager userManager = new FakeUserManager(userRepository);
@@ -93,6 +96,7 @@ public class VoteServiceTest {
         questionGroupTypeRepository,
         questionRepository,
         testDataEntityUtil,
+        userDataRepository,
         userGroupRepository,
         userRepository,
         voteRepository
