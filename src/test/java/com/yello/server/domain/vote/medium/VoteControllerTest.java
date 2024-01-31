@@ -316,7 +316,7 @@ class VoteControllerTest {
     void 투표_가능_여부_조회에_성공합니다() throws Exception {
         // given
         final Cooldown cooldown =
-            Cooldown.of(user, UUID.randomUUID().toString(), LocalDateTime.of(24, 1, 1, 12, 0, 0));
+            Cooldown.of(user, UUID.randomUUID().toString(), LocalDateTime.of(2024, 1, 1, 12, 0, 0));
         final VoteAvailableResponse voteAvailableResponse =
             VoteAvailableResponse.of(user, cooldown, 1);
 

@@ -165,7 +165,7 @@ class PurchaseControllerTest {
 
         final GoogleSubscriptionGetResponse response = GoogleSubscriptionGetResponse.builder()
             .productId("productId")
-            .expiredAt(LocalDateTime.of(24, 1, 1, 12, 0, 0).format(DateTimeFormatter.ISO_LOCAL_DATE_TIME))
+            .expiredAt(LocalDateTime.of(2024, 1, 1, 12, 0, 0).format(DateTimeFormatter.ISO_LOCAL_DATE_TIME))
             .build();
 
         given(purchaseService.verifyGoogleSubscriptionTransaction(anyLong(),
