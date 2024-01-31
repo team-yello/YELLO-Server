@@ -1,19 +1,24 @@
 package com.yello.server.domain.user.controller;
 
 import static com.yello.server.global.common.SuccessCode.DELETE_USER_SUCCESS;
+import static com.yello.server.global.common.SuccessCode.READ_USER_DATA_SUCCESS;
 import static com.yello.server.global.common.SuccessCode.READ_USER_SUBSCRIBE_SUCCESS;
 import static com.yello.server.global.common.SuccessCode.READ_USER_SUCCESS;
 import static com.yello.server.global.common.SuccessCode.UPDATE_DEVICE_TOKEN_USER_SUCCESS;
+import static com.yello.server.global.common.SuccessCode.UPDATE_USER_DATA_SUCCESS;
 import static com.yello.server.global.common.SuccessCode.UPDATE_USER_DETAIL_SUCCESS;
 
+import com.yello.server.domain.user.dto.request.UserDataUpdateRequest;
 import com.yello.server.domain.user.dto.request.UserDeleteReasonRequest;
 import com.yello.server.domain.user.dto.request.UserDeviceTokenRequest;
 import com.yello.server.domain.user.dto.request.UserUpdateRequest;
+import com.yello.server.domain.user.dto.response.UserDataResponse;
 import com.yello.server.domain.user.dto.response.UserDetailResponse;
 import com.yello.server.domain.user.dto.response.UserDetailV2Response;
 import com.yello.server.domain.user.dto.response.UserResponse;
 import com.yello.server.domain.user.dto.response.UserSubscribeDetailResponse;
 import com.yello.server.domain.user.entity.User;
+import com.yello.server.domain.user.entity.UserDataType;
 import com.yello.server.domain.user.service.UserService;
 import com.yello.server.global.common.annotation.AccessTokenUser;
 import com.yello.server.global.common.dto.BaseResponse;
@@ -86,5 +91,18 @@ public class UserController {
     UserDeleteReasonRequest request) {
         userService.deleteUserWithReason(user.getId(), request);
         return BaseResponse.success(DELETE_USER_SUCCESS);
+    }
+
+    @GetMapping("/v1/user/data/{tag}")
+    public BaseResponse<UserDataResponse> getUserData(@AccessTokenUser User user, @PathVariable("tag") String tag) {
+        val data = userService.readUserData(user.getId(), UserDataType.fromCode(tag));
+        return BaseResponse.success(READ_USER_DATA_SUCCESS, data);
+    }
+
+    @PostMapping("/v1/user/data/{tag}")
+    public BaseResponse postUserData(@AccessTokenUser User user, @PathVariable("tag") String tag,
+        @RequestBody UserDataUpdateRequest request) {
+        userService.updateUserData(user.getId(), UserDataType.fromCode(tag), request);
+        return BaseResponse.success(UPDATE_USER_DATA_SUCCESS);
     }
 }

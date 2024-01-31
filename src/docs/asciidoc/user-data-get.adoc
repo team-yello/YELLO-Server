@@ -1,54 +1,32 @@
 :reproducible:
-== 프로필 수정 가능 여부 조회 (명세)
+== 프로필 수정 가능 여부 조회
 
 === 요청
 
-[http]
-----
-GET /api/v1/user/data/account-update-at HTTP/1.1
-Authorization: Bearer your-access-token
-Content-Type: application-json
-----
+include::{snippets}/api/v1/user/data/read/http-request.adoc[]
 
 *필드 타입*
 
-- "tag": "account-update-at"
-* account-update-at 자리가 ENUM으로 대체될 예정입니다.
+- "TAG": "account-updated-at" | "recommended" | "withdraw-reason"
 
 === 응답
 
-[http,json]
-----
-HTTP/1.1 200 OK
-Vary: Origin
-Vary: Access-Control-Request-Method
-Vary: Access-Control-Request-Headers
-Content-Type: application/json
-
-{
-  "status" : 200,
-  "message" : "프로필 수정 가능 여부 조회에 성공하였습니다.",
-  "data": {
-    "tag": "ACCOUNT_UPDATE_AT",
-    "value": "false|2024-01-09|2023-10-20"
-  }
-}
-----
+include::{snippets}/api/v1/user/data/read/http-response.adoc[]
 
 *필드 타입*
 
-- "tag": "ACCOUNT_UPDATE_AT"
+- "tag": "ACCOUNT_UPDATED_AT" | "RECOMMENDED" | "WITHDRAW_REASON"
 - "value": String
-* ACCOUNT_UPDATE_AT의 경우 `{boolean}|{updated_at}|{created_at}` 를 반환합니다.
-* boolean 및 updated_at 값을 parse하여 사용해주세요.
-* 날짜의 경우 YYYY-MM-DD (ISO-8601)
+* ACCOUNT_UPDATED_AT일 때, `{boolean}|{updated_at}|{created_at}` 를 반환합니다.
+** boolean 및 updated_at 값을 parse하여 사용해주세요.
+** 예시) **"false|2024-01-31|2024-01-31"**
 
 === NOTE
 
-- AccessToken에 해당하는 User의 프로필 수정 가능 여부 조회를 조회하는 API입니다.
-- User의 다양한 정보를 조회하는 API로 범용적인 확장할 예정입니다.
-* 차후에 tag에 들어갈 수 있는 ENUM의 종류를 다양화 할 예정입니다.
+- User의 다양한 정보를 조회하는 범용적인 API입니다.
+- `account-updated-at` 을 통해 AccessToken에 해당하는 User의 프로필 수정 가능 여부 조회를 조회하세요.
 
 === CHANGELOG
 
+- 2024.01.30 릴리즈
 - 2024.01.09 명세 작성
