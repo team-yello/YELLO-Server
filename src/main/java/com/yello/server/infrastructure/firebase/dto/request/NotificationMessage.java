@@ -44,7 +44,7 @@ public record NotificationMessage(
         final User sender = vote.getSender();
 
         final String target =
-            Gender.MALE.getIntial().equals(sender.getGender().getIntial()) ? "남학생" : "여학생";
+            Gender.MALE.getInitial().equals(sender.getGender().getInitial()) ? "남학생" : "여학생";
         return NotificationMessage.builder()
             .title(MessageFormat.format("{0}이 쪽지를 보냈어요!", target))
             .message(vote.getQuestion().toNotificationSentence())

@@ -13,7 +13,7 @@ public class SubscribeConverter implements AttributeConverter<Subscribe, String>
         if (subscribe == null) {
             return null;
         }
-        return subscribe.getIntial();
+        return subscribe.name();
     }
 
     @Override
@@ -21,11 +21,7 @@ public class SubscribeConverter implements AttributeConverter<Subscribe, String>
         if (dbData == null) {
             return null;
         }
-        try {
-            return Subscribe.fromCode(dbData);
-        } catch (IllegalArgumentException exception) {
-            log.error("failure to convert cause unexpected code" + dbData + exception);
-            throw exception;
-        }
+
+        return Subscribe.fromName(dbData);
     }
 }

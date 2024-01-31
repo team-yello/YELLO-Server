@@ -3,45 +3,28 @@
 
 === 요청
 
-[http]
-----
-POST /api/v1/user/data/recommended HTTP/1.1
-Authorization: Bearer your-access-token
-Content-Type: application-json
-
-{
-    "value": "true"
-}
-----
+include::{snippets}/api/v1/user/data/update/http-request.adoc[]
 
 *필드 타입*
 
-- "tag": "withdraw-reason" | "account-update-at" | "recommended"
-* withdraw-reason 자리가 ENUM으로 대체될 예정입니다.
+- "TAG": "withdraw-reason" | "account-update-at" | "recommended"
 - "value": String
+* `withdraw-reason` 일 때, 255byte 이내의 string
+* `account-update-at` 또는 `recommended` 일 때, ISO-8601 + ZoneInfo
+** 예시) `2011-12-03T10:15:30+01:00`
 
 === 응답
 
-[http,json]
-----
-HTTP/1.1 200 OK
-Vary: Origin
-Vary: Access-Control-Request-Method
-Vary: Access-Control-Request-Headers
-Content-Type: application/json
-
-{
-  "status" : 200,
-  "message" : "탈퇴 사유 정보 저장에 성공하였습니다."
-}
-----
+include::{snippets}/api/v1/user/data/update/http-response.adoc[]
 
 === NOTE
 
+- `account-update-at` 및 `recommended` 기능은 link:edit-user.html[유저 정보 수정] 및 link:signup.html[회원가입]에 통합되어있습니다
+* 정말 필요에 의해 값을 수정해야하는 경우만 사용해주세요.
 - User의 다양한 정보를 저장하는 API로 범용적인 확장할 예정입니다.
-* 차후에 tag에 들어갈 수 있는 ENUM의 종류를 다양화 할 예정입니다.
 
 === CHANGELOG
 
+- 2024.01.31 릴리즈
 - 2024.01.30 탈퇴 v2 분리로 인한 명세 업데이트
 - 2024.01.09 명세 작성

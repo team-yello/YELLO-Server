@@ -37,6 +37,8 @@ public enum ErrorCode {
     APPLE_IN_APP_BAD_REQUEST_EXCEPTION(BAD_REQUEST, "존재하지 않는 영수증입니다."),
     METHOD_ARGUMENT_TYPE_MISMATCH_EXCEPTION(BAD_REQUEST, "입력한 값의 타입이 올바르지 않습니다."),
     USER_ADMIN_BAD_REQUEST_EXCEPTION(BAD_REQUEST, "검색 필드가 없습니다."),
+    USER_DATA_INVALID_ARGUMENT_EXCEPTION(BAD_REQUEST, "입력한 유저 데이터의 값이 올바르지 않습니다."),
+    ENUM_BAD_REQUEST_EXCEPTION(BAD_REQUEST, "존재하지 않는 열거형 타입입니다."),
 
     /**
      * 401 UNAUTHORIZED
@@ -93,6 +95,7 @@ public enum ErrorCode {
     NOT_FOUND_USER_SUBSCRIBE_EXCEPTION(NOT_FOUND, "유저의 구독정보가 존재하지 않습니다."),
     NOT_FOUND_NOTICE_EXCEPTION(NOT_FOUND, "공지가 존재하지 않습니다."),
     ADMIN_CONFIGURATION_NOT_FOUND_EXCEPTION(NOT_FOUND, "해당 설정이 존재하지 않습니다."),
+    USER_DATA_NOT_FOUND_EXCEPTION(NOT_FOUND, "해당 유저 데이터가 존재하지 않습니다."),
 
     /**
      * 409 CONFLICT

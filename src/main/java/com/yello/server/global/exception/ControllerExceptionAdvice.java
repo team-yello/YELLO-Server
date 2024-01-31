@@ -84,25 +84,6 @@ public class ControllerExceptionAdvice {
         throw exception;
     }
 
-    /**
-     * 400 BAD REQUEST
-     */
-    @ExceptionHandler({
-        FriendException.class,
-        UserException.class,
-        AuthBadRequestException.class,
-        UserBadRequestException.class,
-        QuestionException.class,
-        PurchaseException.class,
-        GoogleBadRequestException.class,
-        AppleBadRequestException.class,
-        UserAdminBadRequestException.class
-    })
-    public ResponseEntity<BaseResponse> BadRequestException(CustomException exception) {
-        return ResponseEntity.status(BAD_REQUEST)
-            .body(BaseResponse.error(exception.getError(), exception.getMessage()));
-    }
-
     @ExceptionHandler({
         // @Valid 오류 Catch
         MethodArgumentNotValidException.class
@@ -145,6 +126,28 @@ public class ControllerExceptionAdvice {
             .body(BaseResponse.error(METHOD_ARGUMENT_TYPE_MISMATCH_EXCEPTION,
                 METHOD_ARGUMENT_TYPE_MISMATCH_EXCEPTION.getMessage()));
     }
+
+    /**
+     * 400 BAD REQUEST
+     */
+    @ExceptionHandler({
+        FriendException.class,
+        UserException.class,
+        AuthBadRequestException.class,
+        UserBadRequestException.class,
+        QuestionException.class,
+        PurchaseException.class,
+        GoogleBadRequestException.class,
+        AppleBadRequestException.class,
+        UserAdminBadRequestException.class,
+        EnumIllegalArgumentException.class,
+        IllegalArgumentException.class
+    })
+    public ResponseEntity<BaseResponse> BadRequestException(CustomException exception) {
+        return ResponseEntity.status(BAD_REQUEST)
+            .body(BaseResponse.error(exception.getError(), exception.getMessage()));
+    }
+
 
     /**
      * 401 UNAUTHORIZED

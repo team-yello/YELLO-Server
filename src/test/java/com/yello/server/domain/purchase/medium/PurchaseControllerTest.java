@@ -15,6 +15,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.yello.server.domain.authorization.filter.JwtExceptionFilter;
 import com.yello.server.domain.authorization.filter.JwtFilter;
+import com.yello.server.domain.group.entity.UserGroup;
 import com.yello.server.domain.group.entity.UserGroupType;
 import com.yello.server.domain.purchase.controller.PurchaseController;
 import com.yello.server.domain.purchase.dto.apple.AppleTransaction;
@@ -25,13 +26,13 @@ import com.yello.server.domain.purchase.dto.response.GoogleSubscriptionGetRespon
 import com.yello.server.domain.purchase.dto.response.GoogleTicketGetResponse;
 import com.yello.server.domain.purchase.dto.response.UserSubscribeNeededResponse;
 import com.yello.server.domain.purchase.service.PurchaseService;
-import com.yello.server.domain.user.dto.response.UserSubscribeDetailResponse;
 import com.yello.server.domain.user.entity.User;
 import com.yello.server.global.exception.ControllerExceptionAdvice;
 import com.yello.server.util.TestDataEntityUtil;
 import com.yello.server.util.TestDataUtil;
 import com.yello.server.util.WithAccessTokenUser;
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.DisplayNameGeneration;
@@ -83,9 +84,9 @@ class PurchaseControllerTest {
 
     @BeforeEach
     void init() {
-        user = testDataUtil.generateUser(1L, 1L, UserGroupType.UNIVERSITY);
-        target = testDataUtil.generateUser(2L, 1L, UserGroupType.UNIVERSITY);
-
+        final UserGroup userGroup = testDataUtil.generateGroup(1L, UserGroupType.UNIVERSITY);
+        user = testDataUtil.generateUser(1L, userGroup);
+        target = testDataUtil.generateUser(2L, userGroup);
     }
 
     @Test
@@ -162,8 +163,10 @@ class PurchaseControllerTest {
                 .acknowledged(true)
                 .build();
 
-        final GoogleSubscriptionGetResponse response = GoogleSubscriptionGetResponse.of(
-            "productId");
+        final GoogleSubscriptionGetResponse response = GoogleSubscriptionGetResponse.builder()
+            .productId("productId")
+            .expiredAt(LocalDateTime.of(2024, 1, 1, 12, 0, 0).format(DateTimeFormatter.ISO_LOCAL_DATE_TIME))
+            .build();
 
         given(purchaseService.verifyGoogleSubscriptionTransaction(anyLong(),
             any(GoogleSubscriptionGetRequest.class)))

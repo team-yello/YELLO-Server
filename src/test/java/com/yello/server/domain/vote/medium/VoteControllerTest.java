@@ -21,6 +21,7 @@ import com.yello.server.domain.authorization.filter.JwtFilter;
 import com.yello.server.domain.cooldown.entity.Cooldown;
 import com.yello.server.domain.friend.dto.response.FriendShuffleResponse;
 import com.yello.server.domain.friend.entity.Friend;
+import com.yello.server.domain.group.entity.UserGroup;
 import com.yello.server.domain.group.entity.UserGroupType;
 import com.yello.server.domain.keyword.dto.response.KeywordCheckResponse;
 import com.yello.server.domain.question.dto.response.QuestionForVoteResponse;
@@ -44,7 +45,6 @@ import com.yello.server.domain.vote.dto.response.VoteListResponse;
 import com.yello.server.domain.vote.dto.response.VoteResponse;
 import com.yello.server.domain.vote.dto.response.VoteUnreadCountResponse;
 import com.yello.server.domain.vote.entity.Vote;
-import com.yello.server.domain.vote.entity.VoteType;
 import com.yello.server.domain.vote.service.VoteService;
 import com.yello.server.global.exception.ControllerExceptionAdvice;
 import com.yello.server.infrastructure.firebase.service.NotificationService;
@@ -110,8 +110,9 @@ class VoteControllerTest {
 
     @BeforeEach
     void init() {
-        user = testDataUtil.generateUser(1L, 1L, UserGroupType.UNIVERSITY);
-        target = testDataUtil.generateUser(2L, 1L, UserGroupType.UNIVERSITY);
+        final UserGroup userGroup = testDataUtil.generateGroup(1L, UserGroupType.UNIVERSITY);
+        user = testDataUtil.generateUser(1L, userGroup);
+        target = testDataUtil.generateUser(2L, userGroup);
     }
 
     @Test
@@ -218,7 +219,8 @@ class VoteControllerTest {
                     removeHeaders(excludeRequestHeaders)),
                 Preprocessors.preprocessResponse(prettyPrint(),
                     removeHeaders(excludeResponseHeaders)),
-                requestParameters(parameterWithName("page").description("페이지네이션 페이지 번호"),parameterWithName("type").description("쪽지 유형 선택")))
+                requestParameters(parameterWithName("page").description("페이지네이션 페이지 번호"),
+                    parameterWithName("type").description("쪽지 유형 선택")))
             )
             .andExpect(MockMvcResultMatchers.status().isOk());
     }
@@ -314,7 +316,7 @@ class VoteControllerTest {
     void 투표_가능_여부_조회에_성공합니다() throws Exception {
         // given
         final Cooldown cooldown =
-            Cooldown.of(user, UUID.randomUUID().toString(), LocalDateTime.now());
+            Cooldown.of(user, UUID.randomUUID().toString(), LocalDateTime.of(2024, 1, 1, 12, 0, 0));
         final VoteAvailableResponse voteAvailableResponse =
             VoteAvailableResponse.of(user, cooldown, 1);
 

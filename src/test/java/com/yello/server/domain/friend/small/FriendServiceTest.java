@@ -16,7 +16,10 @@ import com.yello.server.domain.friend.exception.FriendException;
 import com.yello.server.domain.friend.exception.FriendNotFoundException;
 import com.yello.server.domain.friend.repository.FriendRepository;
 import com.yello.server.domain.friend.service.FriendService;
+import com.yello.server.domain.group.FakeUserGroupRepository;
+import com.yello.server.domain.group.entity.UserGroup;
 import com.yello.server.domain.group.entity.UserGroupType;
+import com.yello.server.domain.group.repository.UserGroupRepository;
 import com.yello.server.domain.notice.FakeNoticeRepository;
 import com.yello.server.domain.notice.repository.NoticeRepository;
 import com.yello.server.domain.purchase.FakePurchaseRepository;
@@ -25,16 +28,19 @@ import com.yello.server.domain.question.FakeQuestionGroupTypeRepository;
 import com.yello.server.domain.question.FakeQuestionRepository;
 import com.yello.server.domain.question.repository.QuestionGroupTypeRepository;
 import com.yello.server.domain.question.repository.QuestionRepository;
+import com.yello.server.domain.user.FakeUserDataRepository;
 import com.yello.server.domain.user.FakeUserManager;
 import com.yello.server.domain.user.FakeUserRepository;
 import com.yello.server.domain.user.entity.User;
 import com.yello.server.domain.user.exception.UserNotFoundException;
+import com.yello.server.domain.user.repository.UserDataRepository;
 import com.yello.server.domain.user.repository.UserRepository;
 import com.yello.server.domain.user.service.UserManager;
 import com.yello.server.domain.vote.FakeVoteManager;
 import com.yello.server.domain.vote.FakeVoteRepository;
 import com.yello.server.domain.vote.repository.VoteRepository;
 import com.yello.server.domain.vote.service.VoteManager;
+import com.yello.server.util.TestDataEntityUtil;
 import com.yello.server.util.TestDataRepositoryUtil;
 import java.util.List;
 import java.util.Optional;
@@ -50,25 +56,31 @@ import org.springframework.data.domain.Pageable;
 class FriendServiceTest {
 
     private final FriendRepository friendRepository = new FakeFriendRepository();
+    private final NoticeRepository noticeRepository = new FakeNoticeRepository();
+    private final PurchaseRepository purchaseRepository = new FakePurchaseRepository();
     private final QuestionRepository questionRepository = new FakeQuestionRepository();
+    private final QuestionGroupTypeRepository
+        questionGroupTypeRepository = new FakeQuestionGroupTypeRepository(questionRepository);
+    private final TestDataEntityUtil testDataEntityUtil = new TestDataEntityUtil();
+    private final UserDataRepository userDataRepository = new FakeUserDataRepository();
+    private final UserGroupRepository userGroupRepository = new FakeUserGroupRepository();
     private final UserRepository userRepository = new FakeUserRepository(friendRepository);
     private final UserManager userManager = new FakeUserManager(userRepository);
     private final VoteRepository voteRepository = new FakeVoteRepository();
-    private final QuestionGroupTypeRepository
-        questionGroupTypeRepository = new FakeQuestionGroupTypeRepository(questionRepository);
     private final VoteManager voteManager =
         new FakeVoteManager(userRepository, questionRepository, voteRepository, friendRepository,
             userManager);
-    private final PurchaseRepository purchaseRepository = new FakePurchaseRepository();
-    private final NoticeRepository noticeRepository = new FakeNoticeRepository();
     private final TestDataRepositoryUtil testDataUtil = new TestDataRepositoryUtil(
-        userRepository,
-        voteRepository,
-        questionRepository,
         friendRepository,
-        questionGroupTypeRepository,
+        noticeRepository,
         purchaseRepository,
-        noticeRepository
+        questionGroupTypeRepository,
+        questionRepository,
+        testDataEntityUtil,
+        userDataRepository,
+        userGroupRepository,
+        userRepository,
+        voteRepository
     );
     private FriendService friendService;
     private User user1;
@@ -86,11 +98,13 @@ class FriendServiceTest {
             .voteManager(voteManager)
             .build();
 
-        user1 = testDataUtil.generateUser(1L, 1L, UserGroupType.UNIVERSITY);
-        user2 = testDataUtil.generateUser(2L, 2L, UserGroupType.UNIVERSITY);
-        user3 = testDataUtil.generateUser(3L, 1L, UserGroupType.UNIVERSITY);
-        user4 = testDataUtil.generateUser(4L, 1L, UserGroupType.UNIVERSITY);
-        user5 = testDataUtil.generateUser(5L, 1L, UserGroupType.UNIVERSITY);
+        final UserGroup userGroup1 = testDataUtil.generateGroup(1L, UserGroupType.UNIVERSITY);
+        final UserGroup userGroup2 = testDataUtil.generateGroup(2L, UserGroupType.UNIVERSITY);
+        user1 = testDataUtil.generateUser(1L, userGroup1);
+        user2 = testDataUtil.generateUser(2L, userGroup2);
+        user3 = testDataUtil.generateUser(3L, userGroup1);
+        user4 = testDataUtil.generateUser(4L, userGroup1);
+        user5 = testDataUtil.generateUser(5L, userGroup1);
 
         testDataUtil.generateFriend(user1, user2);
         testDataUtil.generateFriend(user2, user1);

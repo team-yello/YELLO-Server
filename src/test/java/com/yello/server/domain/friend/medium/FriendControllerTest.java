@@ -28,6 +28,7 @@ import com.yello.server.domain.friend.dto.response.SearchFriendResponse;
 import com.yello.server.domain.friend.dto.response.SearchFriendVO;
 import com.yello.server.domain.friend.entity.Friend;
 import com.yello.server.domain.friend.service.FriendService;
+import com.yello.server.domain.group.entity.UserGroup;
 import com.yello.server.domain.group.entity.UserGroupType;
 import com.yello.server.domain.user.dto.response.UserResponse;
 import com.yello.server.domain.user.entity.User;
@@ -91,8 +92,9 @@ class FriendControllerTest {
 
     @BeforeEach
     void init() {
-        user = testDataUtil.generateUser(1L, 1L, UserGroupType.UNIVERSITY);
-        target = testDataUtil.generateUser(2L, 1L, UserGroupType.UNIVERSITY);
+        final UserGroup userGroup = testDataUtil.generateGroup(1L, UserGroupType.UNIVERSITY);
+        user = testDataUtil.generateUser(1L, userGroup);
+        target = testDataUtil.generateUser(2L, userGroup);
     }
 
     @Test

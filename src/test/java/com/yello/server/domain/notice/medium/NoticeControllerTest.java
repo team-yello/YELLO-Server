@@ -14,6 +14,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.yello.server.domain.authorization.filter.JwtExceptionFilter;
 import com.yello.server.domain.authorization.filter.JwtFilter;
+import com.yello.server.domain.group.entity.UserGroup;
 import com.yello.server.domain.group.entity.UserGroupType;
 import com.yello.server.domain.notice.controller.NoticeController;
 import com.yello.server.domain.notice.dto.NoticeDataResponse;
@@ -25,6 +26,9 @@ import com.yello.server.global.exception.ControllerExceptionAdvice;
 import com.yello.server.util.TestDataEntityUtil;
 import com.yello.server.util.TestDataUtil;
 import com.yello.server.util.WithAccessTokenUser;
+import java.time.Clock;
+import java.time.ZoneId;
+import java.time.ZonedDateTime;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.DisplayNameGeneration;
@@ -72,12 +76,17 @@ public class NoticeControllerTest {
     private TestDataUtil testDataUtil = new TestDataEntityUtil();
     private User user;
     private Notice notice;
-
+    private ZonedDateTime now;
 
     @BeforeEach
     void init() {
-        user = testDataUtil.generateUser(1L, 1L, UserGroupType.HIGH_SCHOOL);
-        notice = testDataUtil.genereateNotice(1L);
+        ZonedDateTime fixedDateTime = ZonedDateTime.of(2024, 1, 1, 10, 0, 0, 0, ZoneId.of("Asia/Seoul"));
+        Clock fixedClock = Clock.fixed(fixedDateTime.toInstant(), fixedDateTime.getZone());
+        now = ZonedDateTime.now(fixedClock);
+
+        final UserGroup userGroup = testDataUtil.generateGroup(1L, UserGroupType.UNIVERSITY);
+        user = testDataUtil.generateUser(1L, userGroup);
+        notice = testDataUtil.generateNotice(1L, NoticeType.NOTICE, now);
     }
 
     @Test

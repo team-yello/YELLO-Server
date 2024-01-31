@@ -2,7 +2,10 @@ package com.yello.server.infrastructure.firebase.small;
 
 import com.yello.server.domain.friend.FakeFriendRepository;
 import com.yello.server.domain.friend.repository.FriendRepository;
+import com.yello.server.domain.group.FakeUserGroupRepository;
+import com.yello.server.domain.group.entity.UserGroup;
 import com.yello.server.domain.group.entity.UserGroupType;
+import com.yello.server.domain.group.repository.UserGroupRepository;
 import com.yello.server.domain.notice.FakeNoticeRepository;
 import com.yello.server.domain.notice.repository.NoticeRepository;
 import com.yello.server.domain.purchase.FakePurchaseRepository;
@@ -12,14 +15,17 @@ import com.yello.server.domain.question.FakeQuestionRepository;
 import com.yello.server.domain.question.entity.Question;
 import com.yello.server.domain.question.repository.QuestionGroupTypeRepository;
 import com.yello.server.domain.question.repository.QuestionRepository;
+import com.yello.server.domain.user.FakeUserDataRepository;
 import com.yello.server.domain.user.FakeUserRepository;
 import com.yello.server.domain.user.entity.User;
+import com.yello.server.domain.user.repository.UserDataRepository;
 import com.yello.server.domain.user.repository.UserRepository;
 import com.yello.server.domain.vote.FakeVoteRepository;
 import com.yello.server.domain.vote.repository.VoteRepository;
 import com.yello.server.infrastructure.firebase.dto.request.NotificationMessage;
 import com.yello.server.infrastructure.firebase.manager.FCMManager;
 import com.yello.server.infrastructure.firebase.manager.FCMManagerImpl;
+import com.yello.server.util.TestDataEntityUtil;
 import com.yello.server.util.TestDataRepositoryUtil;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -31,24 +37,29 @@ import org.junit.jupiter.api.Test;
 @DisplayNameGeneration(ReplaceUnderscores.class)
 public class FcmManagerTest {
 
-    private final VoteRepository voteRepository = new FakeVoteRepository();
-    private final QuestionRepository questionRepository = new FakeQuestionRepository();
     private final FriendRepository friendRepository = new FakeFriendRepository();
-    private final UserRepository userRepository = new FakeUserRepository(friendRepository);
+    private final NoticeRepository noticeRepository = new FakeNoticeRepository();
+    private final PurchaseRepository purchaseRepository = new FakePurchaseRepository();
+    private final QuestionRepository questionRepository = new FakeQuestionRepository();
     private final QuestionGroupTypeRepository
         questionGroupTypeRepository = new FakeQuestionGroupTypeRepository(questionRepository);
-    private final PurchaseRepository purchaseRepository = new FakePurchaseRepository();
-    private final NoticeRepository noticeRepository = new FakeNoticeRepository();
+    private final TestDataEntityUtil testDataEntityUtil = new TestDataEntityUtil();
+    private final UserDataRepository userDataRepository = new FakeUserDataRepository();
+    private final UserGroupRepository userGroupRepository = new FakeUserGroupRepository();
+    private final UserRepository userRepository = new FakeUserRepository(friendRepository);
+    private final VoteRepository voteRepository = new FakeVoteRepository();
     private final TestDataRepositoryUtil testDataUtil = new TestDataRepositoryUtil(
-        userRepository,
-        voteRepository,
-        questionRepository,
         friendRepository,
-        questionGroupTypeRepository,
+        noticeRepository,
         purchaseRepository,
-        noticeRepository
+        questionGroupTypeRepository,
+        questionRepository,
+        testDataEntityUtil,
+        userDataRepository,
+        userGroupRepository,
+        userRepository,
+        voteRepository
     );
-
     private FCMManager fcmManager;
 
     @BeforeEach
@@ -57,8 +68,9 @@ public class FcmManagerTest {
             .voteRepository(voteRepository)
             .build();
 
-        User user = testDataUtil.generateUser(1L, 1L, UserGroupType.UNIVERSITY);
-        User target = testDataUtil.generateUser(2L, 1L, UserGroupType.UNIVERSITY);
+        final UserGroup userGroup = testDataUtil.generateGroup(1L, UserGroupType.UNIVERSITY);
+        User user = testDataUtil.generateUser(1L, userGroup);
+        User target = testDataUtil.generateUser(2L, userGroup);
         Question question = testDataUtil.generateQuestion(1L);
         testDataUtil.generateVote(1L, user, target, question);
     }

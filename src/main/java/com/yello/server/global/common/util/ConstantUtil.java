@@ -1,7 +1,10 @@
 package com.yello.server.global.common.util;
 
+import java.time.ZoneId;
+
 public class ConstantUtil {
 
+    public static final ZoneId GlobalZoneId = ZoneId.of("Asia/Seoul");
     public static final int RANDOM_COUNT = 4;
     public static final int VOTE_COUNT = 8;
     public static final long TIMER_TIME = 2400L;

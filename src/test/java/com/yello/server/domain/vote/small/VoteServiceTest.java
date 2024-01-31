@@ -7,7 +7,10 @@ import com.yello.server.domain.cooldown.FakeCooldownRepository;
 import com.yello.server.domain.cooldown.repository.CooldownRepository;
 import com.yello.server.domain.friend.FakeFriendRepository;
 import com.yello.server.domain.friend.repository.FriendRepository;
+import com.yello.server.domain.group.FakeUserGroupRepository;
+import com.yello.server.domain.group.entity.UserGroup;
 import com.yello.server.domain.group.entity.UserGroupType;
+import com.yello.server.domain.group.repository.UserGroupRepository;
 import com.yello.server.domain.keyword.FakeKeywordRepository;
 import com.yello.server.domain.keyword.dto.response.KeywordCheckResponse;
 import com.yello.server.domain.keyword.repository.KeywordRepository;
@@ -22,9 +25,11 @@ import com.yello.server.domain.question.entity.Question;
 import com.yello.server.domain.question.entity.QuestionGroupType;
 import com.yello.server.domain.question.repository.QuestionGroupTypeRepository;
 import com.yello.server.domain.question.repository.QuestionRepository;
+import com.yello.server.domain.user.FakeUserDataRepository;
 import com.yello.server.domain.user.FakeUserManager;
 import com.yello.server.domain.user.FakeUserRepository;
 import com.yello.server.domain.user.entity.User;
+import com.yello.server.domain.user.repository.UserDataRepository;
 import com.yello.server.domain.user.repository.UserRepository;
 import com.yello.server.domain.user.service.UserManager;
 import com.yello.server.domain.vote.FakeVoteManager;
@@ -45,6 +50,7 @@ import com.yello.server.domain.vote.service.VoteService;
 import com.yello.server.infrastructure.rabbitmq.FakeMessageQueueRepository;
 import com.yello.server.infrastructure.rabbitmq.FakeProducerService;
 import com.yello.server.infrastructure.rabbitmq.service.ProducerService;
+import com.yello.server.util.TestDataEntityUtil;
 import com.yello.server.util.TestDataRepositoryUtil;
 import java.util.ArrayList;
 import java.util.List;
@@ -60,14 +66,22 @@ import org.springframework.data.domain.Pageable;
 @DisplayNameGeneration(ReplaceUnderscores.class)
 public class VoteServiceTest {
 
+    private final CooldownRepository cooldownRepository = new FakeCooldownRepository();
     private final FriendRepository friendRepository = new FakeFriendRepository();
+    private final KeywordRepository keywordRepository = new FakeKeywordRepository();
+    private final NoticeRepository noticeRepository = new FakeNoticeRepository();
+    private final ProducerService producerService =
+        new FakeProducerService(new FakeMessageQueueRepository());
+    private final PurchaseRepository purchaseRepository = new FakePurchaseRepository();
+    private final QuestionRepository questionRepository = new FakeQuestionRepository();
+    private final QuestionGroupTypeRepository questionGroupTypeRepository = new FakeQuestionGroupTypeRepository(
+        questionRepository);
+    private final TestDataEntityUtil testDataEntityUtil = new TestDataEntityUtil();
+    private final UserDataRepository userDataRepository = new FakeUserDataRepository();
+    private final UserGroupRepository userGroupRepository = new FakeUserGroupRepository();
     private final UserRepository userRepository = new FakeUserRepository(friendRepository);
     private final UserManager userManager = new FakeUserManager(userRepository);
     private final VoteRepository voteRepository = new FakeVoteRepository();
-    private final QuestionRepository questionRepository = new FakeQuestionRepository();
-    private final QuestionGroupTypeRepository questionGroupTypeRepository = new FakeQuestionGroupTypeRepository(questionRepository);
-    private final PurchaseRepository purchaseRepository = new FakePurchaseRepository();
-    private final NoticeRepository noticeRepository = new FakeNoticeRepository();
     private final VoteManager voteManager = new FakeVoteManager(
         userRepository,
         questionRepository,
@@ -76,19 +90,17 @@ public class VoteServiceTest {
         userManager
     );
     private final TestDataRepositoryUtil testDataUtil = new TestDataRepositoryUtil(
-        userRepository,
-        voteRepository,
-        questionRepository,
         friendRepository,
-        questionGroupTypeRepository,
+        noticeRepository,
         purchaseRepository,
-        noticeRepository
+        questionGroupTypeRepository,
+        questionRepository,
+        testDataEntityUtil,
+        userDataRepository,
+        userGroupRepository,
+        userRepository,
+        voteRepository
     );
-    private final CooldownRepository cooldownRepository = new FakeCooldownRepository();
-    private final KeywordRepository keywordRepository = new FakeKeywordRepository();
-    private final ProducerService producerService =
-        new FakeProducerService(new FakeMessageQueueRepository());
-
     private VoteService voteService;
     private List<Question> questionData = new ArrayList<>();
     private List<QuestionGroupType> questionGroupTypeData = new ArrayList<>();
@@ -113,13 +125,14 @@ public class VoteServiceTest {
         }
 
         for (long i = 1; i <= 8; i++) {
-            QuestionGroupType questionGroupType = testDataUtil.generateQuestionGroupType(i, questionData.get(Long.valueOf(i).intValue() -1));
+            QuestionGroupType questionGroupType = testDataUtil.generateQuestionGroupType(i,
+                questionData.get(Long.valueOf(i).intValue() - 1));
             questionGroupTypeData.add(questionGroupType);
         }
 
-
+        final UserGroup userGroup = testDataUtil.generateGroup(1L, UserGroupType.UNIVERSITY);
         for (long i = 1; i <= 5; i++) {
-            userData.add(testDataUtil.generateUser(i, 1L, UserGroupType.UNIVERSITY));
+            userData.add(testDataUtil.generateUser(i, userGroup));
         }
 
         testDataUtil.generateFriend(userData.get(1), userData.get(0));

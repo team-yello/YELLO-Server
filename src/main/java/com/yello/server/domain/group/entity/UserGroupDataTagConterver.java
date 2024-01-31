@@ -13,7 +13,7 @@ public class UserGroupDataTagConterver implements AttributeConverter<UserGroupDa
         if (userGroupType == null) {
             return null;
         }
-        return userGroupType.getIntial();
+        return userGroupType.name();
     }
 
     @Override
@@ -21,11 +21,7 @@ public class UserGroupDataTagConterver implements AttributeConverter<UserGroupDa
         if (dbData == null) {
             return null;
         }
-        try {
-            return UserGroupDataTag.fromCode(dbData);
-        } catch (IllegalArgumentException exception) {
-            log.error("failure to convert cause unexpected code" + dbData + exception);
-            throw exception;
-        }
+
+        return UserGroupDataTag.fromName(dbData);
     }
 }

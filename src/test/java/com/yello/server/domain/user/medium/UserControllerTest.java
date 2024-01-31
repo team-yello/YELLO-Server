@@ -16,15 +16,20 @@ import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.yello.server.domain.authorization.filter.JwtExceptionFilter;
 import com.yello.server.domain.authorization.filter.JwtFilter;
+import com.yello.server.domain.group.entity.UserGroup;
 import com.yello.server.domain.group.entity.UserGroupType;
 import com.yello.server.domain.user.controller.UserController;
+import com.yello.server.domain.user.dto.request.UserDataUpdateRequest;
 import com.yello.server.domain.user.dto.request.UserDeleteReasonRequest;
 import com.yello.server.domain.user.dto.request.UserDeviceTokenRequest;
+import com.yello.server.domain.user.dto.request.UserUpdateRequest;
+import com.yello.server.domain.user.dto.response.UserDataResponse;
 import com.yello.server.domain.user.dto.response.UserDetailResponse;
 import com.yello.server.domain.user.dto.response.UserDetailV2Response;
 import com.yello.server.domain.user.dto.response.UserResponse;
 import com.yello.server.domain.user.dto.response.UserSubscribeDetailResponse;
 import com.yello.server.domain.user.entity.User;
+import com.yello.server.domain.user.entity.UserDataType;
 import com.yello.server.domain.user.service.UserService;
 import com.yello.server.global.common.dto.EmptyObject;
 import com.yello.server.global.exception.ControllerExceptionAdvice;
@@ -83,7 +88,8 @@ class UserControllerTest {
 
     @BeforeEach
     void init() {
-        user = testDataUtil.generateUser(1L, 1L, UserGroupType.UNIVERSITY);
+        final UserGroup userGroup = testDataUtil.generateGroup(1L, UserGroupType.UNIVERSITY);
+        user = testDataUtil.generateUser(1L, userGroup);
     }
 
     @Test
@@ -229,7 +235,7 @@ class UserControllerTest {
     void 유저_구독_정보_조회에_성공합니다() throws Exception {
         // given
 
-        final UserSubscribeDetailResponse userSubscribeDetailResponse =
+        UserSubscribeDetailResponse userSubscribeDetailResponse =
             UserSubscribeDetailResponse.of(testDataUtil.generatePurchase(1L, user));
         // when
         given(userService.getUserSubscribe(anyLong()))
@@ -277,4 +283,97 @@ class UserControllerTest {
             .andExpect(MockMvcResultMatchers.status().isOk());
     }
 
+    @Test
+    void 유저_정보_수정에_성공합니다() throws Exception {
+        // given
+        final UserUpdateRequest request =
+            UserUpdateRequest.builder()
+                .name("after")
+                .email("afterupdate@yello.com")
+                .yelloId("afterupdate")
+                .gender("M")
+                .profileImageUrl("https://after.com")
+                .groupId(1L)
+                .groupAdmissionYear(24)
+                .build();
+
+        doNothing()
+            .when(userService)
+            .updateUserProfile(any(Long.class), eq(request));
+        // when
+
+        // then
+        mockMvc.perform(RestDocumentationRequestBuilders.post("/api/v1/user")
+                .with(csrf().asHeader())
+                .header(HttpHeaders.AUTHORIZATION, "Bearer your-access-token")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(request)))
+            .andDo(print())
+            .andDo(document("api/v1/user/update",
+                Preprocessors.preprocessRequest(prettyPrint(),
+                    removeHeaders(excludeRequestHeaders)),
+                Preprocessors.preprocessResponse(prettyPrint(),
+                    removeHeaders(excludeResponseHeaders)))
+            )
+            .andExpect(MockMvcResultMatchers.status().isOk());
+    }
+
+    @Test
+    void 유저_데이터_조회에_성공합니다() throws Exception {
+        // given
+        final UserDataResponse response =
+            UserDataResponse.builder()
+                .tag(UserDataType.ACCOUNT_UPDATED_AT.getInitial())
+                .value("false|2024-01-31|2024-01-31")
+                .build();
+
+        given(userService.readUserData(any(Long.class), any(UserDataType.class)))
+            .willReturn(response);
+        // when
+
+        // then
+        mockMvc.perform(RestDocumentationRequestBuilders.get("/api/v1/user/data/{tag}",
+                    UserDataType.ACCOUNT_UPDATED_AT.getInitial())
+                .header(HttpHeaders.AUTHORIZATION, "Bearer your-access-token")
+                .contentType(MediaType.APPLICATION_JSON)
+            )
+            .andDo(print())
+            .andDo(document("api/v1/user/data/read",
+                Preprocessors.preprocessRequest(prettyPrint(),
+                    removeHeaders(excludeRequestHeaders)),
+                Preprocessors.preprocessResponse(prettyPrint(),
+                    removeHeaders(excludeResponseHeaders)))
+            )
+            .andExpect(MockMvcResultMatchers.status().isOk());
+    }
+
+    @Test
+    void 유저_데이터_수정_및_저장에_성공합니다() throws Exception {
+        // given
+        final UserDataUpdateRequest request =
+            UserDataUpdateRequest.builder()
+                .value("바꿀 값임요")
+                .build();
+
+        doNothing()
+            .when(userService)
+            .updateUserData(any(Long.class), any(UserDataType.class), eq(request));
+        // when
+
+        // then
+        mockMvc.perform(
+                RestDocumentationRequestBuilders.post("/api/v1/user/data/{tag}", UserDataType.WITHDRAW_REASON.getInitial())
+                    .with(csrf().asHeader())
+                    .header(HttpHeaders.AUTHORIZATION, "Bearer your-access-token")
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .content(objectMapper.writeValueAsString(request)))
+            .andDo(print())
+            .andDo(document("api/v1/user/data/update",
+                Preprocessors.preprocessRequest(prettyPrint(),
+                    removeHeaders(excludeRequestHeaders)),
+                Preprocessors.preprocessResponse(prettyPrint(),
+                    removeHeaders(excludeResponseHeaders)))
+            )
+            .andExpect(MockMvcResultMatchers.status().isOk());
+    }
 }

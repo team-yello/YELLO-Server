@@ -16,7 +16,7 @@ public record UserSubscribeDetailResponse(
     public static UserSubscribeDetailResponse of(Purchase purchase) {
         return UserSubscribeDetailResponse.builder()
             .id(purchase.getUser().getId())
-            .subscribe(purchase.getUser().getSubscribe().getIntial())
+            .subscribe(purchase.getUser().getSubscribe().getInitial())
             .expiredDate(
                 toYearAndMonthFormattedString(purchase.getUpdatedAt().plusDays(SUBSCRIBE_DAYS)))
             .build();
