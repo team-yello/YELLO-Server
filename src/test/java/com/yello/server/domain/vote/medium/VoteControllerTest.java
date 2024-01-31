@@ -45,7 +45,6 @@ import com.yello.server.domain.vote.dto.response.VoteListResponse;
 import com.yello.server.domain.vote.dto.response.VoteResponse;
 import com.yello.server.domain.vote.dto.response.VoteUnreadCountResponse;
 import com.yello.server.domain.vote.entity.Vote;
-import com.yello.server.domain.vote.entity.VoteType;
 import com.yello.server.domain.vote.service.VoteService;
 import com.yello.server.global.exception.ControllerExceptionAdvice;
 import com.yello.server.infrastructure.firebase.service.NotificationService;
@@ -220,7 +219,8 @@ class VoteControllerTest {
                     removeHeaders(excludeRequestHeaders)),
                 Preprocessors.preprocessResponse(prettyPrint(),
                     removeHeaders(excludeResponseHeaders)),
-                requestParameters(parameterWithName("page").description("페이지네이션 페이지 번호"),parameterWithName("type").description("쪽지 유형 선택")))
+                requestParameters(parameterWithName("page").description("페이지네이션 페이지 번호"),
+                    parameterWithName("type").description("쪽지 유형 선택")))
             )
             .andExpect(MockMvcResultMatchers.status().isOk());
     }
@@ -316,7 +316,7 @@ class VoteControllerTest {
     void 투표_가능_여부_조회에_성공합니다() throws Exception {
         // given
         final Cooldown cooldown =
-            Cooldown.of(user, UUID.randomUUID().toString(), LocalDateTime.now());
+            Cooldown.of(user, UUID.randomUUID().toString(), LocalDateTime.of(24, 1, 1, 12, 0, 0));
         final VoteAvailableResponse voteAvailableResponse =
             VoteAvailableResponse.of(user, cooldown, 1);
 

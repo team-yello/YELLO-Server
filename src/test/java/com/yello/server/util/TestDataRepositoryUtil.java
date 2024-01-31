@@ -15,9 +15,11 @@ import com.yello.server.domain.question.entity.QuestionGroupType;
 import com.yello.server.domain.question.repository.QuestionGroupTypeRepository;
 import com.yello.server.domain.question.repository.QuestionRepository;
 import com.yello.server.domain.user.entity.User;
+import com.yello.server.domain.user.repository.UserDataRepository;
 import com.yello.server.domain.user.repository.UserRepository;
 import com.yello.server.domain.vote.entity.Vote;
 import com.yello.server.domain.vote.repository.VoteRepository;
+import java.time.ZonedDateTime;
 
 public class TestDataRepositoryUtil implements TestDataUtil {
 
@@ -27,6 +29,7 @@ public class TestDataRepositoryUtil implements TestDataUtil {
     private final QuestionGroupTypeRepository questionGroupTypeRepository;
     private final QuestionRepository questionRepository;
     private final TestDataEntityUtil testDataEntityUtil;
+    private final UserDataRepository userDataRepository;
     private final UserGroupRepository userGroupRepository;
     private final UserRepository userRepository;
     private final VoteRepository voteRepository;
@@ -34,6 +37,7 @@ public class TestDataRepositoryUtil implements TestDataUtil {
     public TestDataRepositoryUtil(FriendRepository friendRepository, NoticeRepository noticeRepository,
         PurchaseRepository purchaseRepository, QuestionGroupTypeRepository questionGroupTypeRepository,
         QuestionRepository questionRepository, TestDataEntityUtil testDataEntityUtil,
+        UserDataRepository userDataRepository,
         UserGroupRepository userGroupRepository, UserRepository userRepository, VoteRepository voteRepository) {
         this.friendRepository = friendRepository;
         this.noticeRepository = noticeRepository;
@@ -41,6 +45,7 @@ public class TestDataRepositoryUtil implements TestDataUtil {
         this.questionGroupTypeRepository = questionGroupTypeRepository;
         this.questionRepository = questionRepository;
         this.testDataEntityUtil = testDataEntityUtil;
+        this.userDataRepository = userDataRepository;
         this.userGroupRepository = userGroupRepository;
         this.userRepository = userRepository;
         this.voteRepository = voteRepository;
@@ -87,7 +92,7 @@ public class TestDataRepositoryUtil implements TestDataUtil {
     }
 
     @Override
-    public Notice generateNotice(long index, NoticeType noticeType) {
-        return noticeRepository.save(testDataEntityUtil.generateNotice(index, noticeType));
+    public Notice generateNotice(long index, NoticeType noticeType, ZonedDateTime createdAt) {
+        return noticeRepository.save(testDataEntityUtil.generateNotice(index, noticeType, createdAt));
     }
 }

@@ -32,6 +32,7 @@ import com.yello.server.util.TestDataEntityUtil;
 import com.yello.server.util.TestDataUtil;
 import com.yello.server.util.WithAccessTokenUser;
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.DisplayNameGeneration;
@@ -162,8 +163,10 @@ class PurchaseControllerTest {
                 .acknowledged(true)
                 .build();
 
-        final GoogleSubscriptionGetResponse response = GoogleSubscriptionGetResponse.of(
-            "productId");
+        final GoogleSubscriptionGetResponse response = GoogleSubscriptionGetResponse.builder()
+            .productId("productId")
+            .expiredAt(LocalDateTime.of(24, 1, 1, 12, 0, 0).format(DateTimeFormatter.ISO_LOCAL_DATE_TIME))
+            .build();
 
         given(purchaseService.verifyGoogleSubscriptionTransaction(anyLong(),
             any(GoogleSubscriptionGetRequest.class)))
