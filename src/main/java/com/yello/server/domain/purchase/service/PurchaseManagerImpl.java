@@ -3,9 +3,7 @@ package com.yello.server.domain.purchase.service;
 import static com.yello.server.global.common.ErrorCode.APPLE_TOKEN_SERVER_EXCEPTION;
 import static com.yello.server.global.common.ErrorCode.GOOGLE_SUBSCRIPTIONS_SUBSCRIPTION_EXCEPTION;
 import static com.yello.server.global.common.ErrorCode.NOT_FOUND_TRANSACTION_EXCEPTION;
-import static com.yello.server.global.common.util.ConstantUtil.REFUND_FIVE_TICKET;
-import static com.yello.server.global.common.util.ConstantUtil.REFUND_ONE_TICKET;
-import static com.yello.server.global.common.util.ConstantUtil.REFUND_TWO_TICKET;
+import static com.yello.server.global.common.util.ConstantUtil.*;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.yello.server.domain.purchase.dto.apple.AppleNotificationPayloadVO;
@@ -118,15 +116,19 @@ public class PurchaseManagerImpl implements PurchaseManager {
                 .orElseThrow(() -> new PurchaseNotFoundException(NOT_FOUND_TRANSACTION_EXCEPTION));
         User user = purchaseData.purchase().getUser();
 
-        if (payloadVO.subtype().equals(ConstantUtil.APPLE_SUBTYPE_AUTO_RENEW_DISABLED)
+        if (payloadVO.subtype().equals(APPLE_SUBTYPE_AUTO_RENEW_DISABLED)
             && !user.getSubscribe().equals(Subscribe.NORMAL)) {
             user.setSubscribe(Subscribe.CANCELED);
             purchase.setPurchaseState(PurchaseState.CANCELED);
         }
 
-        if (payloadVO.subtype().equals(ConstantUtil.APPLE_SUBTYPE_VOLUNTARY)) {
+        if (payloadVO.subtype().equals(APPLE_SUBTYPE_VOLUNTARY)) {
             user.setSubscribe(Subscribe.NORMAL);
             purchase.setPurchaseState(PurchaseState.PAUSED);
+        }
+
+        if(payloadVO.subtype().equals(APPLE_SUBTYPE_AUTO_RENEW_ENABLED)) {
+            user.setSubscribe(Subscribe.ACTIVE);
         }
     }
 
@@ -167,9 +169,9 @@ public class PurchaseManagerImpl implements PurchaseManager {
     }
 
     @Override
-    public void reSubscribeApple(AppleNotificationPayloadVO payloadVO) {
+    public void reSubscribeApple(AppleNotificationPayloadVO payloadVO, String notificationType) {
 
-        if (!payloadVO.subtype().equals(ConstantUtil.APPLE_SUBTYPE_RESUBSCRIBE)) {
+        if (notificationType.equals(APPLE_NOTIFICATION_SUBSCRIBED) && !payloadVO.subtype().equals(APPLE_SUBTYPE_RESUBSCRIBE)) {
             return;
         }
 
