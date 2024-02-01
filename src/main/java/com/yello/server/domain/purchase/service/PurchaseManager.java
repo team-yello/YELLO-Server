@@ -35,4 +35,5 @@ public interface PurchaseManager {
     SlackAppleNotificationResponse checkPurchaseDataByAppleSignedPayload(String payload);
 
     void reSubscribeApple(AppleNotificationPayloadVO payloadVO, String notificationType);
+    void expiredSubscribe(AppleNotificationPayloadVO payloadVO);
 }

@@ -327,12 +327,11 @@ public class PurchaseService {
             });
 
         switch (payloadVO.notificationType()) {
-            case APPLE_NOTIFICATION_CONSUMPTION_REQUEST -> {
-                // Nothing
-                return;
-            }
-            case APPLE_NOTIFICATION_SUBSCRIPTION_STATUS_CHANGE, APPLE_NOTIFICATION_EXPIRED -> {
+            case APPLE_NOTIFICATION_SUBSCRIPTION_STATUS_CHANGE -> {
                 purchaseManager.changeSubscriptionStatus(payloadVO);
+            }
+            case APPLE_NOTIFICATION_EXPIRED ->{
+                purchaseManager.expiredSubscribe(payloadVO);
             }
             case APPLE_NOTIFICATION_REFUND -> {
                 purchaseManager.refundAppleInApp(payloadVO);

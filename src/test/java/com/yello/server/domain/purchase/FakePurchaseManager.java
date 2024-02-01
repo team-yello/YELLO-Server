@@ -92,4 +92,9 @@ public class FakePurchaseManager implements PurchaseManager {
     public void reSubscribeApple(AppleNotificationPayloadVO payloadVO, String notificationType) {
 
     }
+
+    @Override
+    public void expiredSubscribe(AppleNotificationPayloadVO payloadVO) {
+
+    }
 }
