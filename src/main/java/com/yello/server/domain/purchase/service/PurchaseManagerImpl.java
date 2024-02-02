@@ -3,9 +3,7 @@ package com.yello.server.domain.purchase.service;
 import static com.yello.server.global.common.ErrorCode.APPLE_TOKEN_SERVER_EXCEPTION;
 import static com.yello.server.global.common.ErrorCode.GOOGLE_SUBSCRIPTIONS_SUBSCRIPTION_EXCEPTION;
 import static com.yello.server.global.common.ErrorCode.NOT_FOUND_TRANSACTION_EXCEPTION;
-import static com.yello.server.global.common.util.ConstantUtil.REFUND_FIVE_TICKET;
-import static com.yello.server.global.common.util.ConstantUtil.REFUND_ONE_TICKET;
-import static com.yello.server.global.common.util.ConstantUtil.REFUND_TWO_TICKET;
+import static com.yello.server.global.common.util.ConstantUtil.*;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.yello.server.domain.purchase.dto.apple.AppleNotificationPayloadVO;
@@ -118,16 +116,21 @@ public class PurchaseManagerImpl implements PurchaseManager {
                 .orElseThrow(() -> new PurchaseNotFoundException(NOT_FOUND_TRANSACTION_EXCEPTION));
         User user = purchaseData.purchase().getUser();
 
-        if (payloadVO.subtype().equals(ConstantUtil.APPLE_SUBTYPE_AUTO_RENEW_DISABLED)
+        if(payloadVO.subtype().equals(APPLE_SUBTYPE_AUTO_RENEW_ENABLED)) {
+            user.setSubscribe(Subscribe.ACTIVE);
+            purchase.setPurchaseState(PurchaseState.ACTIVE);
+            return;
+        }
+
+        if (payloadVO.subtype().equals(APPLE_SUBTYPE_AUTO_RENEW_DISABLED)
             && !user.getSubscribe().equals(Subscribe.NORMAL)) {
             user.setSubscribe(Subscribe.CANCELED);
             purchase.setPurchaseState(PurchaseState.CANCELED);
+            return;
         }
 
-        if (payloadVO.subtype().equals(ConstantUtil.APPLE_SUBTYPE_VOLUNTARY)) {
-            user.setSubscribe(Subscribe.NORMAL);
-            purchase.setPurchaseState(PurchaseState.PAUSED);
-        }
+        user.setSubscribe(Subscribe.CANCELED);
+        purchase.setPurchaseState(PurchaseState.CANCELED);
     }
 
     @Override
@@ -141,21 +144,56 @@ public class PurchaseManagerImpl implements PurchaseManager {
         switch (purchaseData.purchase().getProductType()) {
             case YELLO_PLUS -> {
                 user.setSubscribe(Subscribe.NORMAL);
-                purchase.setPurchaseState(PurchaseState.INACTIVE);
+                purchase.setPurchaseState(PurchaseState.PAUSED);
             }
             case ONE_TICKET -> {
                 validateTicketCount(REFUND_ONE_TICKET, user);
-                purchase.setPurchaseState(PurchaseState.INACTIVE);
+                purchase.setPurchaseState(PurchaseState.PAUSED);
             }
             case TWO_TICKET -> {
                 validateTicketCount(REFUND_TWO_TICKET, user);
-                purchase.setPurchaseState(PurchaseState.INACTIVE);
+                purchase.setPurchaseState(PurchaseState.PAUSED);
             }
             case FIVE_TICKET -> {
                 validateTicketCount(REFUND_FIVE_TICKET, user);
-                purchase.setPurchaseState(PurchaseState.INACTIVE);
+                purchase.setPurchaseState(PurchaseState.PAUSED);
             }
         }
+    }
+
+    @Override
+    public void reSubscribeApple(AppleNotificationPayloadVO payloadVO, String notificationType) {
+
+        if (notificationType.equals(APPLE_NOTIFICATION_SUBSCRIBED) && !payloadVO.subtype().equals(APPLE_SUBTYPE_RESUBSCRIBE)) {
+            return;
+        }
+
+        AppleJwsTransactionResponse appleJwtDecode =
+                decodeAppleDataPayload(payloadVO.data().signedTransactionInfo());
+
+        Purchase purchase =
+                purchaseRepository.findByTransactionId(appleJwtDecode.originalTransactionId())
+                        .orElseThrow(() -> new PurchaseConflictException(NOT_FOUND_TRANSACTION_EXCEPTION));
+
+        Purchase reSubscribePurchase =
+                createSubscribe(purchase.getUser(), Gateway.APPLE, appleJwtDecode.transactionId(), null,
+                        PurchaseState.ACTIVE, appleJwtDecode.toString());
+
+        purchase.setPurchaseState(PurchaseState.INACTIVE);
+        reSubscribePurchase.setPurchaseState(PurchaseState.ACTIVE);
+
+        purchaseRepository.save(reSubscribePurchase);
+    }
+
+    @Override
+    public void expiredSubscribe(AppleNotificationPayloadVO payloadVO) {
+        ApplePurchaseVO purchaseData = getPurchaseData(payloadVO);
+        Purchase purchase =
+                purchaseRepository.findByTransactionId(purchaseData.transactionId())
+                        .orElseThrow(() -> new PurchaseNotFoundException(NOT_FOUND_TRANSACTION_EXCEPTION));
+        User user = purchaseData.purchase().getUser();
+        user.setSubscribe(Subscribe.NORMAL);
+        purchase.setPurchaseState(PurchaseState.INACTIVE);
     }
 
     @Override
@@ -164,30 +202,6 @@ public class PurchaseManagerImpl implements PurchaseManager {
         Purchase purchase = decodeAppleNotificationData(payloadVO.data().signedTransactionInfo());
 
         return SlackAppleNotificationResponse.of(payloadVO, purchase);
-    }
-
-    @Override
-    public void reSubscribeApple(AppleNotificationPayloadVO payloadVO) {
-
-        if (!payloadVO.subtype().equals(ConstantUtil.APPLE_SUBTYPE_RESUBSCRIBE)) {
-            return;
-        }
-
-        AppleJwsTransactionResponse appleJwtDecode =
-            decodeAppleDataPayload(payloadVO.data().signedTransactionInfo());
-
-        Purchase purchase =
-            purchaseRepository.findByTransactionId(appleJwtDecode.originalTransactionId())
-                .orElseThrow(() -> new PurchaseConflictException(NOT_FOUND_TRANSACTION_EXCEPTION));
-
-        Purchase reSubscribePurchase =
-            createSubscribe(purchase.getUser(), Gateway.APPLE, appleJwtDecode.transactionId(), null,
-                PurchaseState.ACTIVE, appleJwtDecode.toString());
-
-        purchase.setPurchaseState(PurchaseState.INACTIVE);
-        reSubscribePurchase.setPurchaseState(PurchaseState.ACTIVE);
-
-        purchaseRepository.save(reSubscribePurchase);
     }
 
     public void validateTicketCount(int ticketCount, User user) {

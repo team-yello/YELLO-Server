@@ -20,16 +20,7 @@ import static com.yello.server.global.common.ErrorCode.NOT_FOUND_NOTIFICATION_TY
 import static com.yello.server.global.common.ErrorCode.NOT_FOUND_TRANSACTION_EXCEPTION;
 import static com.yello.server.global.common.ErrorCode.PURCHASE_TOKEN_NOT_FOUND_PURCHASE_EXCEPTION;
 import static com.yello.server.global.common.ErrorCode.SUBSCRIBE_ACTIVE_EXCEPTION;
-import static com.yello.server.global.common.util.ConstantUtil.APPLE_NOTIFICATION_CONSUMPTION_REQUEST;
-import static com.yello.server.global.common.util.ConstantUtil.APPLE_NOTIFICATION_EXPIRED;
-import static com.yello.server.global.common.util.ConstantUtil.APPLE_NOTIFICATION_REFUND;
-import static com.yello.server.global.common.util.ConstantUtil.APPLE_NOTIFICATION_SUBSCRIBED;
-import static com.yello.server.global.common.util.ConstantUtil.APPLE_NOTIFICATION_SUBSCRIPTION_STATUS_CHANGE;
-import static com.yello.server.global.common.util.ConstantUtil.APPLE_NOTIFICATION_TEST;
-import static com.yello.server.global.common.util.ConstantUtil.FIVE_TICKET_ID;
-import static com.yello.server.global.common.util.ConstantUtil.ONE_TICKET_ID;
-import static com.yello.server.global.common.util.ConstantUtil.TWO_TICKET_ID;
-import static com.yello.server.global.common.util.ConstantUtil.YELLO_PLUS_ID;
+import static com.yello.server.global.common.util.ConstantUtil.*;
 
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
@@ -336,20 +327,24 @@ public class PurchaseService {
             });
 
         switch (payloadVO.notificationType()) {
-            case APPLE_NOTIFICATION_CONSUMPTION_REQUEST:
-                break;
-            case APPLE_NOTIFICATION_SUBSCRIPTION_STATUS_CHANGE, APPLE_NOTIFICATION_EXPIRED:
+            case APPLE_NOTIFICATION_SUBSCRIPTION_STATUS_CHANGE -> {
                 purchaseManager.changeSubscriptionStatus(payloadVO);
-                break;
-            case APPLE_NOTIFICATION_REFUND:
+            }
+            case APPLE_NOTIFICATION_EXPIRED ->{
+                purchaseManager.expiredSubscribe(payloadVO);
+            }
+            case APPLE_NOTIFICATION_REFUND -> {
                 purchaseManager.refundAppleInApp(payloadVO);
-                break;
-            case APPLE_NOTIFICATION_SUBSCRIBED:
-                purchaseManager.reSubscribeApple(payloadVO);
-            case APPLE_NOTIFICATION_TEST:
+            }
+            case APPLE_NOTIFICATION_SUBSCRIBED, APPLE_NOTIFICATION_DID_RENEW -> {
+                purchaseManager.reSubscribeApple(payloadVO, payloadVO.notificationType());
+            }
+            case APPLE_NOTIFICATION_TEST -> {
                 return;
-            default:
+            }
+            default -> {
                 throw new PurchaseNotFoundException(NOT_FOUND_NOTIFICATION_TYPE_EXCEPTION);
+            }
         }
     }
 
