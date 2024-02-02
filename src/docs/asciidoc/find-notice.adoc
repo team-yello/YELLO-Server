@@ -15,7 +15,11 @@ include::{snippets}/api/v1/notice/http-response.adoc[]
 
 *path variable*
 
-- tag(ENUM 값) -> "NOTICE" | "BANNER"
+- tag(ENUM 값) -> "NOTICE" | "BANNER | PROFILE-BANNER"
+
+* NOTICE : 진입시 공지
+* BANNER : 내 쪽지 배너
+* PROFILE-BANNER : 프로필 배너
 
 === 주의
 
