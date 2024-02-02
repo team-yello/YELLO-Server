@@ -100,7 +100,7 @@ public class TestDataEntityUtil implements TestDataUtil {
     }
 
     @Override
-    public Purchase generatePurchase(long index, User user) {
+    public Purchase generatePurchase(long index, User user, LocalDateTime createdAt) {
         return Purchase.builder()
             .id(index)
             .gateway(Gateway.APPLE)
@@ -109,8 +109,8 @@ public class TestDataEntityUtil implements TestDataUtil {
             .user(user)
             .transactionId("111")
             .state(PurchaseState.ACTIVE)
-            .createdAt(LocalDateTime.now())
-            .updatedAt(LocalDateTime.now())
+            .createdAt(createdAt)
+            .updatedAt(createdAt)
             .build();
     }
 
