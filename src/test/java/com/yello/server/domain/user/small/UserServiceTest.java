@@ -89,6 +89,7 @@ class UserServiceTest {
             .userDataRepository(userDataRepository)
             .build();
 
+        LocalDateTime now = LocalDateTime.of(2024, 1, 1, 0, 0, 0);
         final UserGroup userGroup = testDataUtil.generateGroup(1L, UserGroupType.UNIVERSITY);
         final UserGroup userGroup2 = testDataUtil.generateGroup(2L, UserGroupType.UNIVERSITY);
         for (int i = 1; i <= 2; i++) {
@@ -96,7 +97,7 @@ class UserServiceTest {
             user.setSubscribe(Subscribe.ACTIVE);
         }
         final User user = userRepository.getById(1L);
-        testDataUtil.generatePurchase(1L, user);
+        testDataUtil.generatePurchase(1L, user, now);
     }
 
     @Test
