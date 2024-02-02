@@ -101,7 +101,8 @@ public class NoticeServiceTest {
         final ZonedDateTime now = ZonedDateTime.now(ZoneId.of("Asia/Seoul"));
 
         // when
-        final NoticeDataResponse noticeResponse = noticeService.findNotice(userId, tag);
+        final NoticeDataResponse noticeResponse = noticeService.findNotice(userId,
+            String.valueOf(tag));
 
         // then
         assertThat(noticeResponse.isAvailable()).isTrue();

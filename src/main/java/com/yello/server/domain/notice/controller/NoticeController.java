@@ -24,7 +24,7 @@ public class NoticeController {
     private final NoticeService noticeService;
 
     @GetMapping("/notice/{tag}")
-    public BaseResponse<NoticeDataResponse> findNotice(@AccessTokenUser User user, @PathVariable NoticeType tag) {
+    public BaseResponse<NoticeDataResponse> findNotice(@AccessTokenUser User user, @PathVariable String tag) {
         val data = noticeService.findNotice(user.getId(), tag);
         return BaseResponse.success(READ_NOTICE_SUCCESS, data);
     }

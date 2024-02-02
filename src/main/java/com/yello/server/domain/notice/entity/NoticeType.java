@@ -11,7 +11,8 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public enum NoticeType {
     NOTICE("NOTICE"),
-    BANNER("BANNER");
+    BANNER("BANNER"),
+    PROFILE_BANNER("PROFILE-BANNER");
 
     private final String initial;
 
