@@ -102,7 +102,7 @@ public class NoticeServiceTest {
 
         // when
         final NoticeDataResponse noticeResponse = noticeService.findNotice(userId,
-            String.valueOf(tag));
+            tag.getInitial());
 
         // then
         assertThat(noticeResponse.isAvailable()).isTrue();
