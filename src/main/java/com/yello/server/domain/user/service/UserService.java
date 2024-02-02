@@ -143,20 +143,22 @@ public class UserService {
         final Optional<UserData> userData = userDataRepository.findByUserIdAndTag(userId,
             UserDataType.ACCOUNT_UPDATED_AT);
 
-        if (userData.isPresent()) {
-            userData.get().setValue(
-                ZonedDateTime.now(ConstantUtil.GlobalZoneId).format(DateTimeFormatter.ISO_OFFSET_DATE_TIME)
-            );
-        } else {
-            userDataRepository.save(UserData.of(
-                ACCOUNT_UPDATED_AT,
-                ZonedDateTime.now(ConstantUtil.GlobalZoneId).format(DateTimeFormatter.ISO_OFFSET_DATE_TIME),
-                user
-            ));
-        }
-
         // logic
         user.update(request, gender, userGroup);
+
+        if (!request.groupInfoEquals(user)) {
+            if (userData.isPresent()) {
+                userData.get().setValue(
+                    ZonedDateTime.now(ConstantUtil.GlobalZoneId).format(DateTimeFormatter.ISO_OFFSET_DATE_TIME)
+                );
+            } else {
+                userDataRepository.save(UserData.of(
+                    ACCOUNT_UPDATED_AT,
+                    ZonedDateTime.now(ConstantUtil.GlobalZoneId).format(DateTimeFormatter.ISO_OFFSET_DATE_TIME),
+                    user
+                ));
+            }
+        }
     }
 
     public UserDataResponse readUserData(Long userId, UserDataType tag) {

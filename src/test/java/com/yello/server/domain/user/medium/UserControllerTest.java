@@ -36,6 +36,7 @@ import com.yello.server.global.exception.ControllerExceptionAdvice;
 import com.yello.server.util.TestDataEntityUtil;
 import com.yello.server.util.TestDataUtil;
 import com.yello.server.util.WithAccessTokenUser;
+import java.time.LocalDateTime;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.DisplayNameGeneration;
@@ -234,9 +235,9 @@ class UserControllerTest {
     @Test
     void 유저_구독_정보_조회에_성공합니다() throws Exception {
         // given
-
+        LocalDateTime now = LocalDateTime.of(2024, 1, 1, 0, 0, 0);
         UserSubscribeDetailResponse userSubscribeDetailResponse =
-            UserSubscribeDetailResponse.of(testDataUtil.generatePurchase(1L, user));
+            UserSubscribeDetailResponse.of(testDataUtil.generatePurchase(1L, user, now));
         // when
         given(userService.getUserSubscribe(anyLong()))
             .willReturn(userSubscribeDetailResponse);

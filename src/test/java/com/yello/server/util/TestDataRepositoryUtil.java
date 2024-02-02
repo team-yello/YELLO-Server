@@ -19,6 +19,7 @@ import com.yello.server.domain.user.repository.UserDataRepository;
 import com.yello.server.domain.user.repository.UserRepository;
 import com.yello.server.domain.vote.entity.Vote;
 import com.yello.server.domain.vote.repository.VoteRepository;
+import java.time.LocalDateTime;
 import java.time.ZonedDateTime;
 
 public class TestDataRepositoryUtil implements TestDataUtil {
@@ -87,8 +88,8 @@ public class TestDataRepositoryUtil implements TestDataUtil {
     }
 
     @Override
-    public Purchase generatePurchase(long index, User user) {
-        return purchaseRepository.save(testDataEntityUtil.generatePurchase(index, user));
+    public Purchase generatePurchase(long index, User user, LocalDateTime createdAt) {
+        return purchaseRepository.save(testDataEntityUtil.generatePurchase(index, user, createdAt));
     }
 
     @Override
