@@ -94,7 +94,7 @@ public class NoticeControllerTest {
         // given
         final NoticeDataResponse noticeDataResponse = NoticeDataResponse.of(notice, false);
         NoticeType tag = NoticeType.NOTICE;
-        given(noticeService.findNotice(anyLong(), eq(tag)))
+        given(noticeService.findNotice(anyLong(), String.valueOf(eq(tag.getInitial()))))
             .willReturn(noticeDataResponse);
 
         // when
