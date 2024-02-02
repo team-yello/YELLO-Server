@@ -447,7 +447,7 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <h3 id="_요청">요청</h3>
 <div class="listingblock">
 <div class="content">
-<pre class="highlight nowrap"><code class="language-http" data-lang="http">DELETE /api/v1/user HTTP/1.1
+<pre class="highlight nowrap"><code class="language-http" data-lang="http">POST /api/v1/user HTTP/1.1
 Content-Type: application/json;charset=UTF-8
 Authorization: Bearer your-access-token
 Content-Length: 195
@@ -521,7 +521,7 @@ Content-Type: application/json
 
 {
   "status" : 200,
-  "message" : "유저 탈퇴에 성공했습니다."
+  "message" : "유저 상세 정보 수정에 성공하였습니다."
 }</code></pre>
 </div>
 </div>
@@ -549,6 +549,13 @@ Content-Type: application/json
 <ul>
 <li>
 <p>해당 비즈니스 로직을 만족하기 위해서 <a href="user-data-get.html">프로필 수정 가능 여부 조회</a>를 같이 사용해주세요.</p>
+<div class="ulist">
+<ul>
+<li>
+<p>UserGroup(<code>groupId</code>, <code>groupAdmissionYear</code>)에 대한 정보가 유저의 기존 정보와 달라졌을때<strong>만</strong> <code>프로필 수정 가능 여부</code> 가 갱신됩니다.</p>
+</li>
+</ul>
+</div>
 </li>
 </ul>
 </div>
@@ -560,6 +567,9 @@ Content-Type: application/json
 <h3 id="_changelog">CHANGELOG</h3>
 <div class="ulist">
 <ul>
+<li>
+<p>2024.02.02 groupId, groupAdmissionYear 변경에 따른 제약조건 추가</p>
+</li>
 <li>
 <p>2024.01.31 릴리즈</p>
 </li>
