@@ -7,7 +7,7 @@ include::{snippets}/api/v1/friend/findAllRecommendSchoolFriends/http-request.ado
 
 === 요청 파라미터
 
-include::{snippets}/api/v1/friend/findAllRecommendSchoolFriends/request-parameters.adoc[]
+include::{snippets}/api/v1/friend/findAllRecommendSchoolFriends/query-parameters.adoc[]
 
 === 응답
 

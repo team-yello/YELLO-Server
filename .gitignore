@@ -50,3 +50,6 @@ monitoring/prometheus/volume
 monitoring/grafana
 
 src/main/resources/application-local.yml
+
+### QueryDSL ###
+src/main/generated/

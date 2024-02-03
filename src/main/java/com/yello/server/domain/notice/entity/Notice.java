@@ -1,13 +1,14 @@
 package com.yello.server.domain.notice.entity;
 
 import com.yello.server.global.common.dto.AuditingTimeEntity;
+import com.yello.server.global.common.entity.ZonedDateTimeConverter;
+import jakarta.persistence.Column;
+import jakarta.persistence.Convert;
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
 import java.time.ZonedDateTime;
-import javax.persistence.Column;
-import javax.persistence.Convert;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -32,9 +33,11 @@ public class Notice extends AuditingTimeEntity {
     private String redirectUrl;
 
     @Column(nullable = false)
+    @Convert(converter = ZonedDateTimeConverter.class)
     private ZonedDateTime startDate;
 
     @Column(nullable = false)
+    @Convert(converter = ZonedDateTimeConverter.class)
     private ZonedDateTime endDate;
 
     @Column(nullable = false)

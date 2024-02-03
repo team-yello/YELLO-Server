@@ -5,26 +5,28 @@ import com.yello.server.domain.authorization.dto.request.SignUpRequest;
 import com.yello.server.domain.group.entity.UserGroup;
 import com.yello.server.domain.user.dto.request.UserUpdateRequest;
 import com.yello.server.global.common.dto.AuditingTimeEntity;
+import jakarta.persistence.Column;
+import jakarta.persistence.Convert;
+import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
+import jakarta.persistence.Table;
+import jakarta.persistence.UniqueConstraint;
+import jakarta.validation.constraints.Email;
 import java.time.LocalDateTime;
 import java.util.Objects;
-import javax.persistence.Column;
-import javax.persistence.Convert;
-import javax.persistence.Entity;
-import javax.persistence.FetchType;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
-import javax.persistence.Table;
-import javax.persistence.UniqueConstraint;
-import javax.validation.constraints.Email;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.ColumnDefault;
+import org.hibernate.annotations.OnDelete;
+import org.hibernate.annotations.OnDeleteAction;
 
 @Getter
 @Entity
@@ -68,8 +70,8 @@ public class User extends AuditingTimeEntity {
     private Gender gender;
 
     @Column(nullable = false)
-    @ColumnDefault("200")
-    private Integer point;
+    @Builder.Default
+    private Integer point = 200;
 
     @Column(nullable = false)
     @Convert(converter = SocialConverter.class)
@@ -85,6 +87,7 @@ public class User extends AuditingTimeEntity {
     private LocalDateTime deletedAt;
 
     @ManyToOne(fetch = FetchType.LAZY)
+    @OnDelete(action = OnDeleteAction.RESTRICT)
     @JoinColumn(name = "groupId")
     private UserGroup group;
 
@@ -104,9 +107,9 @@ public class User extends AuditingTimeEntity {
     private String deviceToken;
 
     @Column(nullable = false)
-    @ColumnDefault("normal")
     @Convert(converter = SubscribeConverter.class)
-    private Subscribe subscribe;
+    @Builder.Default
+    private Subscribe subscribe = Subscribe.NORMAL;
 
     public static User of(SignUpRequest signUpRequest, UserGroup group) {
         return User.builder()

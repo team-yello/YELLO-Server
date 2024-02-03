@@ -7,7 +7,7 @@ import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.docu
 import static org.springframework.restdocs.operation.preprocess.Preprocessors.prettyPrint;
 import static org.springframework.restdocs.operation.preprocess.Preprocessors.removeHeaders;
 import static org.springframework.restdocs.request.RequestDocumentation.parameterWithName;
-import static org.springframework.restdocs.request.RequestDocumentation.requestParameters;
+import static org.springframework.restdocs.request.RequestDocumentation.queryParameters;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 
@@ -144,7 +144,7 @@ class AuthControllerTest {
                     removeHeaders(excludeRequestHeaders)),
                 Preprocessors.preprocessResponse(prettyPrint(),
                     removeHeaders(excludeResponseHeaders)),
-                requestParameters(parameterWithName("yelloId").description("중복 체크할 yelloId")))
+                queryParameters(parameterWithName("yelloId").description("중복 체크할 yelloId")))
             )
             .andExpect(MockMvcResultMatchers.status().isOk());
     }
@@ -220,7 +220,7 @@ class AuthControllerTest {
                     removeHeaders(excludeRequestHeaders)),
                 Preprocessors.preprocessResponse(prettyPrint(),
                     removeHeaders(excludeResponseHeaders)),
-                requestParameters(parameterWithName("page").description("페이지네이션 페이지 번호")))
+                queryParameters(parameterWithName("page").description("페이지네이션 페이지 번호")))
             )
             .andExpect(MockMvcResultMatchers.status().isOk());
     }
@@ -249,7 +249,7 @@ class AuthControllerTest {
                     removeHeaders(excludeRequestHeaders)),
                 Preprocessors.preprocessResponse(prettyPrint(),
                     removeHeaders(excludeResponseHeaders)),
-                requestParameters(
+                queryParameters(
                     parameterWithName("page").description("페이지네이션 페이지 번호"),
                     parameterWithName("keyword").description("검색할 쿼리")))
             )
@@ -281,7 +281,7 @@ class AuthControllerTest {
                     removeHeaders(excludeRequestHeaders)),
                 Preprocessors.preprocessResponse(prettyPrint(),
                     removeHeaders(excludeResponseHeaders)),
-                requestParameters(
+                queryParameters(
                     parameterWithName("page").description("페이지네이션 페이지 번호"),
                     parameterWithName("name").description("학교 이름"),
                     parameterWithName("keyword").description("검색할 쿼리")))
@@ -313,7 +313,7 @@ class AuthControllerTest {
                     removeHeaders(excludeRequestHeaders)),
                 Preprocessors.preprocessResponse(prettyPrint(),
                     removeHeaders(excludeResponseHeaders)),
-                requestParameters(
+                queryParameters(
                     parameterWithName("page").description("페이지네이션 페이지 번호"),
                     parameterWithName("keyword").description("검색할 쿼리")))
             )
@@ -342,7 +342,7 @@ class AuthControllerTest {
                     removeHeaders(excludeRequestHeaders)),
                 Preprocessors.preprocessResponse(prettyPrint(),
                     removeHeaders(excludeResponseHeaders)),
-                requestParameters(
+                queryParameters(
                     parameterWithName("name").description("학교 이름"),
                     parameterWithName("keyword").description("검색할 쿼리")))
             )

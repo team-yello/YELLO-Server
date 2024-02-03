@@ -7,11 +7,11 @@ import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.doNothing;
 import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document;
+import static org.springframework.restdocs.operation.preprocess.Preprocessors.modifyHeaders;
 import static org.springframework.restdocs.operation.preprocess.Preprocessors.prettyPrint;
-import static org.springframework.restdocs.operation.preprocess.Preprocessors.removeHeaders;
 import static org.springframework.restdocs.request.RequestDocumentation.parameterWithName;
 import static org.springframework.restdocs.request.RequestDocumentation.pathParameters;
-import static org.springframework.restdocs.request.RequestDocumentation.requestParameters;
+import static org.springframework.restdocs.request.RequestDocumentation.queryParameters;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 
@@ -70,6 +70,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders;
+import org.springframework.restdocs.operation.preprocess.OperationPreprocessor;
 import org.springframework.restdocs.operation.preprocess.Preprocessors;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
@@ -87,14 +88,25 @@ import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 @DisplayName("Vote 컨트롤러에서")
 class VoteControllerTest {
 
-    final String[] excludeRequestHeaders = {"X-CSRF-TOKEN", "Host"};
-    final String[] excludeResponseHeaders =
-        {"X-Content-Type-Options", "X-XSS-Protection", "Cache-Control", "Pragma",
-            "Expires", "X-Frame-Options", "Content-Length"};
+    final OperationPreprocessor[] excludeRequestHeaders = new OperationPreprocessor[]{
+        prettyPrint(),
+        modifyHeaders().remove("X-CSRF-TOKEN"),
+        modifyHeaders().remove("Host")
+    };
+
+    final OperationPreprocessor[] excludeResponseHeaders = new OperationPreprocessor[]{
+        prettyPrint(),
+        modifyHeaders().remove("X-Content-Type-Options"),
+        modifyHeaders().remove("X-XSS-Protection"),
+        modifyHeaders().remove("Cache-Control"),
+        modifyHeaders().remove("Pragma"),
+        modifyHeaders().remove("Expires"),
+        modifyHeaders().remove("X-Frame-Options"),
+        modifyHeaders().remove("Content-Length"),
+    };
 
     @Autowired
     private MockMvc mockMvc;
-
     @Autowired
     private ObjectMapper objectMapper;
 
@@ -135,11 +147,9 @@ class VoteControllerTest {
                 .param("page", "0"))
             .andDo(print())
             .andDo(document("api/v1/vote/findAllMyVotes",
-                Preprocessors.preprocessRequest(prettyPrint(),
-                    removeHeaders(excludeRequestHeaders)),
-                Preprocessors.preprocessResponse(prettyPrint(),
-                    removeHeaders(excludeResponseHeaders)),
-                requestParameters(parameterWithName("page").description("페이지네이션 페이지 번호")))
+                Preprocessors.preprocessRequest(excludeRequestHeaders),
+                Preprocessors.preprocessResponse(excludeResponseHeaders),
+                queryParameters(parameterWithName("page").description("페이지네이션 페이지 번호")))
             )
             .andExpect(MockMvcResultMatchers.status().isOk());
     }
@@ -159,11 +169,9 @@ class VoteControllerTest {
             )
             .andDo(print())
             .andDo(document("api/v1/vote/getUnreadVoteCount",
-                Preprocessors.preprocessRequest(prettyPrint(),
-                    removeHeaders(excludeRequestHeaders)),
-                Preprocessors.preprocessResponse(prettyPrint(),
-                    removeHeaders(excludeResponseHeaders)))
-            )
+                Preprocessors.preprocessRequest(excludeRequestHeaders),
+                Preprocessors.preprocessResponse(excludeResponseHeaders)
+            ))
             .andExpect(MockMvcResultMatchers.status().isOk());
     }
 
@@ -186,11 +194,9 @@ class VoteControllerTest {
                 .param("page", "0"))
             .andDo(print())
             .andDo(document("api/v1/vote/findAllFriendVotes",
-                Preprocessors.preprocessRequest(prettyPrint(),
-                    removeHeaders(excludeRequestHeaders)),
-                Preprocessors.preprocessResponse(prettyPrint(),
-                    removeHeaders(excludeResponseHeaders)),
-                requestParameters(parameterWithName("page").description("페이지네이션 페이지 번호")))
+                Preprocessors.preprocessRequest(excludeRequestHeaders),
+                Preprocessors.preprocessResponse(excludeResponseHeaders),
+                queryParameters(parameterWithName("page").description("페이지네이션 페이지 번호")))
             )
             .andExpect(MockMvcResultMatchers.status().isOk());
     }
@@ -215,11 +221,9 @@ class VoteControllerTest {
                 .param("type", "send"))
             .andDo(print())
             .andDo(document("api/v2/vote/friend",
-                Preprocessors.preprocessRequest(prettyPrint(),
-                    removeHeaders(excludeRequestHeaders)),
-                Preprocessors.preprocessResponse(prettyPrint(),
-                    removeHeaders(excludeResponseHeaders)),
-                requestParameters(parameterWithName("page").description("페이지네이션 페이지 번호"),
+                Preprocessors.preprocessRequest(excludeRequestHeaders),
+                Preprocessors.preprocessResponse(excludeResponseHeaders),
+                queryParameters(parameterWithName("page").description("페이지네이션 페이지 번호"),
                     parameterWithName("type").description("쪽지 유형 선택")))
             )
             .andExpect(MockMvcResultMatchers.status().isOk());
@@ -242,10 +246,8 @@ class VoteControllerTest {
             )
             .andDo(print())
             .andDo(document("api/v1/vote/findVoteById",
-                Preprocessors.preprocessRequest(prettyPrint(),
-                    removeHeaders(excludeRequestHeaders)),
-                Preprocessors.preprocessResponse(prettyPrint(),
-                    removeHeaders(excludeResponseHeaders)),
+                Preprocessors.preprocessRequest(excludeRequestHeaders),
+                Preprocessors.preprocessResponse(excludeResponseHeaders),
                 pathParameters(parameterWithName("voteId").description("투표 아이디 값")))
             )
             .andExpect(MockMvcResultMatchers.status().isOk());
@@ -269,10 +271,8 @@ class VoteControllerTest {
             )
             .andDo(print())
             .andDo(document("api/v1/vote/checkKeyword",
-                Preprocessors.preprocessRequest(prettyPrint(),
-                    removeHeaders(excludeRequestHeaders)),
-                Preprocessors.preprocessResponse(prettyPrint(),
-                    removeHeaders(excludeResponseHeaders)),
+                Preprocessors.preprocessRequest(excludeRequestHeaders),
+                Preprocessors.preprocessResponse(excludeResponseHeaders),
                 pathParameters(parameterWithName("voteId").description("투표 아이디 값")))
             )
             .andExpect(MockMvcResultMatchers.status().isOk());
@@ -304,11 +304,9 @@ class VoteControllerTest {
             )
             .andDo(print())
             .andDo(document("api/v1/vote/findVoteQuestions",
-                Preprocessors.preprocessRequest(prettyPrint(),
-                    removeHeaders(excludeRequestHeaders)),
-                Preprocessors.preprocessResponse(prettyPrint(),
-                    removeHeaders(excludeResponseHeaders)))
-            )
+                Preprocessors.preprocessRequest(excludeRequestHeaders),
+                Preprocessors.preprocessResponse(excludeResponseHeaders)
+            ))
             .andExpect(MockMvcResultMatchers.status().isOk());
     }
 
@@ -330,11 +328,9 @@ class VoteControllerTest {
             )
             .andDo(print())
             .andDo(document("api/v1/vote/checkVoteAvailable",
-                Preprocessors.preprocessRequest(prettyPrint(),
-                    removeHeaders(excludeRequestHeaders)),
-                Preprocessors.preprocessResponse(prettyPrint(),
-                    removeHeaders(excludeResponseHeaders)))
-            )
+                Preprocessors.preprocessRequest(excludeRequestHeaders),
+                Preprocessors.preprocessResponse(excludeResponseHeaders)
+            ))
             .andExpect(MockMvcResultMatchers.status().isOk());
     }
 
@@ -373,11 +369,9 @@ class VoteControllerTest {
                 .content(objectMapper.writeValueAsString(createVoteRequest)))
             .andDo(print())
             .andDo(document("api/v1/vote/createVote",
-                Preprocessors.preprocessRequest(prettyPrint(),
-                    removeHeaders(excludeRequestHeaders)),
-                Preprocessors.preprocessResponse(prettyPrint(),
-                    removeHeaders(excludeResponseHeaders)))
-            )
+                Preprocessors.preprocessRequest(excludeRequestHeaders),
+                Preprocessors.preprocessResponse(excludeResponseHeaders)
+            ))
             .andExpect(MockMvcResultMatchers.status().isOk());
     }
 
@@ -398,10 +392,8 @@ class VoteControllerTest {
             )
             .andDo(print())
             .andDo(document("api/v1/vote/revealNameHint",
-                Preprocessors.preprocessRequest(prettyPrint(),
-                    removeHeaders(excludeRequestHeaders)),
-                Preprocessors.preprocessResponse(prettyPrint(),
-                    removeHeaders(excludeResponseHeaders)),
+                Preprocessors.preprocessRequest(excludeRequestHeaders),
+                Preprocessors.preprocessResponse(excludeResponseHeaders),
                 pathParameters(parameterWithName("voteId").description("투표 아이디 값")))
             )
             .andExpect(MockMvcResultMatchers.status().isOk());
@@ -425,10 +417,8 @@ class VoteControllerTest {
             )
             .andDo(print())
             .andDo(document("api/v1/vote/revealFullName",
-                Preprocessors.preprocessRequest(prettyPrint(),
-                    removeHeaders(excludeRequestHeaders)),
-                Preprocessors.preprocessResponse(prettyPrint(),
-                    removeHeaders(excludeResponseHeaders)),
+                Preprocessors.preprocessRequest(excludeRequestHeaders),
+                Preprocessors.preprocessResponse(excludeResponseHeaders),
                 pathParameters(parameterWithName("voteId").description("투표 아이디 값")))
             )
             .andExpect(MockMvcResultMatchers.status().isOk());

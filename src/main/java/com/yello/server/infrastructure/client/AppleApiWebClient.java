@@ -11,6 +11,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
 import org.springframework.web.reactive.function.client.WebClient;
@@ -32,9 +33,9 @@ public class AppleApiWebClient implements ApiWebClient {
         ResponseEntity<TransactionInfoResponse> transactionResponse =
             getTransactionByWebClient(appleTransaction, APPLE_PRODUCTION_URL);
 
-        HttpStatus statusCode = transactionResponse.getStatusCode();
+        HttpStatusCode statusCode = transactionResponse.getStatusCode();
 
-        if (transactionResponse==null) {
+        if (transactionResponse == null) {
             throw new PurchaseException(NOT_FOUND_TRANSACTION_EXCEPTION);
         }
         if (statusCode.equals(HttpStatus.NOT_FOUND)) {

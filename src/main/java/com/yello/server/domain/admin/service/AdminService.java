@@ -9,6 +9,7 @@ import static com.yello.server.global.common.ErrorCode.UUID_CONFLICT_USER_EXCEPT
 import static com.yello.server.global.common.ErrorCode.YELLOID_CONFLICT_USER_EXCEPTION;
 
 import com.yello.server.domain.admin.dto.request.AdminLoginRequest;
+import com.yello.server.domain.admin.dto.request.AdminNoticeCreateRequest;
 import com.yello.server.domain.admin.dto.request.AdminQuestionVoteRequest;
 import com.yello.server.domain.admin.dto.request.AdminUserDetailRequest;
 import com.yello.server.domain.admin.dto.response.AdminConfigurationResponse;
@@ -31,6 +32,9 @@ import com.yello.server.domain.admin.repository.UserAdminRepository;
 import com.yello.server.domain.authorization.service.AuthManager;
 import com.yello.server.domain.cooldown.entity.Cooldown;
 import com.yello.server.domain.cooldown.repository.CooldownRepository;
+import com.yello.server.domain.notice.entity.Notice;
+import com.yello.server.domain.notice.entity.NoticeType;
+import com.yello.server.domain.notice.repository.NoticeRepository;
 import com.yello.server.domain.question.entity.Question;
 import com.yello.server.domain.question.repository.QuestionRepository;
 import com.yello.server.domain.user.entity.Gender;
@@ -41,6 +45,8 @@ import com.yello.server.domain.user.service.UserManager;
 import com.yello.server.domain.vote.entity.Vote;
 import com.yello.server.domain.vote.repository.VoteRepository;
 import com.yello.server.global.common.dto.EmptyObject;
+import java.time.ZonedDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -58,6 +64,7 @@ public class AdminService {
     private final AdminConfigurationRepository adminConfigurationRepository;
     private final AuthManager authManager;
     private final CooldownRepository cooldownRepository;
+    private final NoticeRepository noticeRepository;
     private final QuestionRepository questionRepository;
     private final UserAdminRepository userAdminRepository;
     private final UserManager userManager;
@@ -318,6 +325,66 @@ public class AdminService {
         userAdminRepository.getByUser(admin);
 
         adminConfigurationRepository.setConfigurations(tag, value);
+
+        return EmptyObject.builder().build();
+    }
+
+    public List<Notice> getNotices(Long adminId) {
+        // exception
+        final User admin = userRepository.getById(adminId);
+        userAdminRepository.getByUser(admin);
+
+        final List<Notice> noticeList = noticeRepository.findAll();
+
+        return noticeList;
+    }
+
+    @Transactional
+    public EmptyObject createNotice(Long adminId, AdminNoticeCreateRequest request) {
+        // exception
+        final User admin = userRepository.getById(adminId);
+        userAdminRepository.getByUser(admin);
+
+        ZonedDateTime startDate = ZonedDateTime.parse(request.startDate(), DateTimeFormatter.ISO_OFFSET_DATE_TIME);
+        ZonedDateTime endDate = ZonedDateTime.parse(request.endDate(), DateTimeFormatter.ISO_OFFSET_DATE_TIME);
+        final NoticeType tag = NoticeType.fromCode(request.tag());
+
+        final Notice notice = Notice.builder()
+            .imageUrl(request.imageUrl())
+            .redirectUrl(request.redirectUrl())
+            .startDate(startDate)
+            .endDate(endDate)
+            .isAvailable(true)
+            .tag(tag)
+            .title(request.title())
+            .build();
+
+        noticeRepository.save(notice);
+
+        return EmptyObject.builder().build();
+    }
+
+    @Transactional
+    public EmptyObject updateNotice(Long adminId, Long noticeId, AdminNoticeCreateRequest request) {
+        // exception
+        final User admin = userRepository.getById(adminId);
+        userAdminRepository.getByUser(admin);
+        final Notice notice = noticeRepository.getById(noticeId);
+
+        ZonedDateTime startDate = ZonedDateTime.parse(request.startDate(), DateTimeFormatter.ISO_OFFSET_DATE_TIME);
+        ZonedDateTime endDate = ZonedDateTime.parse(request.endDate(), DateTimeFormatter.ISO_OFFSET_DATE_TIME);
+        final NoticeType tag = NoticeType.fromCode(request.tag());
+
+        noticeRepository.update(Notice.builder()
+            .id(notice.getId())
+            .imageUrl(request.imageUrl())
+            .redirectUrl(request.redirectUrl())
+            .startDate(startDate)
+            .endDate(endDate)
+            .isAvailable(request.isAvailable())
+            .tag(tag)
+            .title(request.title())
+            .build());
 
         return EmptyObject.builder().build();
     }

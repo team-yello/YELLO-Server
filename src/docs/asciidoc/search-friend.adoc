@@ -7,7 +7,7 @@ include::{snippets}/api/v1/friend/searchFriend/http-request.adoc[]
 
 === 요청 파라미터
 
-include::{snippets}/api/v1/friend/searchFriend/request-parameters.adoc[]
+include::{snippets}/api/v1/friend/searchFriend/query-parameters.adoc[]
 
 === 응답
 
