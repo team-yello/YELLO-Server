@@ -91,18 +91,18 @@ class VoteControllerTest {
     final OperationPreprocessor[] excludeRequestHeaders = new OperationPreprocessor[]{
         prettyPrint(),
         modifyHeaders().remove("X-CSRF-TOKEN"),
-        modifyHeaders().remove("Host")
+        modifyHeaders().remove(HttpHeaders.HOST)
     };
 
     final OperationPreprocessor[] excludeResponseHeaders = new OperationPreprocessor[]{
         prettyPrint(),
         modifyHeaders().remove("X-Content-Type-Options"),
         modifyHeaders().remove("X-XSS-Protection"),
-        modifyHeaders().remove("Cache-Control"),
-        modifyHeaders().remove("Pragma"),
-        modifyHeaders().remove("Expires"),
         modifyHeaders().remove("X-Frame-Options"),
-        modifyHeaders().remove("Content-Length"),
+        modifyHeaders().remove(HttpHeaders.CACHE_CONTROL),
+        modifyHeaders().remove(HttpHeaders.PRAGMA),
+        modifyHeaders().remove(HttpHeaders.EXPIRES),
+        modifyHeaders().remove(HttpHeaders.CONTENT_LENGTH),
     };
 
     @Autowired

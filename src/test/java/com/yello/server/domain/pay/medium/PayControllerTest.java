@@ -5,8 +5,8 @@ import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document;
+import static org.springframework.restdocs.operation.preprocess.Preprocessors.modifyHeaders;
 import static org.springframework.restdocs.operation.preprocess.Preprocessors.prettyPrint;
-import static org.springframework.restdocs.operation.preprocess.Preprocessors.removeHeaders;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 
@@ -31,6 +31,7 @@ import org.springframework.context.annotation.FilterType;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders;
+import org.springframework.restdocs.operation.preprocess.OperationPreprocessor;
 import org.springframework.restdocs.operation.preprocess.Preprocessors;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
@@ -48,9 +49,22 @@ import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 @DisplayName("Pay 컨트롤러에서")
 class PayControllerTest {
 
-    final String[] excludeRequestHeaders = {"X-CSRF-TOKEN", "Host"};
-    final String[] excludeResponseHeaders = {"X-Content-Type-Options", "X-XSS-Protection", "Cache-Control", "Pragma",
-        "Expires", "X-Frame-Options", "Content-Length"};
+    final OperationPreprocessor[] excludeRequestHeaders = new OperationPreprocessor[]{
+        prettyPrint(),
+        modifyHeaders().remove("X-CSRF-TOKEN"),
+        modifyHeaders().remove(HttpHeaders.HOST)
+    };
+
+    final OperationPreprocessor[] excludeResponseHeaders = new OperationPreprocessor[]{
+        prettyPrint(),
+        modifyHeaders().remove("X-Content-Type-Options"),
+        modifyHeaders().remove("X-XSS-Protection"),
+        modifyHeaders().remove("X-Frame-Options"),
+        modifyHeaders().remove(HttpHeaders.CACHE_CONTROL),
+        modifyHeaders().remove(HttpHeaders.PRAGMA),
+        modifyHeaders().remove(HttpHeaders.EXPIRES),
+        modifyHeaders().remove(HttpHeaders.CONTENT_LENGTH),
+    };
 
     @Autowired
     private MockMvc mockMvc;
@@ -77,9 +91,9 @@ class PayControllerTest {
                 .content(objectMapper.writeValueAsString(request)))
             .andDo(print())
             .andDo(document("api/v1/pay/postPayCount",
-                Preprocessors.preprocessRequest(prettyPrint(), removeHeaders(excludeRequestHeaders)),
-                Preprocessors.preprocessResponse(prettyPrint(), removeHeaders(excludeResponseHeaders)))
-            )
+                Preprocessors.preprocessRequest(excludeRequestHeaders),
+                Preprocessors.preprocessResponse(excludeResponseHeaders)
+            ))
             .andExpect(MockMvcResultMatchers.status().isOk());
 
         verify(payService, times(1))
