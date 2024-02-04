@@ -3,11 +3,17 @@ package com.yello.server.domain.admin.service;
 import static com.yello.server.domain.admin.entity.AdminConfigurationType.ADMIN_SITE_PASSWORD;
 import static com.yello.server.global.common.ErrorCode.ADMIN_CONFIGURATION_NOT_FOUND_EXCEPTION;
 import static com.yello.server.global.common.ErrorCode.DEVICE_TOKEN_CONFLICT_USER_EXCEPTION;
+import static com.yello.server.global.common.ErrorCode.PROBABILITY_BAD_REQUEST_EXCEPTION;
 import static com.yello.server.global.common.ErrorCode.USER_ADMIN_BAD_REQUEST_EXCEPTION;
 import static com.yello.server.global.common.ErrorCode.USER_ADMIN_NOT_FOUND_EXCEPTION;
 import static com.yello.server.global.common.ErrorCode.UUID_CONFLICT_USER_EXCEPTION;
 import static com.yello.server.global.common.ErrorCode.YELLOID_CONFLICT_USER_EXCEPTION;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.yello.server.domain.admin.dto.request.AdminEventCreateRequest;
+import com.yello.server.domain.admin.dto.request.AdminEventCreateRequest.EventRewardItemVO;
+import com.yello.server.domain.admin.dto.request.AdminEventCreateRequest.EventRewardVO;
 import com.yello.server.domain.admin.dto.request.AdminLoginRequest;
 import com.yello.server.domain.admin.dto.request.AdminNoticeCreateRequest;
 import com.yello.server.domain.admin.dto.request.AdminQuestionVoteRequest;
@@ -28,10 +34,15 @@ import com.yello.server.domain.admin.exception.AdminConfigurationNotFoundExcepti
 import com.yello.server.domain.admin.exception.UserAdminBadRequestException;
 import com.yello.server.domain.admin.exception.UserAdminNotFoundException;
 import com.yello.server.domain.admin.repository.AdminConfigurationRepository;
+import com.yello.server.domain.admin.repository.AdminRepository;
 import com.yello.server.domain.admin.repository.UserAdminRepository;
 import com.yello.server.domain.authorization.service.AuthManager;
 import com.yello.server.domain.cooldown.entity.Cooldown;
 import com.yello.server.domain.cooldown.repository.CooldownRepository;
+import com.yello.server.domain.event.entity.Event;
+import com.yello.server.domain.event.entity.EventReward;
+import com.yello.server.domain.event.entity.EventRewardMapping;
+import com.yello.server.domain.event.entity.EventTime;
 import com.yello.server.domain.notice.entity.Notice;
 import com.yello.server.domain.notice.entity.NoticeType;
 import com.yello.server.domain.notice.repository.NoticeRepository;
@@ -62,9 +73,11 @@ import org.springframework.transaction.annotation.Transactional;
 public class AdminService {
 
     private final AdminConfigurationRepository adminConfigurationRepository;
+    private final AdminRepository adminRepository;
     private final AuthManager authManager;
     private final CooldownRepository cooldownRepository;
     private final NoticeRepository noticeRepository;
+    private final ObjectMapper objectMapper;
     private final QuestionRepository questionRepository;
     private final UserAdminRepository userAdminRepository;
     private final UserManager userManager;
@@ -385,6 +398,59 @@ public class AdminService {
             .tag(tag)
             .title(request.title())
             .build());
+
+        return EmptyObject.builder().build();
+    }
+
+    @Transactional
+    public EmptyObject createEvent(Long adminId, AdminEventCreateRequest request) throws JsonProcessingException {
+        // exception
+        final User admin = userRepository.getById(adminId);
+        userAdminRepository.getByUser(admin);
+
+        for (EventRewardVO vo : request.eventReward()) {
+            int sumOfProbability = 0;
+
+            for (EventRewardItemVO itemVO : vo.eventRewardItem()) {
+                sumOfProbability += itemVO.eventRewardProbability();
+            }
+
+            if (sumOfProbability != 100) {
+                throw new UserAdminBadRequestException(PROBABILITY_BAD_REQUEST_EXCEPTION);
+            }
+        }
+
+        // logic
+        String animationString = objectMapper.writeValueAsString(request.animationList());
+
+        final Event newEvent = adminRepository.save(Event.builder()
+            .tag(request.tag())
+            .startDate(request.startDate())
+            .endDate(request.endDate())
+            .title(request.title())
+            .subTitle(request.subTitle())
+            .animation(animationString)
+            .build());
+
+        request.eventReward().forEach((eventRewardVO) -> {
+            final EventTime newEventTime = adminRepository.save(EventTime.builder()
+                .event(newEvent)
+                .startTime(eventRewardVO.startTime())
+                .endTime(eventRewardVO.endTime())
+                .rewardCount(eventRewardVO.rewardCount())
+                .build());
+
+            eventRewardVO.eventRewardItem().forEach(eventRewardItemVO -> {
+                final EventReward eventReward = adminRepository.getByTag(eventRewardItemVO.tag());
+
+                adminRepository.save(EventRewardMapping.builder()
+                    .eventTime(newEventTime)
+                    .eventReward(eventReward)
+                    .eventRewardProbability(eventRewardItemVO.eventRewardProbability())
+                    .randomTag(eventRewardItemVO.randomTag())
+                    .build());
+            });
+        });
 
         return EmptyObject.builder().build();
     }

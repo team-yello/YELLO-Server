@@ -6,6 +6,7 @@ import static com.yello.server.global.common.SuccessCode.CREATE_VOTE_SUCCESS;
 import static com.yello.server.global.common.SuccessCode.DELETE_COOLDOWN_ADMIN_SUCCESS;
 import static com.yello.server.global.common.SuccessCode.DELETE_QUESTION_ADMIN_SUCCESS;
 import static com.yello.server.global.common.SuccessCode.DELETE_USER_ADMIN_SUCCESS;
+import static com.yello.server.global.common.SuccessCode.EVENT_CREATE_ADMIN_SUCCESS;
 import static com.yello.server.global.common.SuccessCode.LOGIN_USER_ADMIN_SUCCESS;
 import static com.yello.server.global.common.SuccessCode.NOTICE_CREATE_ADMIN_SUCCESS;
 import static com.yello.server.global.common.SuccessCode.NOTICE_READ_ADMIN_SUCCESS;
@@ -20,6 +21,8 @@ import static com.yello.server.global.common.factory.PaginationFactory.createPag
 import static com.yello.server.global.common.factory.PaginationFactory.createPageableByNameSortDescLimitTen;
 import static com.yello.server.global.common.factory.PaginationFactory.createPageableLimitTen;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.yello.server.domain.admin.dto.request.AdminEventCreateRequest;
 import com.yello.server.domain.admin.dto.request.AdminLoginRequest;
 import com.yello.server.domain.admin.dto.request.AdminNoticeCreateRequest;
 import com.yello.server.domain.admin.dto.request.AdminQuestionVoteRequest;
@@ -193,5 +196,12 @@ public class AdminController {
         @RequestBody AdminNoticeCreateRequest request) {
         val data = adminService.updateNotice(user.getId(), noticeId, request);
         return BaseResponse.success(NOTICE_UPDATE_DETAIL_ADMIN_SUCCESS, data);
+    }
+
+    @PostMapping("/event")
+    public BaseResponse<EmptyObject> createEvent(@AccessTokenUser User user,
+        @RequestBody AdminEventCreateRequest request) throws JsonProcessingException {
+        val data = adminService.createEvent(user.getId(), request);
+        return BaseResponse.success(EVENT_CREATE_ADMIN_SUCCESS, data);
     }
 }
