@@ -425,8 +425,8 @@ public class AdminService {
 
         final Event newEvent = adminRepository.save(Event.builder()
             .tag(request.tag())
-            .startDate(request.startDate())
-            .endDate(request.endDate())
+            .startDate(ZonedDateTime.parse(request.startDate(), DateTimeFormatter.ISO_OFFSET_DATE_TIME))
+            .endDate(ZonedDateTime.parse(request.endDate(), DateTimeFormatter.ISO_OFFSET_DATE_TIME))
             .title(request.title())
             .subTitle(request.subTitle())
             .animation(animationString)

@@ -4,13 +4,12 @@ import com.yello.server.domain.event.entity.EventRewardRandomType;
 import com.yello.server.domain.event.entity.EventRewardType;
 import com.yello.server.domain.event.entity.EventType;
 import java.time.OffsetTime;
-import java.time.ZonedDateTime;
 import java.util.List;
 
 public record AdminEventCreateRequest(
     EventType tag,
-    ZonedDateTime startDate,
-    ZonedDateTime endDate,
+    String startDate,
+    String endDate,
     String title,
     String subTitle,
     List<Object> animationList,
