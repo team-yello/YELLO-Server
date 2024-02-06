@@ -6,7 +6,12 @@ import static com.yello.server.global.common.SuccessCode.CREATE_VOTE_SUCCESS;
 import static com.yello.server.global.common.SuccessCode.DELETE_COOLDOWN_ADMIN_SUCCESS;
 import static com.yello.server.global.common.SuccessCode.DELETE_QUESTION_ADMIN_SUCCESS;
 import static com.yello.server.global.common.SuccessCode.DELETE_USER_ADMIN_SUCCESS;
+import static com.yello.server.global.common.SuccessCode.EVENT_CREATE_ADMIN_SUCCESS;
+import static com.yello.server.global.common.SuccessCode.EVENT_REWARD_CREATE_ADMIN_SUCCESS;
 import static com.yello.server.global.common.SuccessCode.LOGIN_USER_ADMIN_SUCCESS;
+import static com.yello.server.global.common.SuccessCode.NOTICE_CREATE_ADMIN_SUCCESS;
+import static com.yello.server.global.common.SuccessCode.NOTICE_READ_ADMIN_SUCCESS;
+import static com.yello.server.global.common.SuccessCode.NOTICE_UPDATE_DETAIL_ADMIN_SUCCESS;
 import static com.yello.server.global.common.SuccessCode.READ_COOLDOWN_ADMIN_SUCCESS;
 import static com.yello.server.global.common.SuccessCode.READ_QUESTION_ADMIN_SUCCESS;
 import static com.yello.server.global.common.SuccessCode.READ_QUESTION_DETAIL_ADMIN_SUCCESS;
@@ -17,7 +22,11 @@ import static com.yello.server.global.common.factory.PaginationFactory.createPag
 import static com.yello.server.global.common.factory.PaginationFactory.createPageableByNameSortDescLimitTen;
 import static com.yello.server.global.common.factory.PaginationFactory.createPageableLimitTen;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.yello.server.domain.admin.dto.request.AdminEventCreateRequest;
+import com.yello.server.domain.admin.dto.request.AdminEventRewardCreateRequest;
 import com.yello.server.domain.admin.dto.request.AdminLoginRequest;
+import com.yello.server.domain.admin.dto.request.AdminNoticeCreateRequest;
 import com.yello.server.domain.admin.dto.request.AdminQuestionVoteRequest;
 import com.yello.server.domain.admin.dto.request.AdminUserDetailRequest;
 import com.yello.server.domain.admin.dto.response.AdminConfigurationResponse;
@@ -30,12 +39,14 @@ import com.yello.server.domain.admin.dto.response.AdminUserDetailResponse;
 import com.yello.server.domain.admin.dto.response.AdminUserResponse;
 import com.yello.server.domain.admin.entity.AdminConfigurationType;
 import com.yello.server.domain.admin.service.AdminService;
+import com.yello.server.domain.notice.entity.Notice;
 import com.yello.server.domain.user.entity.User;
 import com.yello.server.global.common.annotation.AccessTokenUser;
 import com.yello.server.global.common.dto.BaseResponse;
 import com.yello.server.global.common.dto.EmptyObject;
 import com.yello.server.infrastructure.firebase.dto.request.NotificationCustomMessage;
 import com.yello.server.infrastructure.firebase.service.NotificationService;
+import java.util.List;
 import javax.annotation.Nullable;
 import lombok.RequiredArgsConstructor;
 import lombok.val;
@@ -167,5 +178,39 @@ public class AdminController {
         val data = adminService.updateConfigurations(user.getId(), configurationType, request.value());
 
         return BaseResponse.success(CONFIGURATION_UPDATE_ADMIN_SUCCESS, data);
+    }
+
+    @GetMapping("/notice")
+    public BaseResponse<List<Notice>> getNotices(@AccessTokenUser User user) {
+        val data = adminService.getNotices(user.getId());
+        return BaseResponse.success(NOTICE_READ_ADMIN_SUCCESS, data);
+    }
+
+    @PostMapping("/notice")
+    public BaseResponse<EmptyObject> createNotice(@AccessTokenUser User user,
+        @RequestBody AdminNoticeCreateRequest request) {
+        val data = adminService.createNotice(user.getId(), request);
+        return BaseResponse.success(NOTICE_CREATE_ADMIN_SUCCESS, data);
+    }
+
+    @PostMapping("/notice/{id}")
+    public BaseResponse<EmptyObject> updateNotice(@AccessTokenUser User user, @PathVariable("id") Long noticeId,
+        @RequestBody AdminNoticeCreateRequest request) {
+        val data = adminService.updateNotice(user.getId(), noticeId, request);
+        return BaseResponse.success(NOTICE_UPDATE_DETAIL_ADMIN_SUCCESS, data);
+    }
+
+    @PostMapping("/event")
+    public BaseResponse<EmptyObject> createEvent(@AccessTokenUser User user,
+        @RequestBody AdminEventCreateRequest request) throws JsonProcessingException {
+        val data = adminService.createEvent(user.getId(), request);
+        return BaseResponse.success(EVENT_CREATE_ADMIN_SUCCESS, data);
+    }
+
+    @PostMapping("/event/reward")
+    public BaseResponse<EmptyObject> createEventReward(@AccessTokenUser User user,
+        @RequestBody AdminEventRewardCreateRequest request) {
+        val data = adminService.createEventReward(user.getId(), request);
+        return BaseResponse.success(EVENT_REWARD_CREATE_ADMIN_SUCCESS, data);
     }
 }

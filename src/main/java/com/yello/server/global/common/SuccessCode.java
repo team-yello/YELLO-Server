@@ -54,6 +54,12 @@ public enum SuccessCode {
     READ_NOTICE_SUCCESS(OK, "공지 조회에 성공하였습니다."),
     CONFIGURATION_READ_ADMIN_SUCCESS(OK, "어드민 권한으로 설정 조회에 성공하였습니다."),
     CONFIGURATION_UPDATE_ADMIN_SUCCESS(OK, "어드민 권한으로 설정 수정에 성공하였습니다."),
+    NOTICE_CREATE_ADMIN_SUCCESS(OK, "어드민 권한으로 공지 생성에 성공하였습니다."),
+    NOTICE_READ_ADMIN_SUCCESS(OK, "어드민 권한으로 공지 조회에 성공하였습니다."),
+    NOTICE_UPDATE_DETAIL_ADMIN_SUCCESS(OK, "어드민 권한으로 공지 수정에 성공하였습니다."),
+    EVENT_CREATE_ADMIN_SUCCESS(OK, "어드민 권한으로 이벤트 생성에 성공하였습니다."),
+    EVENT_NOTICE_SUCCESS(OK, "이벤트 전체 조회에 성공하였습니다."),
+    EVENT_REWARD_CREATE_ADMIN_SUCCESS(OK, "어드민 권한으로 이벤트 보상 생성에 성공하였습니다."),
 
     /**
      * 201 CREATED

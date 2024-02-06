@@ -1,7 +1,7 @@
 package com.yello.server.domain.user.entity;
 
-import javax.persistence.AttributeConverter;
-import javax.persistence.Converter;
+import jakarta.persistence.AttributeConverter;
+import jakarta.persistence.Converter;
 import lombok.extern.log4j.Log4j2;
 
 @Converter

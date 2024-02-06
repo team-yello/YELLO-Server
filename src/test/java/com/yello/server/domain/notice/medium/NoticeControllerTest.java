@@ -5,8 +5,8 @@ import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.BDDMockito.given;
 import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document;
+import static org.springframework.restdocs.operation.preprocess.Preprocessors.modifyHeaders;
 import static org.springframework.restdocs.operation.preprocess.Preprocessors.prettyPrint;
-import static org.springframework.restdocs.operation.preprocess.Preprocessors.removeHeaders;
 import static org.springframework.restdocs.request.RequestDocumentation.parameterWithName;
 import static org.springframework.restdocs.request.RequestDocumentation.pathParameters;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
@@ -42,6 +42,7 @@ import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.FilterType;
 import org.springframework.http.HttpHeaders;
 import org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders;
+import org.springframework.restdocs.operation.preprocess.OperationPreprocessor;
 import org.springframework.restdocs.operation.preprocess.Preprocessors;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
@@ -59,10 +60,22 @@ import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 @DisplayName("Notice 컨트롤러에서")
 public class NoticeControllerTest {
 
-    final String[] excludeRequestHeaders = {"X-CSRF-TOKEN", "Host"};
-    final String[] excludeResponseHeaders =
-        {"X-Content-Type-Options", "X-XSS-Protection", "Cache-Control", "Pragma",
-            "Expires", "X-Frame-Options", "Content-Length"};
+    final OperationPreprocessor[] excludeRequestHeaders = new OperationPreprocessor[]{
+        prettyPrint(),
+        modifyHeaders().remove("X-CSRF-TOKEN"),
+        modifyHeaders().remove(HttpHeaders.HOST)
+    };
+
+    final OperationPreprocessor[] excludeResponseHeaders = new OperationPreprocessor[]{
+        prettyPrint(),
+        modifyHeaders().remove("X-Content-Type-Options"),
+        modifyHeaders().remove("X-XSS-Protection"),
+        modifyHeaders().remove("X-Frame-Options"),
+        modifyHeaders().remove(HttpHeaders.CACHE_CONTROL),
+        modifyHeaders().remove(HttpHeaders.PRAGMA),
+        modifyHeaders().remove(HttpHeaders.EXPIRES),
+        modifyHeaders().remove(HttpHeaders.CONTENT_LENGTH),
+    };
 
     @Autowired
     private MockMvc mockMvc;
@@ -104,10 +117,8 @@ public class NoticeControllerTest {
                 .header(HttpHeaders.AUTHORIZATION, "Bearer your-access-token"))
             .andDo(print())
             .andDo(document("api/v1/notice",
-                Preprocessors.preprocessRequest(prettyPrint(),
-                    removeHeaders(excludeRequestHeaders)),
-                Preprocessors.preprocessResponse(prettyPrint(),
-                    removeHeaders(excludeResponseHeaders)),
+                Preprocessors.preprocessRequest(excludeRequestHeaders),
+                Preprocessors.preprocessResponse(excludeResponseHeaders),
                 pathParameters(parameterWithName("tag").description("공지의 종류")))
             )
             .andExpect(MockMvcResultMatchers.status().isOk());

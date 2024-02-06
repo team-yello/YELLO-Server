@@ -7,11 +7,11 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.yello.server.global.common.ErrorCode;
 import com.yello.server.global.common.dto.BaseResponse;
 import com.yello.server.global.common.dto.MultiReadHttpServletRequest;
+import jakarta.servlet.FilterChain;
+import jakarta.servlet.ServletException;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import java.io.IOException;
-import javax.servlet.FilterChain;
-import javax.servlet.ServletException;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 public class ExceptionHandlerFilter extends OncePerRequestFilter {
@@ -23,7 +23,7 @@ public class ExceptionHandlerFilter extends OncePerRequestFilter {
         FilterChain filterChain
     ) throws ServletException, IOException {
         MultiReadHttpServletRequest multiReadRequest = new MultiReadHttpServletRequest(request);
-        
+
         try {
             filterChain.doFilter(multiReadRequest, response);
         } catch (CustomException exception) {

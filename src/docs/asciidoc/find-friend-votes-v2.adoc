@@ -7,7 +7,7 @@ include::{snippets}/api/v2/vote/friend/http-request.adoc[]
 
 === 요청 파라미터
 
-include::{snippets}/api/v2/vote/friend/request-parameters.adoc[]
+include::{snippets}/api/v2/vote/friend/query-parameters.adoc[]
 
 === 응답
 
