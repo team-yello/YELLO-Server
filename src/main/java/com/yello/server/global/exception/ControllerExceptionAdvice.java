@@ -20,6 +20,7 @@ import com.yello.server.domain.authorization.exception.NotExpiredTokenForbiddenE
 import com.yello.server.domain.authorization.exception.NotSignedInException;
 import com.yello.server.domain.authorization.exception.NotValidTokenForbiddenException;
 import com.yello.server.domain.authorization.exception.OAuthException;
+import com.yello.server.domain.event.exception.EventBadRequestException;
 import com.yello.server.domain.friend.exception.FriendException;
 import com.yello.server.domain.friend.exception.FriendNotFoundException;
 import com.yello.server.domain.group.exception.GroupNotFoundException;
@@ -141,7 +142,8 @@ public class ControllerExceptionAdvice {
         AppleBadRequestException.class,
         UserAdminBadRequestException.class,
         EnumIllegalArgumentException.class,
-        IllegalArgumentException.class
+        IllegalArgumentException.class,
+        EventBadRequestException.class
     })
     public ResponseEntity<BaseResponse> BadRequestException(CustomException exception) {
         return ResponseEntity.status(BAD_REQUEST)
