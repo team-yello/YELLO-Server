@@ -10,6 +10,7 @@ import com.yello.server.domain.event.entity.EventTime;
 import com.yello.server.domain.event.repository.EventRepository;
 import com.yello.server.domain.user.entity.User;
 import com.yello.server.domain.user.repository.UserRepository;
+import java.time.OffsetTime;
 import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -31,6 +32,7 @@ public class EventService {
 
         // logic
         ZonedDateTime now = ZonedDateTime.now(GlobalZoneId);
+        OffsetTime nowTime = now.toOffsetDateTime().toOffsetTime();
         List<EventResponse> result = new ArrayList<>();
 
         final List<Event> eventList = eventRepository.findAll().stream()
@@ -38,20 +40,17 @@ public class EventService {
             .toList();
 
         for (Event event : eventList) {
-            final List<EventTime> eventTimeList = eventRepository.findAllByEventId(event.getId());
-            Long eventTimeId = 0L;
-            for (EventTime eventTime : eventTimeList) {
-                if (eventTime.getEvent().equals(event)) {
-                    eventTimeId = eventTime.getId();
-                }
-            }
-            final List<EventRewardMapping> eventRewardMappingList = new ArrayList<>(
-                eventRepository.findAllByEventTimeId(
-                    eventTimeId));
+            final List<EventTime> eventTimeList = eventRepository.findAllByEventId(event.getId()).stream()
+                .filter(
+                    eventTime -> nowTime.isAfter(eventTime.getStartTime()) && nowTime.isBefore(eventTime.getEndTime())
+                )
+                .toList();
 
-            if (!eventTimeList.isEmpty()) {
-                result.add(EventResponse.of(event, eventTimeList, eventRewardMappingList));
-            }
+            final EventTime eventTime = eventTimeList.isEmpty() ? null : eventTimeList.get(0);
+            final List<EventRewardMapping> eventRewardMappingList =
+                eventTimeList.isEmpty() ? null : eventRepository.findAllByEventTimeId(eventTime.getId());
+
+            result.add(EventResponse.of(event, eventTime, eventRewardMappingList));
         }
 
         return result;

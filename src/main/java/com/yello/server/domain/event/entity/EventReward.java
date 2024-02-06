@@ -1,7 +1,6 @@
 package com.yello.server.domain.event.entity;
 
 import jakarta.persistence.Column;
-import jakarta.persistence.Convert;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -34,8 +33,7 @@ public class EventReward {
     private Long id;
 
     @Column(nullable = false)
-    @Convert(converter = EventRewardTypeConverter.class)
-    private EventRewardType tag;
+    private String tag;
 
     @Column
     @Builder.Default

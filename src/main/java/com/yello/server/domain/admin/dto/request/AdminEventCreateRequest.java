@@ -1,7 +1,6 @@
 package com.yello.server.domain.admin.dto.request;
 
 import com.yello.server.domain.event.entity.EventRewardRandomType;
-import com.yello.server.domain.event.entity.EventRewardType;
 import com.yello.server.domain.event.entity.EventType;
 import java.time.OffsetTime;
 import java.util.List;
@@ -26,7 +25,7 @@ public record AdminEventCreateRequest(
     }
 
     public record EventRewardItemVO(
-        EventRewardType tag,
+        String tag,
         Integer eventRewardProbability,
         EventRewardRandomType randomTag
     ) {

@@ -7,6 +7,7 @@ import static com.yello.server.global.common.SuccessCode.DELETE_COOLDOWN_ADMIN_S
 import static com.yello.server.global.common.SuccessCode.DELETE_QUESTION_ADMIN_SUCCESS;
 import static com.yello.server.global.common.SuccessCode.DELETE_USER_ADMIN_SUCCESS;
 import static com.yello.server.global.common.SuccessCode.EVENT_CREATE_ADMIN_SUCCESS;
+import static com.yello.server.global.common.SuccessCode.EVENT_REWARD_CREATE_ADMIN_SUCCESS;
 import static com.yello.server.global.common.SuccessCode.LOGIN_USER_ADMIN_SUCCESS;
 import static com.yello.server.global.common.SuccessCode.NOTICE_CREATE_ADMIN_SUCCESS;
 import static com.yello.server.global.common.SuccessCode.NOTICE_READ_ADMIN_SUCCESS;
@@ -23,6 +24,7 @@ import static com.yello.server.global.common.factory.PaginationFactory.createPag
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.yello.server.domain.admin.dto.request.AdminEventCreateRequest;
+import com.yello.server.domain.admin.dto.request.AdminEventRewardCreateRequest;
 import com.yello.server.domain.admin.dto.request.AdminLoginRequest;
 import com.yello.server.domain.admin.dto.request.AdminNoticeCreateRequest;
 import com.yello.server.domain.admin.dto.request.AdminQuestionVoteRequest;
@@ -203,5 +205,12 @@ public class AdminController {
         @RequestBody AdminEventCreateRequest request) throws JsonProcessingException {
         val data = adminService.createEvent(user.getId(), request);
         return BaseResponse.success(EVENT_CREATE_ADMIN_SUCCESS, data);
+    }
+
+    @PostMapping("/event/reward")
+    public BaseResponse<EmptyObject> createEventReward(@AccessTokenUser User user,
+        @RequestBody AdminEventRewardCreateRequest request) {
+        val data = adminService.createEventReward(user.getId(), request);
+        return BaseResponse.success(EVENT_REWARD_CREATE_ADMIN_SUCCESS, data);
     }
 }

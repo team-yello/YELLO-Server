@@ -1,6 +1,8 @@
 package com.yello.server.domain.event.entity;
 
+import com.yello.server.global.common.entity.OffsetTimeConverter;
 import jakarta.persistence.Column;
+import jakarta.persistence.Convert;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
@@ -33,10 +35,12 @@ public class EventTime {
     @OnDelete(action = OnDeleteAction.RESTRICT)
     private Event event;
 
-    @Column
+    @Column(columnDefinition = "varchar(30) NOT NULL")
+    @Convert(converter = OffsetTimeConverter.class)
     private OffsetTime startTime;
 
-    @Column
+    @Column(columnDefinition = "varchar(30) NOT NULL")
+    @Convert(converter = OffsetTimeConverter.class)
     private OffsetTime endTime;
 
     @Column

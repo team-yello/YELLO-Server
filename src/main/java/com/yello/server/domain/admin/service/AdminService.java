@@ -14,6 +14,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.yello.server.domain.admin.dto.request.AdminEventCreateRequest;
 import com.yello.server.domain.admin.dto.request.AdminEventCreateRequest.EventRewardItemVO;
 import com.yello.server.domain.admin.dto.request.AdminEventCreateRequest.EventRewardVO;
+import com.yello.server.domain.admin.dto.request.AdminEventRewardCreateRequest;
 import com.yello.server.domain.admin.dto.request.AdminLoginRequest;
 import com.yello.server.domain.admin.dto.request.AdminNoticeCreateRequest;
 import com.yello.server.domain.admin.dto.request.AdminQuestionVoteRequest;
@@ -451,6 +452,24 @@ public class AdminService {
                     .build());
             });
         });
+
+        return EmptyObject.builder().build();
+    }
+
+    @Transactional
+    public EmptyObject createEventReward(Long adminId, AdminEventRewardCreateRequest request) {
+        // exception
+        final User admin = userRepository.getById(adminId);
+        userAdminRepository.getByUser(admin);
+
+        // login
+        adminRepository.save(EventReward.builder()
+            .tag(request.tag())
+            .maxRewardValue(request.maxRewardValue())
+            .minRewardValue(request.minRewardValue())
+            .title(request.title())
+            .image(request.image())
+            .build());
 
         return EmptyObject.builder().build();
     }

@@ -5,7 +5,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="generator" content="Asciidoctor 2.0.18">
-<title>YELL:O API 문서</title>
+<title>공지 조회</title>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Open+Sans:300,300italic,400,400italic,600,600italic%7CNoto+Serif:400,400italic,700,700italic%7CDroid+Sans+Mono:400,700">
 <style>
 /*! Asciidoctor default stylesheet | MIT License | https://asciidoctor.org */
@@ -435,222 +435,279 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 #footer-text{color:rgba(0,0,0,.6);font-size:.9em}}
 @media amzn-kf8{#header,#content,#footnotes,#footer{padding:0}}
 </style>
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.18.3/styles/github.min.css">
 </head>
-<body class="book toc2 toc-left">
+<body class="article">
 <div id="header">
-<h1>YELL:O API 문서</h1>
-<div class="details">
-<span id="revnumber">version 0.0.1-SNAPSHOT</span>
-</div>
-<div id="toc" class="toc2">
-<div id="toctitle">Table of Contents</div>
-<ul class="sectlevel1">
-<li><a href="#API-List">APIs</a>
-<ul class="sectlevel2">
-<li><a href="#_auth_api">Auth API</a></li>
-<li><a href="#_user_api">User API</a></li>
-<li><a href="#_vote_api">Vote API</a></li>
-<li><a href="#_friend_api">Friend API</a></li>
-<li><a href="#_purchase_api">Purchase API</a></li>
-<li><a href="#_pay_api">Pay API</a></li>
-<li><a href="#_notice_api">Notice API</a></li>
-<li><a href="#_event_api">Event API</a></li>
-</ul>
-</li>
-</ul>
-</div>
 </div>
 <div id="content">
 <div class="sect1">
-<h2 id="API-List"><a class="link" href="#API-List">APIs</a></h2>
+<h2 id="_공지_조회">공지 조회</h2>
 <div class="sectionbody">
 <div class="sect2">
-<h3 id="_auth_api"><a class="link" href="#_auth_api">Auth API</a></h3>
+<h3 id="_요청">요청</h3>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight nowrap"><code class="language-http" data-lang="http">GET /api/v1/event HTTP/1.1
+Authorization: Bearer your-access-token</code></pre>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_응답">응답</h3>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight nowrap"><code class="language-http" data-lang="http">HTTP/1.1 200 OK
+Vary: Origin
+Vary: Access-Control-Request-Method
+Vary: Access-Control-Request-Headers
+Content-Type: application/json
+
+{
+  "status" : 200,
+  "message" : "이벤트 전체 조회에 성공하였습니다.",
+  "data" : [ {
+    "tag" : "LUNCH_EVENT",
+    "startDate" : "2024-01-01T00:00:00+09:00",
+    "endDate" : "2024-12-31T00:00:00+09:00",
+    "title" : "점심 시간 깜짝 선물!",
+    "subTitle" : "평일 12-14시 최대 1회까지 참여 가능",
+    "animationList" : [ {
+      "v" : "로티1"
+    }, {
+      "v" : "로티2"
+    } ],
+    "eventReward" : {
+      "startTime" : "12:00+09:00",
+      "endTime" : "14:00+09:00",
+      "rewardCount" : 1,
+      "eventRewardItem" : [ {
+        "tag" : "POINT",
+        "eventRewardTitle" : "최대 200P",
+        "eventRewardImage" : "https://storage.googleapis.com/yelloworld/image/coin-stack.svg",
+        "maxRewardValue" : 200,
+        "minRewardValue" : 10,
+        "eventRewardProbability" : 10,
+        "randomTag" : "FIXED"
+      }, {
+        "tag" : "TICKET",
+        "eventRewardTitle" : "열람권 1개",
+        "eventRewardImage" : "https://storage.googleapis.com/yelloworld/image/key.svg",
+        "maxRewardValue" : 1,
+        "minRewardValue" : 1,
+        "eventRewardProbability" : 90,
+        "randomTag" : "RANDOM"
+      } ]
+    }
+  }, {
+    "tag" : "ADMOB",
+    "startDate" : "2024-01-01T00:00:00+09:00",
+    "endDate" : "2024-12-31T00:00:00+09:00",
+    "title" : "ADMOB 광고입니다.",
+    "subTitle" : "ADMOB 광고는 영구 사용 가능 설정입니다",
+    "animationList" : [ ],
+    "eventReward" : {
+      "startTime" : "00:00+09:00",
+      "endTime" : "23:59:59.000999999+09:00",
+      "rewardCount" : 1,
+      "eventRewardItem" : [ {
+        "tag" : "ADMOB_POINT",
+        "eventRewardTitle" : "광고 보고 포인트 얻기",
+        "eventRewardImage" : "https://storage.googleapis.com/yelloworld/image/coin-stack.svg",
+        "maxRewardValue" : 50,
+        "minRewardValue" : 50,
+        "eventRewardProbability" : 100,
+        "randomTag" : "FIXED"
+      } ]
+    }
+  } ]
+}</code></pre>
+</div>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight nowrap"><code class="language-http" data-lang="http">HTTP/1.1 200 OK
+Vary: Origin
+Vary: Access-Control-Request-Method
+Vary: Access-Control-Request-Headers
+Content-Type: application/json
+
+{
+  "status" : 200,
+  "message" : "이벤트 전체 조회에 성공하였습니다.",
+  "data" : [ {
+    "tag" : "LUNCH_EVENT",
+    "startDate" : "2024-01-01T00:00:00+09:00",
+    "endDate" : "2024-12-31T00:00:00+09:00",
+    "title" : "점심 시간 깜짝 선물!",
+    "subTitle" : "평일 12-14시 최대 1회까지 참여 가능",
+    "animationList" : [ {
+      "v" : "로티1"
+    }, {
+      "v" : "로티2"
+    } ],
+    "eventReward" : {
+      "startTime" : "22:00+09:00",
+      "endTime" : "00:00+09:00",
+      "rewardCount" : 1,
+      "eventRewardItem" : [ {
+        "tag" : "POINT",
+        "eventRewardTitle" : "최대 200P",
+        "eventRewardImage" : "https://storage.googleapis.com/yelloworld/image/coin-stack.svg",
+        "maxRewardValue" : 200,
+        "minRewardValue" : 10,
+        "eventRewardProbability" : 40,
+        "randomTag" : "FIXED"
+      }, {
+        "tag" : "TICKET",
+        "eventRewardTitle" : "열람권 1개",
+        "eventRewardImage" : "https://storage.googleapis.com/yelloworld/image/key.svg",
+        "maxRewardValue" : 1,
+        "minRewardValue" : 1,
+        "eventRewardProbability" : 60,
+        "randomTag" : "RANDOM"
+      } ]
+    }
+  }, {
+    "tag" : "ADMOB",
+    "startDate" : "2024-01-01T00:00:00+09:00",
+    "endDate" : "2024-12-31T00:00:00+09:00",
+    "title" : "ADMOB 광고입니다.",
+    "subTitle" : "ADMOB 광고는 영구 사용 가능 설정입니다",
+    "animationList" : [ ],
+    "eventReward" : {
+      "startTime" : "00:00+09:00",
+      "endTime" : "23:59:59.000999999+09:00",
+      "rewardCount" : 1,
+      "eventRewardItem" : [ {
+        "tag" : "ADMOB_POINT",
+        "eventRewardTitle" : "광고 보고 포인트 얻기",
+        "eventRewardImage" : "https://storage.googleapis.com/yelloworld/image/coin-stack.svg",
+        "maxRewardValue" : 50,
+        "minRewardValue" : 50,
+        "eventRewardProbability" : 100,
+        "randomTag" : "FIXED"
+      } ]
+    }
+  } ]
+}</code></pre>
+</div>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight nowrap"><code class="language-http" data-lang="http">HTTP/1.1 200 OK
+Vary: Origin
+Vary: Access-Control-Request-Method
+Vary: Access-Control-Request-Headers
+Content-Type: application/json
+
+{
+  "status" : 200,
+  "message" : "이벤트 전체 조회에 성공하였습니다.",
+  "data" : [ {
+    "tag" : "LUNCH_EVENT",
+    "startDate" : "2024-01-01T00:00:00+09:00",
+    "endDate" : "2024-12-31T00:00:00+09:00",
+    "title" : "점심 시간 깜짝 선물!",
+    "subTitle" : "평일 12-14시 최대 1회까지 참여 가능",
+    "animationList" : [ {
+      "v" : "로티1"
+    }, {
+      "v" : "로티2"
+    } ],
+    "eventReward" : null
+  }, {
+    "tag" : "ADMOB",
+    "startDate" : "2024-01-01T00:00:00+09:00",
+    "endDate" : "2024-12-31T00:00:00+09:00",
+    "title" : "ADMOB 광고입니다.",
+    "subTitle" : "ADMOB 광고는 영구 사용 가능 설정입니다",
+    "animationList" : [ ],
+    "eventReward" : {
+      "startTime" : "00:00+09:00",
+      "endTime" : "23:59:59.000999999+09:00",
+      "rewardCount" : 1,
+      "eventRewardItem" : [ {
+        "tag" : "ADMOB_POINT",
+        "eventRewardTitle" : "광고 보고 포인트 얻기",
+        "eventRewardImage" : "https://storage.googleapis.com/yelloworld/image/coin-stack.svg",
+        "maxRewardValue" : 50,
+        "minRewardValue" : 50,
+        "eventRewardProbability" : 100,
+        "randomTag" : "FIXED"
+      } ]
+    }
+  } ]
+}</code></pre>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_주의">주의</h3>
 <div class="ulist">
 <ul>
 <li>
-<p><a href="login.html">로그인</a></p>
+<p>data: <strong>Response</strong>[]</p>
 </li>
 <li>
-<p><a href="signup.html">회원가입</a></p>
+<p><strong>Response</strong></p>
 </li>
 <li>
-<p><a href="find-onboarding-friends.html">가입한 친구 목록 불러오기</a></p>
+<p>tag : "LUNCH_EVENT" | "ADMOB"</p>
+<div class="ulist">
+<ul>
+<li>
+<p>LUNCH_EVENT에 해당하는 *Response*가 없으면 Render 해주지 말아주세요</p>
+</li>
+</ul>
+</div>
 </li>
 <li>
-<p><a href="search-school.html">대학교 검색하기</a></p>
+<p>startDate : "2024-01-01T00:00:00+09:00"</p>
 </li>
 <li>
-<p><a href="search-department.html">대학교 학과 검색하기</a></p>
+<p>endDate : "2024-12-31T00:00:00+09:00"</p>
 </li>
 <li>
-<p><a href="search-high-name.html">고등학교 이름 검색하기</a></p>
+<p>title : "점심 시간 깜짝 선물!"</p>
 </li>
 <li>
-<p><a href="search-high-class.html">고등학교 이름으로 학반 검색하기</a></p>
+<p>subTitle : "평일 12-14시 최대 1회까지 참여 가능"</p>
 </li>
 <li>
-<p><a href="reissue-token.html">토큰 재발급</a></p>
+<p>animationList : [{&#8230;&#8203;json1&#8230;&#8203;}, {&#8230;&#8203;json2&#8230;&#8203;}]</p>
+</li>
+<li>
+<p>eventReward: <strong>EventReward</strong> | null</p>
+<div class="ulist">
+<ul>
+<li>
+<p>해당 필드가 <strong>null</strong>일 시, 이벤트 보여주지 않도록 해주세요.</p>
+</li>
+</ul>
+</div>
 </li>
 </ul>
 </div>
 </div>
 <div class="sect2">
-<h3 id="_user_api"><a class="link" href="#_user_api">User API</a></h3>
+<h3 id="_note">NOTE</h3>
 <div class="ulist">
 <ul>
 <li>
-<p><a href="check-user.html">내 정보 조회하기 V1</a></p>
+<p><strong>!</strong> LUNCH_EVENT에 해당하는 Response가 없거나, LUNCH_EVENT Response의 eventReward가 null이면, 메인화면 접속시, 이벤트 화면을 띄워주지마세요.</p>
 </li>
 <li>
-<p>🆕 <a href="check-user-v2.html">내 정보 조회하기 V2, 2024-01-30</a></p>
-</li>
-<li>
-<p>🆕 <a href="edit-user.html">유저 정보 수정, 2024-01-31</a></p>
-</li>
-<li>
-<p>🆕 <a href="user-data-get.html">프로필 수정 가능 여부 조회, 2024-01-31</a></p>
-</li>
-<li>
-<p>🆕 <a href="user-data-post.html">유저 기타 정보 저장, 2024-01-31</a></p>
-</li>
-<li>
-<p>🆕 <a href="purchase-info.html">유저 구독 정보, 2024-01-25</a></p>
-</li>
-<li>
-<p><a href="check-user-by-id.html">특정 유저 정보 조회하기</a></p>
-</li>
-<li>
-<p><a href="device-token.html">디바이스 토큰 수정하기</a></p>
-</li>
-<li>
-<p><a href="delete-user.html">유저 탈퇴</a></p>
-</li>
-<li>
-<p>🆕 <a href="delete-user-v2.html">유저 탈퇴 V2, 2024-01-30</a></p>
+<p>이벤트 참여 요청, 이벤트 보상 반환 API 문서 작성중..</p>
 </li>
 </ul>
 </div>
 </div>
 <div class="sect2">
-<h3 id="_vote_api"><a class="link" href="#_vote_api">Vote API</a></h3>
+<h3 id="_changelog">CHANGELOG</h3>
 <div class="ulist">
 <ul>
 <li>
-<p><a href="find-votes.html">내 투표 전체 조회하기</a></p>
-</li>
-<li>
-<p><a href="find-friend-votes.html">친구 투표 전체 조회하기, 2024-01-09</a></p>
-</li>
-<li>
-<p>🆕 <a href="find-friend-votes-v2.html">친구 투표 전체 조회하기 v2, 2024-01-30</a></p>
-</li>
-<li>
-<p><a href="get-unread-vote.html">읽지 않은 쪽지 개수 조회하기</a></p>
-</li>
-<li>
-<p><a href="find-vote.html">투표 상세 조회하기</a></p>
-</li>
-<li>
-<p><a href="find-question.html">투표 질문 조회하기</a></p>
-</li>
-<li>
-<p><a href="check-vote-available.html">투표 가능 여부 조회하기</a></p>
-</li>
-<li>
-<p><a href="create-vote.html">투표 생성하기</a></p>
-</li>
-<li>
-<p><a href="reveal-name.html">투표 이름 부분 조회하기</a></p>
-</li>
-<li>
-<p><a href="reveal-full-name.html">투표 이름 전체 조회하기</a></p>
-</li>
-</ul>
-</div>
-</div>
-<div class="sect2">
-<h3 id="_friend_api"><a class="link" href="#_friend_api">Friend API</a></h3>
-<div class="ulist">
-<ul>
-<li>
-<p><a href="add-friend.html">친구 추가하기</a></p>
-</li>
-<li>
-<p><a href="find-friends.html">친구 전체 조회하기</a></p>
-</li>
-<li>
-<p><a href="shuffle-friends.html">셔플된 친구 조회하기</a></p>
-</li>
-<li>
-<p><a href="find-group-friends.html">그룹 추천 친구 조회하기</a></p>
-</li>
-<li>
-<p><a href="find-kakao-friends.html">카카오 추천 친구 조회하기</a></p>
-</li>
-<li>
-<p><a href="delete-friend.html">친구 끊기</a></p>
-</li>
-<li>
-<p><a href="search-friend.html">친구 검색하기</a></p>
-</li>
-</ul>
-</div>
-</div>
-<div class="sect2">
-<h3 id="_purchase_api"><a class="link" href="#_purchase_api">Purchase API</a></h3>
-<div class="ulist">
-<ul>
-<li>
-<p><a href="apple.html">Apple 결제 관련 API</a></p>
-</li>
-<li>
-<p><a href="google.html">Google 결제 관련 API</a></p>
-</li>
-<li>
-<p><a href="sub-check.html">구독 연장 유도 필요 여부 확인하기</a></p>
-</li>
-<li>
-<p><a href="purchase-check.html">구독 상태 및 열람권 개수 조회하기</a></p>
-</li>
-</ul>
-</div>
-</div>
-<div class="sect2">
-<h3 id="_pay_api"><a class="link" href="#_pay_api">Pay API</a></h3>
-<div class="ulist">
-<ul>
-<li>
-<p>@Deprecated at 2024.03</p>
-<div class="ulist">
-<ul>
-<li>
-<p><a href="pay.html">결제 전환율 체크</a></p>
-</li>
-</ul>
-</div>
-</li>
-</ul>
-</div>
-</div>
-<div class="sect2">
-<h3 id="_notice_api"><a class="link" href="#_notice_api">Notice API</a></h3>
-<div class="ulist">
-<ul>
-<li>
-<p>🆕 <a href="find-notice.html">공지 조회, 2024-01-29</a></p>
-</li>
-</ul>
-</div>
-</div>
-<div class="sect2">
-<h3 id="_event_api"><a class="link" href="#_event_api">Event API</a></h3>
-<div class="ulist">
-<ul>
-<li>
-<p>🆕 <a href="find-event.html">공지 조회, 2024-02-06</a></p>
+<p>2024.02.06 릴리즈</p>
 </li>
 </ul>
 </div>
@@ -658,12 +715,10 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 </div>
 </div>
 </div>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.18.3/highlight.min.js"></script>
-<script>
-if (!hljs.initHighlighting.called) {
-  hljs.initHighlighting.called = true
-  ;[].slice.call(document.querySelectorAll('pre.highlight > code[data-lang]')).forEach(function (el) { hljs.highlightBlock(el) })
-}
-</script>
+<div id="footer">
+<div id="footer-text">
+Version 0.0.1-SNAPSHOT<br>
+</div>
+</div>
 </body>
 </html>

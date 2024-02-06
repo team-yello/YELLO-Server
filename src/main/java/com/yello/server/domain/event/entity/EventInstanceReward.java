@@ -37,8 +37,7 @@ public class EventInstanceReward {
     private Integer eventRewardProbability;
 
     @Column(nullable = false)
-    @Convert(converter = EventRewardTypeConverter.class)
-    private EventRewardType rewardTag;
+    private String rewardTag;
 
     @Column
     private String rewardTitle;

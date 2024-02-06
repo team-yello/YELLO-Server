@@ -11,7 +11,6 @@ import com.yello.server.domain.admin.exception.UserAdminNotFoundException;
 import com.yello.server.domain.event.entity.Event;
 import com.yello.server.domain.event.entity.EventReward;
 import com.yello.server.domain.event.entity.EventRewardMapping;
-import com.yello.server.domain.event.entity.EventRewardType;
 import com.yello.server.domain.event.entity.EventTime;
 import com.yello.server.domain.event.repository.EventJpaRepository;
 import com.yello.server.domain.event.repository.EventRewardJpaRepository;
@@ -42,6 +41,11 @@ public class AdminRepositoryImpl implements AdminRepository {
     }
 
     @Override
+    public EventReward save(EventReward newEventReward) {
+        return eventRewardJpaRepository.save(newEventReward);
+    }
+
+    @Override
     public EventRewardMapping save(EventRewardMapping newEventRewardMapping) {
         return eventRewardMappingJpaRepository.save(newEventRewardMapping);
     }
@@ -66,7 +70,7 @@ public class AdminRepositoryImpl implements AdminRepository {
      * findByEnum을 QueryDSL을 이용하여 조회시 오류가 발생하여 JPA로 구현한다.
      */
     @Override
-    public EventReward getByTag(EventRewardType tag) {
+    public EventReward getByTag(String tag) {
         return eventRewardJpaRepository.findByTag(tag)
             .orElseThrow(() -> new UserAdminNotFoundException(EVENT_REWARD_NOT_FOUND_EXCEPTION));
     }

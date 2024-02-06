@@ -8,11 +8,10 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.yello.server.domain.event.entity.Event;
 import com.yello.server.domain.event.entity.EventRewardMapping;
 import com.yello.server.domain.event.entity.EventRewardRandomType;
-import com.yello.server.domain.event.entity.EventRewardType;
 import com.yello.server.domain.event.entity.EventTime;
 import com.yello.server.domain.event.entity.EventType;
+import jakarta.annotation.Nullable;
 import java.time.OffsetTime;
-import java.util.ArrayList;
 import java.util.List;
 import lombok.Builder;
 
@@ -24,11 +23,11 @@ public record EventResponse(
     String title,
     String subTitle,
     List<Object> animationList,
-    List<EventResponse.EventRewardVO> eventReward
+    @Nullable EventResponse.EventRewardVO eventReward
 ) {
 
-    public static EventResponse of(Event event, List<EventTime> eventTimeList,
-        List<EventRewardMapping> eventRewardMappingList)
+    public static EventResponse of(Event event, @Nullable EventTime eventTime,
+        @Nullable List<EventRewardMapping> eventRewardMappingList)
         throws JsonProcessingException {
         // animation
         ObjectMapper objectMapper = new ObjectMapper();
@@ -36,12 +35,8 @@ public record EventResponse(
             new TypeReference<List<Object>>() {
             });
 
-        List<EventResponse.EventRewardVO> eventRewardVOList = new ArrayList<>();
-        for (EventTime eventTime : eventTimeList) {
-            eventRewardVOList.add(
-                EventRewardVO.of(eventTime, eventRewardMappingList)
-            );
-        }
+        EventResponse.EventRewardVO eventRewardVO = eventTime == null || eventRewardMappingList == null ? null
+            : EventResponse.EventRewardVO.of(eventTime, eventRewardMappingList);
 
         return EventResponse.builder()
             .tag(event.getTag())
@@ -50,7 +45,7 @@ public record EventResponse(
             .title(event.getTitle())
             .subTitle(event.getSubTitle())
             .animationList(animationList)
-            .eventReward(eventRewardVOList)
+            .eventReward(eventRewardVO)
             .build();
     }
 
@@ -77,7 +72,11 @@ public record EventResponse(
 
     @Builder
     public record EventRewardItemVO(
-        EventRewardType tag,
+        String tag,
+        String eventRewardTitle,
+        String eventRewardImage,
+        Long maxRewardValue,
+        Long minRewardValue,
         Integer eventRewardProbability,
         EventRewardRandomType randomTag
     ) {
@@ -85,6 +84,10 @@ public record EventResponse(
         public static EventRewardItemVO of(EventRewardMapping eventRewardMapping) {
             return EventRewardItemVO.builder()
                 .tag(eventRewardMapping.getEventReward().getTag())
+                .eventRewardTitle(eventRewardMapping.getEventReward().getTitle())
+                .eventRewardImage(eventRewardMapping.getEventReward().getImage())
+                .maxRewardValue(eventRewardMapping.getEventReward().getMaxRewardValue())
+                .minRewardValue(eventRewardMapping.getEventReward().getMinRewardValue())
                 .eventRewardProbability(eventRewardMapping.getEventRewardProbability())
                 .randomTag(eventRewardMapping.getRandomTag())
                 .build();
