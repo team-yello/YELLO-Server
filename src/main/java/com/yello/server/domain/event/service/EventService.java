@@ -1,20 +1,25 @@
 package com.yello.server.domain.event.service;
 
+import static com.yello.server.global.common.ErrorCode.EVENT_COUNT_BAD_REQUEST_EXCEPTION;
 import static com.yello.server.global.common.ErrorCode.EVENT_DATE_BAD_REQUEST_EXCEPTION;
 import static com.yello.server.global.common.ErrorCode.EVENT_TIME_BAD_REQUEST_EXCEPTION;
 import static com.yello.server.global.common.ErrorCode.IDEMPOTENCY_KEY_CONFLICT_EXCEPTION;
+import static com.yello.server.global.common.ErrorCode.IDEMPOTENCY_KEY_NOT_FOUND_EXCEPTION;
 import static com.yello.server.global.common.util.ConstantUtil.GlobalZoneId;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.yello.server.domain.event.dto.request.EventJoinRequest;
 import com.yello.server.domain.event.dto.response.EventResponse;
+import com.yello.server.domain.event.dto.response.EventRewardResponse;
 import com.yello.server.domain.event.entity.Event;
 import com.yello.server.domain.event.entity.EventHistory;
 import com.yello.server.domain.event.entity.EventInstance;
+import com.yello.server.domain.event.entity.EventInstanceReward;
 import com.yello.server.domain.event.entity.EventRewardMapping;
 import com.yello.server.domain.event.entity.EventTime;
 import com.yello.server.domain.event.entity.EventType;
 import com.yello.server.domain.event.exception.EventBadRequestException;
+import com.yello.server.domain.event.exception.EventNotFoundException;
 import com.yello.server.domain.event.repository.EventRepository;
 import com.yello.server.domain.user.entity.User;
 import com.yello.server.domain.user.repository.UserRepository;
@@ -70,7 +75,7 @@ public class EventService {
     public void joinEvent(Long userId, UUID uuidIdempotencyKey, EventJoinRequest request) {
         // exception
         final User user = userRepository.getById(userId);
-        final Optional<EventHistory> eventHistory = eventRepository.findByIdempotencyKey(uuidIdempotencyKey);
+        final Optional<EventHistory> eventHistory = eventRepository.findHistoryByIdempotencyKey(uuidIdempotencyKey);
         if (eventHistory.isPresent()) {
             throw new EventBadRequestException(IDEMPOTENCY_KEY_CONFLICT_EXCEPTION);
         }
@@ -105,5 +110,52 @@ public class EventService {
             .endTime(eventTime.getEndTime())
             .remainEventCount(eventTime.getRewardCount())
             .build());
+    }
+
+    @Transactional
+    public EventRewardResponse rewardEvent(Long userId, UUID uuidIdempotencyKey) {
+        // exception
+        final User user = userRepository.getById(userId);
+        final Optional<EventHistory> eventHistory = eventRepository.findHistoryByIdempotencyKey(uuidIdempotencyKey);
+        if (eventHistory.isEmpty()) {
+            throw new EventNotFoundException(IDEMPOTENCY_KEY_NOT_FOUND_EXCEPTION);
+        }
+        final Optional<EventInstance> eventInstance = eventRepository.findInstanceByEventHistory(eventHistory.get());
+
+        // logic
+        ZonedDateTime now = ZonedDateTime.now(GlobalZoneId);
+        OffsetTime nowTime = now.toOffsetDateTime().toOffsetTime();
+
+        if (!now.toLocalDate().isEqual(eventInstance.get().getInstanceDate().toLocalDate())) {
+            throw new EventBadRequestException(EVENT_DATE_BAD_REQUEST_EXCEPTION);
+        }
+
+        if (!(nowTime.isAfter(eventInstance.get().getStartTime()) && nowTime.isBefore(
+            eventInstance.get().getEndTime()))) {
+            throw new EventBadRequestException(EVENT_TIME_BAD_REQUEST_EXCEPTION);
+        }
+
+        if (eventInstance.get().getRemainEventCount() <= 0L) {
+            throw new EventBadRequestException(EVENT_COUNT_BAD_REQUEST_EXCEPTION);
+        }
+
+        eventInstance.get().subRemainEventCount(1L);
+        eventRepository.save(EventInstanceReward.builder()
+            .eventInstance(eventInstance.get())
+            .rewardTag("POINT")
+            .rewardValue(200L)
+            .rewardTitle("200 포인트를 얻었어요!")
+            .rewardImage("https://storage.googleapis.com/yelloworld/image/coin-stack.svg")
+            .build());
+        /**
+         * TODO 랜덤값 구현
+         */
+        user.addPoint(200);
+        return EventRewardResponse.builder()
+            .rewardTag("POINT")
+            .rewardValue(200L)
+            .rewardTitle("200 포인트를 얻었어요!")
+            .rewardImage("https://storage.googleapis.com/yelloworld/image/coin-stack.svg")
+            .build();
     }
 }

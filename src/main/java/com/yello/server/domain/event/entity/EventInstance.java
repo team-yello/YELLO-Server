@@ -57,4 +57,8 @@ public class EventInstance {
     @Column
     @Builder.Default
     private Long remainEventCount = 0L;
+
+    public void subRemainEventCount(Long amount) {
+        this.remainEventCount -= amount;
+    }
 }

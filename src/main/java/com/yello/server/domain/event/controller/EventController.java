@@ -4,11 +4,13 @@ import static com.yello.server.global.common.ErrorCode.IDEMPOTENCY_KEY_BAD_REQUE
 import static com.yello.server.global.common.ErrorCode.IDEMPOTENCY_KEY_INVALID_FORM_BAD_REQUEST_EXCEPTION;
 import static com.yello.server.global.common.SuccessCode.EVENT_JOIN_SUCCESS;
 import static com.yello.server.global.common.SuccessCode.EVENT_NOTICE_SUCCESS;
+import static com.yello.server.global.common.SuccessCode.EVENT_REWARD_SUCCESS;
 import static com.yello.server.global.common.util.ConstantUtil.IdempotencyKeyHeader;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.yello.server.domain.event.dto.request.EventJoinRequest;
 import com.yello.server.domain.event.dto.response.EventResponse;
+import com.yello.server.domain.event.dto.response.EventRewardResponse;
 import com.yello.server.domain.event.exception.EventBadRequestException;
 import com.yello.server.domain.event.service.EventService;
 import com.yello.server.domain.user.entity.User;
@@ -56,5 +58,24 @@ public class EventController {
 
         eventService.joinEvent(user.getId(), uuidIdempotencyKey, request);
         return BaseResponse.success(EVENT_JOIN_SUCCESS);
+    }
+
+    @PostMapping("/v1/event/reward")
+    public BaseResponse<EventRewardResponse> rewardEvent(@AccessTokenUser User user,
+        HttpServletRequest requestServlet) {
+        final String idempotencyKey = requestServlet.getHeader(IdempotencyKeyHeader);
+        if (!StringUtils.hasText(idempotencyKey)) {
+            throw new EventBadRequestException(IDEMPOTENCY_KEY_BAD_REQUEST_EXCEPTION);
+        }
+
+        UUID uuidIdempotencyKey;
+        try {
+            uuidIdempotencyKey = UUID.fromString(idempotencyKey);
+        } catch (IllegalArgumentException e) {
+            throw new EventBadRequestException(IDEMPOTENCY_KEY_INVALID_FORM_BAD_REQUEST_EXCEPTION);
+        }
+
+        val data = eventService.rewardEvent(user.getId(), uuidIdempotencyKey);
+        return BaseResponse.success(EVENT_REWARD_SUCCESS, data);
     }
 }

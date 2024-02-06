@@ -1,7 +1,7 @@
 package com.yello.server.domain.event.entity;
 
+import com.yello.server.global.common.dto.AuditingTimeEntity;
 import jakarta.persistence.Column;
-import jakarta.persistence.Convert;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
@@ -22,7 +22,7 @@ import org.hibernate.annotations.OnDeleteAction;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class EventInstanceReward {
+public class EventInstanceReward extends AuditingTimeEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -33,11 +33,12 @@ public class EventInstanceReward {
     @OnDelete(action = OnDeleteAction.CASCADE)
     private EventInstance eventInstance;
 
-    @Column(columnDefinition = "int NOT NULL CHECK (event_reward_probability BETWEEN 0 and 100)")
-    private Integer eventRewardProbability;
-
     @Column(nullable = false)
     private String rewardTag;
+
+    @Column(nullable = false)
+    @Builder.Default
+    private Long rewardValue = 0L;
 
     @Column
     private String rewardTitle;
@@ -45,16 +46,4 @@ public class EventInstanceReward {
     @Column
     private String rewardImage;
 
-    @Column(nullable = false)
-    @Convert(converter = EventRewardRandomTypeConverter.class)
-    private EventRewardRandomType randomTag;
-
-    @Column(nullable = false)
-    private Long maxRewardValue;
-
-    @Column(nullable = false)
-    private Long minRewardValue;
-
-    @Column(nullable = false)
-    private Long sumRewardValue;
 }

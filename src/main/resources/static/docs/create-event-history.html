@@ -5,7 +5,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="generator" content="Asciidoctor 2.0.18">
-<title>YELL:O API 문서</title>
+<title>공지 조회</title>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Open+Sans:300,300italic,400,400italic,600,600italic%7CNoto+Serif:400,400italic,700,700italic%7CDroid+Sans+Mono:400,700">
 <style>
 /*! Asciidoctor default stylesheet | MIT License | https://asciidoctor.org */
@@ -435,199 +435,97 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 #footer-text{color:rgba(0,0,0,.6);font-size:.9em}}
 @media amzn-kf8{#header,#content,#footnotes,#footer{padding:0}}
 </style>
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.18.3/styles/github.min.css">
 </head>
-<body class="book toc2 toc-left">
+<body class="article">
 <div id="header">
-<h1>YELL:O API 문서</h1>
-<div class="details">
-<span id="revnumber">version 0.0.1-SNAPSHOT</span>
-</div>
-<div id="toc" class="toc2">
-<div id="toctitle">Table of Contents</div>
-<ul class="sectlevel1">
-<li><a href="#API-List">APIs</a>
-<ul class="sectlevel2">
-<li><a href="#_auth_api">Auth API</a></li>
-<li><a href="#_user_api">User API</a></li>
-<li><a href="#_vote_api">Vote API</a></li>
-<li><a href="#_friend_api">Friend API</a></li>
-<li><a href="#_purchase_api">Purchase API</a></li>
-<li><a href="#_pay_api">Pay API</a></li>
-<li><a href="#_notice_api">Notice API</a></li>
-<li><a href="#_event_api">Event API</a></li>
-</ul>
-</li>
-</ul>
-</div>
 </div>
 <div id="content">
 <div class="sect1">
-<h2 id="API-List"><a class="link" href="#API-List">APIs</a></h2>
+<h2 id="_공지_조회">공지 조회</h2>
 <div class="sectionbody">
 <div class="sect2">
-<h3 id="_auth_api"><a class="link" href="#_auth_api">Auth API</a></h3>
+<h3 id="_요청">요청</h3>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight nowrap"><code class="language-http" data-lang="http">POST /api/v1/event HTTP/1.1
+Content-Type: application/json;charset=UTF-8
+Authorization: Bearer your-access-token
+IdempotencyKey: 0397b5f3-ecdc-47d6-b5d7-2b1afcf00e87
+Content-Length: 27
+
+{
+  "tag" : "LUNCH_EVENT"
+}</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Unresolved directive in create-event-history.adoc - include::/Users/euije/Github/YELLO-Server/build/generated-snippets/api/v1/event/join/2/http-request.adoc[]</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_응답">응답</h3>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight nowrap"><code class="language-http" data-lang="http">HTTP/1.1 200 OK
+Vary: Origin
+Vary: Access-Control-Request-Method
+Vary: Access-Control-Request-Headers
+Content-Type: application/json
+
+{
+  "status" : 200,
+  "message" : "이벤트 참여에 성공하였습니다."
+}</code></pre>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_주의">주의</h3>
 <div class="ulist">
 <ul>
 <li>
-<p><a href="login.html">로그인</a></p>
-</li>
-<li>
-<p><a href="signup.html">회원가입</a></p>
-</li>
-<li>
-<p><a href="find-onboarding-friends.html">가입한 친구 목록 불러오기</a></p>
-</li>
-<li>
-<p><a href="search-school.html">대학교 검색하기</a></p>
-</li>
-<li>
-<p><a href="search-department.html">대학교 학과 검색하기</a></p>
-</li>
-<li>
-<p><a href="search-high-name.html">고등학교 이름 검색하기</a></p>
-</li>
-<li>
-<p><a href="search-high-class.html">고등학교 이름으로 학반 검색하기</a></p>
-</li>
-<li>
-<p><a href="reissue-token.html">토큰 재발급</a></p>
+<p>"tag": "LUNCH_EVENT" | "ADMOB"</p>
 </li>
 </ul>
 </div>
 </div>
 <div class="sect2">
-<h3 id="_user_api"><a class="link" href="#_user_api">User API</a></h3>
+<h3 id="_note">NOTE</h3>
 <div class="ulist">
 <ul>
 <li>
-<p><a href="check-user.html">내 정보 조회하기 V1</a></p>
-</li>
+<p>Header에 무작위한 UUID4 값을 넣어주세요</p>
+<div class="ulist">
+<ul>
 <li>
-<p>🆕 <a href="check-user-v2.html">내 정보 조회하기 V2, 2024-01-30</a></p>
-</li>
-<li>
-<p>🆕 <a href="edit-user.html">유저 정보 수정, 2024-01-31</a></p>
-</li>
-<li>
-<p>🆕 <a href="user-data-get.html">프로필 수정 가능 여부 조회, 2024-01-31</a></p>
-</li>
-<li>
-<p>🆕 <a href="user-data-post.html">유저 기타 정보 저장, 2024-01-31</a></p>
-</li>
-<li>
-<p>🆕 <a href="purchase-info.html">유저 구독 정보, 2024-01-25</a></p>
-</li>
-<li>
-<p><a href="check-user-by-id.html">특정 유저 정보 조회하기</a></p>
-</li>
-<li>
-<p><a href="device-token.html">디바이스 토큰 수정하기</a></p>
-</li>
-<li>
-<p><a href="delete-user.html">유저 탈퇴</a></p>
-</li>
-<li>
-<p>🆕 <a href="delete-user-v2.html">유저 탈퇴 V2, 2024-01-30</a></p>
+<p>예시) IdempotencyKey: 0397b5f3-ecdc-47d6-b5d7-2b1afcf00e87</p>
 </li>
 </ul>
 </div>
-</div>
-<div class="sect2">
-<h3 id="_vote_api"><a class="link" href="#_vote_api">Vote API</a></h3>
+</li>
+<li>
+<p>주의사항</p>
 <div class="ulist">
 <ul>
 <li>
-<p><a href="find-votes.html">내 투표 전체 조회하기</a></p>
+<p>tag 요청값에 해당하는 이벤트의 날짜와 시간이 모두 유효해야함.
+(뭔가 에러나면 서버요청 ㄱㄱ)</p>
 </li>
 <li>
-<p><a href="find-friend-votes.html">친구 투표 전체 조회하기, 2024-01-09</a></p>
-</li>
-<li>
-<p>🆕 <a href="find-friend-votes-v2.html">친구 투표 전체 조회하기 v2, 2024-01-30</a></p>
-</li>
-<li>
-<p><a href="get-unread-vote.html">읽지 않은 쪽지 개수 조회하기</a></p>
-</li>
-<li>
-<p><a href="find-vote.html">투표 상세 조회하기</a></p>
-</li>
-<li>
-<p><a href="find-question.html">투표 질문 조회하기</a></p>
-</li>
-<li>
-<p><a href="check-vote-available.html">투표 가능 여부 조회하기</a></p>
-</li>
-<li>
-<p><a href="create-vote.html">투표 생성하기</a></p>
-</li>
-<li>
-<p><a href="reveal-name.html">투표 이름 부분 조회하기</a></p>
-</li>
-<li>
-<p><a href="reveal-full-name.html">투표 이름 전체 조회하기</a></p>
+<p>같은 멱등성키를 2번 요청하면, 400번 에러.</p>
 </li>
 </ul>
 </div>
-</div>
-<div class="sect2">
-<h3 id="_friend_api"><a class="link" href="#_friend_api">Friend API</a></h3>
+</li>
+<li>
+<p>ADMOB</p>
 <div class="ulist">
 <ul>
 <li>
-<p><a href="add-friend.html">친구 추가하기</a></p>
+<p>광고를 시청하기 전, 해당 API를 호출.</p>
 </li>
 <li>
-<p><a href="find-friends.html">친구 전체 조회하기</a></p>
-</li>
-<li>
-<p><a href="shuffle-friends.html">셔플된 친구 조회하기</a></p>
-</li>
-<li>
-<p><a href="find-group-friends.html">그룹 추천 친구 조회하기</a></p>
-</li>
-<li>
-<p><a href="find-kakao-friends.html">카카오 추천 친구 조회하기</a></p>
-</li>
-<li>
-<p><a href="delete-friend.html">친구 끊기</a></p>
-</li>
-<li>
-<p><a href="search-friend.html">친구 검색하기</a></p>
-</li>
-</ul>
-</div>
-</div>
-<div class="sect2">
-<h3 id="_purchase_api"><a class="link" href="#_purchase_api">Purchase API</a></h3>
-<div class="ulist">
-<ul>
-<li>
-<p><a href="apple.html">Apple 결제 관련 API</a></p>
-</li>
-<li>
-<p><a href="google.html">Google 결제 관련 API</a></p>
-</li>
-<li>
-<p><a href="sub-check.html">구독 연장 유도 필요 여부 확인하기</a></p>
-</li>
-<li>
-<p><a href="purchase-check.html">구독 상태 및 열람권 개수 조회하기</a></p>
-</li>
-</ul>
-</div>
-</div>
-<div class="sect2">
-<h3 id="_pay_api"><a class="link" href="#_pay_api">Pay API</a></h3>
-<div class="ulist">
-<ul>
-<li>
-<p>@Deprecated at 2024.03</p>
-<div class="ulist">
-<ul>
-<li>
-<p><a href="pay.html">결제 전환율 체크</a></p>
+<p>ADMOB 서버에 ServerSideVerificationOptions의 customData에 동일한 멱등성 키를 넘겨주세요.</p>
 </li>
 </ul>
 </div>
@@ -636,27 +534,11 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 </div>
 </div>
 <div class="sect2">
-<h3 id="_notice_api"><a class="link" href="#_notice_api">Notice API</a></h3>
+<h3 id="_changelog">CHANGELOG</h3>
 <div class="ulist">
 <ul>
 <li>
-<p>🆕 <a href="find-notice.html">공지 조회, 2024-01-29</a></p>
-</li>
-</ul>
-</div>
-</div>
-<div class="sect2">
-<h3 id="_event_api"><a class="link" href="#_event_api">Event API</a></h3>
-<div class="ulist">
-<ul>
-<li>
-<p>🆕 <a href="find-event.html">공지 조회, 2024-02-06</a></p>
-</li>
-<li>
-<p>🆕 <a href="create-event-history.html">이벤트 참여, 2024-02-07</a></p>
-</li>
-<li>
-<p>🆕 <a href="reward-event.html">이벤트 보상, 2024-02-07</a></p>
+<p>2024.02.07 릴리즈</p>
 </li>
 </ul>
 </div>
@@ -664,12 +546,10 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 </div>
 </div>
 </div>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.18.3/highlight.min.js"></script>
-<script>
-if (!hljs.initHighlighting.called) {
-  hljs.initHighlighting.called = true
-  ;[].slice.call(document.querySelectorAll('pre.highlight > code[data-lang]')).forEach(function (el) { hljs.highlightBlock(el) })
-}
-</script>
+<div id="footer">
+<div id="footer-text">
+Version 0.0.1-SNAPSHOT<br>
+</div>
+</div>
 </body>
 </html>

@@ -44,6 +44,7 @@ public enum ErrorCode {
     IDEMPOTENCY_KEY_INVALID_FORM_BAD_REQUEST_EXCEPTION(BAD_REQUEST, "멱등성 키가 유효한 uuid4 형식이 아닙니다."),
     EVENT_DATE_BAD_REQUEST_EXCEPTION(BAD_REQUEST, "해당 이벤트는 현재 유효한 날짜가 아닙니다."),
     EVENT_TIME_BAD_REQUEST_EXCEPTION(BAD_REQUEST, "해당 이벤트는 현재 유효한 시간이 아닙니다."),
+    EVENT_COUNT_BAD_REQUEST_EXCEPTION(BAD_REQUEST, "해당 이벤트는 보상 횟수가 전부 소진되었습니다."),
 
     /**
      * 401 UNAUTHORIZED
@@ -104,6 +105,7 @@ public enum ErrorCode {
     EVENT_REWARD_NOT_FOUND_EXCEPTION(NOT_FOUND, "해당 EventReward가 존재하지 않습니다."),
     EVENT_NOT_FOUND_EXCEPTION(NOT_FOUND, "해당 Event가 존재하지 않습니다."),
     EVENT_TIME_NOT_FOUND_EXCEPTION(NOT_FOUND, "해당 EventTime가 존재하지 않습니다."),
+    IDEMPOTENCY_KEY_NOT_FOUND_EXCEPTION(NOT_FOUND, "멱등키의 이벤트가 존재하지 않습니다. 이벤트 참여를 먼저 해주세요"),
 
     /**
      * 409 CONFLICT
