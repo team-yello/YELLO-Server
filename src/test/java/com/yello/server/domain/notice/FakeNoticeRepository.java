@@ -1,7 +1,10 @@
 package com.yello.server.domain.notice;
 
+import static com.yello.server.global.common.ErrorCode.NOT_FOUND_NOTICE_EXCEPTION;
+
 import com.yello.server.domain.notice.entity.Notice;
 import com.yello.server.domain.notice.entity.NoticeType;
+import com.yello.server.domain.notice.exception.NoticeNotFoundException;
 import com.yello.server.domain.notice.repository.NoticeRepository;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
@@ -25,10 +28,23 @@ public class FakeNoticeRepository implements NoticeRepository {
                 notice.getIsAvailable().equals(true) &&
                     !notice.getStartDate().isAfter(now) &&
                     !notice.getEndDate().isBefore(now) &&
-                        notice.getTag().equals(tag)
+                    notice.getTag().equals(tag)
             )
             .sorted(Comparator.comparing(Notice::getEndDate).reversed())
             .findFirst();
+    }
+
+    @Override
+    public List<Notice> findAll() {
+        return data;
+    }
+
+    @Override
+    public Notice getById(Long id) {
+        return data.stream()
+            .filter(notice -> notice.getId().equals(id))
+            .findFirst()
+            .orElseThrow(() -> new NoticeNotFoundException(NOT_FOUND_NOTICE_EXCEPTION));
     }
 
     @Override
@@ -46,5 +62,14 @@ public class FakeNoticeRepository implements NoticeRepository {
 
         data.add(newNotice);
         return newNotice;
+    }
+
+    @Override
+    public void update(Notice newNotice) {
+        for (int i = 0; i < data.size(); i++) {
+            if (data.get(i).getId().equals(newNotice.getId())) {
+                data.set(i, newNotice);
+            }
+        }
     }
 }

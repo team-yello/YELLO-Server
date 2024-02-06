@@ -8,6 +8,7 @@ import com.yello.server.domain.user.entity.User;
 import com.yello.server.domain.user.repository.UserRepository;
 import com.yello.server.global.common.factory.TimeFactory;
 import com.yello.server.infrastructure.slack.dto.response.SlackAppleNotificationResponse;
+import jakarta.servlet.http.HttpServletRequest;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
@@ -17,7 +18,6 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
-import javax.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import net.gpedro.integrations.slack.SlackAttachment;
 import net.gpedro.integrations.slack.SlackField;
@@ -39,10 +39,9 @@ public class SlackWebhookMessageFactory {
 
     private static final String APPLE_PURCHASE_ALARM_TITLE = "애플이 결제 관련 알림을 보냈습니다.";
     private static final String APPLE_PURCHASE_ALARM_USERNAME = "애플 뱅크 알림";
-
-    private final UserRepository userRepository;
-    private final TokenProvider tokenProvider;
     private final PurchaseManager purchaseManager;
+    private final TokenProvider tokenProvider;
+    private final UserRepository userRepository;
 
     private static String getRequestBody(HttpServletRequest request) throws IOException {
 
@@ -52,7 +51,7 @@ public class SlackWebhookMessageFactory {
 
         try {
             InputStream inputStream = request.getInputStream();
-            if (inputStream!=null) {
+            if (inputStream != null) {
                 bufferedReader = new BufferedReader(new InputStreamReader(inputStream));
                 char[] charBuffer = new char[128];
                 int bytesRead = -1;
@@ -63,7 +62,7 @@ public class SlackWebhookMessageFactory {
         } catch (IOException ex) {
             throw ex;
         } finally {
-            if (bufferedReader!=null) {
+            if (bufferedReader != null) {
                 try {
                     bufferedReader.close();
                 } catch (IOException ex) {
@@ -173,10 +172,10 @@ public class SlackWebhookMessageFactory {
         HttpServletRequest request
     ) throws IOException {
         final String authHeader = request.getHeader(HttpHeaders.AUTHORIZATION);
-        final String token = authHeader==null ? "null" : authHeader.substring("Bearer ".length());
-        final Long userId = authHeader==null ? -1L : tokenProvider.getUserId(token);
+        final String token = authHeader == null ? "null" : authHeader.substring("Bearer ".length());
+        final Long userId = authHeader == null ? -1L : tokenProvider.getUserId(token);
         final Optional<User> user =
-            authHeader==null ? Optional.empty() : userRepository.findById(userId);
+            authHeader == null ? Optional.empty() : userRepository.findById(userId);
         final String yelloId = user.isPresent() ? user.get().getYelloId() : "null";
         final String deviceToken = user.isPresent() ? user.get().getDeviceToken() : "null";
 

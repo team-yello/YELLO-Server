@@ -7,7 +7,7 @@ include::{snippets}/api/v1/auth/findGroupIdByName/http-request.adoc[]
 
 === 요청 파라미터
 
-include::{snippets}/api/v1/auth/findGroupIdByName/request-parameters.adoc[]
+include::{snippets}/api/v1/auth/findGroupIdByName/query-parameters.adoc[]
 
 === 응답
 

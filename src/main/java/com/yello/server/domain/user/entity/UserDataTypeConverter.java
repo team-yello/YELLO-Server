@@ -1,6 +1,6 @@
 package com.yello.server.domain.user.entity;
 
-import javax.persistence.AttributeConverter;
+import jakarta.persistence.AttributeConverter;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j

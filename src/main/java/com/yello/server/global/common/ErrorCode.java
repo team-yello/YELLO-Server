@@ -39,6 +39,7 @@ public enum ErrorCode {
     USER_ADMIN_BAD_REQUEST_EXCEPTION(BAD_REQUEST, "검색 필드가 없습니다."),
     USER_DATA_INVALID_ARGUMENT_EXCEPTION(BAD_REQUEST, "입력한 유저 데이터의 값이 올바르지 않습니다."),
     ENUM_BAD_REQUEST_EXCEPTION(BAD_REQUEST, "존재하지 않는 열거형 타입입니다."),
+    PROBABILITY_BAD_REQUEST_EXCEPTION(BAD_REQUEST, "확률의 합이 100이 아닙니다."),
 
     /**
      * 401 UNAUTHORIZED
@@ -96,6 +97,9 @@ public enum ErrorCode {
     NOT_FOUND_NOTICE_EXCEPTION(NOT_FOUND, "공지가 존재하지 않습니다."),
     ADMIN_CONFIGURATION_NOT_FOUND_EXCEPTION(NOT_FOUND, "해당 설정이 존재하지 않습니다."),
     USER_DATA_NOT_FOUND_EXCEPTION(NOT_FOUND, "해당 유저 데이터가 존재하지 않습니다."),
+    EVENT_REWARD_NOT_FOUND_EXCEPTION(NOT_FOUND, "해당 EventReward가 존재하지 않습니다."),
+    EVENT_NOT_FOUND_EXCEPTION(NOT_FOUND, "해당 Event가 존재하지 않습니다."),
+    EVENT_TIME_NOT_FOUND_EXCEPTION(NOT_FOUND, "해당 EventTime가 존재하지 않습니다."),
 
     /**
      * 409 CONFLICT

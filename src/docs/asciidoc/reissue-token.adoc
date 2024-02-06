@@ -1,8 +1,6 @@
 :reproducible:
 == 토큰 재발급
 
-operation::api/v1/auth/reIssueToken[snippets='http-request,http-response']
-
 === 요청
 
 include::{snippets}/api/v1/auth/reIssueToken/http-request.adoc[]

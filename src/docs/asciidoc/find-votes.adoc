@@ -7,7 +7,7 @@ include::{snippets}/api/v1/vote/findAllMyVotes/http-request.adoc[]
 
 === 요청 파라미터
 
-include::{snippets}/api/v1/vote/findAllMyVotes/request-parameters.adoc[]
+include::{snippets}/api/v1/vote/findAllMyVotes/query-parameters.adoc[]
 
 === 응답
 

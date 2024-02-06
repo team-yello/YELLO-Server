@@ -4,7 +4,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.yello.server.domain.user.entity.Gender;
 import com.yello.server.domain.user.entity.Social;
 import com.yello.server.domain.user.entity.Subscribe;
-import javax.validation.constraints.NotNull;
+import jakarta.validation.constraints.NotNull;
 
 public record AdminUserDetailRequest(
     @JsonIgnore Long id,

@@ -7,7 +7,7 @@ include::{snippets}/api/v1/vote/findAllFriendVotes/http-request.adoc[]
 
 === 요청 파라미터
 
-include::{snippets}/api/v1/vote/findAllFriendVotes/request-parameters.adoc[]
+include::{snippets}/api/v1/vote/findAllFriendVotes/query-parameters.adoc[]
 
 === 응답
 
