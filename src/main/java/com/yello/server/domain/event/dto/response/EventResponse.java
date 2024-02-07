@@ -7,7 +7,6 @@ import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.yello.server.domain.event.entity.Event;
 import com.yello.server.domain.event.entity.EventRewardMapping;
-import com.yello.server.domain.event.entity.EventRewardRandomType;
 import com.yello.server.domain.event.entity.EventTime;
 import com.yello.server.domain.event.entity.EventType;
 import jakarta.annotation.Nullable;
@@ -78,7 +77,7 @@ public record EventResponse(
         Long maxRewardValue,
         Long minRewardValue,
         Integer eventRewardProbability,
-        EventRewardRandomType randomTag
+        String randomTag
     ) {
 
         public static EventRewardItemVO of(EventRewardMapping eventRewardMapping) {
@@ -89,7 +88,7 @@ public record EventResponse(
                 .maxRewardValue(eventRewardMapping.getEventReward().getMaxRewardValue())
                 .minRewardValue(eventRewardMapping.getEventReward().getMinRewardValue())
                 .eventRewardProbability(eventRewardMapping.getEventRewardProbability())
-                .randomTag(eventRewardMapping.getRandomTag())
+                .randomTag(eventRewardMapping.getEventRandom().getRandomTag())
                 .build();
         }
     }

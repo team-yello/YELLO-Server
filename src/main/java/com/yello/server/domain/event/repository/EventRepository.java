@@ -4,6 +4,7 @@ import com.yello.server.domain.event.entity.Event;
 import com.yello.server.domain.event.entity.EventHistory;
 import com.yello.server.domain.event.entity.EventInstance;
 import com.yello.server.domain.event.entity.EventInstanceReward;
+import com.yello.server.domain.event.entity.EventRandom;
 import com.yello.server.domain.event.entity.EventReward;
 import com.yello.server.domain.event.entity.EventRewardMapping;
 import com.yello.server.domain.event.entity.EventTime;
@@ -29,11 +30,13 @@ public interface EventRepository {
 
     List<EventReward> findRewardAll();
 
-    List<EventInstance> findInstanceAllByEventAndUser(Event event, User user);
+    List<EventInstance> findInstanceAllByEventTimeAndUser(EventTime eventTime, User user);
 
     Event getByTag(EventType tag);
 
     EventReward getRewardById(Long eventRewardId);
+
+    EventRandom getRandomByRandomTag(String randomTag);
 
     Optional<EventHistory> findHistoryByIdempotencyKey(UUID idempotencyKey);
 

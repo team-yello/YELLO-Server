@@ -41,6 +41,7 @@ import com.yello.server.domain.authorization.service.AuthManager;
 import com.yello.server.domain.cooldown.entity.Cooldown;
 import com.yello.server.domain.cooldown.repository.CooldownRepository;
 import com.yello.server.domain.event.entity.Event;
+import com.yello.server.domain.event.entity.EventRandom;
 import com.yello.server.domain.event.entity.EventReward;
 import com.yello.server.domain.event.entity.EventRewardMapping;
 import com.yello.server.domain.event.entity.EventTime;
@@ -443,12 +444,13 @@ public class AdminService {
 
             eventRewardVO.eventRewardItem().forEach(eventRewardItemVO -> {
                 final EventReward eventReward = adminRepository.getByTag(eventRewardItemVO.tag());
+                final EventRandom eventRandom = adminRepository.getByRandomTag(eventRewardItemVO.randomTag());
 
                 adminRepository.save(EventRewardMapping.builder()
                     .eventTime(newEventTime)
                     .eventReward(eventReward)
+                    .eventRandom(eventRandom)
                     .eventRewardProbability(eventRewardItemVO.eventRewardProbability())
-                    .randomTag(eventRewardItemVO.randomTag())
                     .build());
             });
         });
