@@ -50,20 +50,40 @@ public class EventService {
         OffsetTime nowTime = now.toOffsetDateTime().toOffsetTime();
         List<EventResponse> result = new ArrayList<>();
 
+        // 현재 날짜에 유효한 이벤트.
         final List<Event> eventList = eventRepository.findAll().stream()
             .filter(event -> now.isAfter(event.getStartDate()) && now.isBefore(event.getEndDate()))
             .toList();
 
         for (Event event : eventList) {
+            // 현재 시각에 유효한 이벤트 시간대
             final List<EventTime> eventTimeList = eventRepository.findAllByEventId(event.getId()).stream()
                 .filter(
                     eventTime -> nowTime.isAfter(eventTime.getStartTime()) && nowTime.isBefore(eventTime.getEndTime())
                 )
                 .toList();
 
-            final EventTime eventTime = eventTimeList.isEmpty() ? null : eventTimeList.get(0);
+            /**
+             * EventTime을 바꾸면, EventInstance가 바뀌지 않음.
+             * 이벤트 시간대가 바뀌면, 내일부터 적용된다고 말하기
+             */
+            // 이벤트 참가한 이력이 오늘이고, 현재 시각이 이벤트 시간에 유효하고, 남은 보상 카운트가 0인 이력
+            final List<EventInstance> eventInstanceList = eventRepository.findInstanceAllByEventAndUser(event, user)
+                .stream()
+                .filter(eventInstance -> eventInstance.getInstanceDate().isAfter(event.getStartDate())
+                    && eventInstance.getInstanceDate().isBefore(event.getEndDate())
+                    && nowTime.isAfter(eventInstance.getStartTime()) && nowTime.isBefore(eventInstance.getEndTime())
+                    && eventInstance.getRemainEventCount() == 0)
+                .toList();
+
+            // 해당 변수로 클라가 이벤트를 띄울지 판단하게 됨.
+            // 이벤트 시간대가 있고, 보상 카운트가 0인 참여이력이 없을 때
+            // k번 이벤트 참여는 보상 카운트로 구현한다.
+            boolean isEventAvailable = !eventTimeList.isEmpty() && eventInstanceList.isEmpty();
+
+            final EventTime eventTime = isEventAvailable ? eventTimeList.get(0) : null;
             final List<EventRewardMapping> eventRewardMappingList =
-                eventTimeList.isEmpty() ? null : eventRepository.findAllByEventTimeId(eventTime.getId());
+                isEventAvailable ? eventRepository.findAllByEventTimeId(eventTime.getId()) : null;
 
             result.add(EventResponse.of(event, eventTime, eventRewardMappingList));
         }

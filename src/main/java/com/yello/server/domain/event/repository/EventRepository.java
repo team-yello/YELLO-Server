@@ -8,6 +8,7 @@ import com.yello.server.domain.event.entity.EventReward;
 import com.yello.server.domain.event.entity.EventRewardMapping;
 import com.yello.server.domain.event.entity.EventTime;
 import com.yello.server.domain.event.entity.EventType;
+import com.yello.server.domain.user.entity.User;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -27,6 +28,8 @@ public interface EventRepository {
     List<EventRewardMapping> findAllByEventTimeId(Long eventTimeId);
 
     List<EventReward> findRewardAll();
+
+    List<EventInstance> findInstanceAllByEventAndUser(Event event, User user);
 
     Event getByTag(EventType tag);
 

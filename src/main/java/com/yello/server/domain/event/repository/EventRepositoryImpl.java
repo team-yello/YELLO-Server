@@ -11,6 +11,7 @@ import com.yello.server.domain.event.entity.EventRewardMapping;
 import com.yello.server.domain.event.entity.EventTime;
 import com.yello.server.domain.event.entity.EventType;
 import com.yello.server.domain.event.exception.EventNotFoundException;
+import com.yello.server.domain.user.entity.User;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -62,6 +63,11 @@ public class EventRepositoryImpl implements EventRepository {
     @Override
     public List<EventReward> findRewardAll() {
         return eventRewardJpaRepository.findAll();
+    }
+
+    @Override
+    public List<EventInstance> findInstanceAllByEventAndUser(Event event, User user) {
+        return eventInstanceJpaRepository.findAllByEventAndUser(event, user);
     }
 
     @Override
