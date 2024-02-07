@@ -16,14 +16,14 @@ public interface VoteJpaRepository extends JpaRepository<Vote, Long> {
         + "where v.receiver.id = :userId "
         + "and v.receiver.deletedAt is null "
         + "and v.sender.deletedAt is null "
-        + "and v.isRead is false")
+        + "and v.isRead = false")
     Integer countUnreadByReceiverUserId(@Param("userId") Long userId);
 
     @Query("select count(v) from Vote v "
         + "where v.receiver.deviceToken = :deviceToken "
         + "and v.receiver.deletedAt is null "
         + "and v.sender.deletedAt is null "
-        + "and v.isRead is false")
+        + "and v.isRead = false")
     Integer countUnreadByReceiverDeviceToken(@Param("deviceToken") String deviceToken);
 
     @Query("select v from Vote v "
@@ -50,22 +50,22 @@ public interface VoteJpaRepository extends JpaRepository<Vote, Long> {
 
     @Query("select count(v) from Vote v "
         + "where v.receiver.id = :userId "
-        + "and v.isRead is true "
+        + "and v.isRead = true "
         + "and v.receiver.deletedAt is null "
         + "and v.sender.deletedAt is null")
     Integer countReadByReceiverUserId(@Param("userId") Long userId);
 
     @Query("select count(v) from Vote v "
         + "where v.receiver.id = :userId "
-        + "and v.isRead is true "
-        + "and v.isAnswerRevealed is true "
+        + "and v.isRead = true "
+        + "and v.isAnswerRevealed = true "
         + "and v.receiver.deletedAt is null "
         + "and v.sender.deletedAt is null")
     Integer countOpenKeywordByReceiverUserId(@Param("userId") Long userId);
 
     @Query("select count(v) from Vote v "
         + "where v.receiver.id = :userId "
-        + "and v.isRead is true "
+        + "and v.isRead = true "
         + "and v.nameHint in (0,1) "
         + "and v.receiver.deletedAt is null "
         + "and v.sender.deletedAt is null")
@@ -74,7 +74,7 @@ public interface VoteJpaRepository extends JpaRepository<Vote, Long> {
 
     @Query("select count(v) from Vote v "
         + "where v.receiver.id = :userId "
-        + "and v.isRead is true "
+        + "and v.isRead = true "
         + "and v.nameHint = -2 "
         + "and v.receiver.deletedAt is null "
         + "and v.sender.deletedAt is null")
