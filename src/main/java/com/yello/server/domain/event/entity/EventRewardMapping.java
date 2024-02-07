@@ -1,7 +1,6 @@
 package com.yello.server.domain.event.entity;
 
 import jakarta.persistence.Column;
-import jakarta.persistence.Convert;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
@@ -38,11 +37,11 @@ public class EventRewardMapping {
     @OnDelete(action = OnDeleteAction.RESTRICT)
     private EventReward eventReward;
 
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "eventRandomId")
+    @OnDelete(action = OnDeleteAction.RESTRICT)
+    private EventRandom eventRandom;
+
     @Column(columnDefinition = "int NOT NULL CHECK (event_reward_probability BETWEEN 0 and 100)")
     private Integer eventRewardProbability;
-
-
-    @Column(nullable = false)
-    @Convert(converter = EventRewardRandomTypeConverter.class)
-    private EventRewardRandomType randomTag;
 }

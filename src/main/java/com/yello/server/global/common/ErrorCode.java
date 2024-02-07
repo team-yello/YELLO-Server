@@ -106,6 +106,7 @@ public enum ErrorCode {
     EVENT_NOT_FOUND_EXCEPTION(NOT_FOUND, "해당 Event가 존재하지 않습니다."),
     EVENT_TIME_NOT_FOUND_EXCEPTION(NOT_FOUND, "해당 EventTime가 존재하지 않습니다."),
     IDEMPOTENCY_KEY_NOT_FOUND_EXCEPTION(NOT_FOUND, "멱등키의 이벤트가 존재하지 않습니다. 이벤트 참여를 먼저 해주세요"),
+    EVENT_RANDOM_NOT_FOUND_EXCEPTION(NOT_FOUND, "해당 EventRandom가 존재하지 않습니다."),
 
     /**
      * 409 CONFLICT

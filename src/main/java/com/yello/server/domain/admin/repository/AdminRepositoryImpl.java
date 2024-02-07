@@ -3,16 +3,19 @@ package com.yello.server.domain.admin.repository;
 import static com.yello.server.domain.event.entity.QEvent.event;
 import static com.yello.server.domain.event.entity.QEventTime.eventTime;
 import static com.yello.server.global.common.ErrorCode.EVENT_NOT_FOUND_EXCEPTION;
+import static com.yello.server.global.common.ErrorCode.EVENT_RANDOM_NOT_FOUND_EXCEPTION;
 import static com.yello.server.global.common.ErrorCode.EVENT_REWARD_NOT_FOUND_EXCEPTION;
 import static com.yello.server.global.common.ErrorCode.EVENT_TIME_NOT_FOUND_EXCEPTION;
 
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import com.yello.server.domain.admin.exception.UserAdminNotFoundException;
 import com.yello.server.domain.event.entity.Event;
+import com.yello.server.domain.event.entity.EventRandom;
 import com.yello.server.domain.event.entity.EventReward;
 import com.yello.server.domain.event.entity.EventRewardMapping;
 import com.yello.server.domain.event.entity.EventTime;
 import com.yello.server.domain.event.repository.EventJpaRepository;
+import com.yello.server.domain.event.repository.EventRandomJpaRepository;
 import com.yello.server.domain.event.repository.EventRewardJpaRepository;
 import com.yello.server.domain.event.repository.EventRewardMappingJpaRepository;
 import com.yello.server.domain.event.repository.EventTimeJpaRepository;
@@ -25,6 +28,7 @@ import org.springframework.stereotype.Repository;
 public class AdminRepositoryImpl implements AdminRepository {
 
     private final EventJpaRepository eventJpaRepository;
+    private final EventRandomJpaRepository eventRandomJpaRepository;
     private final EventRewardJpaRepository eventRewardJpaRepository;
     private final EventRewardMappingJpaRepository eventRewardMappingJpaRepository;
     private final EventTimeJpaRepository eventTimeJpaRepository;
@@ -73,5 +77,11 @@ public class AdminRepositoryImpl implements AdminRepository {
     public EventReward getByTag(String tag) {
         return eventRewardJpaRepository.findByTag(tag)
             .orElseThrow(() -> new UserAdminNotFoundException(EVENT_REWARD_NOT_FOUND_EXCEPTION));
+    }
+
+    @Override
+    public EventRandom getByRandomTag(String randomTag) {
+        return eventRandomJpaRepository.findTopByRandomTag(randomTag)
+            .orElseThrow(() -> new UserAdminNotFoundException(EVENT_RANDOM_NOT_FOUND_EXCEPTION));
     }
 }

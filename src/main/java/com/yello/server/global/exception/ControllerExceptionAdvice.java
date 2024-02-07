@@ -21,6 +21,7 @@ import com.yello.server.domain.authorization.exception.NotSignedInException;
 import com.yello.server.domain.authorization.exception.NotValidTokenForbiddenException;
 import com.yello.server.domain.authorization.exception.OAuthException;
 import com.yello.server.domain.event.exception.EventBadRequestException;
+import com.yello.server.domain.event.exception.EventNotFoundException;
 import com.yello.server.domain.friend.exception.FriendException;
 import com.yello.server.domain.friend.exception.FriendNotFoundException;
 import com.yello.server.domain.group.exception.GroupNotFoundException;
@@ -192,7 +193,8 @@ public class ControllerExceptionAdvice {
         GoogleTokenNotFoundException.class,
         UserAdminNotFoundException.class,
         NoticeNotFoundException.class,
-        AdminConfigurationNotFoundException.class
+        AdminConfigurationNotFoundException.class,
+        EventNotFoundException.class
     })
     public ResponseEntity<BaseResponse> NotFoundException(CustomException exception) {
         return ResponseEntity.status(NOT_FOUND)

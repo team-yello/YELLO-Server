@@ -1,6 +1,7 @@
 package com.yello.server.domain.admin.repository;
 
 import com.yello.server.domain.event.entity.Event;
+import com.yello.server.domain.event.entity.EventRandom;
 import com.yello.server.domain.event.entity.EventReward;
 import com.yello.server.domain.event.entity.EventRewardMapping;
 import com.yello.server.domain.event.entity.EventTime;
@@ -20,4 +21,6 @@ public interface AdminRepository {
     EventTime getEventTimeById(Long eventTimeId);
 
     EventReward getByTag(String tag);
+
+    EventRandom getByRandomTag(String randomTag);
 }
