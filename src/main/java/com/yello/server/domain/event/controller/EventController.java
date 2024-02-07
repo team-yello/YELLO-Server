@@ -62,7 +62,7 @@ public class EventController {
 
     @PostMapping("/v1/event/reward")
     public BaseResponse<EventRewardResponse> rewardEvent(@AccessTokenUser User user,
-        HttpServletRequest requestServlet) {
+        HttpServletRequest requestServlet) throws JsonProcessingException {
         final String idempotencyKey = requestServlet.getHeader(IdempotencyKeyHeader);
         if (!StringUtils.hasText(idempotencyKey)) {
             throw new EventBadRequestException(IDEMPOTENCY_KEY_BAD_REQUEST_EXCEPTION);
