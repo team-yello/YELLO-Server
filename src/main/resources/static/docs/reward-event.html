@@ -469,9 +469,29 @@ Content-Type: application/json
   "message" : "이벤트 보상에 성공하였습니다.",
   "data" : {
     "rewardTag" : "TICKET",
-    "rewardValue" : 200,
-    "rewardTitle" : "https://storage.googleapis.com/yelloworld/image/coin-stack.svg",
-    "rewardImage" : "200 포인트를 얻었어요!"
+    "rewardValue" : 1,
+    "rewardTitle" : "1 열람권를 얻었어요!",
+    "rewardImage" : "https://storage.googleapis.com/yelloworld/image/coin-stack.svg"
+  }
+}</code></pre>
+</div>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight nowrap"><code class="language-http" data-lang="http">HTTP/1.1 200 OK
+Vary: Origin
+Vary: Access-Control-Request-Method
+Vary: Access-Control-Request-Headers
+Content-Type: application/json
+
+{
+  "status" : 200,
+  "message" : "이벤트 보상에 성공하였습니다.",
+  "data" : {
+    "rewardTag" : "POINT",
+    "rewardValue" : 100,
+    "rewardTitle" : "200 포인트를 얻었어요!",
+    "rewardImage" : "https://storage.googleapis.com/yelloworld/image/coin-stack.svg"
   }
 }</code></pre>
 </div>
@@ -479,7 +499,22 @@ Content-Type: application/json
 </div>
 <div class="sect2">
 <h3 id="_주의">주의</h3>
-
+<div class="ulist">
+<ul>
+<li>
+<p>"rewardTag": "TICKET" | "POINT"</p>
+</li>
+<li>
+<p>"rewardValue": Long</p>
+</li>
+<li>
+<p>"rewardTitle": String</p>
+</li>
+<li>
+<p>"rewardImage": String</p>
+</li>
+</ul>
+</div>
 </div>
 <div class="sect2">
 <h3 id="_note">NOTE</h3>

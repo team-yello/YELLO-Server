@@ -1,7 +1,5 @@
 package com.yello.server.domain.event.medium;
 
-import static com.yello.server.domain.event.entity.EventRewardRandomType.FIXED;
-import static com.yello.server.domain.event.entity.EventRewardRandomType.RANDOM;
 import static com.yello.server.domain.event.entity.EventType.ADMOB;
 import static com.yello.server.domain.event.entity.EventType.LUNCH_EVENT;
 import static com.yello.server.global.common.util.ConstantUtil.GlobalZoneId;
@@ -24,6 +22,7 @@ import com.yello.server.domain.event.dto.request.EventJoinRequest;
 import com.yello.server.domain.event.dto.response.EventResponse;
 import com.yello.server.domain.event.dto.response.EventRewardResponse;
 import com.yello.server.domain.event.entity.Event;
+import com.yello.server.domain.event.entity.EventRandom;
 import com.yello.server.domain.event.entity.EventReward;
 import com.yello.server.domain.event.entity.EventRewardMapping;
 import com.yello.server.domain.event.entity.EventTime;
@@ -135,18 +134,27 @@ class EventControllerTest {
             .endTime(OffsetTime.of(14, 0, 0, 0, ZoneOffset.of("+09:00")))
             .build();
 
+        final EventRandom eventRandom1 = EventRandom.builder()
+            .randomTag("FIXED")
+            .probabilityPointList("[{\"x\": 0, \"y\": 1},{ \"x\": 1, \"y\": 1}]")
+            .build();
+        final EventRandom eventRandom2 = EventRandom.builder()
+            .randomTag("RANDOM")
+            .probabilityPointList("[{\"x\": 0, \"y\": 0},{ \"x\": 0.8, \"y\": 0.55 }, { \"x\": 1, \"y\": 1 }]")
+            .build();
+
         final List<EventRewardMapping> rewardList1 = List.of(
             EventRewardMapping.builder()
                 .eventTime(eventTime1)
                 .eventReward(ticket)
                 .eventRewardProbability(10)
-                .randomTag(FIXED)
+                .eventRandom(eventRandom1)
                 .build(),
             EventRewardMapping.builder()
                 .eventTime(eventTime1)
                 .eventReward(point)
                 .eventRewardProbability(90)
-                .randomTag(RANDOM)
+                .eventRandom(eventRandom2)
                 .build()
         );
 
@@ -176,7 +184,7 @@ class EventControllerTest {
                 .eventTime(eventTime3)
                 .eventReward(admobPoint)
                 .eventRewardProbability(100)
-                .randomTag(FIXED)
+                .eventRandom(eventRandom1)
                 .build()
         );
 
@@ -237,18 +245,27 @@ class EventControllerTest {
             .endTime(OffsetTime.of(0, 0, 0, 0, ZoneOffset.of("+09:00")))
             .build();
 
+        final EventRandom eventRandom1 = EventRandom.builder()
+            .randomTag("FIXED")
+            .probabilityPointList("[{\"x\": 0, \"y\": 1},{ \"x\": 1, \"y\": 1}]")
+            .build();
+        final EventRandom eventRandom2 = EventRandom.builder()
+            .randomTag("RANDOM")
+            .probabilityPointList("[{\"x\": 0, \"y\": 0},{ \"x\": 0.8, \"y\": 0.55 }, { \"x\": 1, \"y\": 1 }]")
+            .build();
+
         final List<EventRewardMapping> rewardList2 = List.of(
             EventRewardMapping.builder()
                 .eventTime(eventTime2)
                 .eventReward(ticket)
                 .eventRewardProbability(40)
-                .randomTag(FIXED)
+                .eventRandom(eventRandom1)
                 .build(),
             EventRewardMapping.builder()
                 .eventTime(eventTime2)
                 .eventReward(point)
                 .eventRewardProbability(60)
-                .randomTag(RANDOM)
+                .eventRandom(eventRandom2)
                 .build()
         );
 
@@ -278,7 +295,7 @@ class EventControllerTest {
                 .eventTime(eventTime3)
                 .eventReward(admobPoint)
                 .eventRewardProbability(100)
-                .randomTag(FIXED)
+                .eventRandom(eventRandom1)
                 .build()
         );
 
@@ -338,12 +355,17 @@ class EventControllerTest {
             .startTime(OffsetTime.of(0, 0, 0, 0, ZoneOffset.of("+09:00")))
             .endTime(OffsetTime.of(23, 59, 59, 999999, ZoneOffset.of("+09:00")))
             .build();
+
+        final EventRandom eventRandom1 = EventRandom.builder()
+            .randomTag("FIXED")
+            .probabilityPointList("[{\"x\": 0, \"y\": 1},{ \"x\": 1, \"y\": 1}]")
+            .build();
         final List<EventRewardMapping> rewardList3 = List.of(
             EventRewardMapping.builder()
                 .eventTime(eventTime3)
                 .eventReward(admobPoint)
                 .eventRewardProbability(100)
-                .randomTag(FIXED)
+                .eventRandom(eventRandom1)
                 .build()
         );
 
@@ -404,12 +426,45 @@ class EventControllerTest {
     @Test
     void 이벤트_참여에_성공합니다2() throws Exception {
         // given
+        final String idempotencyKey = "0397b5f3-ecdc-47d6-b5d7-2b1afcf00e87";
+        final EventJoinRequest request = EventJoinRequest.builder()
+            .tag(ADMOB.getInitial())
+            .build();
+
+        doNothing()
+            .when(eventService)
+            .joinEvent(any(Long.class), any(UUID.class), eq(request));
+
+        // when
+
+        // then
+        mockMvc.perform(
+                RestDocumentationRequestBuilders.post("/api/v1/event")
+                    .with(csrf().asHeader())
+                    .header(HttpHeaders.AUTHORIZATION, "Bearer your-access-token")
+                    .header(ConstantUtil.IdempotencyKeyHeader, idempotencyKey)
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .content(objectMapper.writeValueAsString(request)))
+            .andDo(print())
+            .andDo(document("api/v1/event/join/2",
+                Preprocessors.preprocessRequest(excludeRequestHeaders),
+                Preprocessors.preprocessResponse(excludeResponseHeaders)
+            ))
+            .andExpect(MockMvcResultMatchers.status().isOk());
+    }
+
+    @Test
+    void 이벤트_보상에_성공합니다1() throws Exception {
+        // given
         final String idempotencyKey = "87552f7c-9b62-4b12-b567-1bd062b09288";
+        /**
+         * TODO EventRewardResponse.of로 변경할 것
+         */
         EventRewardResponse response = EventRewardResponse.builder()
             .rewardTag("TICKET")
-            .rewardValue(200L)
-            .rewardImage("200 포인트를 얻었어요!")
-            .rewardTitle("https://storage.googleapis.com/yelloworld/image/coin-stack.svg")
+            .rewardValue(1L)
+            .rewardImage("https://storage.googleapis.com/yelloworld/image/coin-stack.svg")
+            .rewardTitle("1 열람권를 얻었어요!")
             .build();
 
         given(eventService.rewardEvent(any(Long.class), any(UUID.class)))
@@ -425,6 +480,39 @@ class EventControllerTest {
                     .contentType(MediaType.APPLICATION_JSON))
             .andDo(print())
             .andDo(document("api/v1/event/reward/1",
+                Preprocessors.preprocessRequest(excludeRequestHeaders),
+                Preprocessors.preprocessResponse(excludeResponseHeaders)
+            ))
+            .andExpect(MockMvcResultMatchers.status().isOk());
+    }
+
+    @Test
+    void 이벤트_보상에_성공합니다2() throws Exception {
+        // given
+        final String idempotencyKey = "87552f7c-9b62-4b12-b567-1bd062b09288";
+        /**
+         * TODO EventRewardResponse.of로 변경할 것
+         */
+        EventRewardResponse response = EventRewardResponse.builder()
+            .rewardTag("POINT")
+            .rewardValue(100L)
+            .rewardImage("https://storage.googleapis.com/yelloworld/image/coin-stack.svg")
+            .rewardTitle("200 포인트를 얻었어요!")
+            .build();
+
+        given(eventService.rewardEvent(any(Long.class), any(UUID.class)))
+            .willReturn(response);
+        // when
+
+        // then
+        mockMvc.perform(
+                RestDocumentationRequestBuilders.post("/api/v1/event/reward")
+                    .with(csrf().asHeader())
+                    .header(HttpHeaders.AUTHORIZATION, "Bearer your-access-token")
+                    .header(ConstantUtil.IdempotencyKeyHeader, idempotencyKey)
+                    .contentType(MediaType.APPLICATION_JSON))
+            .andDo(print())
+            .andDo(document("api/v1/event/reward/2",
                 Preprocessors.preprocessRequest(excludeRequestHeaders),
                 Preprocessors.preprocessResponse(excludeResponseHeaders)
             ))

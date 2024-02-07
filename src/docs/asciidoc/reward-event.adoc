@@ -8,8 +8,14 @@ include::{snippets}/api/v1/event/reward/1/http-request.adoc[]
 === 응답
 
 include::{snippets}/api/v1/event/reward/1/http-response.adoc[]
+include::{snippets}/api/v1/event/reward/2/http-response.adoc[]
 
 === 주의
+
+- "rewardTag": "TICKET" | "POINT"
+- "rewardValue": Long
+- "rewardTitle": String
+- "rewardImage": String
 
 === NOTE
 
