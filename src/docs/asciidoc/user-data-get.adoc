@@ -12,7 +12,7 @@ include::{snippets}/api/v1/user/data/read/1/http-request.adoc[]
 === 응답
 
 include::{snippets}/api/v1/user/data/read/1/http-response.adoc[]
-include::{snippets}/api/v1/user/data/read/1/http-response.adoc[]
+include::{snippets}/api/v1/user/data/read/2/http-response.adoc[]
 
 *필드 타입*
 
