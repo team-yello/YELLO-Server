@@ -30,7 +30,6 @@ include::{snippets}/api/v1/event/3/http-response.adoc[]
 === NOTE
 
 - *!* LUNCH_EVENT에 해당하는 Response가 없거나, LUNCH_EVENT Response의 eventReward가 null이면, 메인화면 접속시, 이벤트 화면을 띄워주지마세요.
-- 이벤트 참여 요청, 이벤트 보상 반환 API 문서 작성중..
 
 === CHANGELOG
 

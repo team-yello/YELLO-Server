@@ -48,4 +48,10 @@ public class EventReward {
 
     @Column
     private String image;
+
+    @Column
+    private String rewardTitle;
+
+    @Column
+    private String rewardImage;
 }

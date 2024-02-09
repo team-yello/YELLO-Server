@@ -463,8 +463,8 @@ class EventControllerTest {
         EventRewardResponse response = EventRewardResponse.builder()
             .rewardTag("TICKET")
             .rewardValue(1L)
-            .rewardImage("https://storage.googleapis.com/yelloworld/image/coin-stack.svg")
-            .rewardTitle("1 열람권를 얻었어요!")
+            .rewardTitle(String.format("열람권 %s개를 얻었어요!", 1L))
+            .rewardImage("https://storage.googleapis.com/yelloworld/image/ticket-reward.svg")
             .build();
 
         given(eventService.rewardEvent(any(Long.class), any(UUID.class)))
@@ -495,9 +495,9 @@ class EventControllerTest {
          */
         EventRewardResponse response = EventRewardResponse.builder()
             .rewardTag("POINT")
-            .rewardValue(100L)
-            .rewardImage("https://storage.googleapis.com/yelloworld/image/coin-stack.svg")
-            .rewardTitle("200 포인트를 얻었어요!")
+            .rewardValue(79L)
+            .rewardTitle(String.format("%s 포인트를 얻었어요!", 79L))
+            .rewardImage("https://storage.googleapis.com/yelloworld/image/coin-reward.svg")
             .build();
 
         given(eventService.rewardEvent(any(Long.class), any(UUID.class)))
