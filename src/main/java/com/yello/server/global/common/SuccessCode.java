@@ -62,6 +62,7 @@ public enum SuccessCode {
     EVENT_REWARD_CREATE_ADMIN_SUCCESS(OK, "어드민 권한으로 이벤트 보상 생성에 성공하였습니다."),
     EVENT_JOIN_SUCCESS(OK, "이벤트 참여에 성공하였습니다."),
     EVENT_REWARD_SUCCESS(OK, "이벤트 보상에 성공하였습니다."),
+    VERIFY_ADMOB_SSV_SUCCESS(OK, "Admob ssv 검증에 성공하였습니다."),
 
     /**
      * 201 CREATED

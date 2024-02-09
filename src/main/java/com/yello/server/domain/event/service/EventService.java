@@ -10,6 +10,8 @@ import static com.yello.server.global.common.util.ConstantUtil.GlobalZoneId;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.google.crypto.tink.apps.rewardedads.RewardedAdsVerifier;
+import com.yello.server.domain.event.dto.request.AdmobSsvRequest;
 import com.yello.server.domain.event.dto.request.EventJoinRequest;
 import com.yello.server.domain.event.dto.response.EventResponse;
 import com.yello.server.domain.event.dto.response.EventRewardResponse;
@@ -27,18 +29,22 @@ import com.yello.server.domain.event.exception.EventNotFoundException;
 import com.yello.server.domain.event.repository.EventRepository;
 import com.yello.server.domain.user.entity.User;
 import com.yello.server.domain.user.repository.UserRepository;
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
+import java.net.URI;
 import java.time.Duration;
 import java.time.OffsetTime;
 import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.Random;
 import java.util.UUID;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
+import lombok.SneakyThrows;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -201,6 +207,22 @@ public class EventService {
         }
         eventInstance.get().subRemainEventCount(1L);
         return EventRewardResponse.of(eventInstanceReward);
+    }
+
+    @SneakyThrows
+    public void verifyAdmobReward(URI uri, HttpServletRequest request) {
+        // admob 검증하기
+        RewardedAdsVerifier verifier = new RewardedAdsVerifier.Builder()
+            .fetchVerifyingPublicKeysWith(
+                RewardedAdsVerifier.KEYS_DOWNLOADER_INSTANCE_PROD)
+            .build();
+        verifier.verify(uri.toString());
+
+        // request 정보 가져오기
+        Map<String, String[]> parameters = request.getParameterMap();
+        AdmobSsvRequest admobRequest = AdmobSsvRequest.of(parameters);
+        
+        // 보상하기
     }
 
     private @NotNull EventRewardMapping selectRandomly(@NotEmpty List<EventRewardMapping> eventRewardMappingList) {

@@ -1,10 +1,12 @@
 package com.yello.server.domain.event.controller;
 
+import static com.yello.server.global.common.ErrorCode.ADMOB_URI_BAD_REQUEST_EXCEPTION;
 import static com.yello.server.global.common.ErrorCode.IDEMPOTENCY_KEY_BAD_REQUEST_EXCEPTION;
 import static com.yello.server.global.common.ErrorCode.IDEMPOTENCY_KEY_INVALID_FORM_BAD_REQUEST_EXCEPTION;
 import static com.yello.server.global.common.SuccessCode.EVENT_JOIN_SUCCESS;
 import static com.yello.server.global.common.SuccessCode.EVENT_NOTICE_SUCCESS;
 import static com.yello.server.global.common.SuccessCode.EVENT_REWARD_SUCCESS;
+import static com.yello.server.global.common.SuccessCode.VERIFY_ADMOB_SSV_SUCCESS;
 import static com.yello.server.global.common.util.ConstantUtil.IdempotencyKeyHeader;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -17,6 +19,8 @@ import com.yello.server.domain.user.entity.User;
 import com.yello.server.global.common.annotation.AccessTokenUser;
 import com.yello.server.global.common.dto.BaseResponse;
 import jakarta.servlet.http.HttpServletRequest;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.util.List;
 import java.util.UUID;
 import lombok.RequiredArgsConstructor;
@@ -36,7 +40,8 @@ public class EventController {
     private final EventService eventService;
 
     @GetMapping("/v1/event")
-    public BaseResponse<List<EventResponse>> getEvents(@AccessTokenUser User user) throws JsonProcessingException {
+    public BaseResponse<List<EventResponse>> getEvents(@AccessTokenUser User user)
+        throws JsonProcessingException {
         val data = eventService.getEvents(user.getId());
         return BaseResponse.success(EVENT_NOTICE_SUCCESS, data);
     }
@@ -77,5 +82,21 @@ public class EventController {
 
         val data = eventService.rewardEvent(user.getId(), uuidIdempotencyKey);
         return BaseResponse.success(EVENT_REWARD_SUCCESS, data);
+    }
+
+    @GetMapping("/v1/admob/verify")
+    public BaseResponse verifyAdmobReward(HttpServletRequest request) {
+        URI uri;
+        try {
+            uri =
+                new URI(request.getScheme(), null, request.getServerName(), request.getServerPort(),
+                    request.getRequestURI(), request.getQueryString(), null);
+        } catch (URISyntaxException e) {
+            throw new EventBadRequestException(ADMOB_URI_BAD_REQUEST_EXCEPTION);
+        }
+
+        eventService.verifyAdmobReward(uri, request);
+
+        return BaseResponse.success(VERIFY_ADMOB_SSV_SUCCESS);
     }
 }

@@ -45,6 +45,7 @@ public enum ErrorCode {
     EVENT_DATE_BAD_REQUEST_EXCEPTION(BAD_REQUEST, "해당 이벤트는 현재 유효한 날짜가 아닙니다."),
     EVENT_TIME_BAD_REQUEST_EXCEPTION(BAD_REQUEST, "해당 이벤트는 현재 유효한 시간이 아닙니다."),
     EVENT_COUNT_BAD_REQUEST_EXCEPTION(BAD_REQUEST, "해당 이벤트는 보상 횟수가 전부 소진되었습니다."),
+    ADMOB_URI_BAD_REQUEST_EXCEPTION(BAD_REQUEST, "URI의 값이 올바르지 않습니다."),
 
     /**
      * 401 UNAUTHORIZED
