@@ -27,7 +27,7 @@ public record AdmobSsvRequest(
             .map(Long::parseLong)
             .orElse(0L);
 
-        int rewardAmount = Optional.ofNullable(parameters.get("rewardAmount"))
+        int rewardAmount = Optional.ofNullable(parameters.get("reward_amount"))
             .flatMap(arr -> Arrays.stream(arr).findFirst())
             .map(Integer::parseInt)
             .orElse(0);

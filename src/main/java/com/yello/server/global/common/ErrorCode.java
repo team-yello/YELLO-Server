@@ -40,7 +40,7 @@ public enum ErrorCode {
     USER_DATA_INVALID_ARGUMENT_EXCEPTION(BAD_REQUEST, "입력한 유저 데이터의 값이 올바르지 않습니다."),
     ENUM_BAD_REQUEST_EXCEPTION(BAD_REQUEST, "존재하지 않는 열거형 타입입니다."),
     PROBABILITY_BAD_REQUEST_EXCEPTION(BAD_REQUEST, "확률의 합이 100이 아닙니다."),
-    IDEMPOTENCY_KEY_BAD_REQUEST_EXCEPTION(BAD_REQUEST, "멱등성 키를 헤더에 명시되어 있지 않습니다."),
+    IDEMPOTENCY_KEY_BAD_REQUEST_EXCEPTION(BAD_REQUEST, "멱등성 키가 명시되어 있지 않습니다."),
     IDEMPOTENCY_KEY_INVALID_FORM_BAD_REQUEST_EXCEPTION(BAD_REQUEST, "멱등성 키가 유효한 uuid4 형식이 아닙니다."),
     EVENT_DATE_BAD_REQUEST_EXCEPTION(BAD_REQUEST, "해당 이벤트는 현재 유효한 날짜가 아닙니다."),
     EVENT_TIME_BAD_REQUEST_EXCEPTION(BAD_REQUEST, "해당 이벤트는 현재 유효한 시간이 아닙니다."),

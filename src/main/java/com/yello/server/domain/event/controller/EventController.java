@@ -1,8 +1,6 @@
 package com.yello.server.domain.event.controller;
 
 import static com.yello.server.global.common.ErrorCode.ADMOB_URI_BAD_REQUEST_EXCEPTION;
-import static com.yello.server.global.common.ErrorCode.IDEMPOTENCY_KEY_BAD_REQUEST_EXCEPTION;
-import static com.yello.server.global.common.ErrorCode.IDEMPOTENCY_KEY_INVALID_FORM_BAD_REQUEST_EXCEPTION;
 import static com.yello.server.global.common.SuccessCode.EVENT_JOIN_SUCCESS;
 import static com.yello.server.global.common.SuccessCode.EVENT_NOTICE_SUCCESS;
 import static com.yello.server.global.common.SuccessCode.EVENT_REWARD_SUCCESS;
@@ -18,6 +16,7 @@ import com.yello.server.domain.event.service.EventService;
 import com.yello.server.domain.user.entity.User;
 import com.yello.server.global.common.annotation.AccessTokenUser;
 import com.yello.server.global.common.dto.BaseResponse;
+import com.yello.server.global.common.factory.UuidFactory;
 import jakarta.servlet.http.HttpServletRequest;
 import java.net.URI;
 import java.net.URISyntaxException;
@@ -25,7 +24,6 @@ import java.util.List;
 import java.util.UUID;
 import lombok.RequiredArgsConstructor;
 import lombok.val;
-import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -49,18 +47,8 @@ public class EventController {
     @PostMapping("/v1/event")
     public BaseResponse joinEvent(@AccessTokenUser User user, HttpServletRequest requestServlet,
         @RequestBody EventJoinRequest request) {
-        final String idempotencyKey = requestServlet.getHeader(IdempotencyKeyHeader);
-        if (!StringUtils.hasText(idempotencyKey)) {
-            throw new EventBadRequestException(IDEMPOTENCY_KEY_BAD_REQUEST_EXCEPTION);
-        }
-
-        UUID uuidIdempotencyKey;
-        try {
-            uuidIdempotencyKey = UUID.fromString(idempotencyKey);
-        } catch (IllegalArgumentException e) {
-            throw new EventBadRequestException(IDEMPOTENCY_KEY_INVALID_FORM_BAD_REQUEST_EXCEPTION);
-        }
-
+        UUID uuidIdempotencyKey =
+            UuidFactory.checkUuid(requestServlet.getHeader(IdempotencyKeyHeader));
         eventService.joinEvent(user.getId(), uuidIdempotencyKey, request);
         return BaseResponse.success(EVENT_JOIN_SUCCESS);
     }
@@ -68,18 +56,8 @@ public class EventController {
     @PostMapping("/v1/event/reward")
     public BaseResponse<EventRewardResponse> rewardEvent(@AccessTokenUser User user,
         HttpServletRequest requestServlet) throws JsonProcessingException {
-        final String idempotencyKey = requestServlet.getHeader(IdempotencyKeyHeader);
-        if (!StringUtils.hasText(idempotencyKey)) {
-            throw new EventBadRequestException(IDEMPOTENCY_KEY_BAD_REQUEST_EXCEPTION);
-        }
-
-        UUID uuidIdempotencyKey;
-        try {
-            uuidIdempotencyKey = UUID.fromString(idempotencyKey);
-        } catch (IllegalArgumentException e) {
-            throw new EventBadRequestException(IDEMPOTENCY_KEY_INVALID_FORM_BAD_REQUEST_EXCEPTION);
-        }
-
+        UUID uuidIdempotencyKey =
+            UuidFactory.checkUuid(requestServlet.getHeader(IdempotencyKeyHeader));
         val data = eventService.rewardEvent(user.getId(), uuidIdempotencyKey);
         return BaseResponse.success(EVENT_REWARD_SUCCESS, data);
     }
