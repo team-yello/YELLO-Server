@@ -483,6 +483,24 @@ Content-Type: application/json
 }</code></pre>
 </div>
 </div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight nowrap"><code class="language-http" data-lang="http">HTTP/1.1 200 OK
+Vary: Origin
+Vary: Access-Control-Request-Method
+Vary: Access-Control-Request-Headers
+Content-Type: application/json
+
+{
+  "status" : 200,
+  "message" : "유저 데이터 조회에 성공하였습니다.",
+  "data" : {
+    "tag" : "account-updated-at",
+    "value" : "true|null|2024-01-31"
+  }
+}</code></pre>
+</div>
+</div>
 <div class="paragraph">
 <p><strong>필드 타입</strong></p>
 </div>
@@ -504,6 +522,9 @@ Content-Type: application/json
 </li>
 <li>
 <p>예시) <strong>"false|2024-01-31|2024-01-31"</strong></p>
+</li>
+<li>
+<p>"updated_at": "YYYY-mm-dd" | null</p>
 </li>
 </ul>
 </div>
@@ -531,6 +552,9 @@ Content-Type: application/json
 <h3 id="_changelog">CHANGELOG</h3>
 <div class="ulist">
 <ul>
+<li>
+<p>2024.02.10 응답 케이스 추가</p>
+</li>
 <li>
 <p>2024.01.30 릴리즈</p>
 </li>

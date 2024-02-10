@@ -144,8 +144,6 @@ public class UserService {
             UserDataType.ACCOUNT_UPDATED_AT);
 
         // logic
-        user.update(request, gender, userGroup);
-
         if (!request.groupInfoEquals(user)) {
             if (userData.isPresent()) {
                 userData.get().setValue(
@@ -159,6 +157,7 @@ public class UserService {
                 ));
             }
         }
+        user.update(request, gender, userGroup);
     }
 
     public UserDataResponse readUserData(Long userId, UserDataType tag) {

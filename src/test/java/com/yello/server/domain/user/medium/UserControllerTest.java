@@ -317,7 +317,7 @@ class UserControllerTest {
     }
 
     @Test
-    void 유저_데이터_조회에_성공합니다() throws Exception {
+    void 유저_데이터_조회에_성공합니다1() throws Exception {
         // given
         final UserDataResponse response =
             UserDataResponse.builder()
@@ -336,7 +336,34 @@ class UserControllerTest {
                 .contentType(MediaType.APPLICATION_JSON)
             )
             .andDo(print())
-            .andDo(document("api/v1/user/data/read",
+            .andDo(document("api/v1/user/data/read/1",
+                Preprocessors.preprocessRequest(excludeRequestHeaders),
+                Preprocessors.preprocessResponse(excludeResponseHeaders)
+            ))
+            .andExpect(MockMvcResultMatchers.status().isOk());
+    }
+
+    @Test
+    void 유저_데이터_조회에_성공합니다2() throws Exception {
+        // given
+        final UserDataResponse response =
+            UserDataResponse.builder()
+                .tag(UserDataType.ACCOUNT_UPDATED_AT.getInitial())
+                .value("true|null|2024-01-31")
+                .build();
+
+        given(userService.readUserData(any(Long.class), any(UserDataType.class)))
+            .willReturn(response);
+        // when
+
+        // then
+        mockMvc.perform(RestDocumentationRequestBuilders.get("/api/v1/user/data/{tag}",
+                    UserDataType.ACCOUNT_UPDATED_AT.getInitial())
+                .header(HttpHeaders.AUTHORIZATION, "Bearer your-access-token")
+                .contentType(MediaType.APPLICATION_JSON)
+            )
+            .andDo(print())
+            .andDo(document("api/v1/user/data/read/2",
                 Preprocessors.preprocessRequest(excludeRequestHeaders),
                 Preprocessors.preprocessResponse(excludeResponseHeaders)
             ))

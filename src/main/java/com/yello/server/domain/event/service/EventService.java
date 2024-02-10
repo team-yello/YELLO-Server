@@ -103,9 +103,10 @@ public class EventService {
             }
 
             // 해당 변수로 클라가 이벤트를 띄울지 판단하게 됨.
-            // 이벤트 시간대가 있고, 보상 카운트가 0인 참여이력이 없을 때
+            // 이벤트 시간대가 있고, 보상 카운트가 0인 참여이력의 숫자가 RewardCount 보다 적을 때
             // k번 이벤트 참여는 보상 카운트로 구현한다.
-            boolean isEventAvailable = !eventTimeList.isEmpty() && eventInstanceList.isEmpty();
+            boolean isEventAvailable =
+                !eventTimeList.isEmpty() && (eventTimeList.get(0).getRewardCount() > eventInstanceList.size());
 
             final EventTime eventTime = isEventAvailable ? eventTimeList.get(0) : null;
             final List<EventRewardMapping> eventRewardMappingList =
@@ -157,7 +158,7 @@ public class EventService {
             .eventHistory(newEventHistory)
             .eventTime(eventTime)
             .instanceDate(now)
-            .remainEventCount(eventTime.getRewardCount())
+            .remainEventCount(1L)
             .build());
     }
 
@@ -202,16 +203,17 @@ public class EventService {
         final EventRewardMapping randomRewardMapping = selectRandomly(eventRewardMappingList);
         final long randomValue = selectRandomValue(randomRewardMapping);
 
-        final EventInstanceReward eventInstanceReward =
-            eventRepository.save(EventInstanceReward.builder()
-                .eventInstance(eventInstance.get())
-                .rewardTag(randomRewardMapping.getEventReward().getTag())
-                .rewardValue(randomValue)
-                .rewardTitle(String.format("%d %s를 얻었어요!", randomValue,
-                    randomRewardMapping.getEventReward().getTag()))
-                .rewardImage(randomRewardMapping.getEventReward().getImage())
-                .build());
+        final EventInstanceReward eventInstanceReward = eventRepository.save(EventInstanceReward.builder()
+            .eventInstance(eventInstance.get())
+            .rewardTag(randomRewardMapping.getEventReward().getTag())
+            .rewardValue(randomValue)
+            .rewardTitle(String.format(randomRewardMapping.getEventReward().getRewardTitle(), randomValue))
+            .rewardImage(randomRewardMapping.getEventReward().getRewardImage())
+            .build());
 
+        /**
+         * TODO 그냥 문자열로 저장하고 있는데, 어떻게 해야 enum의 문제를 극복하면서 switch와 함꼐 사용할 수 있을지 고민해야함.
+         */
         if (randomRewardMapping.getEventReward().getTag().equals("TICKET")) {
             user.addTicketCount((int) randomValue);
         } else if (randomRewardMapping.getEventReward().getTag().equals("POINT")) {
