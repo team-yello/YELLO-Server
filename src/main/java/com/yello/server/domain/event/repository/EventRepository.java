@@ -41,4 +41,7 @@ public interface EventRepository {
     Optional<EventHistory> findHistoryByIdempotencyKey(UUID idempotencyKey);
 
     Optional<EventInstance> findInstanceByEventHistory(EventHistory eventHistory);
+
+    EventReward findRewardByTag(String rewardTag);
+    EventRewardMapping findRewardMappingByEventRewardId(Long eventRewardId);
 }

@@ -1,8 +1,12 @@
 package com.yello.server.domain.event.repository;
 
+import static com.yello.server.domain.event.entity.QEventReward.eventReward;
+import static com.yello.server.domain.event.entity.QEventRewardMapping.eventRewardMapping;
 import static com.yello.server.global.common.ErrorCode.EVENT_NOT_FOUND_EXCEPTION;
 import static com.yello.server.global.common.ErrorCode.EVENT_RANDOM_NOT_FOUND_EXCEPTION;
+import static com.yello.server.global.common.ErrorCode.NOT_FOUND_EVENT_REWARD_EXCEPTION;
 
+import com.querydsl.jpa.impl.JPAQueryFactory;
 import com.yello.server.domain.event.entity.Event;
 import com.yello.server.domain.event.entity.EventHistory;
 import com.yello.server.domain.event.entity.EventInstance;
@@ -32,6 +36,7 @@ public class EventRepositoryImpl implements EventRepository {
     private final EventRewardJpaRepository eventRewardJpaRepository;
     private final EventRewardMappingJpaRepository eventRewardMappingJpaRepository;
     private final EventTimeJpaRepository eventTimeJpaRepository;
+    private final JPAQueryFactory jpaQueryFactory;
 
     @Override
     public EventHistory save(EventHistory newEventHistory) {
@@ -99,5 +104,19 @@ public class EventRepositoryImpl implements EventRepository {
     @Override
     public Optional<EventInstance> findInstanceByEventHistory(EventHistory eventHistory) {
         return eventInstanceJpaRepository.findTopByEventHistory(eventHistory);
+    }
+
+    @Override
+    public EventReward findRewardByTag(String rewardTag) {
+        return Optional.ofNullable(jpaQueryFactory.selectFrom(eventReward)
+            .where(eventReward.tag.eq(rewardTag))
+            .fetchOne()).orElseThrow(() -> new EventNotFoundException(NOT_FOUND_EVENT_REWARD_EXCEPTION));
+    }
+
+    @Override
+    public EventRewardMapping findRewardMappingByEventRewardId(Long eventRewardId) {
+        return Optional.ofNullable(jpaQueryFactory.selectFrom(eventRewardMapping)
+            .where(eventRewardMapping.eventReward.id.eq(eventRewardId))
+            .fetchOne()).orElseThrow(() -> new EventNotFoundException(NOT_FOUND_EVENT_REWARD_EXCEPTION));
     }
 }

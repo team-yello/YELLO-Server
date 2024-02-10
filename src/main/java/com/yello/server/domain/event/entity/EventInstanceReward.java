@@ -45,5 +45,14 @@ public class EventInstanceReward extends AuditingTimeEntity {
 
     @Column
     private String rewardImage;
+    public static EventInstanceReward of(EventInstance eventInstance, EventReward eventReward) {
+        return EventInstanceReward.builder()
+            .eventInstance(eventInstance)
+            .rewardTag(eventReward.getTag())
+            .rewardValue(eventReward.getMinRewardValue())
+            .rewardTitle(eventReward.getRewardTitle())
+            .rewardImage(eventReward.getRewardImage())
+            .build();
+    }
 
 }

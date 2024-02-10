@@ -1,5 +1,7 @@
 package com.yello.server.domain.event.entity;
 
+import static com.yello.server.global.common.util.ConstantUtil.GlobalZoneId;
+
 import com.yello.server.global.common.entity.ZonedDateTimeConverter;
 import jakarta.persistence.Column;
 import jakarta.persistence.Convert;
@@ -10,6 +12,7 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
+import java.time.OffsetTime;
 import java.time.ZonedDateTime;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
@@ -47,6 +50,15 @@ public class EventInstance {
     @Column
     @Builder.Default
     private Long remainEventCount = 0L;
+
+    public static EventInstance of(EventTime eventTime, EventHistory eventHistory) {
+        ZonedDateTime now = ZonedDateTime.now(GlobalZoneId);
+        return EventInstance.builder()
+            .eventHistory(eventHistory)
+            .eventTime(eventTime)
+            .instanceDate(now)
+            .build();
+    }
 
     public void subRemainEventCount(Long amount) {
         this.remainEventCount -= amount;

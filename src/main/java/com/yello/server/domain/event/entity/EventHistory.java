@@ -44,4 +44,8 @@ public class EventHistory extends AuditingTimeEntity {
             .idempotencyKey(uuidIdempotencyKey)
             .build();
     }
+
+    public void update(User user) {
+        this.user = user;
+    }
 }

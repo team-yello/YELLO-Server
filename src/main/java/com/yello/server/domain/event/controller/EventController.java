@@ -4,10 +4,13 @@ import static com.yello.server.global.common.ErrorCode.ADMOB_URI_BAD_REQUEST_EXC
 import static com.yello.server.global.common.SuccessCode.EVENT_JOIN_SUCCESS;
 import static com.yello.server.global.common.SuccessCode.EVENT_NOTICE_SUCCESS;
 import static com.yello.server.global.common.SuccessCode.EVENT_REWARD_SUCCESS;
+import static com.yello.server.global.common.SuccessCode.REWARD_ADMOB_SUCCESS;
 import static com.yello.server.global.common.SuccessCode.VERIFY_ADMOB_SSV_SUCCESS;
 import static com.yello.server.global.common.util.ConstantUtil.IdempotencyKeyHeader;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ser.Serializers.Base;
+import com.yello.server.domain.event.dto.request.AdmobRewardRequest;
 import com.yello.server.domain.event.dto.request.EventJoinRequest;
 import com.yello.server.domain.event.dto.response.EventResponse;
 import com.yello.server.domain.event.dto.response.EventRewardResponse;
@@ -63,7 +66,7 @@ public class EventController {
     }
 
     @GetMapping("/v1/admob/verify")
-    public BaseResponse verifyAdmobReward(HttpServletRequest request) {
+    public BaseResponse verifyAdmob(HttpServletRequest request) {
         URI uri;
         try {
             uri =
@@ -72,9 +75,13 @@ public class EventController {
         } catch (URISyntaxException e) {
             throw new EventBadRequestException(ADMOB_URI_BAD_REQUEST_EXCEPTION);
         }
-
         eventService.verifyAdmobReward(uri, request);
-
         return BaseResponse.success(VERIFY_ADMOB_SSV_SUCCESS);
+    }
+
+    @PostMapping("/v1/admob/reward")
+    public BaseResponse<EventRewardResponse> rewardAdmob(@AccessTokenUser User user, @RequestBody AdmobRewardRequest request) {
+        val data = eventService.rewardAdmob(user.getId(), request);
+        return BaseResponse.success(REWARD_ADMOB_SUCCESS, data);
     }
 }

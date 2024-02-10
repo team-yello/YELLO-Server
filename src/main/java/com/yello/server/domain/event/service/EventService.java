@@ -1,5 +1,6 @@
 package com.yello.server.domain.event.service;
 
+import static com.yello.server.global.common.ErrorCode.DUPLICATE_ADMOB_REWARD_EXCEPTION;
 import static com.yello.server.global.common.ErrorCode.EVENT_COUNT_BAD_REQUEST_EXCEPTION;
 import static com.yello.server.global.common.ErrorCode.EVENT_DATE_BAD_REQUEST_EXCEPTION;
 import static com.yello.server.global.common.ErrorCode.EVENT_TIME_BAD_REQUEST_EXCEPTION;
@@ -11,6 +12,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.crypto.tink.apps.rewardedads.RewardedAdsVerifier;
+import com.yello.server.domain.event.dto.request.AdmobRewardRequest;
 import com.yello.server.domain.event.dto.request.AdmobSsvRequest;
 import com.yello.server.domain.event.dto.request.EventJoinRequest;
 import com.yello.server.domain.event.dto.response.EventResponse;
@@ -24,7 +26,10 @@ import com.yello.server.domain.event.entity.EventReward;
 import com.yello.server.domain.event.entity.EventRewardMapping;
 import com.yello.server.domain.event.entity.EventTime;
 import com.yello.server.domain.event.entity.EventType;
+import com.yello.server.domain.event.entity.RandomType;
+import com.yello.server.domain.event.entity.RewardType;
 import com.yello.server.domain.event.exception.EventBadRequestException;
+import com.yello.server.domain.event.exception.EventForbiddenException;
 import com.yello.server.domain.event.exception.EventNotFoundException;
 import com.yello.server.domain.event.repository.EventRepository;
 import com.yello.server.domain.user.entity.User;
@@ -39,7 +44,6 @@ import java.time.OffsetTime;
 import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 import java.util.Optional;
 import java.util.Random;
 import java.util.UUID;
@@ -106,7 +110,8 @@ public class EventService {
             // 이벤트 시간대가 있고, 보상 카운트가 0인 참여이력의 숫자가 RewardCount 보다 적을 때
             // k번 이벤트 참여는 보상 카운트로 구현한다.
             boolean isEventAvailable =
-                !eventTimeList.isEmpty() && (eventTimeList.get(0).getRewardCount() > eventInstanceList.size());
+                !eventTimeList.isEmpty() && (eventTimeList.get(0).getRewardCount()
+                    > eventInstanceList.size());
 
             final EventTime eventTime = isEventAvailable ? eventTimeList.get(0) : null;
             final List<EventRewardMapping> eventRewardMappingList =
@@ -203,13 +208,15 @@ public class EventService {
         final EventRewardMapping randomRewardMapping = selectRandomly(eventRewardMappingList);
         final long randomValue = selectRandomValue(randomRewardMapping);
 
-        final EventInstanceReward eventInstanceReward = eventRepository.save(EventInstanceReward.builder()
-            .eventInstance(eventInstance.get())
-            .rewardTag(randomRewardMapping.getEventReward().getTag())
-            .rewardValue(randomValue)
-            .rewardTitle(String.format(randomRewardMapping.getEventReward().getRewardTitle(), randomValue))
-            .rewardImage(randomRewardMapping.getEventReward().getRewardImage())
-            .build());
+        final EventInstanceReward eventInstanceReward =
+            eventRepository.save(EventInstanceReward.builder()
+                .eventInstance(eventInstance.get())
+                .rewardTag(randomRewardMapping.getEventReward().getTag())
+                .rewardValue(randomValue)
+                .rewardTitle(String.format(randomRewardMapping.getEventReward().getRewardTitle(),
+                    randomValue))
+                .rewardImage(randomRewardMapping.getEventReward().getRewardImage())
+                .build());
 
         /**
          * TODO 그냥 문자열로 저장하고 있는데, 어떻게 해야 enum의 문제를 극복하면서 switch와 함꼐 사용할 수 있을지 고민해야함.
@@ -217,13 +224,14 @@ public class EventService {
         if (randomRewardMapping.getEventReward().getTag().equals("TICKET")) {
             user.addTicketCount((int) randomValue);
         } else if (randomRewardMapping.getEventReward().getTag().equals("POINT")) {
-            user.addPoint((int) randomValue);
+            user.addPointBySubscribe((int) randomValue);
         }
         eventInstance.get().subRemainEventCount(1L);
         return EventRewardResponse.of(eventInstanceReward);
     }
 
     @SneakyThrows
+    @Transactional
     public void verifyAdmobReward(URI uri, HttpServletRequest request) {
         // 1. admob 검증하기
         RewardedAdsVerifier verifier = new RewardedAdsVerifier.Builder()
@@ -245,6 +253,60 @@ public class EventService {
         }
 
         eventRepository.save(EventHistory.of(null, uuidIdempotencyKey));
+    }
+
+    @Transactional
+    public EventRewardResponse rewardAdmob(Long userId, AdmobRewardRequest request) {
+        UUID uuid = UuidFactory.checkUuid(request.uuid());
+        final User user = userRepository.getById(userId);
+
+        // 멱등키를 통해 해당 history 찾기
+        final Optional<EventHistory> eventHistory =
+            eventRepository.findHistoryByIdempotencyKey(uuid);
+        if (eventHistory.isEmpty()) {
+            throw new EventBadRequestException(IDEMPOTENCY_KEY_NOT_FOUND_EXCEPTION);
+        }
+
+        // history 있으면 userId로 세팅
+        if (eventHistory.get().getUser()!=null) {
+            throw new EventForbiddenException(DUPLICATE_ADMOB_REWARD_EXCEPTION);
+        }
+        eventHistory.get().update(user);
+
+        // event_random tag 확인 후 reward
+        EventReward eventReward = null;
+        switch (RandomType.fromCode(request.randomType())) {
+            case FIXED, ADMOB_RANDOM -> {
+                eventReward = handleRewardByType(request, user);
+            }
+        }
+        EventRewardMapping rewardMapping =
+            eventRepository.findRewardMappingByEventRewardId(eventReward.getId());
+
+        // event_instance에 해당 데이터 저장
+        EventInstance eventInstance = eventRepository.save(
+            EventInstance.of(rewardMapping.getEventTime(), eventHistory.get()));
+        EventInstanceReward rewardInstance =
+            eventRepository.save(EventInstanceReward.of(eventInstance, eventReward));
+
+        return EventRewardResponse.of(rewardInstance);
+    }
+
+    private EventReward handleRewardByType(AdmobRewardRequest request, User user) {
+        switch (RewardType.fromCode(request.rewardType())) {
+            case ADMOB_POINT -> {
+                EventReward rewardByTag = eventRepository.findRewardByTag(request.rewardType());
+                user.addPoint(Math.toIntExact((rewardByTag.getMinRewardValue())));
+                return rewardByTag;
+            }
+            case ADMOB_MULTIPLE_POINT -> {
+                EventReward rewardByTag = eventRepository.findRewardByTag(request.rewardType());
+                user.addPoint(request.rewardNumber());
+                rewardByTag.updateMinRewardValue(Long.valueOf(request.rewardNumber() * 2));
+                return rewardByTag;
+            }
+        }
+        return null;
     }
 
     private @NotNull EventRewardMapping selectRandomly(

@@ -117,8 +117,8 @@ public class AuthService {
                 UserDataType.RECOMMENDED);
 
             recommendedUser.addRecommendCount(1L);
-            recommendedUser.addPoint(RECOMMEND_POINT);
-            user.addPoint(RECOMMEND_POINT);
+            recommendedUser.addPointBySubscribe(RECOMMEND_POINT);
+            user.addPointBySubscribe(RECOMMEND_POINT);
             if (recommended.isEmpty()) {
                 recommendedUser.addTicketCount(1);
 
