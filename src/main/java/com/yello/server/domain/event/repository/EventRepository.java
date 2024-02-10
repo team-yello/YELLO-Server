@@ -43,5 +43,6 @@ public interface EventRepository {
     Optional<EventInstance> findInstanceByEventHistory(EventHistory eventHistory);
 
     EventReward findRewardByTag(String rewardTag);
+
     EventRewardMapping findRewardMappingByEventRewardId(Long eventRewardId);
 }

@@ -239,6 +239,7 @@ public class EventService {
                 RewardedAdsVerifier.KEYS_DOWNLOADER_INSTANCE_PROD)
             .build();
         verifier.verify(uri.toString());
+        System.out.println(" verify 성공 !!!!!!");
 
         // 2. google이 넘겨준 query 정보 가져오기
         AdmobSsvRequest admobRequest = AdmobSsvRequest.of(request.getParameterMap());

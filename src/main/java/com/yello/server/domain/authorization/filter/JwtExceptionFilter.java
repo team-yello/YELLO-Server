@@ -48,6 +48,7 @@ public class JwtExceptionFilter extends OncePerRequestFilter {
             || requestPath.startsWith("/api/v1/admin/login")
             || requestPath.startsWith("/v2/apple/notifications")
             || requestPath.startsWith("/v2/google/notifications")
+            || requestPath.startsWith("/api/v1/admob/verify")
             || (requestPath.startsWith("/api/v1/auth")
             && !requestPath.startsWith("/api/v1/auth/token/issue"))) {
             filterChain.doFilter(request, response);

@@ -117,6 +117,6 @@ public class EventRepositoryImpl implements EventRepository {
     public EventRewardMapping findRewardMappingByEventRewardId(Long eventRewardId) {
         return Optional.ofNullable(jpaQueryFactory.selectFrom(eventRewardMapping)
             .where(eventRewardMapping.eventReward.id.eq(eventRewardId))
-            .fetchOne()).orElseThrow(() -> new EventNotFoundException(NOT_FOUND_EVENT_REWARD_EXCEPTION));
+            .fetchFirst()).orElseThrow(() -> new EventNotFoundException(NOT_FOUND_EVENT_REWARD_EXCEPTION));
     }
 }

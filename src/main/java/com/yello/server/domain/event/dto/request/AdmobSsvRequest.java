@@ -33,7 +33,7 @@ public record AdmobSsvRequest(
             .orElse(0);
 
         return AdmobSsvRequest.builder()
-            .customData(getParameter.apply("customData"))
+            .customData(getParameter.apply("custom_data"))
             .signature(getParameter.apply("signature"))
             .keyId(keyId)
             .transactionId(getParameter.apply("transaction_id"))

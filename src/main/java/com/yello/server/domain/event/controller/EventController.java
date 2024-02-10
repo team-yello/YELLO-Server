@@ -27,6 +27,8 @@ import java.util.List;
 import java.util.UUID;
 import lombok.RequiredArgsConstructor;
 import lombok.val;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -66,7 +68,7 @@ public class EventController {
     }
 
     @GetMapping("/v1/admob/verify")
-    public BaseResponse verifyAdmob(HttpServletRequest request) {
+    public ResponseEntity<?> verifyAdmob(HttpServletRequest request) {
         URI uri;
         try {
             uri =
@@ -76,7 +78,8 @@ public class EventController {
             throw new EventBadRequestException(ADMOB_URI_BAD_REQUEST_EXCEPTION);
         }
         eventService.verifyAdmobReward(uri, request);
-        return BaseResponse.success(VERIFY_ADMOB_SSV_SUCCESS);
+
+        return new ResponseEntity<>(HttpStatus.OK);
     }
 
     @PostMapping("/v1/admob/reward")

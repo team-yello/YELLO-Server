@@ -50,7 +50,7 @@ public class EventInstanceReward extends AuditingTimeEntity {
             .eventInstance(eventInstance)
             .rewardTag(eventReward.getTag())
             .rewardValue(eventReward.getMinRewardValue())
-            .rewardTitle(eventReward.getRewardTitle())
+            .rewardTitle(String.format(eventReward.getRewardTitle(), eventReward.getMinRewardValue()))
             .rewardImage(eventReward.getRewardImage())
             .build();
     }
