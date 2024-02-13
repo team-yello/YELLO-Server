@@ -23,7 +23,8 @@ include::{snippets}/api/v1/event/3/http-response.adoc[]
 - endDate : "2024-12-31T00:00:00+09:00"
 - title : "점심 시간 깜짝 선물!"
 - subTitle : "평일 12-14시 최대 1회까지 참여 가능"
-- animationList : [{...json1...}, {...json2...}]
+- animationList : string[]
+* URL이 들어감.
 - eventReward: *EventReward* | null
 * 해당 필드가 **null**일 시, 이벤트 보여주지 않도록 해주세요.
 
