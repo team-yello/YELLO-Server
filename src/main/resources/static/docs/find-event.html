@@ -5,7 +5,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="generator" content="Asciidoctor 2.0.18">
-<title>공지 조회</title>
+<title>이벤트 조회</title>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Open+Sans:300,300italic,400,400italic,600,600italic%7CNoto+Serif:400,400italic,700,700italic%7CDroid+Sans+Mono:400,700">
 <style>
 /*! Asciidoctor default stylesheet | MIT License | https://asciidoctor.org */
@@ -441,7 +441,7 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 </div>
 <div id="content">
 <div class="sect1">
-<h2 id="_공지_조회">공지 조회</h2>
+<h2 id="_이벤트_조회">이벤트 조회</h2>
 <div class="sectionbody">
 <div class="sect2">
 <h3 id="_요청">요청</h3>
@@ -652,7 +652,7 @@ Content-Type: application/json
 <p><strong>Response</strong></p>
 </li>
 <li>
-<p>tag : "LUNCH_EVENT" | "ADMOB"</p>
+<p>tag : "LUNCH_EVENT"</p>
 <div class="ulist">
 <ul>
 <li>
@@ -674,7 +674,14 @@ Content-Type: application/json
 <p>subTitle : "평일 12-14시 최대 1회까지 참여 가능"</p>
 </li>
 <li>
-<p>animationList : [{&#8230;&#8203;json1&#8230;&#8203;}, {&#8230;&#8203;json2&#8230;&#8203;}]</p>
+<p>animationList : string[]</p>
+<div class="ulist">
+<ul>
+<li>
+<p>URL이 들어감.</p>
+</li>
+</ul>
+</div>
 </li>
 <li>
 <p>eventReward: <strong>EventReward</strong> | null</p>
