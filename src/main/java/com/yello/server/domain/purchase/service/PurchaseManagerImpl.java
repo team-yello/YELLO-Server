@@ -22,12 +22,10 @@ import com.yello.server.domain.purchase.repository.PurchaseRepository;
 import com.yello.server.domain.user.entity.Subscribe;
 import com.yello.server.domain.user.entity.User;
 import com.yello.server.domain.user.repository.UserRepository;
-import com.yello.server.global.common.factory.DecodeTokenFactory;
+import com.yello.server.global.common.factory.DecodeFactory;
 import com.yello.server.global.common.factory.TokenFactory;
-import com.yello.server.global.common.util.ConstantUtil;
 import com.yello.server.infrastructure.slack.dto.response.SlackAppleNotificationResponse;
 import java.util.Map;
-import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
@@ -77,7 +75,7 @@ public class PurchaseManagerImpl implements PurchaseManager {
     @Override
     public AppleNotificationPayloadVO decodeApplePayload(String signedPayload) {
 
-        Map<String, Object> jsonPayload = DecodeTokenFactory.decodeToken(signedPayload);
+        Map<String, Object> jsonPayload = DecodeFactory.decodeToken(signedPayload);
         ObjectMapper objectMapper = new ObjectMapper();
 
         String notificationType = jsonPayload.get("notificationType").toString();
@@ -98,7 +96,7 @@ public class PurchaseManagerImpl implements PurchaseManager {
     @Override
     public Purchase decodeAppleNotificationData(String signedTransactionInfo) {
 
-        Map<String, Object> decodeToken = DecodeTokenFactory.decodeToken(signedTransactionInfo);
+        Map<String, Object> decodeToken = DecodeFactory.decodeToken(signedTransactionInfo);
         String decodeTransactionId = decodeToken.get("transactionId").toString();
 
         Purchase purchase = purchaseRepository.findByTransactionId(decodeTransactionId)
@@ -223,7 +221,7 @@ public class PurchaseManagerImpl implements PurchaseManager {
 
     public AppleJwsTransactionResponse decodeAppleDataPayload(String signedTransactionInfo) {
 
-        Map<String, Object> decodeToken = DecodeTokenFactory.decodeToken(signedTransactionInfo);
+        Map<String, Object> decodeToken = DecodeFactory.decodeToken(signedTransactionInfo);
         String decodeOriginalTransactionId = decodeToken.get("originalTransactionId").toString();
         String decodeTransactionId = decodeToken.get("transactionId").toString();
 

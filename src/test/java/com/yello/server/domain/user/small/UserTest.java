@@ -85,7 +85,7 @@ public class UserTest {
         assertThat(user.getPoint()).isEqualTo(200);
 
         // when
-        user.addPoint(RECOMMEND_POINT);
+        user.addPointBySubscribe(RECOMMEND_POINT);
 
         // then
         assertThat(user.getPoint()).isEqualTo(300);

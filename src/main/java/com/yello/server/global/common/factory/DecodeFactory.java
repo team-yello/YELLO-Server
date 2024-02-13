@@ -3,7 +3,7 @@ package com.yello.server.global.common.factory;
 import java.util.Map;
 import org.springframework.boot.json.BasicJsonParser;
 
-public class DecodeTokenFactory {
+public class DecodeFactory {
 
     public static Map<String, Object> decodeToken(String jwtToken) {
         final String payloadJWT = jwtToken.split("\\.")[1];

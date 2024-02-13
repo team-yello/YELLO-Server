@@ -110,8 +110,10 @@
 
 === Event API
 
-* 🆕 link:find-event.html[공지 조회, 2024-02-06]
+* 🆕 link:find-event.html[이벤트 조회, 2024-02-06]
 
 * 🆕 link:create-event-history.html[이벤트 참여, 2024-02-07]
 
 * 🆕 link:reward-event.html[이벤트 보상, 2024-02-07]
+
+* 🆕 link:reward-admob.html[광고보고 보상 얻기, 2024-02-11]

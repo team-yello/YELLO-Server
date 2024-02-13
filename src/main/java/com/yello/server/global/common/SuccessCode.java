@@ -62,6 +62,7 @@ public enum SuccessCode {
     EVENT_REWARD_CREATE_ADMIN_SUCCESS(OK, "어드민 권한으로 이벤트 보상 생성에 성공하였습니다."),
     EVENT_JOIN_SUCCESS(OK, "이벤트 참여에 성공하였습니다."),
     EVENT_REWARD_SUCCESS(OK, "이벤트 보상에 성공하였습니다."),
+    VERIFY_ADMOB_SSV_SUCCESS(OK, "Admob ssv 검증에 성공하였습니다."),
 
     /**
      * 201 CREATED
@@ -76,7 +77,8 @@ public enum SuccessCode {
     PURCHASE_SUBSCRIPTION_VERIFY_SUCCESS(CREATED, "애플 결제 검증 및 반영에 성공하였습니다."),
     GOOGLE_PURCHASE_SUBSCRIPTION_VERIFY_SUCCESS(CREATED, "구글 구독 결제 검증 및 반영에 성공하였습니다."),
     GOOGLE_PURCHASE_INAPP_VERIFY_SUCCESS(CREATED, "구글 인앱 결제 검증 및 반영에 성공하였습니다."),
-    LOGIN_USER_ADMIN_SUCCESS(CREATED, "어드민 로그인에 성공하였습니다.");
+    LOGIN_USER_ADMIN_SUCCESS(CREATED, "어드민 로그인에 성공하였습니다."),
+    REWARD_ADMOB_SUCCESS(CREATED, "Admob 광고 보고 보상받기에 성공했습니다.");
 
 
     private final HttpStatus httpStatus;

@@ -37,4 +37,15 @@ public class EventHistory extends AuditingTimeEntity {
 
     @Column
     private UUID idempotencyKey;
+
+    public static EventHistory of(User user, UUID uuidIdempotencyKey) {
+        return EventHistory.builder()
+            .user(user)
+            .idempotencyKey(uuidIdempotencyKey)
+            .build();
+    }
+
+    public void update(User user) {
+        this.user = user;
+    }
 }

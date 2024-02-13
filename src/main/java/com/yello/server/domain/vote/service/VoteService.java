@@ -7,13 +7,11 @@ import static com.yello.server.global.common.ErrorCode.LACK_USER_EXCEPTION;
 import static com.yello.server.global.common.ErrorCode.REVEAL_FULL_NAME_VOTE_EXCEPTION;
 import static com.yello.server.global.common.ErrorCode.WRONG_VOTE_TYPE_FORBIDDEN;
 import static com.yello.server.global.common.factory.TimeFactory.minusTime;
-import static com.yello.server.global.common.util.ConstantUtil.ALL_VOTE_TYPE;
 import static com.yello.server.global.common.util.ConstantUtil.CHECK_FULL_NAME;
 import static com.yello.server.global.common.util.ConstantUtil.COOL_DOWN_TIME;
 import static com.yello.server.global.common.util.ConstantUtil.MINUS_TICKET_COUNT;
 import static com.yello.server.global.common.util.ConstantUtil.NO_FRIEND_COUNT;
 import static com.yello.server.global.common.util.ConstantUtil.RANDOM_COUNT;
-import static com.yello.server.global.common.util.ConstantUtil.USER_VOTE_TYPE;
 
 import com.yello.server.domain.cooldown.entity.Cooldown;
 import com.yello.server.domain.cooldown.repository.CooldownRepository;
@@ -47,7 +45,6 @@ import com.yello.server.domain.vote.entity.VoteType;
 import com.yello.server.domain.vote.exception.VoteForbiddenException;
 import com.yello.server.domain.vote.exception.VoteNotFoundException;
 import com.yello.server.domain.vote.repository.VoteRepository;
-import com.yello.server.global.common.ErrorCode;
 import com.yello.server.infrastructure.rabbitmq.service.ProducerService;
 import java.time.LocalDateTime;
 import java.util.List;
@@ -213,7 +210,7 @@ public class VoteService {
         cooldown.updateDate(LocalDateTime.now());
         producerService.produceVoteAvailableNotification(cooldown);
 
-        sender.addPoint(request.totalPoint());
+        sender.addPointBySubscribe(request.totalPoint());
         return VoteCreateVO.of(sender.getPoint(), votes);
     }
 

@@ -105,6 +105,10 @@ dependencies {
     annotationProcessor "jakarta.persistence:jakarta.persistence-api"
     implementation "jakarta.annotation:jakarta.annotation-api"
     implementation "com.querydsl:querydsl-codegen:${queryDslVersion}"
+
+    // tink
+    implementation 'com.google.crypto.tink:tink-android:1.4.0-rc1'
+    implementation 'com.google.crypto.tink:apps-rewardedads:1.10.0'
 }
 
 asciidoctor {
