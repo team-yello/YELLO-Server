@@ -1,5 +1,5 @@
 :reproducible:
-== 공지 조회
+== 이벤트 조회
 
 === 요청
 
@@ -17,7 +17,7 @@ include::{snippets}/api/v1/event/3/http-response.adoc[]
 
 - data: *Response*[]
 - *Response*
-- tag : "LUNCH_EVENT" | "ADMOB"
+- tag : "LUNCH_EVENT"
 * LUNCH_EVENT에 해당하는 *Response*가 없으면 Render 해주지 말아주세요
 - startDate : "2024-01-01T00:00:00+09:00"
 - endDate : "2024-12-31T00:00:00+09:00"

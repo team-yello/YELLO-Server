@@ -54,4 +54,8 @@ public class EventReward {
 
     @Column
     private String rewardImage;
+
+    public void updateMinRewardValue(Long rewardValue) {
+        this.minRewardValue = rewardValue;
+    }
 }

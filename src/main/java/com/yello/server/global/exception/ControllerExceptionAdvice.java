@@ -21,6 +21,7 @@ import com.yello.server.domain.authorization.exception.NotSignedInException;
 import com.yello.server.domain.authorization.exception.NotValidTokenForbiddenException;
 import com.yello.server.domain.authorization.exception.OAuthException;
 import com.yello.server.domain.event.exception.EventBadRequestException;
+import com.yello.server.domain.event.exception.EventForbiddenException;
 import com.yello.server.domain.event.exception.EventNotFoundException;
 import com.yello.server.domain.friend.exception.FriendException;
 import com.yello.server.domain.friend.exception.FriendNotFoundException;
@@ -173,7 +174,8 @@ public class ControllerExceptionAdvice {
         VoteForbiddenException.class,
         NotSignedInException.class,
         NotExpiredTokenForbiddenException.class,
-        NotValidTokenForbiddenException.class
+        NotValidTokenForbiddenException.class,
+        EventForbiddenException.class
     })
     public ResponseEntity<BaseResponse> ForbiddenException(CustomException exception) {
         return ResponseEntity.status(FORBIDDEN)

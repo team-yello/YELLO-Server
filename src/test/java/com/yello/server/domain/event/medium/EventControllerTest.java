@@ -18,6 +18,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.yello.server.domain.authorization.filter.JwtExceptionFilter;
 import com.yello.server.domain.authorization.filter.JwtFilter;
 import com.yello.server.domain.event.controller.EventController;
+import com.yello.server.domain.event.dto.request.AdmobRewardRequest;
 import com.yello.server.domain.event.dto.request.EventJoinRequest;
 import com.yello.server.domain.event.dto.response.EventResponse;
 import com.yello.server.domain.event.dto.response.EventRewardResponse;
@@ -37,6 +38,7 @@ import java.time.ZoneOffset;
 import java.time.ZonedDateTime;
 import java.util.List;
 import java.util.UUID;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.DisplayNameGeneration;
 import org.junit.jupiter.api.DisplayNameGenerator.ReplaceUnderscores;
@@ -70,13 +72,13 @@ import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 @DisplayName("Event 컨트롤러에서")
 class EventControllerTest {
 
-    final OperationPreprocessor[] excludeRequestHeaders = new OperationPreprocessor[]{
+    final OperationPreprocessor[] excludeRequestHeaders = new OperationPreprocessor[] {
         prettyPrint(),
         modifyHeaders().remove("X-CSRF-TOKEN"),
         modifyHeaders().remove(HttpHeaders.HOST)
     };
 
-    final OperationPreprocessor[] excludeResponseHeaders = new OperationPreprocessor[]{
+    final OperationPreprocessor[] excludeResponseHeaders = new OperationPreprocessor[] {
         prettyPrint(),
         modifyHeaders().remove("X-Content-Type-Options"),
         modifyHeaders().remove("X-XSS-Protection"),
@@ -101,6 +103,11 @@ class EventControllerTest {
     /**
      * TODO Event* TestUtil 작성 및 연결 필요
      */
+    @BeforeEach
+    void init() {
+
+    }
+
     @Test
     void 이벤트_전체_조회에_성공합니다1() throws Exception {
         final EventReward ticket = EventReward.builder()
@@ -140,7 +147,8 @@ class EventControllerTest {
             .build();
         final EventRandom eventRandom2 = EventRandom.builder()
             .randomTag("RANDOM")
-            .probabilityPointList("[{\"x\": 0, \"y\": 0},{ \"x\": 0.8, \"y\": 0.55 }, { \"x\": 1, \"y\": 1 }]")
+            .probabilityPointList(
+                "[{\"x\": 0, \"y\": 0},{ \"x\": 0.8, \"y\": 0.55 }, { \"x\": 1, \"y\": 1 }]")
             .build();
 
         final List<EventRewardMapping> rewardList1 = List.of(
@@ -251,7 +259,8 @@ class EventControllerTest {
             .build();
         final EventRandom eventRandom2 = EventRandom.builder()
             .randomTag("RANDOM")
-            .probabilityPointList("[{\"x\": 0, \"y\": 0},{ \"x\": 0.8, \"y\": 0.55 }, { \"x\": 1, \"y\": 1 }]")
+            .probabilityPointList(
+                "[{\"x\": 0, \"y\": 0},{ \"x\": 0.8, \"y\": 0.55 }, { \"x\": 1, \"y\": 1 }]")
             .build();
 
         final List<EventRewardMapping> rewardList2 = List.of(
@@ -513,6 +522,45 @@ class EventControllerTest {
                     .contentType(MediaType.APPLICATION_JSON))
             .andDo(print())
             .andDo(document("api/v1/event/reward/2",
+                Preprocessors.preprocessRequest(excludeRequestHeaders),
+                Preprocessors.preprocessResponse(excludeResponseHeaders)
+            ))
+            .andExpect(MockMvcResultMatchers.status().isOk());
+    }
+
+    @Test
+    void 광고_후_보상에_성공합니다() throws Exception {
+
+        final String idempotencyKey = "87552f7c-9b62-4b12-b567-1bd062b09288";
+
+        final AdmobRewardRequest request = AdmobRewardRequest.builder()
+            .rewardType("ADMOB_POINT")
+            .randomType("FIXED")
+            .uuid(idempotencyKey)
+            .rewardNumber(10)
+            .build();
+
+        final EventRewardResponse response = EventRewardResponse.builder()
+            .rewardTag("ADMOB_POINT")
+            .rewardValue(10L)
+            .rewardTitle(String.format("%s 포인트를 얻었어요!", 10L))
+            .rewardImage("https://storage.googleapis.com/yelloworld/image/ticket-reward.svg")
+            .build();
+
+        given(eventService.rewardAdmob(anyLong(), eq(request)))
+            .willReturn(response);
+        // when
+
+        // then
+        mockMvc.perform(
+                RestDocumentationRequestBuilders.post("/api/v1/admob/reward")
+                    .with(csrf().asHeader())
+                    .header(HttpHeaders.AUTHORIZATION, "Bearer your-access-token")
+                    .header(ConstantUtil.IdempotencyKeyHeader, idempotencyKey)
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .content(objectMapper.writeValueAsString(request)))
+            .andDo(print())
+            .andDo(document("api/v1/admob/reward",
                 Preprocessors.preprocessRequest(excludeRequestHeaders),
                 Preprocessors.preprocessResponse(excludeResponseHeaders)
             ))

@@ -76,7 +76,6 @@ public class ConstantUtil {
     public static final String USER_VOTE_TYPE = "send";
     public static final String ALL_VOTE_TYPE = "all";
 
-
     private ConstantUtil() {
         throw new IllegalStateException();
     }

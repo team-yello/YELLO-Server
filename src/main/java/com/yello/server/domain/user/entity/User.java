@@ -169,7 +169,7 @@ public class User extends AuditingTimeEntity {
     }
 
 
-    public void addPoint(Integer point) {
+    public void addPointBySubscribe(Integer point) {
         if (this.getSubscribe() == Subscribe.NORMAL) {
             this.point += point;
             return;
@@ -179,6 +179,9 @@ public class User extends AuditingTimeEntity {
 
     public void subPoint(Integer point) {
         this.point -= point;
+    }
+    public void addPoint(Integer point) {
+        this.point += point;
     }
 
     public void addRecommendCount(Long recommendCount) {

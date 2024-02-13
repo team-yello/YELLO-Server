@@ -1,0 +1,35 @@
+:reproducible:
+== 이벤트 참여
+
+=== 요청
+
+include::{snippets}/api/v1/admob/reward/http-request.adoc[]
+
+=== request body
+
+- "rewardType": String -> "ADMOB_POINT" | "ADMOB_MULTIPLE_POINT"
+* ADMOB_POINT : 광고 보고 10 포인트
+* ADMOB_MULTIPLE_POINT : 광고 보고 포인트 2배 이벤트
+
+- "randomType" : String -> "FIXED" | "ADMOB_RANDOM"
+* FIXED : 고정값 (현재 이것만 사용)
+* ADMOB_RANDOM : 랜덤값 (추후 랜덤으로 바뀔 것 고려)
+- "uuid" : String -> UUID4 형식만 적용
+- "rewardNumber" : Integer -> 포인트인 경우 10, 투표 포인트 2배 이벤트인 경우 현재 투표 후 받은 포인트 보내줘야함
+
+=== 응답
+
+include::{snippets}/api/v1/admob/reward/http-response.adoc[]
+
+=== NOTE
+
+- Header에 무작위한 UUID4 값을 넣어주세요
+* 예시) IdempotencyKey: 0397b5f3-ecdc-47d6-b5d7-2b1afcf00e87
+- 주의사항
+* 같은 멱등성키를 2번 요청하면, 400번 에러.
+- ADMOB
+* ADMOB 서버에 SSV(ServerSideVerification) Options의 customData에 입력한 것과 동일한 멱등성 키를 넘겨주세요.
+
+=== CHANGELOG
+
+- 2024.02.11 릴리즈

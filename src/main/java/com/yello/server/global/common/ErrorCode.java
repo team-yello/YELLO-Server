@@ -40,11 +40,12 @@ public enum ErrorCode {
     USER_DATA_INVALID_ARGUMENT_EXCEPTION(BAD_REQUEST, "입력한 유저 데이터의 값이 올바르지 않습니다."),
     ENUM_BAD_REQUEST_EXCEPTION(BAD_REQUEST, "존재하지 않는 열거형 타입입니다."),
     PROBABILITY_BAD_REQUEST_EXCEPTION(BAD_REQUEST, "확률의 합이 100이 아닙니다."),
-    IDEMPOTENCY_KEY_BAD_REQUEST_EXCEPTION(BAD_REQUEST, "멱등성 키를 헤더에 명시되어 있지 않습니다."),
+    IDEMPOTENCY_KEY_BAD_REQUEST_EXCEPTION(BAD_REQUEST, "멱등성 키가 명시되어 있지 않습니다."),
     IDEMPOTENCY_KEY_INVALID_FORM_BAD_REQUEST_EXCEPTION(BAD_REQUEST, "멱등성 키가 유효한 uuid4 형식이 아닙니다."),
     EVENT_DATE_BAD_REQUEST_EXCEPTION(BAD_REQUEST, "해당 이벤트는 현재 유효한 날짜가 아닙니다."),
     EVENT_TIME_BAD_REQUEST_EXCEPTION(BAD_REQUEST, "해당 이벤트는 현재 유효한 시간이 아닙니다."),
     EVENT_COUNT_BAD_REQUEST_EXCEPTION(BAD_REQUEST, "해당 이벤트는 보상 횟수가 전부 소진되었습니다."),
+    ADMOB_URI_BAD_REQUEST_EXCEPTION(BAD_REQUEST, "URI의 값이 올바르지 않습니다."),
 
     /**
      * 401 UNAUTHORIZED
@@ -73,6 +74,7 @@ public enum ErrorCode {
     GOOGLE_SUBSCRIPTIONS_FORBIDDEN_EXCEPTION(FORBIDDEN, "이미 YELLO: PLUS를 구독한 상태입니다."),
     GOOGLE_SUBSCRIPTION_TRANSACTION_EXPIRED_EXCEPTION(FORBIDDEN, "이미 만료된 결제 내역의 영수증입니다."),
     WRONG_VOTE_TYPE_FORBIDDEN(FORBIDDEN, "잘못된 투표 유형입니다."),
+    DUPLICATE_ADMOB_REWARD_EXCEPTION(FORBIDDEN, "이미 광고 보상에 대한 처리가 완료되었습니다."),
 
     /**
      * 404 NOT FOUND
@@ -107,6 +109,7 @@ public enum ErrorCode {
     EVENT_TIME_NOT_FOUND_EXCEPTION(NOT_FOUND, "해당 EventTime가 존재하지 않습니다."),
     IDEMPOTENCY_KEY_NOT_FOUND_EXCEPTION(NOT_FOUND, "멱등키의 이벤트가 존재하지 않습니다. 이벤트 참여를 먼저 해주세요"),
     EVENT_RANDOM_NOT_FOUND_EXCEPTION(NOT_FOUND, "해당 EventRandom가 존재하지 않습니다."),
+    NOT_FOUND_EVENT_REWARD_EXCEPTION(NOT_FOUND, "해당 EventReward가 존재하지 않습니다."),
 
     /**
      * 409 CONFLICT
