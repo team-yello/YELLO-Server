@@ -10,7 +10,8 @@ import lombok.RequiredArgsConstructor;
 @Getter
 @RequiredArgsConstructor
 public enum EventType {
-    ADMOB("ADMOB"),
+    ADMOB_POINT("ADMOB_POINT"),
+    ADMOB_MULTIPLE_POINT("ADMOB_MULTIPLE_POINT"),
     LUNCH_EVENT("LUNCH_EVENT");
 
     private final String initial;
