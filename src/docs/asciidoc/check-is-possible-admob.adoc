@@ -1,0 +1,52 @@
+:reproducible:
+== 상점에서 보상형 광고 가능한지 여부 (명세)
+
+=== 요청
+
+[http,json]
+----
+GET /api/v1/admob/{tag} HTTP/1.1
+Authorization: Bearer your-access-token
+Content-Type: application/json
+----
+
+=== 요청 파라미터
+
+----
+tag -> shop
+----
+* 보상형 광고 다른곳에서 사용할 수도 있으므로 tag로 어떤 곳에서 사용하고 있는곳인지 tag로 명시
+* 현재는 상점 -> shop에서만 보상형 광고 진행
+
+=== 응답
+
+[http,json]
+----
+HTTP/1.1 200 OK
+Vary: Origin
+Vary: Access-Control-Request-Method
+Vary: Access-Control-Request-Headers
+Content-Type: application/json
+{
+  "status" : 200,
+  "message" : "광고 보고 포인트 얻기 가능 여부 조회에 성공했습니다.",
+  "data": {
+    "createdAt": "2024-01-01 12:00:00",
+    "isPossible" : true,
+  }
+}
+----
+
+
+=== NOTE
+
+- Header에 무작위한 UUID4 값을 넣어주세요
+* 예시) IdempotencyKey: 0397b5f3-ecdc-47d6-b5d7-2b1afcf00e87
+- 주의사항
+* 같은 멱등성키를 2번 요청하면, 400번 에러.
+- ADMOB
+* ADMOB 서버에 SSV(ServerSideVerification) Options의 customData에 입력한 것과 동일한 멱등성 키를 넘겨주세요.
+
+=== CHANGELOG
+
+- 2024.02.16 명세서 작성
