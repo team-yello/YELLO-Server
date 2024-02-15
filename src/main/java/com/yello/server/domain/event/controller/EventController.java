@@ -70,6 +70,7 @@ public class EventController {
     @GetMapping("/v1/admob/verify")
     public ResponseEntity<?> verifyAdmob(HttpServletRequest request) {
         URI uri;
+        System.out.println(request.getQueryString() + " alalalalalal");
         try {
             uri =
                 new URI(request.getScheme(), null, request.getServerName(), request.getServerPort(),
@@ -77,6 +78,7 @@ public class EventController {
         } catch (URISyntaxException e) {
             throw new EventBadRequestException(ADMOB_URI_BAD_REQUEST_EXCEPTION);
         }
+        System.out.println("URIIIII : " + uri);
         eventService.verifyAdmobReward(uri, request);
 
         return new ResponseEntity<>(HttpStatus.OK);
