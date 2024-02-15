@@ -144,8 +144,7 @@ public class ControllerExceptionAdvice {
         AppleBadRequestException.class,
         UserAdminBadRequestException.class,
         EnumIllegalArgumentException.class,
-        IllegalArgumentException.class,
-        EventBadRequestException.class
+        IllegalArgumentException.class
     })
     public ResponseEntity<BaseResponse> BadRequestException(CustomException exception) {
         return ResponseEntity.status(BAD_REQUEST)
@@ -196,7 +195,8 @@ public class ControllerExceptionAdvice {
         UserAdminNotFoundException.class,
         NoticeNotFoundException.class,
         AdminConfigurationNotFoundException.class,
-        EventNotFoundException.class
+        EventNotFoundException.class,
+        EventBadRequestException.class
     })
     public ResponseEntity<BaseResponse> NotFoundException(CustomException exception) {
         return ResponseEntity.status(NOT_FOUND)

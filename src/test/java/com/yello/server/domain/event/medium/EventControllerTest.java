@@ -1,6 +1,6 @@
 package com.yello.server.domain.event.medium;
 
-import static com.yello.server.domain.event.entity.EventType.ADMOB;
+import static com.yello.server.domain.event.entity.EventType.ADMOB_POINT;
 import static com.yello.server.domain.event.entity.EventType.LUNCH_EVENT;
 import static com.yello.server.global.common.util.ConstantUtil.GlobalZoneId;
 import static org.mockito.ArgumentMatchers.any;
@@ -174,7 +174,7 @@ class EventControllerTest {
             .image("https://storage.googleapis.com/yelloworld/image/coin-stack.svg")
             .build();
         final Event admobEvent = Event.builder()
-            .tag(ADMOB)
+            .tag(ADMOB_POINT)
             .startDate(ZonedDateTime.of(2024, 1, 1, 0, 0, 0, 0, GlobalZoneId))
             .endDate(ZonedDateTime.of(2024, 12, 31, 0, 0, 0, 0, GlobalZoneId))
             .title("ADMOB 광고입니다.")
@@ -286,7 +286,7 @@ class EventControllerTest {
             .image("https://storage.googleapis.com/yelloworld/image/coin-stack.svg")
             .build();
         final Event admobEvent = Event.builder()
-            .tag(ADMOB)
+            .tag(ADMOB_POINT)
             .startDate(ZonedDateTime.of(2024, 1, 1, 0, 0, 0, 0, GlobalZoneId))
             .endDate(ZonedDateTime.of(2024, 12, 31, 0, 0, 0, 0, GlobalZoneId))
             .title("ADMOB 광고입니다.")
@@ -351,7 +351,7 @@ class EventControllerTest {
             .image("https://storage.googleapis.com/yelloworld/image/coin-stack.svg")
             .build();
         final Event admobEvent = Event.builder()
-            .tag(ADMOB)
+            .tag(ADMOB_POINT)
             .startDate(ZonedDateTime.of(2024, 1, 1, 0, 0, 0, 0, GlobalZoneId))
             .endDate(ZonedDateTime.of(2024, 12, 31, 0, 0, 0, 0, GlobalZoneId))
             .title("ADMOB 광고입니다.")
@@ -437,7 +437,7 @@ class EventControllerTest {
         // given
         final String idempotencyKey = "0397b5f3-ecdc-47d6-b5d7-2b1afcf00e87";
         final EventJoinRequest request = EventJoinRequest.builder()
-            .tag(ADMOB.getInitial())
+            .tag(ADMOB_POINT.getInitial())
             .build();
 
         doNothing()
