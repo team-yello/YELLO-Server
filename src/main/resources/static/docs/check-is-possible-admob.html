@@ -5,7 +5,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="generator" content="Asciidoctor 2.0.18">
-<title>이벤트 조회</title>
+<title>상점에서 보상형 광고 가능한지 여부 (명세)</title>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Open+Sans:300,300italic,400,400italic,600,600italic%7CNoto+Serif:400,400italic,700,700italic%7CDroid+Sans+Mono:400,700">
 <style>
 /*! Asciidoctor default stylesheet | MIT License | https://asciidoctor.org */
@@ -441,259 +441,54 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 </div>
 <div id="content">
 <div class="sect1">
-<h2 id="_이벤트_조회">이벤트 조회</h2>
+<h2 id="_상점에서_보상형_광고_가능한지_여부_명세">상점에서 보상형 광고 가능한지 여부 (명세)</h2>
 <div class="sectionbody">
 <div class="sect2">
 <h3 id="_요청">요청</h3>
 <div class="listingblock">
 <div class="content">
-<pre class="highlight nowrap"><code class="language-http" data-lang="http">GET /api/v1/event HTTP/1.1
-Authorization: Bearer your-access-token</code></pre>
+<pre>GET /api/v1/admob/{tag} HTTP/1.1
+Authorization: Bearer your-access-token
+Content-Type: application/json</pre>
 </div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_요청_파라미터">요청 파라미터</h3>
+<div class="listingblock">
+<div class="content">
+<pre>tag -&gt; shop</pre>
+</div>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>보상형 광고 다른곳에서 사용할 수도 있으므로 tag로 어떤 곳에서 사용하고 있는곳인지 tag로 명시</p>
+</li>
+<li>
+<p>현재는 상점 &#8594; shop에서만 보상형 광고 진행</p>
+</li>
+</ul>
 </div>
 </div>
 <div class="sect2">
 <h3 id="_응답">응답</h3>
 <div class="listingblock">
 <div class="content">
-<pre class="highlight nowrap"><code class="language-http" data-lang="http">HTTP/1.1 200 OK
+<pre>HTTP/1.1 200 OK
 Vary: Origin
 Vary: Access-Control-Request-Method
 Vary: Access-Control-Request-Headers
 Content-Type: application/json
-
 {
   "status" : 200,
-  "message" : "이벤트 전체 조회에 성공하였습니다.",
-  "data" : [ {
-    "tag" : "LUNCH_EVENT",
-    "startDate" : "2024-01-01T00:00:00+09:00",
-    "endDate" : "2024-12-31T00:00:00+09:00",
-    "title" : "점심 시간 깜짝 선물!",
-    "subTitle" : "평일 12-14시 최대 1회까지 참여 가능",
-    "animationList" : [ {
-      "v" : "로티1"
-    }, {
-      "v" : "로티2"
-    } ],
-    "eventReward" : {
-      "startTime" : "12:00+09:00",
-      "endTime" : "14:00+09:00",
-      "rewardCount" : 1,
-      "eventRewardItem" : [ {
-        "tag" : "POINT",
-        "eventRewardTitle" : "최대 200P",
-        "eventRewardImage" : "https://storage.googleapis.com/yelloworld/image/coin-stack.svg",
-        "maxRewardValue" : 200,
-        "minRewardValue" : 10,
-        "eventRewardProbability" : 10,
-        "randomTag" : "FIXED"
-      }, {
-        "tag" : "TICKET",
-        "eventRewardTitle" : "열람권 1개",
-        "eventRewardImage" : "https://storage.googleapis.com/yelloworld/image/key.svg",
-        "maxRewardValue" : 1,
-        "minRewardValue" : 1,
-        "eventRewardProbability" : 90,
-        "randomTag" : "RANDOM"
-      } ]
-    }
-  }, {
-    "tag" : "ADMOB_POINT",
-    "startDate" : "2024-01-01T00:00:00+09:00",
-    "endDate" : "2024-12-31T00:00:00+09:00",
-    "title" : "ADMOB 광고입니다.",
-    "subTitle" : "ADMOB 광고는 영구 사용 가능 설정입니다",
-    "animationList" : [ ],
-    "eventReward" : {
-      "startTime" : "00:00+09:00",
-      "endTime" : "23:59:59.000999999+09:00",
-      "rewardCount" : 1,
-      "eventRewardItem" : [ {
-        "tag" : "ADMOB_POINT",
-        "eventRewardTitle" : "광고 보고 포인트 얻기",
-        "eventRewardImage" : "https://storage.googleapis.com/yelloworld/image/coin-stack.svg",
-        "maxRewardValue" : 50,
-        "minRewardValue" : 50,
-        "eventRewardProbability" : 100,
-        "randomTag" : "FIXED"
-      } ]
-    }
-  } ]
-}</code></pre>
+  "message" : "광고 보고 포인트 얻기 가능 여부 조회에 성공했습니다.",
+  "data": {
+    "createdAt": "2024-01-01 12:00:00",
+    "isPossible" : true,
+  }
+}</pre>
 </div>
-</div>
-<div class="listingblock">
-<div class="content">
-<pre class="highlight nowrap"><code class="language-http" data-lang="http">HTTP/1.1 200 OK
-Vary: Origin
-Vary: Access-Control-Request-Method
-Vary: Access-Control-Request-Headers
-Content-Type: application/json
-
-{
-  "status" : 200,
-  "message" : "이벤트 전체 조회에 성공하였습니다.",
-  "data" : [ {
-    "tag" : "LUNCH_EVENT",
-    "startDate" : "2024-01-01T00:00:00+09:00",
-    "endDate" : "2024-12-31T00:00:00+09:00",
-    "title" : "점심 시간 깜짝 선물!",
-    "subTitle" : "평일 12-14시 최대 1회까지 참여 가능",
-    "animationList" : [ {
-      "v" : "로티1"
-    }, {
-      "v" : "로티2"
-    } ],
-    "eventReward" : {
-      "startTime" : "22:00+09:00",
-      "endTime" : "00:00+09:00",
-      "rewardCount" : 1,
-      "eventRewardItem" : [ {
-        "tag" : "POINT",
-        "eventRewardTitle" : "최대 200P",
-        "eventRewardImage" : "https://storage.googleapis.com/yelloworld/image/coin-stack.svg",
-        "maxRewardValue" : 200,
-        "minRewardValue" : 10,
-        "eventRewardProbability" : 40,
-        "randomTag" : "FIXED"
-      }, {
-        "tag" : "TICKET",
-        "eventRewardTitle" : "열람권 1개",
-        "eventRewardImage" : "https://storage.googleapis.com/yelloworld/image/key.svg",
-        "maxRewardValue" : 1,
-        "minRewardValue" : 1,
-        "eventRewardProbability" : 60,
-        "randomTag" : "RANDOM"
-      } ]
-    }
-  }, {
-    "tag" : "ADMOB_POINT",
-    "startDate" : "2024-01-01T00:00:00+09:00",
-    "endDate" : "2024-12-31T00:00:00+09:00",
-    "title" : "ADMOB 광고입니다.",
-    "subTitle" : "ADMOB 광고는 영구 사용 가능 설정입니다",
-    "animationList" : [ ],
-    "eventReward" : {
-      "startTime" : "00:00+09:00",
-      "endTime" : "23:59:59.000999999+09:00",
-      "rewardCount" : 1,
-      "eventRewardItem" : [ {
-        "tag" : "ADMOB_POINT",
-        "eventRewardTitle" : "광고 보고 포인트 얻기",
-        "eventRewardImage" : "https://storage.googleapis.com/yelloworld/image/coin-stack.svg",
-        "maxRewardValue" : 50,
-        "minRewardValue" : 50,
-        "eventRewardProbability" : 100,
-        "randomTag" : "FIXED"
-      } ]
-    }
-  } ]
-}</code></pre>
-</div>
-</div>
-<div class="listingblock">
-<div class="content">
-<pre class="highlight nowrap"><code class="language-http" data-lang="http">HTTP/1.1 200 OK
-Vary: Origin
-Vary: Access-Control-Request-Method
-Vary: Access-Control-Request-Headers
-Content-Type: application/json
-
-{
-  "status" : 200,
-  "message" : "이벤트 전체 조회에 성공하였습니다.",
-  "data" : [ {
-    "tag" : "LUNCH_EVENT",
-    "startDate" : "2024-01-01T00:00:00+09:00",
-    "endDate" : "2024-12-31T00:00:00+09:00",
-    "title" : "점심 시간 깜짝 선물!",
-    "subTitle" : "평일 12-14시 최대 1회까지 참여 가능",
-    "animationList" : [ {
-      "v" : "로티1"
-    }, {
-      "v" : "로티2"
-    } ],
-    "eventReward" : null
-  }, {
-    "tag" : "ADMOB_POINT",
-    "startDate" : "2024-01-01T00:00:00+09:00",
-    "endDate" : "2024-12-31T00:00:00+09:00",
-    "title" : "ADMOB 광고입니다.",
-    "subTitle" : "ADMOB 광고는 영구 사용 가능 설정입니다",
-    "animationList" : [ ],
-    "eventReward" : {
-      "startTime" : "00:00+09:00",
-      "endTime" : "23:59:59.000999999+09:00",
-      "rewardCount" : 1,
-      "eventRewardItem" : [ {
-        "tag" : "ADMOB_POINT",
-        "eventRewardTitle" : "광고 보고 포인트 얻기",
-        "eventRewardImage" : "https://storage.googleapis.com/yelloworld/image/coin-stack.svg",
-        "maxRewardValue" : 50,
-        "minRewardValue" : 50,
-        "eventRewardProbability" : 100,
-        "randomTag" : "FIXED"
-      } ]
-    }
-  } ]
-}</code></pre>
-</div>
-</div>
-</div>
-<div class="sect2">
-<h3 id="_주의">주의</h3>
-<div class="ulist">
-<ul>
-<li>
-<p>data: <strong>Response</strong>[]</p>
-</li>
-<li>
-<p><strong>Response</strong></p>
-</li>
-<li>
-<p>tag : "LUNCH_EVENT"</p>
-<div class="ulist">
-<ul>
-<li>
-<p>LUNCH_EVENT에 해당하는 *Response*가 없으면 Render 해주지 말아주세요</p>
-</li>
-</ul>
-</div>
-</li>
-<li>
-<p>startDate : "2024-01-01T00:00:00+09:00"</p>
-</li>
-<li>
-<p>endDate : "2024-12-31T00:00:00+09:00"</p>
-</li>
-<li>
-<p>title : "점심 시간 깜짝 선물!"</p>
-</li>
-<li>
-<p>subTitle : "평일 12-14시 최대 1회까지 참여 가능"</p>
-</li>
-<li>
-<p>animationList : string[]</p>
-<div class="ulist">
-<ul>
-<li>
-<p>URL이 들어감.</p>
-</li>
-</ul>
-</div>
-</li>
-<li>
-<p>eventReward: <strong>EventReward</strong> | null</p>
-<div class="ulist">
-<ul>
-<li>
-<p>해당 필드가 <strong>null</strong>일 시, 이벤트 보여주지 않도록 해주세요.</p>
-</li>
-</ul>
-</div>
-</li>
-</ul>
 </div>
 </div>
 <div class="sect2">
@@ -701,7 +496,34 @@ Content-Type: application/json
 <div class="ulist">
 <ul>
 <li>
-<p><strong>!</strong> LUNCH_EVENT에 해당하는 Response가 없거나, LUNCH_EVENT Response의 eventReward가 null이면, 메인화면 접속시, 이벤트 화면을 띄워주지마세요.</p>
+<p>Header에 무작위한 UUID4 값을 넣어주세요</p>
+<div class="ulist">
+<ul>
+<li>
+<p>예시) IdempotencyKey: 0397b5f3-ecdc-47d6-b5d7-2b1afcf00e87</p>
+</li>
+</ul>
+</div>
+</li>
+<li>
+<p>주의사항</p>
+<div class="ulist">
+<ul>
+<li>
+<p>같은 멱등성키를 2번 요청하면, 400번 에러.</p>
+</li>
+</ul>
+</div>
+</li>
+<li>
+<p>ADMOB</p>
+<div class="ulist">
+<ul>
+<li>
+<p>ADMOB 서버에 SSV(ServerSideVerification) Options의 customData에 입력한 것과 동일한 멱등성 키를 넘겨주세요.</p>
+</li>
+</ul>
+</div>
 </li>
 </ul>
 </div>
@@ -711,7 +533,7 @@ Content-Type: application/json
 <div class="ulist">
 <ul>
 <li>
-<p>2024.02.06 릴리즈</p>
+<p>2024.02.16 명세서 작성</p>
 </li>
 </ul>
 </div>
