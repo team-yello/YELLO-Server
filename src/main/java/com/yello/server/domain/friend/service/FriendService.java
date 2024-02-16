@@ -120,6 +120,7 @@ public class FriendService {
         final User user = userRepository.getById(userId);
         final String groupName = user.getGroup().getGroupName();
         List<String> uuidList = Arrays.asList(YELLO_FEMALE, YELLO_MALE);
+        List<User> friends = new ArrayList<>();
 
         List<User> friendList = new ArrayList<>();
 
@@ -132,13 +133,12 @@ public class FriendService {
                     userRepository.findAllByGroupContainingName(groupName, keyword, uuidList));
             friendList.addAll(
                     userRepository.findAllByOtherGroupContainingName(groupName, keyword, uuidList));
-
+            friendList.addAll(userRepository.findAllByGroupNameContainingAndFriendListNotContaining(keyword, uuidList, friendList));
         } else {
             friendList.addAll(
                     userRepository.findAllByGroupContainingYelloId(groupName, keyword, uuidList));
             friendList.addAll(
                     userRepository.findAllByOtherGroupContainingYelloId(groupName, keyword, uuidList));
-            friendList.addAll(userRepository.findAllByGroupNameContainingAndFriendListNotContaining(keyword, uuidList, friendList));
         }
 
         List<SearchFriendVO> pageList = PaginationFactory.getPage(friendList, pageable)
