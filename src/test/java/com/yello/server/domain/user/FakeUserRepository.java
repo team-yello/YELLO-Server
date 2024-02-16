@@ -259,6 +259,15 @@ public class FakeUserRepository implements UserRepository {
     }
 
     @Override
+    public List<User> findAllByGroupNameContainingAndFriendListNotContaining(String keyword, List<String> uuidList, List<User> friendList) {
+        return data.stream()
+                .filter(user -> user.getGroup().getGroupName().contains(keyword))
+                .filter(user -> !user.getId().equals(1L))
+                .filter(user -> !uuidList.contains(user.getUuid()))
+                .toList();
+    }
+
+    @Override
     public Long count() {
         return (long) data.size();
     }

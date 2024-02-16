@@ -154,6 +154,11 @@ public class UserRepositoryImpl implements UserRepository {
     }
 
     @Override
+    public List<User> findAllByGroupNameContainingAndFriendListNotContaining(String keyword, List<String> uuidList, List<User> friendList) {
+        return userJpaRepository.findAllByGroupContaining(keyword, uuidList, friendList);
+    }
+
+    @Override
     public Long count() {
         return userJpaRepository.count();
     }
