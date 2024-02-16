@@ -110,6 +110,7 @@ public enum ErrorCode {
     IDEMPOTENCY_KEY_NOT_FOUND_EXCEPTION(NOT_FOUND, "멱등키의 이벤트가 존재하지 않습니다. 이벤트 참여를 먼저 해주세요"),
     EVENT_RANDOM_NOT_FOUND_EXCEPTION(NOT_FOUND, "해당 EventRandom가 존재하지 않습니다."),
     NOT_FOUND_EVENT_REWARD_EXCEPTION(NOT_FOUND, "해당 EventReward가 존재하지 않습니다."),
+    EMPTY_QUERY_STRING_EXCEPTION(NOT_FOUND, "query string 값이 null 입니다."),
 
     /**
      * 409 CONFLICT
