@@ -4,6 +4,7 @@ import static com.yello.server.global.common.ErrorCode.ADMOB_URI_BAD_REQUEST_EXC
 import static com.yello.server.global.common.SuccessCode.EVENT_JOIN_SUCCESS;
 import static com.yello.server.global.common.SuccessCode.EVENT_NOTICE_SUCCESS;
 import static com.yello.server.global.common.SuccessCode.EVENT_REWARD_SUCCESS;
+import static com.yello.server.global.common.SuccessCode.GET_IS_POSSIBLE_ADMOB_SUCCESS;
 import static com.yello.server.global.common.SuccessCode.REWARD_ADMOB_SUCCESS;
 import static com.yello.server.global.common.SuccessCode.VERIFY_ADMOB_SSV_SUCCESS;
 import static com.yello.server.global.common.util.ConstantUtil.IdempotencyKeyHeader;
@@ -14,6 +15,7 @@ import com.yello.server.domain.event.dto.request.AdmobRewardRequest;
 import com.yello.server.domain.event.dto.request.EventJoinRequest;
 import com.yello.server.domain.event.dto.response.EventResponse;
 import com.yello.server.domain.event.dto.response.EventRewardResponse;
+import com.yello.server.domain.event.dto.response.GetIsPossibleAdmob;
 import com.yello.server.domain.event.exception.EventBadRequestException;
 import com.yello.server.domain.event.service.EventService;
 import com.yello.server.domain.user.entity.User;
@@ -30,6 +32,7 @@ import lombok.val;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -88,5 +91,12 @@ public class EventController {
     public BaseResponse<EventRewardResponse> rewardAdmob(@AccessTokenUser User user, @RequestBody AdmobRewardRequest request) {
         val data = eventService.rewardAdmob(user.getId(), request);
         return BaseResponse.success(REWARD_ADMOB_SUCCESS, data);
+    }
+
+    @GetMapping("/v1/admob/possible/{tag}")
+    public BaseResponse<GetIsPossibleAdmob> getIsPossibleAdmob(@AccessTokenUser User user, @PathVariable("tag") String tag) {
+        System.out.println(" asfsaasdfasdf");
+        val data = eventService.getIsPossibleAdmob(user.getId(), tag);
+        return BaseResponse.success(GET_IS_POSSIBLE_ADMOB_SUCCESS, data);
     }
 }
