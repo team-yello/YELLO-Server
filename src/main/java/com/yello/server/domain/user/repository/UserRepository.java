@@ -60,6 +60,8 @@ public interface UserRepository {
     List<User> findAllByOtherGroupContainingYelloId(String groupName, String keyword,
         List<String> uuidList);
 
+    List<User> findAllByGroupNameContainingAndFriendListNotContaining(String keyword, List<String> uuidList, List<User> friendList);
+
     Long count();
 
     Long countAllByYelloIdContaining(String yelloId);

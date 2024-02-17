@@ -3,6 +3,7 @@ package com.yello.server.domain.user.entity;
 import static com.yello.server.global.common.ErrorCode.ENUM_BAD_REQUEST_EXCEPTION;
 
 import com.yello.server.global.exception.EnumIllegalArgumentException;
+import java.time.LocalDateTime;
 import java.time.ZonedDateTime;
 import java.util.Arrays;
 import lombok.Getter;
@@ -16,7 +17,8 @@ public enum UserDataType {
      */
     WITHDRAW_REASON(String.class, "withdraw-reason"),
     ACCOUNT_UPDATED_AT(ZonedDateTime.class, "account-updated-at"),
-    RECOMMENDED(ZonedDateTime.class, "recommended");
+    RECOMMENDED(ZonedDateTime.class, "recommended"),
+    ADMOB_POINT(LocalDateTime.class, "ADMOB_POINT");
 
     private final Class<?> classType;
     private final String initial;

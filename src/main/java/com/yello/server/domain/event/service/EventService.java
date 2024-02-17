@@ -1,11 +1,15 @@
 package com.yello.server.domain.event.service;
 
+import static com.yello.server.domain.user.entity.UserDataType.fromCode;
 import static com.yello.server.global.common.ErrorCode.DUPLICATE_ADMOB_REWARD_EXCEPTION;
 import static com.yello.server.global.common.ErrorCode.EVENT_COUNT_BAD_REQUEST_EXCEPTION;
 import static com.yello.server.global.common.ErrorCode.EVENT_DATE_BAD_REQUEST_EXCEPTION;
 import static com.yello.server.global.common.ErrorCode.EVENT_TIME_BAD_REQUEST_EXCEPTION;
 import static com.yello.server.global.common.ErrorCode.IDEMPOTENCY_KEY_CONFLICT_EXCEPTION;
 import static com.yello.server.global.common.ErrorCode.IDEMPOTENCY_KEY_NOT_FOUND_EXCEPTION;
+import static com.yello.server.global.common.factory.TimeFactory.minusTime;
+import static com.yello.server.global.common.factory.TimeFactory.toDateFormattedString;
+import static com.yello.server.global.common.util.ConstantUtil.ADMOB_SHOP_TIME;
 import static com.yello.server.global.common.util.ConstantUtil.GlobalZoneId;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -17,6 +21,7 @@ import com.yello.server.domain.event.dto.request.AdmobSsvRequest;
 import com.yello.server.domain.event.dto.request.EventJoinRequest;
 import com.yello.server.domain.event.dto.response.EventResponse;
 import com.yello.server.domain.event.dto.response.EventRewardResponse;
+import com.yello.server.domain.event.dto.response.GetIsPossibleAdmob;
 import com.yello.server.domain.event.entity.Event;
 import com.yello.server.domain.event.entity.EventHistory;
 import com.yello.server.domain.event.entity.EventInstance;
@@ -33,6 +38,8 @@ import com.yello.server.domain.event.exception.EventForbiddenException;
 import com.yello.server.domain.event.exception.EventNotFoundException;
 import com.yello.server.domain.event.repository.EventRepository;
 import com.yello.server.domain.user.entity.User;
+import com.yello.server.domain.user.entity.UserData;
+import com.yello.server.domain.user.repository.UserDataRepository;
 import com.yello.server.domain.user.repository.UserRepository;
 import com.yello.server.global.common.factory.UuidFactory;
 import jakarta.servlet.http.HttpServletRequest;
@@ -40,6 +47,7 @@ import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
 import java.net.URI;
 import java.time.Duration;
+import java.time.LocalDateTime;
 import java.time.OffsetTime;
 import java.time.ZonedDateTime;
 import java.util.ArrayList;
@@ -61,6 +69,7 @@ public class EventService {
     private final EventRepository eventRepository;
     private final ObjectMapper objectMapper;
     private final UserRepository userRepository;
+    private final UserDataRepository userDataRepository;
 
     public List<EventResponse> getEvents(Long userId) throws JsonProcessingException {
         // exception
@@ -290,7 +299,23 @@ public class EventService {
         EventInstanceReward rewardInstance =
             eventRepository.save(EventInstanceReward.of(eventInstance, eventReward));
 
+        // user-data cooldown 추가
+        UserData userAdmob =
+            userDataRepository.findByUserIdAndTag(userId, fromCode(request.rewardType()))
+                .orElseGet(() -> userDataRepository.save(UserData.of(fromCode(request.rewardType()),
+                    toDateFormattedString(LocalDateTime.now()), user)));
+
+        userAdmob.setValue(toDateFormattedString(LocalDateTime.now()));
+
         return EventRewardResponse.of(rewardInstance);
+    }
+
+    public GetIsPossibleAdmob getIsPossibleAdmob(Long userId, String tag) {
+        final User user = userRepository.getById(userId);
+        UserData userAdmob = userDataRepository.findByUserIdAndTag(userId, fromCode(tag))
+            .orElse(UserData.of(fromCode(tag),
+                toDateFormattedString(minusTime(LocalDateTime.now(), ADMOB_SHOP_TIME)), user));
+        return GetIsPossibleAdmob.of(userAdmob);
     }
 
     private EventReward handleRewardByType(AdmobRewardRequest request, User user) {
