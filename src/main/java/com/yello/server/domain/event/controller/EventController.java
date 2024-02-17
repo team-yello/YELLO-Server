@@ -101,7 +101,6 @@ public class EventController {
     @GetMapping("/v1/admob/possible/{tag}")
     public BaseResponse<GetIsPossibleAdmob> getIsPossibleAdmob(@AccessTokenUser User user,
         @PathVariable("tag") String tag) {
-        System.out.println(" asfsaasdfasdf");
         val data = eventService.getIsPossibleAdmob(user.getId(), tag);
         return BaseResponse.success(GET_IS_POSSIBLE_ADMOB_SUCCESS, data);
     }
