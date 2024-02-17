@@ -132,13 +132,12 @@ public class FriendService {
                     userRepository.findAllByGroupContainingName(groupName, keyword, uuidList));
             friendList.addAll(
                     userRepository.findAllByOtherGroupContainingName(groupName, keyword, uuidList));
-
+            friendList.addAll(userRepository.findAllByGroupNameContainingAndFriendListNotContaining(keyword, uuidList, friendList));
         } else {
             friendList.addAll(
                     userRepository.findAllByGroupContainingYelloId(groupName, keyword, uuidList));
             friendList.addAll(
                     userRepository.findAllByOtherGroupContainingYelloId(groupName, keyword, uuidList));
-            friendList.addAll(userRepository.findAllByGroupNameContainingAndFriendListNotContaining(keyword, uuidList, friendList));
         }
 
         List<SearchFriendVO> pageList = PaginationFactory.getPage(friendList, pageable)

@@ -73,8 +73,8 @@ public class ConstantUtil {
     public static final int NO_FRIEND_COUNT = 0;
     public static final int SUBSCRIBE_DAYS = 7;
     public static final int PLUS_BASIC_TIME = 0;
-    public static final String USER_VOTE_TYPE = "send";
-    public static final String ALL_VOTE_TYPE = "all";
+    public static final int ADMOB_SHOP_TIME = 60;
+    public static final long ADMOB_TIMER_TIME = 3600L;
 
     private ConstantUtil() {
         throw new IllegalStateException();
