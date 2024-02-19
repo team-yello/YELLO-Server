@@ -47,7 +47,6 @@ import com.yello.server.global.common.dto.EmptyObject;
 import com.yello.server.infrastructure.firebase.dto.request.NotificationCustomMessage;
 import com.yello.server.infrastructure.firebase.service.NotificationService;
 import java.util.List;
-import javax.annotation.Nullable;
 import lombok.RequiredArgsConstructor;
 import lombok.val;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -75,9 +74,9 @@ public class AdminController {
 
     @GetMapping("/user")
     public BaseResponse<AdminUserResponse> getUserAdmin(@AccessTokenUser User user,
-        @RequestParam Integer page,
-        @Nullable @RequestParam String field,
-        @Nullable @RequestParam String value) {
+        @RequestParam(value = "page") Integer page,
+        @RequestParam(value = "field", required = false) String field,
+        @RequestParam(value = "value", required = false) String value) {
         val data = (field == null && value == null)
             ? adminService.findUser(user.getId(), createPageableByNameSortDescLimitTen(page))
             : adminService.findUserContaining(user.getId(),
@@ -88,28 +87,28 @@ public class AdminController {
 
     @GetMapping("/user/{id}")
     public BaseResponse<AdminUserDetailResponse> getUserDetailAdmin(@AccessTokenUser User user,
-        @PathVariable Long id) {
+        @PathVariable(value = "id") Long id) {
         val data = adminService.findUserDetail(user.getId(), id);
         return BaseResponse.success(READ_USER_DETAIL_ADMIN_SUCCESS, data);
     }
 
     @PostMapping("/user/{id}")
     public BaseResponse<EmptyObject> postUserDetailAdmin(@AccessTokenUser User user,
-        @PathVariable Long id, @RequestBody AdminUserDetailRequest request) {
+        @PathVariable(value = "id") Long id, @RequestBody AdminUserDetailRequest request) {
         val data = adminService.updateUserDetail(user.getId(), id, request);
         return BaseResponse.success(UPDATE_USER_DETAIL_ADMIN_SUCCESS);
     }
 
     @DeleteMapping("/user")
-    public BaseResponse deleteUser(@AccessTokenUser User user, @RequestParam Long userId) {
+    public BaseResponse deleteUser(@AccessTokenUser User user, @RequestParam(value = "userId") Long userId) {
         adminService.deleteUser(user.getId(), userId);
         return BaseResponse.success(DELETE_USER_ADMIN_SUCCESS);
     }
 
     @GetMapping("/cooldown")
     public BaseResponse<AdminCooldownResponse> getCooldownAdmin(@AccessTokenUser User user,
-        @RequestParam Integer page,
-        @Nullable @RequestParam String yelloId) {
+        @RequestParam(value = "page") Integer page,
+        @RequestParam(value = "yelloId", required = false) String yelloId) {
         val data = yelloId == null
             ? adminService.findCooldown(user.getId(), createPageableLimitTen(page))
             : adminService.findCooldownContaining(user.getId(), createPageableLimitTen(page),
@@ -118,14 +117,15 @@ public class AdminController {
     }
 
     @DeleteMapping("/cooldown")
-    public BaseResponse deleteCooldown(@AccessTokenUser User user, @RequestParam Long cooldownId) {
+    public BaseResponse deleteCooldown(@AccessTokenUser User user,
+        @RequestParam(value = "cooldownId") Long cooldownId) {
         adminService.deleteCooldown(user.getId(), cooldownId);
         return BaseResponse.success(DELETE_COOLDOWN_ADMIN_SUCCESS);
     }
 
     @GetMapping("/question")
     public BaseResponse<AdminQuestionResponse> getQuestionAdmin(@AccessTokenUser User user,
-        @RequestParam Integer page) {
+        @RequestParam(value = "page") Integer page) {
         val data = adminService.findQuestion(user.getId(), createPageable(page, 20));
         return BaseResponse.success(READ_QUESTION_ADMIN_SUCCESS, data);
     }
@@ -133,14 +133,14 @@ public class AdminController {
     @GetMapping("/question/{id}")
     public BaseResponse<AdminQuestionDetailResponse> getQuestionDetailAdmin(
         @AccessTokenUser User user,
-        @PathVariable Long id) {
+        @PathVariable(value = "id") Long id) {
         val data = adminService.findQuestionDetail(user.getId(), id);
         return BaseResponse.success(READ_QUESTION_DETAIL_ADMIN_SUCCESS, data);
     }
 
     @PostMapping("/question/{id}")
     public BaseResponse<EmptyObject> postQuestionSendAdmin(@AccessTokenUser User user,
-        @PathVariable Long id, @RequestBody AdminQuestionVoteRequest request) {
+        @PathVariable(value = "id") Long id, @RequestBody AdminQuestionVoteRequest request) {
         val data = adminService.createVote(user.getId(), id, request);
         data.forEach(notificationService::sendYelloNotification);
 
@@ -148,7 +148,8 @@ public class AdminController {
     }
 
     @DeleteMapping("/question")
-    public BaseResponse deleteQuestion(@AccessTokenUser User user, @RequestParam Long questionId) {
+    public BaseResponse deleteQuestion(@AccessTokenUser User user,
+        @RequestParam(value = "questionId") Long questionId) {
         adminService.deleteQuestion(user.getId(), questionId);
         return BaseResponse.success(DELETE_QUESTION_ADMIN_SUCCESS);
     }
@@ -162,7 +163,7 @@ public class AdminController {
     }
 
     @GetMapping("/configuration")
-    public BaseResponse<AdminConfigurationResponse> getConfigurations(@RequestParam("tag") String tag,
+    public BaseResponse<AdminConfigurationResponse> getConfigurations(@RequestParam(value = "tag") String tag,
         @AccessTokenUser User user) {
         final AdminConfigurationType configurationType = AdminConfigurationType.fromCode(tag);
         val data = adminService.getConfigurations(user.getId(), configurationType);
@@ -194,7 +195,7 @@ public class AdminController {
     }
 
     @PostMapping("/notice/{id}")
-    public BaseResponse<EmptyObject> updateNotice(@AccessTokenUser User user, @PathVariable("id") Long noticeId,
+    public BaseResponse<EmptyObject> updateNotice(@AccessTokenUser User user, @PathVariable(value = "id") Long noticeId,
         @RequestBody AdminNoticeCreateRequest request) {
         val data = adminService.updateNotice(user.getId(), noticeId, request);
         return BaseResponse.success(NOTICE_UPDATE_DETAIL_ADMIN_SUCCESS, data);

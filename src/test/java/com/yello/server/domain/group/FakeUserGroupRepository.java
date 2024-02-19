@@ -49,6 +49,13 @@ public class FakeUserGroupRepository implements UserGroupRepository {
     }
 
     @Override
+    public List<UserGroup> findAllByGroupName(String groupName) {
+        return data.stream()
+            .filter(group -> group.getGroupName().equals(groupName))
+            .toList();
+    }
+
+    @Override
     public Integer countDistinctGroupNameContaining(String groupName, UserGroupType userGroupType) {
         return Math.toIntExact(data.stream()
             .filter(group -> group.getGroupName().contains(groupName)
