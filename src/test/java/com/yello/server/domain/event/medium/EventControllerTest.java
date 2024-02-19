@@ -569,7 +569,6 @@ class EventControllerTest {
                 RestDocumentationRequestBuilders.post("/api/v1/admob/reward")
                     .with(csrf().asHeader())
                     .header(HttpHeaders.AUTHORIZATION, "Bearer your-access-token")
-                    .header(ConstantUtil.IdempotencyKeyHeader, idempotencyKey)
                     .contentType(MediaType.APPLICATION_JSON)
                     .content(objectMapper.writeValueAsString(request)))
             .andDo(print())

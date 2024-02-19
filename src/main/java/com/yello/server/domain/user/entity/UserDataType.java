@@ -18,7 +18,8 @@ public enum UserDataType {
     WITHDRAW_REASON(String.class, "withdraw-reason"),
     ACCOUNT_UPDATED_AT(ZonedDateTime.class, "account-updated-at"),
     RECOMMENDED(ZonedDateTime.class, "recommended"),
-    ADMOB_POINT(LocalDateTime.class, "ADMOB_POINT");
+    ADMOB_POINT(LocalDateTime.class, "ADMOB_POINT"),
+    ADMOB_MULTIPLE_POINT(LocalDateTime.class, "ADMOB_MULTIPLE_POINT");
 
     private final Class<?> classType;
     private final String initial;
