@@ -12,7 +12,8 @@ import lombok.RequiredArgsConstructor;
 public enum AdminConfigurationType {
     ACCESS_TOKEN_TIME("ACCESS_TOKEN_TIME"),
     REFRESH_TOKEN_TIME("REFRESH_TOKEN_TIME"),
-    ADMIN_SITE_PASSWORD("ADMIN_SITE_PASSWORD");
+    ADMIN_SITE_PASSWORD("ADMIN_SITE_PASSWORD"),
+    STATISTICS_USER_GROUP_START_DATE("STATISTICS_USER_GROUP_START_DATE");
 
     private final String initial;
 

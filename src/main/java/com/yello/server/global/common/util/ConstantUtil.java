@@ -4,7 +4,8 @@ import java.time.ZoneId;
 
 public class ConstantUtil {
 
-    public static final ZoneId GlobalZoneId = ZoneId.of("Asia/Seoul");
+    public static final String GlobalZoneIdLabel = "Asia/Seoul";
+    public static final ZoneId GlobalZoneId = ZoneId.of(GlobalZoneIdLabel);
     public static final String IdempotencyKeyHeader = "IdempotencyKey";
     public static final int RANDOM_COUNT = 4;
     public static final int VOTE_COUNT = 8;

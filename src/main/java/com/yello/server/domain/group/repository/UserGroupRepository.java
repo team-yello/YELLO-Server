@@ -14,6 +14,8 @@ public interface UserGroupRepository {
 
     Optional<UserGroup> findById(Long id);
 
+    List<UserGroup> findAllByGroupName(String groupName);
+
     Integer countDistinctGroupNameContaining(String groupName, UserGroupType userGroupType);
 
     List<String> findDistinctGroupNameContaining(String groupName, UserGroupType userGroupType, Pageable pageable);
