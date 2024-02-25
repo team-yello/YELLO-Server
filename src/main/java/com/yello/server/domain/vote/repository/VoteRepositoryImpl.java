@@ -100,6 +100,7 @@ public class VoteRepositoryImpl implements VoteRepository {
                         .where(friend.user.id.eq(userId)
                             .and(friend.deletedAt.isNull())
                         )))
+                .and(vote.nameHint.ne(-3))
                 .and(vote.sender.deletedAt.isNull())
                 .and(vote.receiver.deletedAt.isNull()))
             .orderBy(vote.createdAt.desc())
@@ -120,6 +121,7 @@ public class VoteRepositoryImpl implements VoteRepository {
                         .where(friend.user.id.eq(userId)
                             .and(friend.deletedAt.isNull())
                         )))
+                .and(vote.nameHint.ne(-3))
                 .and(vote.sender.deletedAt.isNull())
                 .and(vote.receiver.deletedAt.isNull()))
             .fetchOne();
