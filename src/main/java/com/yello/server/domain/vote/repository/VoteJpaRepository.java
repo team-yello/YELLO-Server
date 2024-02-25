@@ -35,6 +35,7 @@ public interface VoteJpaRepository extends JpaRepository<Vote, Long> {
 
     @Query("select v from Vote v where v.receiver.id in "
         + "(select f.target.id from Friend f where f.user.id = :userId and f.deletedAt is null) "
+        + "and v.nameHint != -3 "
         + "and v.sender.deletedAt is null "
         + "and v.receiver.deletedAt is null "
         + "order by v.createdAt desc")
@@ -42,6 +43,7 @@ public interface VoteJpaRepository extends JpaRepository<Vote, Long> {
 
     @Query("select count(v) from Vote v where v.receiver.id in "
         + "(select f.target.id from Friend f where f.user.id = :userId and f.deletedAt is null) "
+        + "and v.nameHint != -3 "
         + "and v.sender.deletedAt is null "
         + "and v.receiver.deletedAt is null "
         + "order by v.createdAt desc")
