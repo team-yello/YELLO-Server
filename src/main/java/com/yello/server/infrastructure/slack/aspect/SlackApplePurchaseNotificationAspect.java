@@ -24,7 +24,7 @@ public class SlackApplePurchaseNotificationAspect {
     public SlackApplePurchaseNotificationAspect(
         @Qualifier("slackApplePurchaseNotificationApi") SlackApi slackApplePurchaseApi,
         SlackWebhookMessageFactory slackWebhookMessageFactory,
-        TaskExecutor taskExecutor) {
+        @Qualifier("threadPoolTaskExecutor") TaskExecutor taskExecutor) {
         this.slackApplePurchaseApi = slackApplePurchaseApi;
         this.slackWebhookMessageFactory = slackWebhookMessageFactory;
         this.taskExecutor = taskExecutor;

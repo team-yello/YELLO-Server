@@ -36,6 +36,7 @@ import com.yello.server.domain.purchase.exception.PurchaseNotFoundException;
 import com.yello.server.domain.purchase.exception.SubscriptionConflictException;
 import com.yello.server.domain.question.exception.QuestionException;
 import com.yello.server.domain.question.exception.QuestionNotFoundException;
+import com.yello.server.domain.statistics.exception.StatisticsNotFoundException;
 import com.yello.server.domain.user.exception.UserBadRequestException;
 import com.yello.server.domain.user.exception.UserConflictException;
 import com.yello.server.domain.user.exception.UserException;
@@ -69,7 +70,7 @@ public class ControllerExceptionAdvice {
     public ControllerExceptionAdvice(
         @Qualifier("slackErrorApi") SlackApi slackErrorApi,
         SlackWebhookMessageFactory slackWebhookMessageFactory,
-        TaskExecutor taskExecutor
+        @Qualifier("threadPoolTaskExecutor") TaskExecutor taskExecutor
     ) {
         this.slackWebhookMessageFactory = slackWebhookMessageFactory;
         this.taskExecutor = taskExecutor;
@@ -196,7 +197,8 @@ public class ControllerExceptionAdvice {
         NoticeNotFoundException.class,
         AdminConfigurationNotFoundException.class,
         EventNotFoundException.class,
-        EventBadRequestException.class
+        EventBadRequestException.class,
+        StatisticsNotFoundException.class
     })
     public ResponseEntity<BaseResponse> NotFoundException(CustomException exception) {
         return ResponseEntity.status(NOT_FOUND)

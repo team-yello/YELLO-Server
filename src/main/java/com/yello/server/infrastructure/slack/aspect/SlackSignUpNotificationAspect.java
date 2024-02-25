@@ -24,7 +24,7 @@ public class SlackSignUpNotificationAspect {
     public SlackSignUpNotificationAspect(
         @Qualifier("slackSignUpApi") SlackApi slackSignUpApi,
         SlackWebhookMessageFactory slackWebhookMessageFactory,
-        TaskExecutor taskExecutor) {
+        @Qualifier("threadPoolTaskExecutor") TaskExecutor taskExecutor) {
         this.slackSignUpApi = slackSignUpApi;
         this.slackWebhookMessageFactory = slackWebhookMessageFactory;
         this.taskExecutor = taskExecutor;

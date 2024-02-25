@@ -11,6 +11,8 @@ import org.springframework.data.repository.query.Param;
 
 public interface UserGroupJpaRepository extends JpaRepository<UserGroup, Long> {
 
+    List<UserGroup> findAllByGroupName(String groupName);
+
     @Query("select count (distinct(s.groupName)) from UserGroup s " +
         "where s.groupName " +
         "like CONCAT('%',:groupName,'%' )" +

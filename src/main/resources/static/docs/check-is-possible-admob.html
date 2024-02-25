@@ -5,7 +5,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="generator" content="Asciidoctor 2.0.18">
-<title>상점에서 보상형 광고 가능한지 여부 (명세)</title>
+<title>상점에서 보상형 광고 가능한지 여부</title>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Open+Sans:300,300italic,400,400italic,600,600italic%7CNoto+Serif:400,400italic,700,700italic%7CDroid+Sans+Mono:400,700">
 <style>
 /*! Asciidoctor default stylesheet | MIT License | https://asciidoctor.org */
@@ -441,23 +441,42 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 </div>
 <div id="content">
 <div class="sect1">
-<h2 id="_상점에서_보상형_광고_가능한지_여부_명세">상점에서 보상형 광고 가능한지 여부 (명세)</h2>
+<h2 id="_상점에서_보상형_광고_가능한지_여부">상점에서 보상형 광고 가능한지 여부</h2>
 <div class="sectionbody">
 <div class="sect2">
 <h3 id="_요청">요청</h3>
 <div class="listingblock">
 <div class="content">
-<pre>GET /api/v1/admob/{tag} HTTP/1.1
-Authorization: Bearer your-access-token
-Content-Type: application/json</pre>
+<pre class="highlight nowrap"><code class="language-http" data-lang="http">GET /api/v1/admob/possible/ADMOB_POINT HTTP/1.1
+Content-Type: application/json;charset=UTF-8
+Authorization: Bearer your-access-token</code></pre>
 </div>
 </div>
 </div>
 <div class="sect2">
 <h3 id="_요청_파라미터">요청 파라미터</h3>
+<table class="tableblock frame-all grid-all stretch">
+<caption class="title">Table 1. /api/v1/admob/possible/{tag}</caption>
+<colgroup>
+<col style="width: 50%;">
+<col style="width: 50%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Parameter</th>
+<th class="tableblock halign-left valign-top">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>tag</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">보상형 광고의 종류</p></td>
+</tr>
+</tbody>
+</table>
 <div class="listingblock">
 <div class="content">
-<pre>tag -&gt; shop</pre>
+<pre>tag -&gt; ADMOB_POINT</pre>
 </div>
 </div>
 <div class="ulist">
@@ -466,7 +485,7 @@ Content-Type: application/json</pre>
 <p>보상형 광고 다른곳에서 사용할 수도 있으므로 tag로 어떤 곳에서 사용하고 있는곳인지 tag로 명시</p>
 </li>
 <li>
-<p>현재는 상점 &#8594; shop에서만 보상형 광고 진행</p>
+<p>현재는 상점에 있는 보상형 광고 (ADMOB_POINT를 tag에 요청)</p>
 </li>
 </ul>
 </div>
@@ -475,63 +494,34 @@ Content-Type: application/json</pre>
 <h3 id="_응답">응답</h3>
 <div class="listingblock">
 <div class="content">
-<pre>HTTP/1.1 200 OK
+<pre class="highlight nowrap"><code class="language-http" data-lang="http">HTTP/1.1 200 OK
 Vary: Origin
 Vary: Access-Control-Request-Method
 Vary: Access-Control-Request-Headers
 Content-Type: application/json
+
 {
   "status" : 200,
   "message" : "광고 보고 포인트 얻기 가능 여부 조회에 성공했습니다.",
-  "data": {
-    "createdAt": "2024-01-01 12:00:00",
-    "isPossible" : true,
+  "data" : {
+    "createdAt" : "2024-01-10 01:12:00",
+    "isPossible" : true
   }
-}</pre>
+}</code></pre>
 </div>
 </div>
 </div>
 <div class="sect2">
 <h3 id="_note">NOTE</h3>
-<div class="ulist">
-<ul>
-<li>
-<p>Header에 무작위한 UUID4 값을 넣어주세요</p>
-<div class="ulist">
-<ul>
-<li>
-<p>예시) IdempotencyKey: 0397b5f3-ecdc-47d6-b5d7-2b1afcf00e87</p>
-</li>
-</ul>
-</div>
-</li>
-<li>
-<p>주의사항</p>
-<div class="ulist">
-<ul>
-<li>
-<p>같은 멱등성키를 2번 요청하면, 400번 에러.</p>
-</li>
-</ul>
-</div>
-</li>
-<li>
-<p>ADMOB</p>
-<div class="ulist">
-<ul>
-<li>
-<p>ADMOB 서버에 SSV(ServerSideVerification) Options의 customData에 입력한 것과 동일한 멱등성 키를 넘겨주세요.</p>
-</li>
-</ul>
-</div>
-</li>
-</ul>
-</div>
+
 </div>
 <div class="sect2">
 <h3 id="_changelog">CHANGELOG</h3>
 <div class="ulist">
 <ul>
+<li>
+<p>2024.02.17 API 릴리즈</p>
+</li>
 <li>
 <p>2024.02.16 명세서 작성</p>
 </li>

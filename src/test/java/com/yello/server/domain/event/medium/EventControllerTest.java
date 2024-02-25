@@ -11,6 +11,8 @@ import static org.mockito.Mockito.doNothing;
 import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document;
 import static org.springframework.restdocs.operation.preprocess.Preprocessors.modifyHeaders;
 import static org.springframework.restdocs.operation.preprocess.Preprocessors.prettyPrint;
+import static org.springframework.restdocs.request.RequestDocumentation.parameterWithName;
+import static org.springframework.restdocs.request.RequestDocumentation.pathParameters;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 
@@ -22,20 +24,28 @@ import com.yello.server.domain.event.dto.request.AdmobRewardRequest;
 import com.yello.server.domain.event.dto.request.EventJoinRequest;
 import com.yello.server.domain.event.dto.response.EventResponse;
 import com.yello.server.domain.event.dto.response.EventRewardResponse;
+import com.yello.server.domain.event.dto.response.GetIsPossibleAdmob;
 import com.yello.server.domain.event.entity.Event;
 import com.yello.server.domain.event.entity.EventRandom;
 import com.yello.server.domain.event.entity.EventReward;
 import com.yello.server.domain.event.entity.EventRewardMapping;
 import com.yello.server.domain.event.entity.EventTime;
 import com.yello.server.domain.event.service.EventService;
+import com.yello.server.domain.group.entity.UserGroup;
+import com.yello.server.domain.group.entity.UserGroupType;
+import com.yello.server.domain.user.entity.User;
+import com.yello.server.domain.user.entity.UserData;
+import com.yello.server.domain.user.entity.UserDataType;
 import com.yello.server.global.common.util.ConstantUtil;
 import com.yello.server.global.exception.ControllerExceptionAdvice;
 import com.yello.server.util.TestDataEntityUtil;
 import com.yello.server.util.TestDataUtil;
 import com.yello.server.util.WithAccessTokenUser;
+import java.time.LocalDateTime;
 import java.time.OffsetTime;
 import java.time.ZoneOffset;
 import java.time.ZonedDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.UUID;
 import org.junit.jupiter.api.BeforeEach;
@@ -100,12 +110,15 @@ class EventControllerTest {
 
     private TestDataUtil testDataUtil = new TestDataEntityUtil();
 
+    private User user;
+
     /**
      * TODO Event* TestUtil 작성 및 연결 필요
      */
     @BeforeEach
     void init() {
-
+        final UserGroup userGroup = testDataUtil.generateGroup(1L, UserGroupType.UNIVERSITY);
+        user = testDataUtil.generateUser(1L, userGroup);
     }
 
     @Test
@@ -556,7 +569,6 @@ class EventControllerTest {
                 RestDocumentationRequestBuilders.post("/api/v1/admob/reward")
                     .with(csrf().asHeader())
                     .header(HttpHeaders.AUTHORIZATION, "Bearer your-access-token")
-                    .header(ConstantUtil.IdempotencyKeyHeader, idempotencyKey)
                     .contentType(MediaType.APPLICATION_JSON)
                     .content(objectMapper.writeValueAsString(request)))
             .andDo(print())
@@ -565,5 +577,34 @@ class EventControllerTest {
                 Preprocessors.preprocessResponse(excludeResponseHeaders)
             ))
             .andExpect(MockMvcResultMatchers.status().isOk());
+    }
+
+    @Test
+    void 광고_보고_보상_얻기_가능_여부_조회에_성공합니다() throws Exception {
+        // when
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+        LocalDateTime localDateTime = LocalDateTime.of(2024, 1, 10, 1, 12);
+        final UserDataType tag = UserDataType.ADMOB_POINT;
+        final UserData userData = UserData.builder().user(user).tag(tag)
+            .value(localDateTime.format(formatter)).build();
+        final GetIsPossibleAdmob response = GetIsPossibleAdmob.of(userData);
+
+        given(eventService.getIsPossibleAdmob(anyLong(), eq(tag.getInitial())))
+            .willReturn(response);
+
+        // then
+        mockMvc.perform(
+                RestDocumentationRequestBuilders.get("/api/v1/admob/possible/{tag}", tag.getInitial())
+                    .with(csrf().asHeader())
+                    .header(HttpHeaders.AUTHORIZATION, "Bearer your-access-token")
+                    .contentType(MediaType.APPLICATION_JSON))
+            .andDo(print())
+            .andDo(document("api/v1/admob/possible",
+                Preprocessors.preprocessRequest(excludeRequestHeaders),
+                Preprocessors.preprocessResponse(excludeResponseHeaders),
+                pathParameters(parameterWithName("tag").description("보상형 광고의 종류"))
+            ))
+            .andExpect(MockMvcResultMatchers.status().isOk());
+
     }
 }

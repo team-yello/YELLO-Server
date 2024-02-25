@@ -112,7 +112,6 @@ public class VoteService {
         final Integer totalCount = voteRepository.countAllReceivedByFriends(userId);
         final List<VoteFriendVO> list = voteRepository.findAllReceivedByFriends(userId, pageable)
             .stream()
-            .filter(vote -> vote.getNameHint()!=-3)
             .map(VoteFriendVO::of)
             .toList();
         return VoteFriendResponse.of(totalCount, list);
@@ -124,7 +123,6 @@ public class VoteService {
             final Long totalCount = Long.valueOf(voteRepository.countAllReceivedByFriends(userId));
             final List<VoteFriendAndUserVO> list = voteRepository.findAllReceivedByFriends(userId, pageable)
                 .stream()
-                .filter(vote -> vote.getNameHint()!=-3)
                 .map(vote -> VoteFriendAndUserVO.of(vote, vote.getSender().getId().equals(userId)))
                 .toList();
             return VoteFriendAndUserResponse.of(totalCount, list);
@@ -136,7 +134,6 @@ public class VoteService {
                 List<VoteFriendAndUserVO> list =
                     voteRepository.findUserSendReceivedByFriends(userId, pageable)
                         .stream()
-                        .filter(vote -> vote.getNameHint()!=-3)
                         .map(vote -> VoteFriendAndUserVO.of(vote, vote.getSender().getId().equals(userId)))
                         .toList();
                 return VoteFriendAndUserResponse.of(totalCount,list);

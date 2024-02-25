@@ -63,6 +63,8 @@ public enum SuccessCode {
     EVENT_JOIN_SUCCESS(OK, "이벤트 참여에 성공하였습니다."),
     EVENT_REWARD_SUCCESS(OK, "이벤트 보상에 성공하였습니다."),
     VERIFY_ADMOB_SSV_SUCCESS(OK, "Admob ssv 검증에 성공하였습니다."),
+    GET_IS_POSSIBLE_ADMOB_SUCCESS(OK, "광고 보고 포인트 얻기 가능 여부 조회에 성공했습니다."),
+    READ_USER_GROUP_SCHOOL_ATTACK_STATISTICS_SUCCESS(OK, "School Attack 통계 조회에 성공하였습니다."),
 
     /**
      * 201 CREATED
