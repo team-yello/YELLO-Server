@@ -16,8 +16,8 @@ public class JobConfiguration {
     private final StepConfiguration stepConfiguration;
 
     @Bean
-    public Job myJob(JobRepository jobRepository, PlatformTransactionManager transactionManager) {
-        return new JobBuilder("myJob", jobRepository)
+    public Job lunchEventJob(JobRepository jobRepository, PlatformTransactionManager transactionManager) throws Exception {
+        return new JobBuilder("lunchEventJob", jobRepository)
                 .start(stepConfiguration.lunchEventAlarmStep(jobRepository, transactionManager))
                 .build();
     }

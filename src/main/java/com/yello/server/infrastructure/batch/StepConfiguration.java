@@ -12,6 +12,7 @@ import org.springframework.batch.core.step.builder.StepBuilder;
 import org.springframework.batch.repeat.RepeatStatus;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.transaction.PlatformTransactionManager;
 
 @Slf4j
@@ -23,10 +24,10 @@ public class StepConfiguration {
     private final ChunkWriter chunkWriter;
 
     @Bean
-    public Step lunchEventAlarmStep(JobRepository jobRepository, PlatformTransactionManager transactionManager) {
+    public Step lunchEventAlarmStep(JobRepository jobRepository, PlatformTransactionManager transactionManager) throws Exception {
         return new StepBuilder("lunchEventStep", jobRepository)
                 .<User, User>chunk(100, transactionManager)
-                .reader(chunkReader.userDataReader())
+                .reader(chunkReader.userDataJdbcPagingItemReader())
                 .writer(chunkWriter.lunchEventWriter())
                 .build();
     }
