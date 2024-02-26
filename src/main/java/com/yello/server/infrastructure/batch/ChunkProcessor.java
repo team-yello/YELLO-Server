@@ -12,9 +12,4 @@ import org.springframework.context.annotation.Configuration;
 @Configuration
 public class ChunkProcessor {
 
-    @Bean
-    @StepScope
-    public ItemProcessor<User, User> lunchEventProcessor() {
-        return user -> new User);
-    }
 }

@@ -6,6 +6,8 @@ import com.yello.server.domain.vote.entity.Vote;
 import com.yello.server.global.common.dto.EmptyObject;
 import com.yello.server.infrastructure.firebase.dto.request.NotificationCustomMessage;
 
+import java.util.List;
+
 public interface NotificationService {
 
     void sendRecommendNotification(User user, User target);
@@ -19,4 +21,5 @@ public interface NotificationService {
     void sendCustomNotification(NotificationCustomMessage request);
 
     EmptyObject adminSendCustomNotification(Long adminId, NotificationCustomMessage request);
+    void sendLunchEventNotification(User userList);
 }

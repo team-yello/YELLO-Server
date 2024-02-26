@@ -23,13 +23,6 @@ public class StepConfiguration {
     private final ChunkWriter chunkWriter;
 
     @Bean
-    public Step myStep(JobRepository jobRepository, PlatformTransactionManager transactionManager) {
-        return new StepBuilder("myStep", jobRepository)
-                .tasklet(((contribution, chunkContext) -> RepeatStatus.FINISHED), transactionManager) // or .chunk(chunkSize, transactionManager)
-                .build();
-    }
-
-    @Bean
     public Step lunchEventAlarmStep(JobRepository jobRepository, PlatformTransactionManager transactionManager) {
         return new StepBuilder("lunchEventStep", jobRepository)
                 .<User, User>chunk(100, transactionManager)

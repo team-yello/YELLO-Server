@@ -52,6 +52,14 @@ public record NotificationMessage(
             .build();
     }
 
+    public static NotificationMessage toAllUserLunchEventNotificationContent() {
+        return NotificationMessage.builder()
+                .title("우리 학교 선착순 30명 열람권 뿌린다!")
+                .message("지금부터 14시까지\uD83D\uDD25 사라지기 전에 바로 확인해보세요!")
+                .type(NotificationType.LUNCH_EVENT)
+                .build();
+    }
+
     public static NotificationMessage toYelloNotificationCustomContent(
         NotificationCustomMessage message) {
 
