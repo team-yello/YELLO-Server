@@ -192,4 +192,9 @@ public class UserRepositoryImpl implements UserRepository {
     public void delete(User user) {
         userJpaRepository.delete(user);
     }
+
+    @Override
+    public Page<User> findAllByPageable(Pageable pageable) {
+        return userJpaRepository.findAllByPageable(pageable);
+    }
 }

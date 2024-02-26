@@ -133,4 +133,7 @@ public interface UserJpaRepository extends JpaRepository<User, Long> {
     @Query("select u from User u "
             + "where LOWER(u.name) like LOWER(CONCAT('%', :name, '%'))")
     Page<User> findAllByNameContaining(Pageable pageable, @Param("name") String name);
+
+    Page<User> findAllByPageable(Pageable pageable);
+
 }

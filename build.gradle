@@ -88,6 +88,7 @@ dependencies {
     testImplementation 'org.springframework.restdocs:spring-restdocs-mockmvc'
     testImplementation 'org.springframework.security:spring-security-test'
     testImplementation 'org.mockito:mockito-inline:5.2.0'
+    testImplementation 'org.springframework.batch:spring-batch-test'
 
     // jwt decode
     implementation 'org.bouncycastle:bcprov-jdk15on:1.69'
@@ -109,6 +110,10 @@ dependencies {
     // tink
     implementation 'com.google.crypto.tink:tink-android:1.4.0-rc1'
     implementation 'com.google.crypto.tink:apps-rewardedads:1.10.0'
+
+    // spring batch
+    implementation 'org.springframework.boot:spring-boot-starter-batch'
+
 }
 
 asciidoctor {

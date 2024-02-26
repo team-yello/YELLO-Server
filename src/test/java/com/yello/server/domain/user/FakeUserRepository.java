@@ -321,4 +321,13 @@ public class FakeUserRepository implements UserRepository {
     public void delete(User user) {
         data.remove(user);
     }
+
+    @Override
+    public Page<User> findAllByPageable(Pageable pageable) {
+        final List<User> userList = data.stream()
+                .skip(pageable.getOffset())
+                .limit(pageable.getPageSize())
+                .toList();
+        return new PageImpl<>(userList);
+    }
 }
