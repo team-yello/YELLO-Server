@@ -54,8 +54,16 @@ public record NotificationMessage(
 
     public static NotificationMessage toUserOpenVoteNotificationContent(User user) {
         return NotificationMessage.builder()
-                .title(MessageFormat.format("{0}님이 내가 보낸 쪽지를 확인했어요! ", user.getName()))
+                .title(MessageFormat.format("{0}님이 내가 보낸 쪽지를 확인했어요!", user.getName()))
                 .message("\uD83D\uDEA8\uD83D\uDC9A 그린라이트입니다.")
+                .type(NotificationType.OPEN_VOTE)
+                .build();
+    }
+
+    public static NotificationMessage toUserAndFriendRecommendSignupNotificationContent(User user) {
+        return NotificationMessage.builder()
+                .title(MessageFormat.format("{0}님이 나를 추천인으로 가입해 열람권이 지급됐어요!", user.getName()))
+                .message("지금이다! 날 짝사랑 하는 사람 보러가기")
                 .type(NotificationType.OPEN_VOTE)
                 .build();
     }
