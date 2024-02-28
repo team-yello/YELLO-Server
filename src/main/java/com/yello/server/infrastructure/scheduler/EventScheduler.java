@@ -1,6 +1,10 @@
 package com.yello.server.infrastructure.scheduler;
 
 
+import com.yello.server.domain.user.entity.User;
+import com.yello.server.domain.user.entity.UserData;
+import com.yello.server.domain.user.entity.UserDataType;
+import com.yello.server.domain.user.repository.UserDataRepository;
 import com.yello.server.infrastructure.batch.JobConfiguration;
 import lombok.RequiredArgsConstructor;
 import org.springframework.batch.core.JobParameter;
@@ -28,14 +32,16 @@ public class EventScheduler {
     private final JobConfiguration jobConfiguration;
     private final JobRepository jobRepository;
     private final PlatformTransactionManager transactionManager;
+    private final UserDataRepository userDataRepository;
 
-    @Scheduled(cron="0 0 12 * * ?")
+    @Scheduled(cron="0 19 2 * * ?")
     public void lunchEventRunJob() {
 
         //JobParamter의 역할은 반복해서 실행되는 Job의 유일한 ID임, 동일한 값이 세팅되면 두번째부터 실행안됨)
         JobParameters jobParameters = new JobParametersBuilder()
                 .addString("uuid", UUID.randomUUID().toString())
                 .toJobParameters();
+        System.out.println("hye!!!!!!!!!!!!");
 
         try {
             jobLauncher.run(jobConfiguration.lunchEventJob(jobRepository, transactionManager), jobParameters);
