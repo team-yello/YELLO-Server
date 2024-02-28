@@ -145,4 +145,16 @@ public class NotificationFcmService implements NotificationService {
             fcmManager.send(message);
         }
     }
+
+    @Override
+    public void sendRecommendSignupNotification(User recommendUser) {
+        NotificationMessage notificationMessage =
+                NotificationMessage.toUserAndFriendRecommendSignupNotificationContent(recommendUser);
+
+        if (recommendUser.getDeviceToken() != null && !Objects.equals(recommendUser.getDeviceToken(), "")) {
+            final Message message =
+                    fcmManager.createMessage(recommendUser.getDeviceToken(), notificationMessage);
+            fcmManager.send(message);
+        }
+    }
 }

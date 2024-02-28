@@ -127,6 +127,7 @@ public class AuthService {
                     ZonedDateTime.now(GlobalZoneId).format(ISO_OFFSET_DATE_TIME),
                     recommendedUser
                 ));
+                notificationService.sendRecommendSignupNotification(recommendedUser);
             }
 
             notificationService.sendRecommendNotification(user, recommendedUser);

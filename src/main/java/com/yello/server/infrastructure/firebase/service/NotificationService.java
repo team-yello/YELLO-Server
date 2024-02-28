@@ -24,4 +24,6 @@ public interface NotificationService {
     void sendLunchEventNotification(User userList);
 
     void sendOpenVoteNotification(User user);
+
+    void sendRecommendSignupNotification(User user);
 }
