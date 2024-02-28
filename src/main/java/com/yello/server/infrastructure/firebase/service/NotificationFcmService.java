@@ -133,4 +133,16 @@ public class NotificationFcmService implements NotificationService {
 
         }
     }
+
+    @Override
+    public void sendOpenVoteNotification(User user) {
+        NotificationMessage notificationMessage =
+                NotificationMessage.toUserOpenVoteNotificationContent(user);
+
+        if (user.getDeviceToken() != null && !Objects.equals(user.getDeviceToken(), "")) {
+            final Message message =
+                    fcmManager.createMessage(user.getDeviceToken(), notificationMessage);
+            fcmManager.send(message);
+        }
+    }
 }

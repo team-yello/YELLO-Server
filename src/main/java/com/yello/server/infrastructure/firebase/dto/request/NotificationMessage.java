@@ -52,6 +52,14 @@ public record NotificationMessage(
             .build();
     }
 
+    public static NotificationMessage toUserOpenVoteNotificationContent(User user) {
+        return NotificationMessage.builder()
+                .title(MessageFormat.format("{0}님이 내가 보낸 쪽지를 확인했어요! ", user.getName()))
+                .message("\uD83D\uDEA8\uD83D\uDC9A 그린라이트입니다.")
+                .type(NotificationType.OPEN_VOTE)
+                .build();
+    }
+
     public static NotificationMessage toAllUserLunchEventNotificationContent() {
         return NotificationMessage.builder()
                 .title("우리 학교 선착순 30명 열람권 뿌린다!")

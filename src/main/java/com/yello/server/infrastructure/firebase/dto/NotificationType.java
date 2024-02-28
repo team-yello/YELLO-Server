@@ -5,5 +5,6 @@ public enum NotificationType {
     VOTE_AVAILABLE,
     NEW_FRIEND,
     RECOMMEND,
-    LUNCH_EVENT
+    LUNCH_EVENT,
+    OPEN_VOTE
 }
