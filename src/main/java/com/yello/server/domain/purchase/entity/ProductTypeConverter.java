@@ -1,7 +1,7 @@
 package com.yello.server.domain.purchase.entity;
 
-import javax.persistence.AttributeConverter;
-import javax.persistence.Converter;
+import jakarta.persistence.AttributeConverter;
+import jakarta.persistence.Converter;
 import lombok.extern.log4j.Log4j2;
 
 @Converter
@@ -13,7 +13,7 @@ public class ProductTypeConverter implements AttributeConverter<ProductType, Str
         if (productType == null) {
             return null;
         }
-        return productType.getIntial();
+        return productType.name();
     }
 
     @Override
@@ -21,11 +21,7 @@ public class ProductTypeConverter implements AttributeConverter<ProductType, Str
         if (dbData == null) {
             return null;
         }
-        try {
-            return ProductType.fromCode(dbData);
-        } catch (IllegalArgumentException exception) {
-            log.error("failure to convert cause unexpected code" + dbData + exception);
-            throw exception;
-        }
+
+        return ProductType.fromName(dbData);
     }
 }

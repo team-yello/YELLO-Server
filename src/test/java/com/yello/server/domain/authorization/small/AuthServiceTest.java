@@ -1,5 +1,7 @@
 package com.yello.server.domain.authorization.small;
 
+import static com.yello.server.domain.admin.entity.AdminConfigurationType.ACCESS_TOKEN_TIME;
+import static com.yello.server.domain.admin.entity.AdminConfigurationType.REFRESH_TOKEN_TIME;
 import static com.yello.server.global.common.ErrorCode.GROUPID_NOT_FOUND_GROUP_EXCEPTION;
 import static com.yello.server.global.common.ErrorCode.UUID_CONFLICT_USER_EXCEPTION;
 import static com.yello.server.global.common.ErrorCode.YELLOID_CONFLICT_USER_EXCEPTION;
@@ -7,6 +9,8 @@ import static com.yello.server.global.common.ErrorCode.YELLOID_REQUIRED_EXCEPTIO
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
+import com.yello.server.domain.admin.FakeAdminConfigurationRepository;
+import com.yello.server.domain.admin.repository.AdminConfigurationRepository;
 import com.yello.server.domain.authorization.FakeAuthManager;
 import com.yello.server.domain.authorization.FakeConnectionManager;
 import com.yello.server.domain.authorization.dto.request.OnBoardingFriendRequest;
@@ -27,19 +31,26 @@ import com.yello.server.domain.friend.FakeFriendRepository;
 import com.yello.server.domain.friend.repository.FriendRepository;
 import com.yello.server.domain.friend.service.FriendManager;
 import com.yello.server.domain.group.FakeUserGroupRepository;
+import com.yello.server.domain.group.entity.UserGroup;
 import com.yello.server.domain.group.entity.UserGroupType;
 import com.yello.server.domain.group.exception.GroupNotFoundException;
 import com.yello.server.domain.group.repository.UserGroupRepository;
+import com.yello.server.domain.notice.FakeNoticeRepository;
+import com.yello.server.domain.notice.repository.NoticeRepository;
+import com.yello.server.domain.purchase.FakePurchaseRepository;
+import com.yello.server.domain.purchase.repository.PurchaseRepository;
 import com.yello.server.domain.question.FakeQuestionGroupTypeRepository;
 import com.yello.server.domain.question.FakeQuestionRepository;
 import com.yello.server.domain.question.repository.QuestionGroupTypeRepository;
 import com.yello.server.domain.question.repository.QuestionRepository;
+import com.yello.server.domain.user.FakeUserDataRepository;
 import com.yello.server.domain.user.FakeUserManager;
 import com.yello.server.domain.user.FakeUserRepository;
 import com.yello.server.domain.user.entity.Gender;
 import com.yello.server.domain.user.entity.Social;
 import com.yello.server.domain.user.entity.User;
 import com.yello.server.domain.user.exception.UserConflictException;
+import com.yello.server.domain.user.repository.UserDataRepository;
 import com.yello.server.domain.user.repository.UserRepository;
 import com.yello.server.domain.user.service.UserManager;
 import com.yello.server.domain.vote.FakeVoteManager;
@@ -54,8 +65,7 @@ import com.yello.server.infrastructure.firebase.service.NotificationFcmService;
 import com.yello.server.infrastructure.firebase.service.NotificationService;
 import com.yello.server.infrastructure.rabbitmq.FakeMessageQueueRepository;
 import com.yello.server.infrastructure.rabbitmq.repository.MessageQueueRepository;
-import com.yello.server.infrastructure.redis.FakeTokenRepository;
-import com.yello.server.infrastructure.redis.repository.TokenRepository;
+import com.yello.server.util.TestDataEntityUtil;
 import com.yello.server.util.TestDataRepositoryUtil;
 import java.util.ArrayList;
 import java.util.Base64;
@@ -73,37 +83,45 @@ import org.springframework.data.domain.Pageable;
 @DisplayNameGeneration(ReplaceUnderscores.class)
 public class AuthServiceTest {
 
+    private final AdminConfigurationRepository adminConfigurationRepository = new FakeAdminConfigurationRepository();
     private final ConnectionManager connectionManager = new FakeConnectionManager();
     private final CooldownRepository cooldownRepository = new FakeCooldownRepository();
     private final FCMManager fcmManager = new FakeFcmManger();
     private final FriendRepository friendRepository = new FakeFriendRepository();
     private final MessageQueueRepository messageQueueRepository = new FakeMessageQueueRepository();
+    private final NoticeRepository noticeRepository = new FakeNoticeRepository();
+    private final PurchaseRepository purchaseRepository = new FakePurchaseRepository();
     private final QuestionRepository questionRepository = new FakeQuestionRepository();
+    private final QuestionGroupTypeRepository
+        questionGroupTypeRepository = new FakeQuestionGroupTypeRepository(questionRepository);
     private final String secretKey = Base64.getEncoder().encodeToString(
         "keyForTestkeyForTestkeyForTestkeyForTestkeyForTestkeyForTestkeyForTestkeyForTestkeyForTest".getBytes());
+    private final TestDataEntityUtil testDataEntityUtil = new TestDataEntityUtil();
     private final TokenProvider tokenProvider = new TokenJwtProvider(secretKey);
-    private final TokenRepository tokenRepository = new FakeTokenRepository();
+    private final UserDataRepository userDataRepository = new FakeUserDataRepository();
     private final UserGroupRepository userGroupRepository = new FakeUserGroupRepository();
     private final UserRepository userRepository = new FakeUserRepository(friendRepository);
     private final UserManager userManager = new FakeUserManager(userRepository);
     private final FriendManager friendManager = new FakeFriendManager(userRepository);
-    private final QuestionGroupTypeRepository
-        questionGroupTypeRepository = new FakeQuestionGroupTypeRepository(questionRepository);
     private final NotificationService notificationService = NotificationFcmService.builder()
         .userRepository(userRepository)
-        .tokenRepository(tokenRepository)
         .fcmManager(fcmManager)
         .build();
     private final AuthManager authManager = new FakeAuthManager(
-        friendRepository, cooldownRepository, userRepository, tokenRepository, tokenProvider
+        adminConfigurationRepository, cooldownRepository, friendRepository, tokenProvider, userRepository
     );
     private final VoteRepository voteRepository = new FakeVoteRepository();
     private final TestDataRepositoryUtil testDataUtil = new TestDataRepositoryUtil(
-        userRepository,
-        voteRepository,
-        questionRepository,
         friendRepository,
-        questionGroupTypeRepository
+        noticeRepository,
+        purchaseRepository,
+        questionGroupTypeRepository,
+        questionRepository,
+        testDataEntityUtil,
+        userDataRepository,
+        userGroupRepository,
+        userRepository,
+        voteRepository
     );
     private final VoteManager voteManager = new FakeVoteManager(
         userRepository, questionRepository, voteRepository, friendRepository,
@@ -115,6 +133,7 @@ public class AuthServiceTest {
         this.authService = AuthService.builder()
             .userRepository(userRepository)
             .userGroupRepository(userGroupRepository)
+            .userDataRepository(userDataRepository)
             .friendRepository(friendRepository)
             .cooldownRepository(cooldownRepository)
             .messageQueueRepository(messageQueueRepository)
@@ -122,18 +141,20 @@ public class AuthServiceTest {
             .friendManager(friendManager)
             .connectionManager(connectionManager)
             .voteManager(voteManager)
-            .tokenProvider(tokenProvider)
             .notificationService(notificationService)
             .build();
 
-        userGroupRepository.save(testDataUtil.generateGroup(1L, UserGroupType.UNIVERSITY));
+        final UserGroup userGroup = testDataUtil.generateGroup(1L, UserGroupType.UNIVERSITY);
 
         // soft-deleted User
-        testDataUtil.generateDeletedUser(0L, 1L, UserGroupType.UNIVERSITY);
+        testDataUtil.generateDeletedUser(0L, userGroup);
 
         for (int i = 1; i <= 3; i++) {
-            testDataUtil.generateUser(i, 1L, UserGroupType.UNIVERSITY);
+            testDataUtil.generateUser(i, userGroup);
         }
+
+        adminConfigurationRepository.setConfigurations(ACCESS_TOKEN_TIME, String.valueOf(30L));
+        adminConfigurationRepository.setConfigurations(REFRESH_TOKEN_TIME, String.valueOf(10080L));
     }
 
     @Test

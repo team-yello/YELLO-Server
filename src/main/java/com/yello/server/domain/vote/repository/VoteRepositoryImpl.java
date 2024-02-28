@@ -1,7 +1,11 @@
 package com.yello.server.domain.vote.repository;
 
+import static com.yello.server.domain.friend.entity.QFriend.friend;
+import static com.yello.server.domain.vote.entity.QVote.vote;
 import static com.yello.server.global.common.ErrorCode.NOT_FOUND_VOTE_EXCEPTION;
 
+import com.querydsl.jpa.JPAExpressions;
+import com.querydsl.jpa.impl.JPAQueryFactory;
 import com.yello.server.domain.vote.entity.Vote;
 import com.yello.server.domain.vote.exception.VoteNotFoundException;
 import java.util.List;
@@ -17,6 +21,7 @@ import org.springframework.transaction.annotation.Transactional;
 public class VoteRepositoryImpl implements VoteRepository {
 
     private final VoteJpaRepository voteJpaRepository;
+    private final JPAQueryFactory jpaQueryFactory;
 
     @Override
     public Vote save(Vote vote) {
@@ -82,5 +87,43 @@ public class VoteRepositoryImpl implements VoteRepository {
     @Override
     public Integer countOpenFullNameByReceiverUserId(Long userId) {
         return voteJpaRepository.countOpenFullNameByReceiverUserId(userId);
+    }
+
+    @Override
+    public List<Vote> findUserSendReceivedByFriends(Long userId, Pageable pageable) {
+        return jpaQueryFactory.selectFrom(vote)
+            .where(vote.sender.id.eq(userId)
+                .and(vote.receiver.id.in(
+                    JPAExpressions
+                        .select(friend.target.id)
+                        .from(friend)
+                        .where(friend.user.id.eq(userId)
+                            .and(friend.deletedAt.isNull())
+                        )))
+                .and(vote.nameHint.ne(-3))
+                .and(vote.sender.deletedAt.isNull())
+                .and(vote.receiver.deletedAt.isNull()))
+            .orderBy(vote.createdAt.desc())
+            .offset(pageable.getOffset())
+            .limit(pageable.getPageSize())
+            .fetch();
+    }
+
+    @Override
+    public Long countUserSendReceivedByFriends(Long userId) {
+        return jpaQueryFactory.select(vote.count())
+            .from(vote)
+            .where(vote.sender.id.eq(userId)
+                .and(vote.receiver.id.in(
+                    JPAExpressions
+                        .select(friend.target.id)
+                        .from(friend)
+                        .where(friend.user.id.eq(userId)
+                            .and(friend.deletedAt.isNull())
+                        )))
+                .and(vote.nameHint.ne(-3))
+                .and(vote.sender.deletedAt.isNull())
+                .and(vote.receiver.deletedAt.isNull()))
+            .fetchOne();
     }
 }

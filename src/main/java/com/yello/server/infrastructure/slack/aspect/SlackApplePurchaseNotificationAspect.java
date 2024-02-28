@@ -1,7 +1,7 @@
 package com.yello.server.infrastructure.slack.aspect;
 
 import com.yello.server.infrastructure.slack.factory.SlackWebhookMessageFactory;
-import javax.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletRequest;
 import net.gpedro.integrations.slack.SlackApi;
 import net.gpedro.integrations.slack.SlackMessage;
 import org.aspectj.lang.ProceedingJoinPoint;
@@ -24,7 +24,7 @@ public class SlackApplePurchaseNotificationAspect {
     public SlackApplePurchaseNotificationAspect(
         @Qualifier("slackApplePurchaseNotificationApi") SlackApi slackApplePurchaseApi,
         SlackWebhookMessageFactory slackWebhookMessageFactory,
-        TaskExecutor taskExecutor) {
+        @Qualifier("threadPoolTaskExecutor") TaskExecutor taskExecutor) {
         this.slackApplePurchaseApi = slackApplePurchaseApi;
         this.slackWebhookMessageFactory = slackWebhookMessageFactory;
         this.taskExecutor = taskExecutor;

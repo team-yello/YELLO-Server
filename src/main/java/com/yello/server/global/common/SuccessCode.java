@@ -37,16 +37,34 @@ public enum SuccessCode {
     VERIFY_RECEIPT_SUCCESS(OK, "인앱결제 검증에 성공했습니다."),
     READ_USER_ADMIN_SUCCESS(OK, "어드민 페이지 유저 조회에 성공하였습니다."),
     READ_USER_DETAIL_ADMIN_SUCCESS(OK, "어드민 페이지 유저 상세 조회에 성공하였습니다."),
+    READ_USER_DATA_SUCCESS(OK, "유저 데이터 조회에 성공하였습니다."),
     UPDATE_USER_DETAIL_ADMIN_SUCCESS(OK, "어드민 페이지 유저 상세 정보 수정에 성공하였습니다."),
+    UPDATE_USER_DETAIL_SUCCESS(OK, "유저 상세 정보 수정에 성공하였습니다."),
+    UPDATE_USER_DATA_SUCCESS(OK, "유저 데이터 수정에 성공하였습니다."),
     READ_COOLDOWN_ADMIN_SUCCESS(OK, "어드민 페이지 쿨다운 조회에 성공하였습니다."),
-    DELETE_USER_ADMIN_SUCCESS(OK, "어드민 권환으로 유저 삭제에 성공하였습니다."),
-    DELETE_COOLDOWN_ADMIN_SUCCESS(OK, "어드민 권환으로 쿨다운 삭제에 성공하였습니다."),
+    DELETE_USER_ADMIN_SUCCESS(OK, "어드민 권한으로 유저 삭제에 성공하였습니다."),
+    DELETE_COOLDOWN_ADMIN_SUCCESS(OK, "어드민 권한으로 쿨다운 삭제에 성공하였습니다."),
     POST_APPLE_NOTIFICATION_SUCCESS(OK, "apple 알림 처리에 성공하였습니다."),
     POST_GOOGLE_NOTIFICATION_SUCCESS(OK, "google 알림 처리에 성공하였습니다."),
     READ_QUESTION_ADMIN_SUCCESS(OK, "어드민 페이지 질문 조회에 성공하였습니다."),
     READ_QUESTION_DETAIL_ADMIN_SUCCESS(OK, "어드민 페이지 질문 상세 조회에 성공하였습니다."),
-    DELETE_QUESTION_ADMIN_SUCCESS(OK, "어드민 권환으로 질문지 삭제에 성공하였습니다."),
+    DELETE_QUESTION_ADMIN_SUCCESS(OK, "어드민 권한으로 질문지 삭제에 성공하였습니다."),
     CLASS_NAME_SEARCH_BY_SCHOOL_NAME_SCHOOL_SUCCESS(OK, "학반 검색에 성공했습니다."),
+    READ_USER_SUBSCRIBE_SUCCESS(OK, "구독 정보 조회에 성공하였습니다."),
+    READ_NOTICE_SUCCESS(OK, "공지 조회에 성공하였습니다."),
+    CONFIGURATION_READ_ADMIN_SUCCESS(OK, "어드민 권한으로 설정 조회에 성공하였습니다."),
+    CONFIGURATION_UPDATE_ADMIN_SUCCESS(OK, "어드민 권한으로 설정 수정에 성공하였습니다."),
+    NOTICE_CREATE_ADMIN_SUCCESS(OK, "어드민 권한으로 공지 생성에 성공하였습니다."),
+    NOTICE_READ_ADMIN_SUCCESS(OK, "어드민 권한으로 공지 조회에 성공하였습니다."),
+    NOTICE_UPDATE_DETAIL_ADMIN_SUCCESS(OK, "어드민 권한으로 공지 수정에 성공하였습니다."),
+    EVENT_CREATE_ADMIN_SUCCESS(OK, "어드민 권한으로 이벤트 생성에 성공하였습니다."),
+    EVENT_NOTICE_SUCCESS(OK, "이벤트 전체 조회에 성공하였습니다."),
+    EVENT_REWARD_CREATE_ADMIN_SUCCESS(OK, "어드민 권한으로 이벤트 보상 생성에 성공하였습니다."),
+    EVENT_JOIN_SUCCESS(OK, "이벤트 참여에 성공하였습니다."),
+    EVENT_REWARD_SUCCESS(OK, "이벤트 보상에 성공하였습니다."),
+    VERIFY_ADMOB_SSV_SUCCESS(OK, "Admob ssv 검증에 성공하였습니다."),
+    GET_IS_POSSIBLE_ADMOB_SUCCESS(OK, "광고 보고 포인트 얻기 가능 여부 조회에 성공했습니다."),
+    READ_USER_GROUP_SCHOOL_ATTACK_STATISTICS_SUCCESS(OK, "School Attack 통계 조회에 성공하였습니다."),
 
     /**
      * 201 CREATED
@@ -61,11 +79,12 @@ public enum SuccessCode {
     PURCHASE_SUBSCRIPTION_VERIFY_SUCCESS(CREATED, "애플 결제 검증 및 반영에 성공하였습니다."),
     GOOGLE_PURCHASE_SUBSCRIPTION_VERIFY_SUCCESS(CREATED, "구글 구독 결제 검증 및 반영에 성공하였습니다."),
     GOOGLE_PURCHASE_INAPP_VERIFY_SUCCESS(CREATED, "구글 인앱 결제 검증 및 반영에 성공하였습니다."),
-    LOGIN_USER_ADMIN_SUCCESS(CREATED, "어드민 로그인에 성공하였습니다.");
+    LOGIN_USER_ADMIN_SUCCESS(CREATED, "어드민 로그인에 성공하였습니다."),
+    REWARD_ADMOB_SUCCESS(CREATED, "Admob 광고 보고 보상받기에 성공했습니다.");
 
 
     private final HttpStatus httpStatus;
-    private final String message;
+    String message;
 
     public int getHttpStatusCode() {
         return httpStatus.value();

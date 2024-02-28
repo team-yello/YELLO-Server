@@ -1,10 +1,15 @@
 package com.yello.server.domain.authorization.service;
 
+import static com.yello.server.global.common.ErrorCode.ADMIN_CONFIGURATION_NOT_FOUND_EXCEPTION;
 import static com.yello.server.global.common.ErrorCode.DEVICE_TOKEN_CONFLICT_USER_EXCEPTION;
 import static com.yello.server.global.common.ErrorCode.NOT_SIGNIN_USER_EXCEPTION;
 import static com.yello.server.global.common.ErrorCode.UUID_CONFLICT_USER_EXCEPTION;
 import static com.yello.server.global.common.ErrorCode.YELLOID_CONFLICT_USER_EXCEPTION;
 
+import com.yello.server.domain.admin.entity.AdminConfiguration;
+import com.yello.server.domain.admin.entity.AdminConfigurationType;
+import com.yello.server.domain.admin.exception.AdminConfigurationNotFoundException;
+import com.yello.server.domain.admin.repository.AdminConfigurationRepository;
 import com.yello.server.domain.authorization.dto.ServiceTokenVO;
 import com.yello.server.domain.authorization.dto.request.SignUpRequest;
 import com.yello.server.domain.authorization.exception.NotSignedInException;
@@ -15,7 +20,8 @@ import com.yello.server.domain.friend.repository.FriendRepository;
 import com.yello.server.domain.user.entity.User;
 import com.yello.server.domain.user.exception.UserConflictException;
 import com.yello.server.domain.user.repository.UserRepository;
-import com.yello.server.infrastructure.redis.repository.TokenRepository;
+import java.time.Duration;
+import java.util.List;
 import java.util.Optional;
 import lombok.Builder;
 import lombok.RequiredArgsConstructor;
@@ -26,11 +32,11 @@ import org.springframework.stereotype.Component;
 @RequiredArgsConstructor
 public class AuthManagerImpl implements AuthManager {
 
-    private final FriendRepository friendRepository;
+    private final AdminConfigurationRepository adminConfigurationRepository;
     private final CooldownRepository cooldownRepository;
-    private final UserRepository userRepository;
-    private final TokenRepository tokenRepository;
+    private final FriendRepository friendRepository;
     private final TokenProvider tokenProvider;
+    private final UserRepository userRepository;
 
     @Override
     public User getSignedInUserByUuid(String uuid) {
@@ -42,34 +48,59 @@ public class AuthManagerImpl implements AuthManager {
     }
 
     @Override
-    public ServiceTokenVO registerToken(User user) {
-        ServiceTokenVO newUserTokens = tokenProvider.createServiceToken(
+    public ServiceTokenVO issueToken(User user) {
+        final List<AdminConfiguration> accessTokenTime = adminConfigurationRepository.findConfigurations(
+            AdminConfigurationType.ACCESS_TOKEN_TIME);
+        final List<AdminConfiguration> refreshTokenTime = adminConfigurationRepository.findConfigurations(
+            AdminConfigurationType.REFRESH_TOKEN_TIME);
+
+        if (accessTokenTime.isEmpty() || refreshTokenTime.isEmpty()) {
+            throw new AdminConfigurationNotFoundException(ADMIN_CONFIGURATION_NOT_FOUND_EXCEPTION);
+        }
+
+        final String accessToken = tokenProvider.createAccessToken(
             user.getId(),
-            user.getUuid()
+            user.getUuid(),
+            Duration.ofMinutes(Long.parseLong(accessTokenTime.get(0).getValue()))
         );
-        tokenRepository.set(user.getId(), newUserTokens);
-        return newUserTokens;
+        final String refreshToken = tokenProvider.createAccessToken(
+            user.getId(),
+            user.getUuid(),
+            Duration.ofMinutes(Long.parseLong(refreshTokenTime.get(0).getValue()))
+        );
+
+        return ServiceTokenVO.of(accessToken, refreshToken);
     }
 
     @Override
-    public ServiceTokenVO setNewAccessToken(String refreshToken) {
+    public boolean isExpired(String token) {
+        return tokenProvider.isExpired(token);
+    }
+
+    @Override
+    public String issueNewAccessToken(String refreshToken) {
         final Long userId = tokenProvider.getUserId(refreshToken);
         final String uuid = tokenProvider.getUserUuid(refreshToken);
+        final List<AdminConfiguration> accessTokenTime = adminConfigurationRepository.findConfigurations(
+            AdminConfigurationType.ACCESS_TOKEN_TIME);
 
         userRepository.getById(userId);
         userRepository.getByUuid(uuid);
+        if (accessTokenTime.isEmpty()) {
+            throw new AdminConfigurationNotFoundException(ADMIN_CONFIGURATION_NOT_FOUND_EXCEPTION);
+        }
 
-        final String newAccessToken = tokenProvider.createAccessToken(userId, uuid);
-        final ServiceTokenVO token = ServiceTokenVO.of(newAccessToken, refreshToken);
-        tokenRepository.set(userId, token);
-        return token;
+        final String newAccessToken = tokenProvider.createAccessToken(
+            userId,
+            uuid,
+            Duration.ofMinutes(Long.parseLong(accessTokenTime.get(0).getValue()))
+        );
+
+        return newAccessToken;
     }
 
     @Override
     public void validateSignupRequest(SignUpRequest signUpRequest) {
-        // 회원가입 로그 (이슈 해결 후 제거)
-        System.out.println("회원가입 : " + signUpRequest.toString());
-
         userRepository.findByUuidNotFiltered(signUpRequest.uuid())
             .ifPresent(action -> {
                 throw new UserConflictException(UUID_CONFLICT_USER_EXCEPTION);

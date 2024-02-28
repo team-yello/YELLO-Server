@@ -1,0 +1,28 @@
+:reproducible:
+== 상점에서 보상형 광고 가능한지 여부
+
+=== 요청
+
+include::{snippets}/api/v1/admob/possible/http-request.adoc[]
+
+=== 요청 파라미터
+
+include::{snippets}/api/v1/admob/possible/path-parameters.adoc[]
+
+----
+tag -> ADMOB_POINT
+----
+* 보상형 광고 다른곳에서 사용할 수도 있으므로 tag로 어떤 곳에서 사용하고 있는곳인지 tag로 명시
+* 현재는 상점에 있는 보상형 광고 (ADMOB_POINT를 tag에 요청)
+
+=== 응답
+
+include::{snippets}/api/v1/admob/possible/http-response.adoc[]
+
+=== NOTE
+
+
+=== CHANGELOG
+
+- 2024.02.17 API 릴리즈
+- 2024.02.16 명세서 작성

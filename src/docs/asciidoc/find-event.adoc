@@ -1,0 +1,37 @@
+:reproducible:
+== 이벤트 조회
+
+=== 요청
+
+include::{snippets}/api/v1/event/1/http-request.adoc[]
+
+=== 응답
+
+include::{snippets}/api/v1/event/1/http-response.adoc[]
+
+include::{snippets}/api/v1/event/2/http-response.adoc[]
+
+include::{snippets}/api/v1/event/3/http-response.adoc[]
+
+=== 주의
+
+- data: *Response*[]
+- *Response*
+- tag : "LUNCH_EVENT"
+* LUNCH_EVENT에 해당하는 *Response*가 없으면 Render 해주지 말아주세요
+- startDate : "2024-01-01T00:00:00+09:00"
+- endDate : "2024-12-31T00:00:00+09:00"
+- title : "점심 시간 깜짝 선물!"
+- subTitle : "평일 12-14시 최대 1회까지 참여 가능"
+- animationList : string[]
+* URL이 들어감.
+- eventReward: *EventReward* | null
+* 해당 필드가 **null**일 시, 이벤트 보여주지 않도록 해주세요.
+
+=== NOTE
+
+- *!* LUNCH_EVENT에 해당하는 Response가 없거나, LUNCH_EVENT Response의 eventReward가 null이면, 메인화면 접속시, 이벤트 화면을 띄워주지마세요.
+
+=== CHANGELOG
+
+- 2024.02.06 릴리즈

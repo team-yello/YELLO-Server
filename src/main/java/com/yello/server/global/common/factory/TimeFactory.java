@@ -2,6 +2,8 @@ package com.yello.server.global.common.factory;
 
 import java.time.Duration;
 import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
 
 public class TimeFactory {
@@ -51,4 +53,20 @@ public class TimeFactory {
     public static LocalDateTime minusTime(LocalDateTime localDateTime, int time) {
         return localDateTime.minusMinutes(time);
     }
+
+    public static String toYearAndMonthFormattedString(LocalDateTime localDateTime) {
+        if (localDateTime == null) {
+            return "";
+        }
+        DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+        return localDateTime.format(dateTimeFormatter);
+    }
+
+    public static Boolean compareNowAndEndData(ZonedDateTime zonedDateTime) {
+        ZoneId zoneId = ZoneId.of("Asia/Seoul");
+        ZonedDateTime now = ZonedDateTime.now(zoneId);
+
+        return now.isBefore(zonedDateTime);
+    }
+
 }

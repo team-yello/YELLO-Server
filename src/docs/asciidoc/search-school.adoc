@@ -1,13 +1,14 @@
+:reproducible:
 == 대학교 검색하기
 
 === 요청
 
-include::{snippets}/api/v1/auth/findSchoolsByKeyword/http-request.adoc[]
+include::{snippets}/api/v1/auth/findAllUnivName/http-request.adoc[]
 
 === 요청 파라미터
 
-include::{snippets}/api/v1/auth/findSchoolsByKeyword/request-parameters.adoc[]
+include::{snippets}/api/v1/auth/findAllUnivName/query-parameters.adoc[]
 
 === 응답
 
-include::{snippets}/api/v1/auth/findSchoolsByKeyword/http-response.adoc[]
+include::{snippets}/api/v1/auth/findAllUnivName/http-response.adoc[]

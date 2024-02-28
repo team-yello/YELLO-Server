@@ -1,7 +1,13 @@
+buildscript {
+    ext {
+        queryDslVersion = "5.0.0"
+    }
+}
+
 plugins {
     id 'java'
-    id 'org.springframework.boot' version '2.7.4'
-    id 'io.spring.dependency-management' version '1.0.15.RELEASE'
+    id 'org.springframework.boot' version '3.2.2'
+    id 'io.spring.dependency-management' version '1.1.4'
     id "org.asciidoctor.jvm.convert" version "3.3.2"
     id 'jacoco'
 }
@@ -32,14 +38,16 @@ repositories {
 }
 
 dependencies {
+    // Properties Migrator
+    runtimeOnly "org.springframework.boot:spring-boot-properties-migrator"
+
     implementation 'org.springframework.boot:spring-boot-starter-web'
     compileOnly 'org.projectlombok:lombok'
     annotationProcessor 'org.projectlombok:lombok'
 
     // Repositories
     implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
-    implementation 'org.springframework.boot:spring-boot-starter-data-redis'
-    implementation 'org.springframework.amqp:spring-rabbit:2.3.12'
+    implementation 'org.springframework.amqp:spring-rabbit:3.1.1'
 
     runtimeOnly 'com.h2database:h2'
     runtimeOnly 'com.mysql:mysql-connector-j:8.0.31'
@@ -79,6 +87,7 @@ dependencies {
     asciidoctorExt 'org.springframework.restdocs:spring-restdocs-asciidoctor'
     testImplementation 'org.springframework.restdocs:spring-restdocs-mockmvc'
     testImplementation 'org.springframework.security:spring-security-test'
+    testImplementation 'org.mockito:mockito-inline:5.2.0'
 
     // jwt decode
     implementation 'org.bouncycastle:bcprov-jdk15on:1.69'
@@ -88,6 +97,18 @@ dependencies {
 
     // AOP
     implementation 'org.springframework.boot:spring-boot-starter-aop'
+
+    // querydsl
+    implementation "com.querydsl:querydsl-core:${queryDslVersion}"
+    annotationProcessor "com.querydsl:querydsl-apt:${queryDslVersion}:jakarta"
+    implementation "com.querydsl:querydsl-jpa:${queryDslVersion}:jakarta"
+    annotationProcessor "jakarta.persistence:jakarta.persistence-api"
+    implementation "jakarta.annotation:jakarta.annotation-api"
+    implementation "com.querydsl:querydsl-codegen:${queryDslVersion}"
+
+    // tink
+    implementation 'com.google.crypto.tink:tink-android:1.4.0-rc1'
+    implementation 'com.google.crypto.tink:apps-rewardedads:1.10.0'
 }
 
 asciidoctor {
@@ -112,6 +133,7 @@ configurations {
     compileOnly {
         extendsFrom annotationProcessor
     }
+    querydsl.extendsFrom compileClasspath
 }
 
 jar.enabled = false
@@ -128,6 +150,7 @@ jacocoTestReport {
     }
 //    finalizedBy 'jacocoTestCoverageVerification'
 }
+
 //jacocoTestCoverageVerification {
 //    violationRules {
 //        rule {

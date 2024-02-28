@@ -11,7 +11,7 @@
 
 ## Tech Stack
 
-- [Spring Boot 2.7](https://spring.io/blog/2022/09/22/spring-boot-2-7-4-available-now)
+- [Spring Boot 3.2.2](https://spring.io/blog/2024/01/19/spring-boot-3-2-2-available-now)
   with [Java 17](https://docs.oracle.com/en/java/javase/17/docs/api/index.html)
 - [MySQL](https://dev.mysql.com/doc/) & [JPA](https://docs.spring.io/spring-data/jpa/docs/current/reference/html/)
 - [JUnit5](https://junit.org/junit5/docs/current/user-guide/) for testing

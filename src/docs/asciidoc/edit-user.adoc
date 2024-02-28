@@ -1,0 +1,39 @@
+:reproducible:
+== 유저 프로필 수정
+
+=== 요청
+
+include::{snippets}/api/v1/user/update/http-request.adoc[]
+
+*필드 타입*
+
+- "name": String
+- "yelloId": String
+- "gender": "M" | "F"
+- "email": String
+- "profileImageUrl": String
+- "groupId": Long
+* 대학교 검색 또는 고등학교 검색 API를 이용하여 유저가 선택한 groupId를 입력해주세요.
+* 해당 groupId에 해당하는 group이 고등학교면, 해당 유저는 고등학생 / 대학교면 대학생이 됩니다.
+- "groupAdmissionYear": Integer
+* 대학생이면 학번 / 고등학생이면 '반(class)'를 넣어주세요.
+
+=== 응답
+
+include::{snippets}/api/v1/user/update/http-response.adoc[]
+
+*필드 타입*
+
+=== NOTE
+
+- 포인트 / 구독정보 / 로그인 정보와 같이 user-pure하지 않은 정보는 수정할 수 없도록 설계하였습니다.
+* 해당 정보 수정API는 도메인 별로 만들 예정입니다.
+- 비즈니스 로직인 **'1년에 1회 수정 가능하다'**라는 조건과 상관없이 여러번 호출하여 유저 정보 수정이 가능합니다.
+* 해당 비즈니스 로직을 만족하기 위해서 link:user-data-get.html[프로필 수정 가능 여부 조회]를 같이 사용해주세요.
+** UserGroup(`groupId`, `groupAdmissionYear`)에 대한 정보가 유저의 기존 정보와 달라졌을때**만** `프로필 수정 가능 여부` 가 갱신됩니다.
+
+=== CHANGELOG
+
+- 2024.02.02 groupId, groupAdmissionYear 변경에 따른 제약조건 추가
+- 2024.01.31 릴리즈
+- 2024.01.09 명세 작성

@@ -1,8 +1,12 @@
 package com.yello.server.domain.purchase.repository;
 
+import static com.yello.server.global.common.ErrorCode.NOT_FOUND_USER_SUBSCRIBE_EXCEPTION;
+
 import com.yello.server.domain.purchase.entity.ProductType;
 import com.yello.server.domain.purchase.entity.Purchase;
+import com.yello.server.domain.purchase.exception.PurchaseNotFoundException;
 import com.yello.server.domain.user.entity.User;
+import com.yello.server.global.common.ErrorCode;
 import java.util.List;
 import java.util.Optional;
 import lombok.RequiredArgsConstructor;
@@ -49,5 +53,11 @@ public class PurchaseRepositoryImpl implements PurchaseRepository {
     @Override
     public void delete(Purchase purchase) {
         purchaseJpaRepository.delete(purchase);
+    }
+
+    @Override
+    public Purchase getTopByStateAndUserId(User user) {
+        return purchaseJpaRepository.findTopByStateAndUser(user)
+            .orElseThrow(() -> new PurchaseNotFoundException(NOT_FOUND_USER_SUBSCRIBE_EXCEPTION));
     }
 }

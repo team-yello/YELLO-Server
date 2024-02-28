@@ -5,6 +5,8 @@
 :toc: left
 :toclevels: 3
 :sectlinks:
+:nofooter:
+:nofootnotes:
 
 [[API-List]]
 == APIs
@@ -17,15 +19,29 @@
 
 * link:find-onboarding-friends.html[가입한 친구 목록 불러오기]
 
-* link:search-userGroup.html[대학교 검색하기]
+* link:search-school.html[대학교 검색하기]
 
 * link:search-department.html[대학교 학과 검색하기]
+
+* link:search-high-name.html[고등학교 이름 검색하기]
+
+* link:search-high-class.html[고등학교 이름으로 학반 검색하기]
 
 * link:reissue-token.html[토큰 재발급]
 
 === User API
 
-* link:check-user.html[내 정보 조회하기]
+* link:check-user.html[내 정보 조회하기 V1]
+
+* 🆕 link:check-user-v2.html[내 정보 조회하기 V2, 2024-01-30]
+
+* 🆕 link:edit-user.html[유저 정보 수정, 2024-01-31]
+
+* 🆕 link:user-data-get.html[프로필 수정 가능 여부 조회, 2024-01-31]
+
+* 🆕 link:user-data-post.html[유저 기타 정보 저장, 2024-01-31]
+
+* 🆕 link:purchase-info.html[유저 구독 정보, 2024-01-25]
 
 * link:check-user-by-id.html[특정 유저 정보 조회하기]
 
@@ -33,13 +49,17 @@
 
 * link:delete-user.html[유저 탈퇴]
 
+* 🆕 link:delete-user-v2.html[유저 탈퇴 V2, 2024-01-30]
+
 === Vote API
 
 * link:find-votes.html[내 투표 전체 조회하기]
 
-* link:find-friend-votes.html[친구 투표 전체 조회하기]
+* link:find-friend-votes.html[친구 투표 전체 조회하기, 2024-01-09]
 
-* link:find-friend-votes.html[읽지 않은 쪽지 개수 조회하기]
+* 🆕 link:find-friend-votes-v2.html[친구 투표 전체 조회하기 v2, 2024-01-30]
+
+* link:get-unread-vote.html[읽지 않은 쪽지 개수 조회하기]
 
 * link:find-vote.html[투표 상세 조회하기]
 
@@ -81,4 +101,21 @@
 
 === Pay API
 
+- @Deprecated at 2024.03
 * link:pay.html[결제 전환율 체크]
+
+=== Notice API
+
+* 🆕 link:find-notice.html[공지 조회, 2024-01-29]
+
+=== Event API
+
+* 🆕 link:find-event.html[이벤트 조회, 2024-02-06]
+
+* 🆕 link:create-event-history.html[이벤트 참여, 2024-02-07]
+
+* 🆕 link:reward-event.html[이벤트 보상, 2024-02-07]
+
+* 🆕 link:reward-admob.html[광고보고 보상 얻기, 2024-02-19]
+
+* 🆕 link:check-is-possible-admob.html[광고보고 보상 얻기 가능 여부 조회, 2024-02-17]

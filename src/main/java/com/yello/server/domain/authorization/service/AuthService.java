@@ -3,7 +3,9 @@ package com.yello.server.domain.authorization.service;
 import static com.yello.server.global.common.ErrorCode.TOKEN_ALL_EXPIRED_AUTH_EXCEPTION;
 import static com.yello.server.global.common.ErrorCode.TOKEN_NOT_EXPIRED_AUTH_EXCEPTION;
 import static com.yello.server.global.common.ErrorCode.YELLOID_REQUIRED_EXCEPTION;
+import static com.yello.server.global.common.util.ConstantUtil.GlobalZoneId;
 import static com.yello.server.global.common.util.ConstantUtil.RECOMMEND_POINT;
+import static java.time.format.DateTimeFormatter.ISO_OFFSET_DATE_TIME;
 
 import com.yello.server.domain.authorization.dto.ServiceTokenVO;
 import com.yello.server.domain.authorization.dto.kakao.KakaoTokenInfo;
@@ -27,16 +29,20 @@ import com.yello.server.domain.group.entity.UserGroup;
 import com.yello.server.domain.group.entity.UserGroupType;
 import com.yello.server.domain.group.repository.UserGroupRepository;
 import com.yello.server.domain.user.entity.User;
+import com.yello.server.domain.user.entity.UserData;
+import com.yello.server.domain.user.entity.UserDataType;
+import com.yello.server.domain.user.repository.UserDataRepository;
 import com.yello.server.domain.user.repository.UserRepository;
 import com.yello.server.domain.vote.service.VoteManager;
 import com.yello.server.global.common.factory.PaginationFactory;
 import com.yello.server.global.common.manager.ConnectionManager;
 import com.yello.server.infrastructure.firebase.service.NotificationService;
 import com.yello.server.infrastructure.rabbitmq.repository.MessageQueueRepository;
+import jakarta.validation.constraints.NotNull;
+import java.time.ZonedDateTime;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
-import javax.validation.constraints.NotNull;
 import lombok.Builder;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
@@ -51,19 +57,17 @@ import org.springframework.transaction.annotation.Transactional;
 @Transactional(readOnly = true)
 public class AuthService {
 
-    private final UserRepository userRepository;
-    private final UserGroupRepository userGroupRepository;
-    private final FriendRepository friendRepository;
-    private final CooldownRepository cooldownRepository;
-    private final MessageQueueRepository messageQueueRepository;
-
     private final AuthManager authManager;
-    private final FriendManager friendManager;
     private final ConnectionManager connectionManager;
-    private final VoteManager voteManager;
-    private final TokenProvider tokenProvider;
-
+    private final CooldownRepository cooldownRepository;
+    private final FriendManager friendManager;
+    private final FriendRepository friendRepository;
+    private final MessageQueueRepository messageQueueRepository;
     private final NotificationService notificationService;
+    private final UserDataRepository userDataRepository;
+    private final UserGroupRepository userGroupRepository;
+    private final UserRepository userRepository;
+    private final VoteManager voteManager;
 
     @Transactional
     public OAuthResponse oauthLogin(OAuthRequest oAuthRequest) {
@@ -71,7 +75,7 @@ public class AuthService {
             connectionManager.getKakaoTokenInfo(oAuthRequest.accessToken());
 
         final User user = authManager.getSignedInUserByUuid(response.getBody().id().toString());
-        final ServiceTokenVO serviceTokenVO = authManager.registerToken(user);
+        final ServiceTokenVO serviceTokenVO = authManager.issueToken(user);
 
         final Boolean isResigned = authManager.renewUserData(user);
         user.setDeviceToken(oAuthRequest.deviceToken());
@@ -96,7 +100,7 @@ public class AuthService {
 
         this.recommendUser(signUpRequest.recommendId(), signUpRequest.yelloId());
 
-        final ServiceTokenVO signUpToken = authManager.registerToken(newUser);
+        final ServiceTokenVO signUpToken = authManager.issueToken(newUser);
 
         this.makeFriend(newUser, signUpRequest.friends());
 
@@ -109,10 +113,21 @@ public class AuthService {
         if (recommendYelloId != null && !recommendYelloId.isEmpty()) {
             User recommendedUser = userRepository.getByYelloId(recommendYelloId);
             User user = userRepository.getByYelloId(userYelloId);
+            final Optional<UserData> recommended = userDataRepository.findByUserIdAndTag(recommendedUser.getId(),
+                UserDataType.RECOMMENDED);
 
             recommendedUser.addRecommendCount(1L);
-            recommendedUser.addPoint(RECOMMEND_POINT);
-            user.addPoint(RECOMMEND_POINT);
+            recommendedUser.addPointBySubscribe(RECOMMEND_POINT);
+            user.addPointBySubscribe(RECOMMEND_POINT);
+            if (recommended.isEmpty()) {
+                recommendedUser.addTicketCount(1);
+
+                userDataRepository.save(UserData.of(
+                    UserDataType.RECOMMENDED,
+                    ZonedDateTime.now(GlobalZoneId).format(ISO_OFFSET_DATE_TIME),
+                    recommendedUser
+                ));
+            }
 
             notificationService.sendRecommendNotification(user, recommendedUser);
 
@@ -172,8 +187,8 @@ public class AuthService {
 
     @Transactional
     public ServiceTokenVO reIssueToken(@NotNull ServiceTokenVO tokens) {
-        boolean isAccessTokenExpired = tokenProvider.isExpired(tokens.accessToken());
-        boolean isRefreshTokenExpired = tokenProvider.isExpired(tokens.refreshToken());
+        boolean isAccessTokenExpired = authManager.isExpired(tokens.accessToken());
+        boolean isRefreshTokenExpired = authManager.isExpired(tokens.refreshToken());
 
         if (isAccessTokenExpired) {
 
@@ -181,8 +196,8 @@ public class AuthService {
                 throw new NotExpiredTokenForbiddenException(TOKEN_ALL_EXPIRED_AUTH_EXCEPTION);
             }
 
-            final String refreshToken = tokens.refreshToken();
-            return authManager.setNewAccessToken(refreshToken);
+            String newAccessToken = authManager.issueNewAccessToken(tokens.refreshToken());
+            return ServiceTokenVO.of(newAccessToken, tokens.refreshToken());
         }
 
         throw new NotExpiredTokenForbiddenException(TOKEN_NOT_EXPIRED_AUTH_EXCEPTION);

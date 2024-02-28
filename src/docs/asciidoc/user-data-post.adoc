@@ -1,0 +1,30 @@
+:reproducible:
+== 유저 기타 정보 저장 (명세)
+
+=== 요청
+
+include::{snippets}/api/v1/user/data/update/http-request.adoc[]
+
+*필드 타입*
+
+- "TAG": "withdraw-reason" | "account-update-at" | "recommended"
+- "value": String
+* `withdraw-reason` 일 때, 255byte 이내의 string
+* `account-update-at` 또는 `recommended` 일 때, ISO-8601 + ZoneInfo
+** 예시) `2011-12-03T10:15:30+01:00`
+
+=== 응답
+
+include::{snippets}/api/v1/user/data/update/http-response.adoc[]
+
+=== NOTE
+
+- `account-update-at` 및 `recommended` 기능은 link:edit-user.html[유저 정보 수정] 및 link:signup.html[회원가입]에 통합되어있습니다
+* 정말 필요에 의해 값을 수정해야하는 경우만 사용해주세요.
+- User의 다양한 정보를 저장하는 API로 범용적인 확장할 예정입니다.
+
+=== CHANGELOG
+
+- 2024.01.31 릴리즈
+- 2024.01.30 탈퇴 v2 분리로 인한 명세 업데이트
+- 2024.01.09 명세 작성

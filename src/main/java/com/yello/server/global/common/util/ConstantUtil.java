@@ -1,7 +1,12 @@
 package com.yello.server.global.common.util;
 
+import java.time.ZoneId;
+
 public class ConstantUtil {
 
+    public static final String GlobalZoneIdLabel = "Asia/Seoul";
+    public static final ZoneId GlobalZoneId = ZoneId.of(GlobalZoneIdLabel);
+    public static final String IdempotencyKeyHeader = "IdempotencyKey";
     public static final int RANDOM_COUNT = 4;
     public static final int VOTE_COUNT = 8;
     public static final long TIMER_TIME = 2400L;
@@ -57,15 +62,20 @@ public class ConstantUtil {
     public static final String APPLE_NOTIFICATION_EXPIRED = "EXPIRED";
     public static final String APPLE_NOTIFICATION_TEST = "TEST";
     public static final String APPLE_NOTIFICATION_SUBSCRIBED = "SUBSCRIBED";
+    public static final String APPLE_NOTIFICATION_DID_RENEW = "DID_RENEW";
     public static final String APPLE_SUBTYPE_AUTO_RENEW_DISABLED = "AUTO_RENEW_DISABLED";
     public static final String APPLE_SUBTYPE_VOLUNTARY = "VOLUNTARY";
     public static final String APPLE_SUBTYPE_AUTO_RENEW_ENABLED = "AUTO_RENEW_ENABLED";
+    public static final String APPLE_SUBTYPE_BILLING_RECOVERY = "BILLING_RECOVERY";
     public static final String APPLE_SUBTYPE_RESUBSCRIBE = "RESUBSCRIBE";
     public static final int REFUND_ONE_TICKET = 1;
     public static final int REFUND_TWO_TICKET = 2;
     public static final int REFUND_FIVE_TICKET = 5;
     public static final int NO_FRIEND_COUNT = 0;
-
+    public static final int SUBSCRIBE_DAYS = 7;
+    public static final int PLUS_BASIC_TIME = 0;
+    public static final int ADMOB_SHOP_TIME = 60;
+    public static final long ADMOB_TIMER_TIME = 3600L;
 
     private ConstantUtil() {
         throw new IllegalStateException();

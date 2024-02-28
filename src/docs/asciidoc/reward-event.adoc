@@ -1,0 +1,34 @@
+:reproducible:
+== 공지 조회
+
+=== 요청
+
+include::{snippets}/api/v1/event/reward/1/http-request.adoc[]
+
+=== 응답
+
+include::{snippets}/api/v1/event/reward/1/http-response.adoc[]
+include::{snippets}/api/v1/event/reward/2/http-response.adoc[]
+
+=== 주의
+
+- "rewardTag": "TICKET" | "POINT"
+- "rewardValue": Long
+- "rewardTitle": String
+- "rewardImage": String
+
+=== NOTE
+
+- Header에 이벤트 참여에 입력했던 멱등키를 넣어주세요.
+* 예시) IdempotencyKey: 0397b5f3-ecdc-47d6-b5d7-2b1afcf00e87
+- ADMOB
+* 광고를 시청한 후, 해당 API를 호출.
+* ADMOB 서버에 ServerSideVerificationOptions의 customData에 동일한 멱등성 키를 넘겨주세요.
+* 이벤트 참여에 넣어준 멱등키와 동일하여 검증이되면, 정상 보상, 그렇지 않으면 이상으로 판단하여 400번대 에러
+- 보상
+* 지금 랜덤 보상이 구현안되있는데, 차후 서버에서 보상 처리하겠음.
+클라측에서는 View과 종속적인 값만 처리하면 됨.
+
+=== CHANGELOG
+
+- 2024.02.07 릴리즈

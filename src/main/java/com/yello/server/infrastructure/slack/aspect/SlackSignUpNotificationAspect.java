@@ -1,7 +1,7 @@
 package com.yello.server.infrastructure.slack.aspect;
 
 import com.yello.server.infrastructure.slack.factory.SlackWebhookMessageFactory;
-import javax.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletRequest;
 import net.gpedro.integrations.slack.SlackApi;
 import net.gpedro.integrations.slack.SlackMessage;
 import org.aspectj.lang.ProceedingJoinPoint;
@@ -24,7 +24,7 @@ public class SlackSignUpNotificationAspect {
     public SlackSignUpNotificationAspect(
         @Qualifier("slackSignUpApi") SlackApi slackSignUpApi,
         SlackWebhookMessageFactory slackWebhookMessageFactory,
-        TaskExecutor taskExecutor) {
+        @Qualifier("threadPoolTaskExecutor") TaskExecutor taskExecutor) {
         this.slackSignUpApi = slackSignUpApi;
         this.slackWebhookMessageFactory = slackWebhookMessageFactory;
         this.taskExecutor = taskExecutor;

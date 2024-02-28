@@ -1,0 +1,25 @@
+:reproducible:
+== 유저 구독 정보
+
+=== 요청
+
+include::{snippets}/api/v1/user/subscribe/http-request.adoc[]
+
+=== 응답
+
+include::{snippets}/api/v1/user/subscribe/http-response.adoc[]
+
+*필드 타입*
+
+- "id": Long
+- "subscribe": "normal" | "active" | "canceled"
+- "expireDate": String(10)
+* YYYY-MM-DD (ISO-8601)
+
+=== Note
+
+=== CHANGELOG
+
+- 2024.01.25 expiredDate 필드명 및 subscribe 소문자 오류 수정
+- 2024.01.23 API 릴리즈
+- 2024.01.09 명세 작성

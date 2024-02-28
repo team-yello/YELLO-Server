@@ -1,0 +1,59 @@
+:reproducible:
+== 공지 조회
+
+=== 요청
+
+include::{snippets}/api/v1/notice/http-request.adoc[]
+
+=== 요청 파라미터
+
+include::{snippets}/api/v1/notice/path-parameters.adoc[]
+
+=== 응답
+
+include::{snippets}/api/v1/notice/http-response.adoc[]
+
+*path variable*
+
+- tag(ENUM 값) -> "NOTICE" | "BANNER | "PROFILE-BANNER"
+
+* NOTICE : 진입시 공지
+* BANNER : 내 쪽지 배너
+* PROFILE-BANNER : 프로필 배너
+
+=== 주의
+
+[http, json]
+
+*유효한 날짜의 공지가 존재하지 않는 경우*
+
+-> isAvailable은 false로 오고 날짜 제외한 나머지 값은 빈값으로 전달
+
+----
+{
+    "status": 200,
+    "message": "공지 조회에 성공하였습니다.",
+    "data": {
+    "imageUrl": "",
+    "redirectUrl": "",
+    "startDate": "2024-01-27",
+    "endDate": "2024-01-27",
+    "isAvailable": false,
+    "type": null,
+    "title": ""
+}
+
+----
+
+=== NOTE
+
+- 공지 정보를 조회하는 API입니다.
+- isAvailable true일 때, 유효한 1개의 공지를 반환합니다.
+* 요구사항에 따라 여러개의 공지를 반환할 수 있도록 염두하고 있습니다.
+* 반환되는 공지를 무조건 View에 띄워주시면 되겠습니다.
+
+=== CHANGELOG
+
+- 2024.01.29 API tag 추가 및 수정
+- 2024.01.26 API 릴리즈
+- 2024.01.09 명세 작성

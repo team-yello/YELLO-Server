@@ -37,6 +37,11 @@ public class UserGroupRepositoryImpl implements UserGroupRepository {
     }
 
     @Override
+    public List<UserGroup> findAllByGroupName(String groupName) {
+        return userGroupJpaRepository.findAllByGroupName(groupName);
+    }
+
+    @Override
     public Integer countDistinctGroupNameContaining(String groupName, UserGroupType userGroupType) {
         return userGroupJpaRepository.countDistinctGroupNameContaining(groupName, userGroupType);
     }

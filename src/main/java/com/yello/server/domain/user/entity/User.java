@@ -3,27 +3,30 @@ package com.yello.server.domain.user.entity;
 import com.yello.server.domain.admin.dto.request.AdminUserDetailRequest;
 import com.yello.server.domain.authorization.dto.request.SignUpRequest;
 import com.yello.server.domain.group.entity.UserGroup;
+import com.yello.server.domain.user.dto.request.UserUpdateRequest;
 import com.yello.server.global.common.dto.AuditingTimeEntity;
+import jakarta.persistence.Column;
+import jakarta.persistence.Convert;
+import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
+import jakarta.persistence.Table;
+import jakarta.persistence.UniqueConstraint;
+import jakarta.validation.constraints.Email;
 import java.time.LocalDateTime;
 import java.util.Objects;
-import javax.persistence.Column;
-import javax.persistence.Convert;
-import javax.persistence.Entity;
-import javax.persistence.FetchType;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
-import javax.persistence.Table;
-import javax.persistence.UniqueConstraint;
-import javax.validation.constraints.Email;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.ColumnDefault;
+import org.hibernate.annotations.OnDelete;
+import org.hibernate.annotations.OnDeleteAction;
 
 @Getter
 @Entity
@@ -67,8 +70,8 @@ public class User extends AuditingTimeEntity {
     private Gender gender;
 
     @Column(nullable = false)
-    @ColumnDefault("200")
-    private Integer point;
+    @Builder.Default
+    private Integer point = 200;
 
     @Column(nullable = false)
     @Convert(converter = SocialConverter.class)
@@ -84,6 +87,7 @@ public class User extends AuditingTimeEntity {
     private LocalDateTime deletedAt;
 
     @ManyToOne(fetch = FetchType.LAZY)
+    @OnDelete(action = OnDeleteAction.RESTRICT)
     @JoinColumn(name = "groupId")
     private UserGroup group;
 
@@ -103,9 +107,9 @@ public class User extends AuditingTimeEntity {
     private String deviceToken;
 
     @Column(nullable = false)
-    @ColumnDefault("normal")
     @Convert(converter = SubscribeConverter.class)
-    private Subscribe subscribe;
+    @Builder.Default
+    private Subscribe subscribe = Subscribe.NORMAL;
 
     public static User of(SignUpRequest signUpRequest, UserGroup group) {
         return User.builder()
@@ -128,16 +132,6 @@ public class User extends AuditingTimeEntity {
             .build();
     }
 
-    public void delete() {
-        this.deletedAt = LocalDateTime.now();
-        this.point = 0;
-        this.deviceToken = null;
-    }
-
-    public void renew() {
-        this.deletedAt = null;
-    }
-
     public void update(AdminUserDetailRequest request) {
         this.recommendCount = request.recommendCount();
         this.name = request.name();
@@ -154,7 +148,28 @@ public class User extends AuditingTimeEntity {
         this.subscribe = request.subscribe();
     }
 
-    public void addPoint(Integer point) {
+    public void update(UserUpdateRequest request, Gender gender, UserGroup userGroup) {
+        this.name = request.name();
+        this.yelloId = request.yelloId();
+        this.gender = gender;
+        this.email = request.email();
+        this.profileImage = request.profileImageUrl();
+        this.group = userGroup;
+        this.groupAdmissionYear = request.groupAdmissionYear();
+    }
+
+    public void delete() {
+        this.deletedAt = LocalDateTime.now();
+        this.point = 0;
+        this.deviceToken = null;
+    }
+
+    public void renew() {
+        this.deletedAt = null;
+    }
+
+
+    public void addPointBySubscribe(Integer point) {
         if (this.getSubscribe() == Subscribe.NORMAL) {
             this.point += point;
             return;
@@ -164,6 +179,9 @@ public class User extends AuditingTimeEntity {
 
     public void subPoint(Integer point) {
         this.point -= point;
+    }
+    public void addPoint(Integer point) {
+        this.point += point;
     }
 
     public void addRecommendCount(Long recommendCount) {

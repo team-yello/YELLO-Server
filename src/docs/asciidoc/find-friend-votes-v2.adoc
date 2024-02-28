@@ -1,0 +1,74 @@
+:reproducible:
+== 친구 투표 전체 조회 v2
+
+=== 요청
+
+include::{snippets}/api/v2/vote/friend/http-request.adoc[]
+
+=== 요청 파라미터
+
+include::{snippets}/api/v2/vote/friend/query-parameters.adoc[]
+
+=== 응답
+
+include::{snippets}/api/v2/vote/friend/http-response.adoc[]
+
+
+|===
+|`+type+`| 조회할 쪽지 종류 (null -> 모든쪽지, send-> 보낸쪽지)
+|===
+
+
+*필드 타입*
+
+- "totalCount": Integer
+- "friendVotes": *FriendVote*[]
+- "isUserSenderVote" : Boolean (내가 보냈는지 여부)
+- *FriendVote*
+* "id": Long
+* "senderId" : Long
+* "senderName" : String
+* "senderYelloId" : String
+* "senderGender": "MALE" | "FEMALE"
+* "senderProfileImage" : String
+* "receiverId" : Long
+* "receiverName": String
+* "receiverYelloId" : String
+* "receiverGender": "MALE" | "FEMALE"
+* "receiverProfileImage": String
+* "vote": *Vote*
+* "isHintUsed": Boolean
+* "createdAt": "{0}초 전" | "{0}분 전" | "{0}시간 전" | "{0}일 전"
+
+- *Vote*
+* "nameHead": String
+* "nameFoot": String
+* "keywordHead": String
+* "keyword": String
+* "keywordFoot": String
+
+
+=== Excpetion
+
+- 잘못된 type을 queryString에 보내는 경우
+
+[http,json]
+----
+{
+    "status": 403,
+    "message": "[VoteForbiddenException] 잘못된 투표 유형입니다."
+}
+----
+
+=== NOTE
+
+- 모든 종류의 쪽지를 조회할 때 `/api/v1/vote/friend?page=0` 으로 요청해주세요
+* type을 명시하지 마세요
+- 내가 보낸 쪽지를 조회할 때 `/api/v1/vote/friend?page=0&type=send` 으로 요청해주세요
+- `senderGender` 필드가 다른 API와 일관되지 못한점 미안해요 ㅠ
+
+=== CHANGELOG
+
+- 2924.01.30 API 릴리즈
+- 2024.01.26 필드 명세 업데이트
+- 2024.01.09 `type` 명세 업데이트

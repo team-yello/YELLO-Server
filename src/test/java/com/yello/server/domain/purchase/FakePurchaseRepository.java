@@ -1,7 +1,11 @@
 package com.yello.server.domain.purchase;
 
+import static com.yello.server.global.common.ErrorCode.NOT_FOUND_USER_SUBSCRIBE_EXCEPTION;
+
 import com.yello.server.domain.purchase.entity.ProductType;
 import com.yello.server.domain.purchase.entity.Purchase;
+import com.yello.server.domain.purchase.entity.PurchaseState;
+import com.yello.server.domain.purchase.exception.PurchaseNotFoundException;
 import com.yello.server.domain.purchase.repository.PurchaseRepository;
 import com.yello.server.domain.user.entity.User;
 import java.util.ArrayList;
@@ -24,13 +28,16 @@ public class FakePurchaseRepository implements PurchaseRepository {
 
         final Purchase newPurchase = Purchase.builder()
             .id(purchase.getId() == null ? ++id : purchase.getId())
+            .transactionId(purchase.getTransactionId())
             .price(purchase.getPrice())
             .user(purchase.getUser())
             .gateway(purchase.getGateway())
+            .purchaseToken(purchase.getPurchaseToken())
+            .state(purchase.getState())
+            .rawData(purchase.getRawData())
             .productType(purchase.getProductType())
             .createdAt(purchase.getCreatedAt())
             .updatedAt(purchase.getUpdatedAt())
-            .transactionId(purchase.getTransactionId())
             .build();
 
         data.add(newPurchase);
@@ -81,5 +88,18 @@ public class FakePurchaseRepository implements PurchaseRepository {
     @Override
     public void delete(Purchase purchase) {
         data.remove(purchase);
+    }
+
+    @Override
+    public Purchase getTopByStateAndUserId(User user) {
+        return data.stream()
+            .filter(purchase -> {
+                return purchase.getUser().equals(user) &&
+                    purchase.getProductType().equals(ProductType.YELLO_PLUS) &&
+                    purchase.getState().equals(PurchaseState.ACTIVE);
+            })
+            .sorted(Comparator.comparing(Purchase::getUpdatedAt).reversed())
+            .findFirst()
+            .orElseThrow(() -> new PurchaseNotFoundException(NOT_FOUND_USER_SUBSCRIBE_EXCEPTION));
     }
 }

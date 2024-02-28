@@ -26,6 +26,7 @@ public class FakeUserGroupRepository implements UserGroupRepository {
             .id(group.getId() == null ? ++id : group.getId())
             .groupName(group.getGroupName())
             .subGroupName(group.getSubGroupName())
+            .userGroupType(group.getUserGroupType())
             .build();
 
         data.add(newUserGroup);
@@ -45,6 +46,13 @@ public class FakeUserGroupRepository implements UserGroupRepository {
         return data.stream()
             .filter(group -> group.getId().equals(id))
             .findFirst();
+    }
+
+    @Override
+    public List<UserGroup> findAllByGroupName(String groupName) {
+        return data.stream()
+            .filter(group -> group.getGroupName().equals(groupName))
+            .toList();
     }
 
     @Override

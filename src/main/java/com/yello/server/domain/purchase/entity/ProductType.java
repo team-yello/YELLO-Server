@@ -1,5 +1,6 @@
 package com.yello.server.domain.purchase.entity;
 
+import static com.yello.server.global.common.ErrorCode.ENUM_BAD_REQUEST_EXCEPTION;
 import static com.yello.server.global.common.util.ConstantUtil.FIVE_TICKET_ID;
 import static com.yello.server.global.common.util.ConstantUtil.GOOGLE_FIVE_TICKET_ID;
 import static com.yello.server.global.common.util.ConstantUtil.GOOGLE_ONE_TICKET_ID;
@@ -9,7 +10,7 @@ import static com.yello.server.global.common.util.ConstantUtil.ONE_TICKET_ID;
 import static com.yello.server.global.common.util.ConstantUtil.TWO_TICKET_ID;
 import static com.yello.server.global.common.util.ConstantUtil.YELLO_PLUS_ID;
 
-import java.text.MessageFormat;
+import com.yello.server.global.exception.EnumIllegalArgumentException;
 import java.util.Arrays;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
@@ -23,14 +24,20 @@ public enum ProductType {
     FIVE_TICKET("five_ticket"),
     TEST("test");
 
-    private final String intial;
+    private final String initial;
 
     public static ProductType fromCode(String dbData) {
         return Arrays.stream(ProductType.values())
-            .filter(v -> v.getIntial().equals(dbData))
+            .filter(v -> v.getInitial().equals(dbData))
             .findAny()
-            .orElseThrow(() -> new IllegalArgumentException(
-                MessageFormat.format("존재하지 않는 상품타입입니다. {0}", dbData)));
+            .orElseThrow(() -> new EnumIllegalArgumentException(ENUM_BAD_REQUEST_EXCEPTION));
+    }
+
+    public static ProductType fromName(String name) {
+        return Arrays.stream(ProductType.values())
+            .filter(v -> v.name().equals(name))
+            .findAny()
+            .orElseThrow(() -> new EnumIllegalArgumentException(ENUM_BAD_REQUEST_EXCEPTION));
     }
 
     public static ProductType getProductType(String productId) {
@@ -50,9 +57,5 @@ public enum ProductType {
             case FIVE_TICKET -> 5;
             default -> null;
         };
-    }
-
-    public String intial() {
-        return intial;
     }
 }

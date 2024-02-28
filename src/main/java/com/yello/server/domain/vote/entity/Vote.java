@@ -3,21 +3,24 @@ package com.yello.server.domain.vote.entity;
 import com.yello.server.domain.question.entity.Question;
 import com.yello.server.domain.user.entity.User;
 import com.yello.server.global.common.dto.AuditingTimeEntity;
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.FetchType;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.experimental.SuperBuilder;
 import org.hibernate.annotations.ColumnDefault;
 import org.hibernate.annotations.DynamicInsert;
+import org.hibernate.annotations.OnDelete;
+import org.hibernate.annotations.OnDeleteAction;
 
 @Entity
 @Getter
@@ -38,23 +41,26 @@ public class Vote extends AuditingTimeEntity {
     @Column(nullable = false)
     private Integer nameHint;
 
-    @ColumnDefault("false")
     @Column(nullable = false)
-    private Boolean isAnswerRevealed;
+    @Builder.Default
+    private Boolean isAnswerRevealed = false;
 
-    @ColumnDefault("false")
     @Column(nullable = false)
-    private Boolean isRead;
+    @Builder.Default
+    private Boolean isRead = false;
 
     @ManyToOne(fetch = FetchType.LAZY)
+    @OnDelete(action = OnDeleteAction.SET_NULL)
     @JoinColumn(name = "senderId")
     private User sender;
 
     @ManyToOne(fetch = FetchType.LAZY)
+    @OnDelete(action = OnDeleteAction.SET_NULL)
     @JoinColumn(name = "receiverId")
     private User receiver;
 
     @ManyToOne(fetch = FetchType.LAZY)
+    @OnDelete(action = OnDeleteAction.RESTRICT)
     @JoinColumn(name = "questionId")
     private Question question;
 

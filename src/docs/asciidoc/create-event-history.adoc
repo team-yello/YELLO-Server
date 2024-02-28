@@ -1,0 +1,30 @@
+:reproducible:
+== 이벤트 참여
+
+=== 요청
+
+include::{snippets}/api/v1/event/join/1/http-request.adoc[]
+
+=== 응답
+
+include::{snippets}/api/v1/event/join/1/http-response.adoc[]
+
+=== 주의
+
+- "tag": "LUNCH_EVENT"
+
+=== NOTE
+
+- Header에 무작위한 UUID4 값을 넣어주세요
+* 예시) IdempotencyKey: 0397b5f3-ecdc-47d6-b5d7-2b1afcf00e87
+- 주의사항
+* tag 요청값에 해당하는 이벤트의 날짜와 시간이 모두 유효해야함.
+(뭔가 에러나면 서버요청 ㄱㄱ)
+* 같은 멱등성키를 2번 요청하면, 400번 에러.
+- ADMOB
+* 광고를 시청하기 전, 해당 API를 호출.
+* ADMOB 서버에 ServerSideVerificationOptions의 customData에 동일한 멱등성 키를 넘겨주세요.
+
+=== CHANGELOG
+
+- 2024.02.07 릴리즈

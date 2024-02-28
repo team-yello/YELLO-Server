@@ -6,10 +6,10 @@ import static com.yello.server.global.common.ErrorCode.QUERY_STRING_REQUIRED_EXC
 import static org.springframework.http.HttpStatus.BAD_REQUEST;
 import static org.springframework.http.HttpStatus.CONFLICT;
 import static org.springframework.http.HttpStatus.FORBIDDEN;
-import static org.springframework.http.HttpStatus.INTERNAL_SERVER_ERROR;
 import static org.springframework.http.HttpStatus.NOT_FOUND;
 import static org.springframework.http.HttpStatus.UNAUTHORIZED;
 
+import com.yello.server.domain.admin.exception.AdminConfigurationNotFoundException;
 import com.yello.server.domain.admin.exception.UserAdminBadRequestException;
 import com.yello.server.domain.admin.exception.UserAdminNotFoundException;
 import com.yello.server.domain.authorization.exception.AuthBadRequestException;
@@ -20,20 +20,23 @@ import com.yello.server.domain.authorization.exception.NotExpiredTokenForbiddenE
 import com.yello.server.domain.authorization.exception.NotSignedInException;
 import com.yello.server.domain.authorization.exception.NotValidTokenForbiddenException;
 import com.yello.server.domain.authorization.exception.OAuthException;
+import com.yello.server.domain.event.exception.EventBadRequestException;
+import com.yello.server.domain.event.exception.EventForbiddenException;
+import com.yello.server.domain.event.exception.EventNotFoundException;
 import com.yello.server.domain.friend.exception.FriendException;
 import com.yello.server.domain.friend.exception.FriendNotFoundException;
 import com.yello.server.domain.group.exception.GroupNotFoundException;
+import com.yello.server.domain.notice.exception.NoticeNotFoundException;
 import com.yello.server.domain.purchase.exception.AppleBadRequestException;
-import com.yello.server.domain.purchase.exception.AppleTokenServerErrorException;
 import com.yello.server.domain.purchase.exception.GoogleBadRequestException;
 import com.yello.server.domain.purchase.exception.GoogleTokenNotFoundException;
-import com.yello.server.domain.purchase.exception.GoogleTokenServerErrorException;
 import com.yello.server.domain.purchase.exception.PurchaseConflictException;
 import com.yello.server.domain.purchase.exception.PurchaseException;
 import com.yello.server.domain.purchase.exception.PurchaseNotFoundException;
 import com.yello.server.domain.purchase.exception.SubscriptionConflictException;
 import com.yello.server.domain.question.exception.QuestionException;
 import com.yello.server.domain.question.exception.QuestionNotFoundException;
+import com.yello.server.domain.statistics.exception.StatisticsNotFoundException;
 import com.yello.server.domain.user.exception.UserBadRequestException;
 import com.yello.server.domain.user.exception.UserConflictException;
 import com.yello.server.domain.user.exception.UserException;
@@ -41,10 +44,8 @@ import com.yello.server.domain.user.exception.UserNotFoundException;
 import com.yello.server.domain.vote.exception.VoteForbiddenException;
 import com.yello.server.domain.vote.exception.VoteNotFoundException;
 import com.yello.server.global.common.dto.BaseResponse;
-import com.yello.server.infrastructure.redis.exception.RedisException;
-import com.yello.server.infrastructure.redis.exception.RedisNotFoundException;
 import com.yello.server.infrastructure.slack.factory.SlackWebhookMessageFactory;
-import javax.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletRequest;
 import net.gpedro.integrations.slack.SlackApi;
 import net.gpedro.integrations.slack.SlackMessage;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -69,7 +70,7 @@ public class ControllerExceptionAdvice {
     public ControllerExceptionAdvice(
         @Qualifier("slackErrorApi") SlackApi slackErrorApi,
         SlackWebhookMessageFactory slackWebhookMessageFactory,
-        TaskExecutor taskExecutor
+        @Qualifier("threadPoolTaskExecutor") TaskExecutor taskExecutor
     ) {
         this.slackWebhookMessageFactory = slackWebhookMessageFactory;
         this.taskExecutor = taskExecutor;
@@ -85,25 +86,6 @@ public class ControllerExceptionAdvice {
         Runnable runnable = () -> slackErrorApi.call(slackMessage);
         taskExecutor.execute(runnable);
         throw exception;
-    }
-
-    /**
-     * 400 BAD REQUEST
-     */
-    @ExceptionHandler({
-        FriendException.class,
-        UserException.class,
-        AuthBadRequestException.class,
-        UserBadRequestException.class,
-        QuestionException.class,
-        PurchaseException.class,
-        GoogleBadRequestException.class,
-        AppleBadRequestException.class,
-        UserAdminBadRequestException.class
-    })
-    public ResponseEntity<BaseResponse> BadRequestException(CustomException exception) {
-        return ResponseEntity.status(BAD_REQUEST)
-            .body(BaseResponse.error(exception.getError(), exception.getMessage()));
     }
 
     @ExceptionHandler({
@@ -150,6 +132,28 @@ public class ControllerExceptionAdvice {
     }
 
     /**
+     * 400 BAD REQUEST
+     */
+    @ExceptionHandler({
+        FriendException.class,
+        UserException.class,
+        AuthBadRequestException.class,
+        UserBadRequestException.class,
+        QuestionException.class,
+        PurchaseException.class,
+        GoogleBadRequestException.class,
+        AppleBadRequestException.class,
+        UserAdminBadRequestException.class,
+        EnumIllegalArgumentException.class,
+        IllegalArgumentException.class
+    })
+    public ResponseEntity<BaseResponse> BadRequestException(CustomException exception) {
+        return ResponseEntity.status(BAD_REQUEST)
+            .body(BaseResponse.error(exception.getError(), exception.getMessage()));
+    }
+
+
+    /**
      * 401 UNAUTHORIZED
      */
     @ExceptionHandler({
@@ -170,7 +174,8 @@ public class ControllerExceptionAdvice {
         VoteForbiddenException.class,
         NotSignedInException.class,
         NotExpiredTokenForbiddenException.class,
-        NotValidTokenForbiddenException.class
+        NotValidTokenForbiddenException.class,
+        EventForbiddenException.class
     })
     public ResponseEntity<BaseResponse> ForbiddenException(CustomException exception) {
         return ResponseEntity.status(FORBIDDEN)
@@ -186,10 +191,14 @@ public class ControllerExceptionAdvice {
         GroupNotFoundException.class,
         FriendNotFoundException.class,
         QuestionNotFoundException.class,
-        RedisNotFoundException.class,
         PurchaseNotFoundException.class,
         GoogleTokenNotFoundException.class,
-        UserAdminNotFoundException.class
+        UserAdminNotFoundException.class,
+        NoticeNotFoundException.class,
+        AdminConfigurationNotFoundException.class,
+        EventNotFoundException.class,
+        EventBadRequestException.class,
+        StatisticsNotFoundException.class
     })
     public ResponseEntity<BaseResponse> NotFoundException(CustomException exception) {
         return ResponseEntity.status(NOT_FOUND)
@@ -206,19 +215,6 @@ public class ControllerExceptionAdvice {
     })
     public ResponseEntity<BaseResponse> ConflictException(CustomException exception) {
         return ResponseEntity.status(CONFLICT)
-            .body(BaseResponse.error(exception.getError(), exception.getMessage()));
-    }
-
-    /**
-     * 500 INTERNAL SERVER ERROR
-     */
-    @ExceptionHandler({
-        RedisException.class,
-        GoogleTokenServerErrorException.class,
-        AppleTokenServerErrorException.class
-    })
-    public ResponseEntity<BaseResponse> InternalServerException(CustomException exception) {
-        return ResponseEntity.status(INTERNAL_SERVER_ERROR)
             .body(BaseResponse.error(exception.getError(), exception.getMessage()));
     }
 }

@@ -10,6 +10,7 @@ import com.yello.server.global.common.factory.TokenFactory;
 import com.yello.server.infrastructure.client.ApiWebClient;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.reactive.function.client.WebClient;
 
@@ -33,8 +34,8 @@ public class FakeAppleApiWebClient implements ApiWebClient {
         ResponseEntity<TransactionInfoResponse> transactionResponse =
             getTransactionByWebClient(appleTransaction, APPLE_PRODUCTION_URL);
 
-        HttpStatus statusCode = transactionResponse.getStatusCode();
-        if (transactionResponse==null) {
+        HttpStatusCode statusCode = transactionResponse.getStatusCode();
+        if (transactionResponse == null) {
             throw new PurchaseException(NOT_FOUND_TRANSACTION_EXCEPTION);
         }
         if (statusCode.equals(HttpStatus.NOT_FOUND)) {

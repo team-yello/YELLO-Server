@@ -57,7 +57,7 @@ public class TokenFactoryImpl implements TokenFactory {
     public void decodeTransactionToken(String signedTransactionInfo,
         String transactionId) {
 
-        Map<String, Object> decodeToken = DecodeTokenFactory.decodeToken(signedTransactionInfo);
+        Map<String, Object> decodeToken = DecodeFactory.decodeToken(signedTransactionInfo);
 
         String decodeTransactionId = decodeToken.get("transactionId").toString();
         if (!transactionId.equals(decodeTransactionId)) {

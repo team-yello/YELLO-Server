@@ -1,17 +1,17 @@
 package com.yello.server.domain.question.entity;
 
 import com.yello.server.domain.keyword.entity.Keyword;
+import jakarta.persistence.CascadeType;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.OneToMany;
 import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
-import javax.persistence.CascadeType;
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.OneToMany;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -50,7 +50,7 @@ public class Question {
 
     private static String deleteBracket(String target) {
         val slashIndex = target.indexOf('/');
-        return slashIndex!=-1 ? target.substring(slashIndex + 1) : target;
+        return slashIndex != -1 ? target.substring(slashIndex + 1) : target;
     }
 
     public static Question of(String nameHead, String nameFoot, String keywordHead, String keywordFoot) {
@@ -68,18 +68,18 @@ public class Question {
 
     public String toNotificationSentence() {
         final String nameFootPart = deleteBracket(this.nameFoot);
-        final String nameHeadPart = (this.nameHead!=null) ? MessageFormat.format("{0} ", this.nameHead) : "";
-        final String keywordHeadPart = (this.keywordHead!=null) ? MessageFormat.format(" {0}", this.keywordHead) : "";
+        final String nameHeadPart = (this.nameHead != null) ? MessageFormat.format("{0} ", this.nameHead) : "";
+        final String keywordHeadPart = (this.keywordHead != null) ? MessageFormat.format(" {0}", this.keywordHead) : "";
 
         return MessageFormat.format("{0}너{1}{2} ...", nameHeadPart, nameFootPart, keywordHeadPart);
     }
 
     @Override
     public boolean equals(Object o) {
-        if (this==o) {
+        if (this == o) {
             return true;
         }
-        if (o==null || getClass()!=o.getClass()) {
+        if (o == null || getClass() != o.getClass()) {
             return false;
         }
         Question question = (Question) o;

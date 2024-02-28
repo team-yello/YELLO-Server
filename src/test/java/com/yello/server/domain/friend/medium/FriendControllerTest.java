@@ -7,11 +7,11 @@ import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.doNothing;
 import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document;
+import static org.springframework.restdocs.operation.preprocess.Preprocessors.modifyHeaders;
 import static org.springframework.restdocs.operation.preprocess.Preprocessors.prettyPrint;
-import static org.springframework.restdocs.operation.preprocess.Preprocessors.removeHeaders;
 import static org.springframework.restdocs.request.RequestDocumentation.parameterWithName;
 import static org.springframework.restdocs.request.RequestDocumentation.pathParameters;
-import static org.springframework.restdocs.request.RequestDocumentation.requestParameters;
+import static org.springframework.restdocs.request.RequestDocumentation.queryParameters;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 
@@ -28,6 +28,7 @@ import com.yello.server.domain.friend.dto.response.SearchFriendResponse;
 import com.yello.server.domain.friend.dto.response.SearchFriendVO;
 import com.yello.server.domain.friend.entity.Friend;
 import com.yello.server.domain.friend.service.FriendService;
+import com.yello.server.domain.group.entity.UserGroup;
 import com.yello.server.domain.group.entity.UserGroupType;
 import com.yello.server.domain.user.dto.response.UserResponse;
 import com.yello.server.domain.user.entity.User;
@@ -52,6 +53,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders;
+import org.springframework.restdocs.operation.preprocess.OperationPreprocessor;
 import org.springframework.restdocs.operation.preprocess.Preprocessors;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
@@ -69,9 +71,22 @@ import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 @DisplayNameGeneration(ReplaceUnderscores.class)
 class FriendControllerTest {
 
-    final String[] excludeRequestHeaders = {"X-CSRF-TOKEN", "Host"};
-    final String[] excludeResponseHeaders = {"X-Content-Type-Options", "X-XSS-Protection", "Cache-Control", "Pragma",
-        "Expires", "X-Frame-Options", "Content-Length"};
+    final OperationPreprocessor[] excludeRequestHeaders = new OperationPreprocessor[]{
+        prettyPrint(),
+        modifyHeaders().remove("X-CSRF-TOKEN"),
+        modifyHeaders().remove(HttpHeaders.HOST)
+    };
+
+    final OperationPreprocessor[] excludeResponseHeaders = new OperationPreprocessor[]{
+        prettyPrint(),
+        modifyHeaders().remove("X-Content-Type-Options"),
+        modifyHeaders().remove("X-XSS-Protection"),
+        modifyHeaders().remove("X-Frame-Options"),
+        modifyHeaders().remove(HttpHeaders.CACHE_CONTROL),
+        modifyHeaders().remove(HttpHeaders.PRAGMA),
+        modifyHeaders().remove(HttpHeaders.EXPIRES),
+        modifyHeaders().remove(HttpHeaders.CONTENT_LENGTH),
+    };
 
     @Autowired
     protected ObjectMapper objectMapper;
@@ -91,8 +106,9 @@ class FriendControllerTest {
 
     @BeforeEach
     void init() {
-        user = testDataUtil.generateUser(1L, 1L, UserGroupType.UNIVERSITY);
-        target = testDataUtil.generateUser(2L, 1L, UserGroupType.UNIVERSITY);
+        final UserGroup userGroup = testDataUtil.generateGroup(1L, UserGroupType.UNIVERSITY);
+        user = testDataUtil.generateUser(1L, userGroup);
+        target = testDataUtil.generateUser(2L, userGroup);
     }
 
     @Test
@@ -112,8 +128,8 @@ class FriendControllerTest {
                 .header(HttpHeaders.AUTHORIZATION, "Bearer your-access-token"))
             .andDo(print())
             .andDo(document("api/v1/friend/addFriend",
-                Preprocessors.preprocessRequest(prettyPrint(), removeHeaders(excludeRequestHeaders)),
-                Preprocessors.preprocessResponse(prettyPrint(), removeHeaders(excludeResponseHeaders)),
+                Preprocessors.preprocessRequest(excludeRequestHeaders),
+                Preprocessors.preprocessResponse(excludeResponseHeaders),
                 pathParameters(parameterWithName("targetId").description("친구 신청할 상대 유저의 아이디 값")))
             )
             .andExpect(MockMvcResultMatchers.status().isOk());
@@ -135,9 +151,9 @@ class FriendControllerTest {
                 .param("page", "0"))
             .andDo(print())
             .andDo(document("api/v1/friend/findAllFriend",
-                Preprocessors.preprocessRequest(prettyPrint(), removeHeaders(excludeRequestHeaders)),
-                Preprocessors.preprocessResponse(prettyPrint(), removeHeaders(excludeResponseHeaders)),
-                requestParameters(parameterWithName("page").description("페이지네이션 페이지 번호")))
+                Preprocessors.preprocessRequest(excludeRequestHeaders),
+                Preprocessors.preprocessResponse(excludeResponseHeaders),
+                queryParameters(parameterWithName("page").description("페이지네이션 페이지 번호")))
             )
             .andExpect(MockMvcResultMatchers.status().isOk());
     }
@@ -157,9 +173,9 @@ class FriendControllerTest {
                 .header(HttpHeaders.AUTHORIZATION, "Bearer your-access-token"))
             .andDo(print())
             .andDo(document("api/v1/friend/findShuffledFriend",
-                Preprocessors.preprocessRequest(prettyPrint(), removeHeaders(excludeRequestHeaders)),
-                Preprocessors.preprocessResponse(prettyPrint(), removeHeaders(excludeResponseHeaders)))
-            )
+                Preprocessors.preprocessRequest(excludeRequestHeaders),
+                Preprocessors.preprocessResponse(excludeResponseHeaders)
+            ))
             .andExpect(MockMvcResultMatchers.status().isOk());
     }
 
@@ -180,9 +196,9 @@ class FriendControllerTest {
                 .param("page", "0"))
             .andDo(print())
             .andDo(document("api/v1/friend/findAllRecommendSchoolFriends",
-                Preprocessors.preprocessRequest(prettyPrint(), removeHeaders(excludeRequestHeaders)),
-                Preprocessors.preprocessResponse(prettyPrint(), removeHeaders(excludeResponseHeaders)),
-                requestParameters(parameterWithName("page").description("페이지네이션 페이지 번호")))
+                Preprocessors.preprocessRequest(excludeRequestHeaders),
+                Preprocessors.preprocessResponse(excludeResponseHeaders),
+                queryParameters(parameterWithName("page").description("페이지네이션 페이지 번호")))
             )
             .andExpect(MockMvcResultMatchers.status().isOk());
     }
@@ -210,9 +226,9 @@ class FriendControllerTest {
                 .param("page", "0"))
             .andDo(print())
             .andDo(document("api/v1/friend/findAllRecommendKakaoFriends",
-                Preprocessors.preprocessRequest(prettyPrint(), removeHeaders(excludeRequestHeaders)),
-                Preprocessors.preprocessResponse(prettyPrint(), removeHeaders(excludeResponseHeaders)),
-                requestParameters(parameterWithName("page").description("페이지네이션 페이지 번호")))
+                Preprocessors.preprocessRequest(excludeRequestHeaders),
+                Preprocessors.preprocessResponse(excludeResponseHeaders),
+                queryParameters(parameterWithName("page").description("페이지네이션 페이지 번호")))
             )
             .andExpect(MockMvcResultMatchers.status().isOk());
     }
@@ -232,8 +248,8 @@ class FriendControllerTest {
             )
             .andDo(print())
             .andDo(document("api/v1/friend/deleteFriend",
-                Preprocessors.preprocessRequest(prettyPrint(), removeHeaders(excludeRequestHeaders)),
-                Preprocessors.preprocessResponse(prettyPrint(), removeHeaders(excludeResponseHeaders)),
+                Preprocessors.preprocessRequest(excludeRequestHeaders),
+                Preprocessors.preprocessResponse(excludeResponseHeaders),
                 pathParameters(parameterWithName("targetId").description("삭제할 상대 유저의 아이디 값")))
             )
             .andExpect(MockMvcResultMatchers.status().isOk());
@@ -257,9 +273,9 @@ class FriendControllerTest {
             )
             .andDo(print())
             .andDo(document("api/v1/friend/searchFriend",
-                Preprocessors.preprocessRequest(prettyPrint(), removeHeaders(excludeRequestHeaders)),
-                Preprocessors.preprocessResponse(prettyPrint(), removeHeaders(excludeResponseHeaders)),
-                requestParameters(
+                Preprocessors.preprocessRequest(excludeRequestHeaders),
+                Preprocessors.preprocessResponse(excludeResponseHeaders),
+                queryParameters(
                     parameterWithName("page").description("페이지네이션 페이지 번호"),
                     parameterWithName("keyword").description("검색할 쿼리")))
             )
