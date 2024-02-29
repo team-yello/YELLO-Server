@@ -6,7 +6,9 @@ import jakarta.persistence.EntityManagerFactory;
 import java.util.Collections;
 import javax.sql.DataSource;
 import lombok.RequiredArgsConstructor;
+import org.springframework.batch.core.configuration.annotation.EnableBatchProcessing;
 import org.springframework.batch.core.configuration.annotation.StepScope;
+import org.springframework.batch.item.ItemReader;
 import org.springframework.batch.item.data.RepositoryItemReader;
 import org.springframework.batch.item.data.builder.RepositoryItemReaderBuilder;
 import org.springframework.batch.item.database.JdbcCursorItemReader;
@@ -23,8 +25,8 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.data.domain.Sort;
 import org.springframework.jdbc.core.BeanPropertyRowMapper;
 
-@RequiredArgsConstructor
 @Configuration
+@RequiredArgsConstructor
 public class ChunkReader {
 
     private final UserJpaRepository userRepository;
@@ -56,12 +58,23 @@ public class ChunkReader {
 
     @Bean
     @StepScope
+    public ItemReader<User> userDataItemReader() {
+        return new JpaPagingItemReaderBuilder<User>()
+                .name("exampleItemReader")
+                .entityManagerFactory(this.entityManagerFactory)
+                .pageSize(10)
+                .queryString("SELECT u FROM User u")
+                .build();
+    }
+
+    @Bean
+    @StepScope
     public JpaPagingItemReader<User> userDataJpaPagingItemReader() {
 
         return new JpaPagingItemReaderBuilder<User>()
             .name("userDataReader")
             .pageSize(100)
-            .queryString("SELECT u FROM USER u ORDER BY id")
+            .queryString("SELECT u FROM User u WHERE deletedAt is NULL ORDER BY id")
             .entityManagerFactory(entityManagerFactory)
             .build();
     }
@@ -75,7 +88,7 @@ public class ChunkReader {
             .fetchSize(100)
             .dataSource(dataSource)
             .queryProvider(createUserDataQueryProvider())
-            .rowMapper(new BeanPropertyRowMapper<>(User.class))
+            .rowMapper(new UserRowMapper())
             .name("jdbcPagingItemReader")
             .build();
     }

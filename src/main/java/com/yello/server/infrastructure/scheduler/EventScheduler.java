@@ -34,7 +34,7 @@ public class EventScheduler {
     private final PlatformTransactionManager transactionManager;
     private final UserDataRepository userDataRepository;
 
-    @Scheduled(cron="0 19 2 * * ?")
+    @Scheduled(cron="0 58 10 * * ?")
     public void lunchEventRunJob() {
 
         //JobParamter의 역할은 반복해서 실행되는 Job의 유일한 ID임, 동일한 값이 세팅되면 두번째부터 실행안됨)

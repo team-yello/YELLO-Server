@@ -3,6 +3,7 @@ package com.yello.server.infrastructure.batch;
 
 import com.yello.server.domain.user.entity.User;
 import lombok.RequiredArgsConstructor;
+import org.springframework.batch.core.configuration.annotation.EnableBatchProcessing;
 import org.springframework.batch.item.ItemProcessor;
 import org.springframework.context.annotation.Configuration;
 

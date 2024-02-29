@@ -120,7 +120,6 @@ public class NotificationFcmService implements NotificationService {
 
     @Override
     public void sendLunchEventNotification(User user) {
-        System.out.println(user.getId() + " asfsfsdfsd");
         final User receiver = userRepository.getById(user.getId());
 
         NotificationMessage notificationMessage =
