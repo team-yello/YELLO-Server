@@ -4,7 +4,6 @@ import com.yello.server.domain.user.entity.User;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.batch.core.Step;
-import org.springframework.batch.core.configuration.annotation.EnableBatchProcessing;
 import org.springframework.batch.core.configuration.annotation.JobScope;
 import org.springframework.batch.core.repository.JobRepository;
 import org.springframework.batch.core.step.builder.StepBuilder;
@@ -24,11 +23,11 @@ public class StepConfiguration {
     @Bean
     @JobScope
     public Step lunchEventAlarmStep(JobRepository jobRepository,
-        PlatformTransactionManager transactionManager) throws Exception {
+                                    PlatformTransactionManager transactionManager) throws Exception {
         return new StepBuilder("lunchEventStep", jobRepository)
-            .<User, User>chunk(100, transactionManager)
-            .reader(chunkReader.userDataJdbcPagingItemReader())
-            .writer(chunkWriter.lunchEventWriter())
-            .build();
+                .<User, User>chunk(100, transactionManager)
+                .reader(chunkReader.userDataJdbcPagingItemReader())
+                .writer(chunkWriter.lunchEventWriter())
+                .build();
     }
 }
