@@ -32,7 +32,6 @@ public class EventScheduler {
         JobParameters jobParameters = new JobParametersBuilder()
                 .addString("uuid", UUID.randomUUID().toString())
                 .toJobParameters();
-        System.out.println("hye!!!!!!!!!!!!");
 
         try {
             jobLauncher.run(jobConfiguration.lunchEventJob(jobRepository, transactionManager), jobParameters);

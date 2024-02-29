@@ -17,7 +17,6 @@ public class ChunkWriter {
     @Bean
     @StepScope
     public ItemWriter<User> lunchEventWriter() {
-
         return items -> items.forEach(notificationService::sendLunchEventNotification);
     }
 }
