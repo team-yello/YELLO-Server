@@ -45,6 +45,7 @@ import com.yello.server.domain.vote.entity.VoteType;
 import com.yello.server.domain.vote.exception.VoteForbiddenException;
 import com.yello.server.domain.vote.exception.VoteNotFoundException;
 import com.yello.server.domain.vote.repository.VoteRepository;
+import com.yello.server.infrastructure.firebase.service.NotificationService;
 import com.yello.server.infrastructure.rabbitmq.service.ProducerService;
 import java.time.LocalDateTime;
 import java.util.List;
@@ -73,6 +74,7 @@ public class VoteService {
 
     private final VoteManager voteManager;
     private final ProducerService producerService;
+    private final NotificationService notificationService;
 
     public VoteListResponse findAllVotes(Long userId, Pageable pageable) {
         Integer totalCount = voteRepository.countAllByReceiverUserId(userId);
@@ -103,6 +105,10 @@ public class VoteService {
     public VoteDetailResponse findVoteById(Long voteId, Long userId) {
         final Vote vote = voteRepository.getById(voteId);
         final User user = userRepository.getById(userId);
+
+        if(!vote.getIsRead()) {
+            notificationService.sendOpenVoteNotification(vote.getSender());
+        }
 
         vote.read();
         return VoteDetailResponse.of(vote, user);
