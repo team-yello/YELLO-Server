@@ -25,7 +25,7 @@ public class EventScheduler {
     private final JobRepository jobRepository;
     private final PlatformTransactionManager transactionManager;
 
-    @Scheduled(cron = "0 0 12 * * ?")
+    @Scheduled(cron = "0 20 16 * * ?")
     public void lunchEventRunJob() {
 
         //JobParamter의 역할은 반복해서 실행되는 Job의 유일한 ID임, 동일한 값이 세팅되면 두번째부터 실행안됨)

@@ -141,7 +141,7 @@ class NotificationFcmServiceTest {
 
         // when
         // then
-        notificationService.sendOpenVoteNotification(vote.getSender());
+        notificationService.sendOpenVoteNotification(target, user);
     }
 
     @Test
@@ -151,7 +151,7 @@ class NotificationFcmServiceTest {
 
         // when
         // then
-        notificationService.sendRecommendSignupAndGetTicketNotification(target);
+        notificationService.sendRecommendSignupAndGetTicketNotification(target, user);
     }
 
     @Test

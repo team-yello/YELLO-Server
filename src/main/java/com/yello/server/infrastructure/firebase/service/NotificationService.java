@@ -21,7 +21,7 @@ public interface NotificationService {
     EmptyObject adminSendCustomNotification(Long adminId, NotificationCustomMessage request);
     void sendLunchEventNotification(User userList);
 
-    void sendOpenVoteNotification(User user);
+    void sendOpenVoteNotification(User target, User user);
 
-    void sendRecommendSignupAndGetTicketNotification(User user);
+    void sendRecommendSignupAndGetTicketNotification(User recommendUser, User user);
 }
