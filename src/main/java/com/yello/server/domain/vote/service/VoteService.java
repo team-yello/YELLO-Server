@@ -107,7 +107,7 @@ public class VoteService {
         final User user = userRepository.getById(userId);
 
         if(!vote.getIsRead()) {
-            notificationService.sendOpenVoteNotification(vote.getSender());
+            notificationService.sendOpenVoteNotification(vote.getSender(), user);
         }
 
         vote.read();

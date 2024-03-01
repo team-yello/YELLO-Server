@@ -135,21 +135,21 @@ public class NotificationFcmService implements NotificationService {
     }
 
     @Override
-    public void sendOpenVoteNotification(User sender) {
+    public void sendOpenVoteNotification(User target, User user) {
         NotificationMessage notificationMessage =
-                NotificationMessage.toUserOpenVoteNotificationContent(sender);
+                NotificationMessage.toUserOpenVoteNotificationContent(user);
 
-        if (sender.getDeviceToken() != null && !Objects.equals(sender.getDeviceToken(), "")) {
+        if (target.getDeviceToken() != null && !Objects.equals(target.getDeviceToken(), "")) {
             final Message message =
-                    fcmManager.createMessage(sender.getDeviceToken(), notificationMessage);
+                    fcmManager.createMessage(target.getDeviceToken(), notificationMessage);
             fcmManager.send(message);
         }
     }
 
     @Override
-    public void sendRecommendSignupAndGetTicketNotification(User recommendUser) {
+    public void sendRecommendSignupAndGetTicketNotification(User recommendUser, User user) {
         NotificationMessage notificationMessage =
-                NotificationMessage.toUserAndFriendRecommendSignupAndGetTicketNotificationContent(recommendUser);
+                NotificationMessage.toUserAndFriendRecommendSignupAndGetTicketNotificationContent(user);
 
         if (recommendUser.getDeviceToken() != null && !Objects.equals(recommendUser.getDeviceToken(), "")) {
             final Message message =
