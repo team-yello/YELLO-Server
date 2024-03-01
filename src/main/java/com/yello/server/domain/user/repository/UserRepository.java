@@ -75,4 +75,5 @@ public interface UserRepository {
     Page<User> findAllByNameContaining(Pageable pageable, String name);
 
     void delete(User user);
+
 }

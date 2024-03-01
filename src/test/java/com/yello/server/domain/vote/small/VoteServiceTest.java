@@ -1,8 +1,5 @@
 package com.yello.server.domain.vote.small;
 
-import static com.yello.server.global.common.factory.PaginationFactory.createPageable;
-import static org.assertj.core.api.Assertions.assertThat;
-
 import com.yello.server.domain.cooldown.FakeCooldownRepository;
 import com.yello.server.domain.cooldown.repository.CooldownRepository;
 import com.yello.server.domain.friend.FakeFriendRepository;
@@ -36,31 +33,29 @@ import com.yello.server.domain.vote.FakeVoteManager;
 import com.yello.server.domain.vote.FakeVoteRepository;
 import com.yello.server.domain.vote.dto.request.CreateVoteRequest;
 import com.yello.server.domain.vote.dto.request.VoteAnswer;
-import com.yello.server.domain.vote.dto.response.RevealNameResponse;
-import com.yello.server.domain.vote.dto.response.VoteAvailableResponse;
-import com.yello.server.domain.vote.dto.response.VoteCreateVO;
-import com.yello.server.domain.vote.dto.response.VoteDetailResponse;
-import com.yello.server.domain.vote.dto.response.VoteFriendResponse;
-import com.yello.server.domain.vote.dto.response.VoteListResponse;
-import com.yello.server.domain.vote.dto.response.VoteUnreadCountResponse;
+import com.yello.server.domain.vote.dto.response.*;
 import com.yello.server.domain.vote.entity.Vote;
 import com.yello.server.domain.vote.repository.VoteRepository;
 import com.yello.server.domain.vote.service.VoteManager;
 import com.yello.server.domain.vote.service.VoteService;
+import com.yello.server.infrastructure.firebase.FakeFcmManger;
+import com.yello.server.infrastructure.firebase.manager.FCMManager;
+import com.yello.server.infrastructure.firebase.service.NotificationFcmService;
+import com.yello.server.infrastructure.firebase.service.NotificationService;
 import com.yello.server.infrastructure.rabbitmq.FakeMessageQueueRepository;
 import com.yello.server.infrastructure.rabbitmq.FakeProducerService;
 import com.yello.server.infrastructure.rabbitmq.service.ProducerService;
 import com.yello.server.util.TestDataEntityUtil;
 import com.yello.server.util.TestDataRepositoryUtil;
+import org.junit.jupiter.api.*;
+import org.junit.jupiter.api.DisplayNameGenerator.ReplaceUnderscores;
+import org.springframework.data.domain.Pageable;
+
 import java.util.ArrayList;
 import java.util.List;
-import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.DisplayNameGeneration;
-import org.junit.jupiter.api.DisplayNameGenerator.ReplaceUnderscores;
-import org.junit.jupiter.api.Test;
-import org.springframework.data.domain.Pageable;
+
+import static com.yello.server.global.common.factory.PaginationFactory.createPageable;
+import static org.assertj.core.api.Assertions.assertThat;
 
 @DisplayName("VoteService 에서")
 @DisplayNameGeneration(ReplaceUnderscores.class)
@@ -71,35 +66,40 @@ public class VoteServiceTest {
     private final KeywordRepository keywordRepository = new FakeKeywordRepository();
     private final NoticeRepository noticeRepository = new FakeNoticeRepository();
     private final ProducerService producerService =
-        new FakeProducerService(new FakeMessageQueueRepository());
+            new FakeProducerService(new FakeMessageQueueRepository());
     private final PurchaseRepository purchaseRepository = new FakePurchaseRepository();
     private final QuestionRepository questionRepository = new FakeQuestionRepository();
     private final QuestionGroupTypeRepository questionGroupTypeRepository = new FakeQuestionGroupTypeRepository(
-        questionRepository);
+            questionRepository);
     private final TestDataEntityUtil testDataEntityUtil = new TestDataEntityUtil();
     private final UserDataRepository userDataRepository = new FakeUserDataRepository();
     private final UserGroupRepository userGroupRepository = new FakeUserGroupRepository();
     private final UserRepository userRepository = new FakeUserRepository(friendRepository);
     private final UserManager userManager = new FakeUserManager(userRepository);
+    private final FCMManager fcmManager = new FakeFcmManger();
+    private final NotificationService notificationService = NotificationFcmService.builder()
+            .userRepository(userRepository)
+            .fcmManager(fcmManager)
+            .build();
     private final VoteRepository voteRepository = new FakeVoteRepository();
     private final VoteManager voteManager = new FakeVoteManager(
-        userRepository,
-        questionRepository,
-        voteRepository,
-        friendRepository,
-        userManager
+            userRepository,
+            questionRepository,
+            voteRepository,
+            friendRepository,
+            userManager
     );
     private final TestDataRepositoryUtil testDataUtil = new TestDataRepositoryUtil(
-        friendRepository,
-        noticeRepository,
-        purchaseRepository,
-        questionGroupTypeRepository,
-        questionRepository,
-        testDataEntityUtil,
-        userDataRepository,
-        userGroupRepository,
-        userRepository,
-        voteRepository
+            friendRepository,
+            noticeRepository,
+            purchaseRepository,
+            questionGroupTypeRepository,
+            questionRepository,
+            testDataEntityUtil,
+            userDataRepository,
+            userGroupRepository,
+            userRepository,
+            voteRepository
     );
     private VoteService voteService;
     private List<Question> questionData = new ArrayList<>();
@@ -109,16 +109,17 @@ public class VoteServiceTest {
     @BeforeEach
     void init() {
         this.voteService = VoteService.builder()
-            .voteRepository(voteRepository)
-            .friendRepository(friendRepository)
-            .cooldownRepository(cooldownRepository)
-            .userRepository(userRepository)
-            .questionRepository(questionRepository)
-            .keywordRepository(keywordRepository)
-            .producerService(producerService)
-            .voteManager(voteManager)
-            .questionGroupTypeRepository(questionGroupTypeRepository)
-            .build();
+                .voteRepository(voteRepository)
+                .friendRepository(friendRepository)
+                .cooldownRepository(cooldownRepository)
+                .userRepository(userRepository)
+                .questionRepository(questionRepository)
+                .keywordRepository(keywordRepository)
+                .producerService(producerService)
+                .voteManager(voteManager)
+                .questionGroupTypeRepository(questionGroupTypeRepository)
+                .notificationService(notificationService)
+                .build();
 
         for (long i = 1; i <= 8; i++) {
             questionData.add(testDataUtil.generateQuestion(i));
@@ -126,7 +127,7 @@ public class VoteServiceTest {
 
         for (long i = 1; i <= 8; i++) {
             QuestionGroupType questionGroupType = testDataUtil.generateQuestionGroupType(i,
-                questionData.get(Long.valueOf(i).intValue() - 1));
+                    questionData.get(Long.valueOf(i).intValue() - 1));
             questionGroupTypeData.add(questionGroupType);
         }
 
@@ -203,7 +204,7 @@ public class VoteServiceTest {
 
         // when
         VoteFriendResponse result =
-            voteService.findAllFriendVotes(userId, pageable); // 다시 확인 !!
+                voteService.findAllFriendVotes(userId, pageable); // 다시 확인 !!
 
         // then
         assertThat(result.totalCount()).isEqualTo(4);
@@ -262,17 +263,17 @@ public class VoteServiceTest {
 
         final List<VoteAnswer> voteAnswerList = new ArrayList<>();
         VoteAnswer answer1 = VoteAnswer.builder()
-            .friendId(2L)
-            .questionId(1L)
-            .keywordName("test")
-            .colorIndex(0)
-            .build();
+                .friendId(2L)
+                .questionId(1L)
+                .keywordName("test")
+                .colorIndex(0)
+                .build();
         voteAnswerList.add(answer1);
 
         CreateVoteRequest request = CreateVoteRequest.builder()
-            .voteAnswerList(voteAnswerList)
-            .totalPoint(3)
-            .build();
+                .voteAnswerList(voteAnswerList)
+                .totalPoint(3)
+                .build();
 
         // when
         VoteCreateVO result = voteService.createVote(userId, request);
