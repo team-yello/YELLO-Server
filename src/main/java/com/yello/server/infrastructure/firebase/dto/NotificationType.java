@@ -6,5 +6,6 @@ public enum NotificationType {
     NEW_FRIEND,
     RECOMMEND,
     LUNCH_EVENT,
-    OPEN_VOTE
+    OPEN_VOTE,
+    FIRST_RECOMMEND
 }
