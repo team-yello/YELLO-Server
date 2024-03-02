@@ -64,7 +64,7 @@ public record NotificationMessage(
         return NotificationMessage.builder()
                 .title(MessageFormat.format("{0}님이 나를 추천인으로 가입해 열람권이 지급됐어요!", user.getName()))
                 .message("지금이다! 날 짝사랑 하는 사람 보러가기")
-                .type(NotificationType.RECOMMEND)
+                .type(NotificationType.FIRST_RECOMMEND)
                 .build();
     }
 
