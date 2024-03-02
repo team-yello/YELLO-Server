@@ -1,19 +1,5 @@
 package com.yello.server.domain.vote.service;
 
-import static com.yello.server.global.common.ErrorCode.DUPLICATE_VOTE_EXCEPTION;
-import static com.yello.server.global.common.ErrorCode.INVALID_VOTE_EXCEPTION;
-import static com.yello.server.global.common.ErrorCode.LACK_POINT_EXCEPTION;
-import static com.yello.server.global.common.ErrorCode.LACK_USER_EXCEPTION;
-import static com.yello.server.global.common.factory.WeightedRandomFactory.randomPoint;
-import static com.yello.server.global.common.util.ConstantUtil.KEYWORD_HINT_POINT;
-import static com.yello.server.global.common.util.ConstantUtil.NAME_HINT_DEFAULT;
-import static com.yello.server.global.common.util.ConstantUtil.NAME_HINT_POINT;
-import static com.yello.server.global.common.util.ConstantUtil.NO_FRIEND_COUNT;
-import static com.yello.server.global.common.util.ConstantUtil.RANDOM_COUNT;
-import static com.yello.server.global.common.util.ConstantUtil.VOTE_COUNT;
-import static com.yello.server.global.common.util.ConstantUtil.YELLO_FEMALE;
-import static com.yello.server.global.common.util.ConstantUtil.YELLO_MALE;
-
 import com.yello.server.domain.friend.dto.response.FriendShuffleResponse;
 import com.yello.server.domain.friend.entity.Friend;
 import com.yello.server.domain.friend.exception.FriendException;
@@ -33,16 +19,18 @@ import com.yello.server.domain.vote.entity.Vote;
 import com.yello.server.domain.vote.exception.VoteForbiddenException;
 import com.yello.server.domain.vote.exception.VoteNotFoundException;
 import com.yello.server.domain.vote.repository.VoteRepository;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
-import java.util.concurrent.ThreadLocalRandom;
-import java.util.stream.IntStream;
 import lombok.Builder;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.*;
+import java.util.concurrent.ThreadLocalRandom;
+import java.util.stream.IntStream;
+
+import static com.yello.server.global.common.ErrorCode.*;
+import static com.yello.server.global.common.factory.WeightedRandomFactory.randomPoint;
+import static com.yello.server.global.common.util.ConstantUtil.*;
 
 @Builder
 @Component
@@ -66,27 +54,32 @@ public class VoteManagerImpl implements VoteManager {
         final User sender = userRepository.getById(senderId);
 
         IntStream.range(0, voteAnswers.size())
-            .forEach(index -> {
-                VoteAnswer currentVote = voteAnswers.get(index);
+                .filter(index -> {
+                    User receiver = userRepository.getById(voteAnswers.get(index).friendId());
+                    return Objects.isNull(receiver.getDeletedAt());
+                })
+                .forEach(index -> {
+                    VoteAnswer currentVote = voteAnswers.get(index);
 
-                if (isDuplicatedVote(index, voteAnswers)) {
-                    throw new VoteForbiddenException(DUPLICATE_VOTE_EXCEPTION);
-                }
+                    if (isDuplicatedVote(index, voteAnswers)) {
+                        throw new VoteForbiddenException(DUPLICATE_VOTE_EXCEPTION);
+                    }
 
-                User receiver = userRepository.getById(currentVote.friendId());
-                Question question = questionRepository.getById(currentVote.questionId());
+                    User receiver = userRepository.getById(currentVote.friendId());
+                    Question question = questionRepository.getById(currentVote.questionId());
 
-                Vote newVote = Vote.createVote(
-                    currentVote.keywordName(),
-                    sender,
-                    receiver,
-                    question,
-                    currentVote.colorIndex()
-                );
 
-                Vote savedVote = voteRepository.save(newVote);
-                votes.add(savedVote);
-            });
+                    Vote newVote = Vote.createVote(
+                            currentVote.keywordName(),
+                            sender,
+                            receiver,
+                            question,
+                            currentVote.colorIndex()
+                    );
+
+                    Vote savedVote = voteRepository.save(newVote);
+                    votes.add(savedVote);
+                });
 
         return votes;
     }
@@ -97,15 +90,15 @@ public class VoteManagerImpl implements VoteManager {
         Collections.shuffle(questionList);
 
         return questionList.stream()
-            .map(question -> QuestionForVoteResponse.builder()
-                .friendList(getShuffledFriends(user))
-                .keywordList(getShuffledKeywords(question))
-                .question(QuestionVO.of(question))
-                .questionPoint(randomPoint())
-                .subscribe(user.getSubscribe().toString())
-                .build())
-            .limit(VOTE_COUNT)
-            .toList();
+                .map(question -> QuestionForVoteResponse.builder()
+                        .friendList(getShuffledFriends(user))
+                        .keywordList(getShuffledKeywords(question))
+                        .question(QuestionVO.of(question))
+                        .questionPoint(randomPoint())
+                        .subscribe(user.getSubscribe().toString())
+                        .build())
+                .limit(VOTE_COUNT)
+                .toList();
     }
 
     @Override
@@ -146,18 +139,18 @@ public class VoteManagerImpl implements VoteManager {
     public void makeGreetingVote(User user) {
         final User sender = userManager.getOfficialUser(user.getGender());
         final Question greetingQuestion = questionRepository.findByQuestionContent(
-            null,
-            GREETING_NAME_FOOT,
-            null,
-            GREETING_KEYWORD_FOOT
+                null,
+                GREETING_NAME_FOOT,
+                null,
+                GREETING_KEYWORD_FOOT
         ).orElseGet(() ->
-            questionRepository.save(
-                Question.of(
-                    null,
-                    GREETING_NAME_FOOT,
-                    null,
-                    GREETING_KEYWORD_FOOT)
-            )
+                questionRepository.save(
+                        Question.of(
+                                null,
+                                GREETING_NAME_FOOT,
+                                null,
+                                GREETING_KEYWORD_FOOT)
+                )
         );
 
         voteRepository.save(createFirstVote(sender, user, greetingQuestion));
@@ -177,19 +170,19 @@ public class VoteManagerImpl implements VoteManager {
 
         if (friends.size() > NO_FRIEND_COUNT && friends.size() < RANDOM_COUNT) {
             return friendList.stream()
-                .map(FriendShuffleResponse::of)
-                .toList();
+                    .map(FriendShuffleResponse::of)
+                    .toList();
         }
 
         return friendList.stream()
-            .map(FriendShuffleResponse::of)
-            .limit(RANDOM_COUNT)
-            .toList();
+                .map(FriendShuffleResponse::of)
+                .limit(RANDOM_COUNT)
+                .toList();
     }
 
     private boolean isDuplicatedVote(int index, List<VoteAnswer> voteAnswers) {
         return index > 0 && voteAnswers.get(index - 1).questionId()
-            .equals(voteAnswers.get(index).questionId());
+                .equals(voteAnswers.get(index).questionId());
     }
 
     private List<String> getShuffledKeywords(Question question) {
@@ -198,9 +191,9 @@ public class VoteManagerImpl implements VoteManager {
         Collections.shuffle(keywordList);
 
         return keywordList.stream()
-            .map(Keyword::getKeywordName)
-            .limit(RANDOM_COUNT)
-            .toList();
+                .map(Keyword::getKeywordName)
+                .limit(RANDOM_COUNT)
+                .toList();
     }
 
     private Vote createFirstVote(User sender, User receiver, Question question) {
@@ -208,14 +201,14 @@ public class VoteManagerImpl implements VoteManager {
         final String answer = "널 기다렸어";
 
         return Vote.builder()
-            .answer(answer)
-            .nameHint(-3)
-            .isAnswerRevealed(true)
-            .isRead(false)
-            .sender(sender)
-            .receiver(receiver)
-            .question(question)
-            .colorIndex(random.nextInt(12) + 1)
-            .build();
+                .answer(answer)
+                .nameHint(-3)
+                .isAnswerRevealed(true)
+                .isRead(false)
+                .sender(sender)
+                .receiver(receiver)
+                .question(question)
+                .colorIndex(random.nextInt(12) + 1)
+                .build();
     }
 }

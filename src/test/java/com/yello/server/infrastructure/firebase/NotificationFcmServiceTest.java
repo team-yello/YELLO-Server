@@ -36,7 +36,8 @@ class NotificationFcmServiceTest {
     private User user;
     private User target;
     private User dummy;
-
+    private Vote vote;
+    private Question question;
     @BeforeEach
     void init() {
         this.notificationService = NotificationFcmService.builder()
@@ -74,6 +75,19 @@ class NotificationFcmServiceTest {
             .deletedAt(null).group(userGroup)
             .groupAdmissionYear(19).email("yello@test.com")
             .build();
+        question = Question.builder()
+                .id(1L)
+                .nameHead(null).nameFoot("와")
+                .keywordHead("멋진").keywordFoot("에서 놀고싶어")
+                .build();
+        vote = Vote.builder()
+                .id(1L)
+                .colorIndex(0).answer("test")
+                .isRead(false).nameHint(-1).isAnswerRevealed(false)
+                .sender(userRepository.getById(1L))
+                .receiver(userRepository.getById(2L))
+                .question(question).createdAt(LocalDateTime.now())
+                .build();
     }
 
     @Test
@@ -118,6 +132,26 @@ class NotificationFcmServiceTest {
         // when
         // then
         notificationService.sendFriendNotification(friend);
+    }
+
+    @Test
+    void 친구가_내가_보낸_쪽지_열람시_알림_전송에_성공합니다() {
+        //given
+        target.setDeviceToken("test-device-token");
+
+        // when
+        // then
+        notificationService.sendOpenVoteNotification(target, user);
+    }
+
+    @Test
+    void 추천인_코드_가입하여_열람권_얻은_경우_알림_전송에_성공합니다() {
+        //given
+        target.setDeviceToken("test-device-token");
+
+        // when
+        // then
+        notificationService.sendRecommendSignupAndGetTicketNotification(target, user);
     }
 
     @Test

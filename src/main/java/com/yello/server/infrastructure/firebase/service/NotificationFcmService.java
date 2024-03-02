@@ -10,11 +10,12 @@ import com.yello.server.global.common.dto.EmptyObject;
 import com.yello.server.infrastructure.firebase.dto.request.NotificationCustomMessage;
 import com.yello.server.infrastructure.firebase.dto.request.NotificationMessage;
 import com.yello.server.infrastructure.firebase.manager.FCMManager;
-import java.util.Objects;
 import lombok.Builder;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.stereotype.Service;
+
+import java.util.Objects;
 
 @Log4j2
 @Builder
@@ -29,11 +30,11 @@ public class NotificationFcmService implements NotificationService {
     @Override
     public void sendRecommendNotification(User user, User target) {
         NotificationMessage notificationMessage =
-            NotificationMessage.toRecommendNotificationContent(user);
+                NotificationMessage.toRecommendNotificationContent(user);
 
         if (target.getDeviceToken() != null && !Objects.equals(target.getDeviceToken(), "")) {
             final Message message =
-                fcmManager.createMessage(target.getDeviceToken(), notificationMessage);
+                    fcmManager.createMessage(target.getDeviceToken(), notificationMessage);
             fcmManager.send(message);
         }
     }
@@ -43,13 +44,13 @@ public class NotificationFcmService implements NotificationService {
         final User receiver = vote.getReceiver();
 
         NotificationMessage notificationMessage =
-            NotificationMessage.toYelloNotificationContent(vote);
+                NotificationMessage.toYelloNotificationContent(vote);
 
         final String path = "/api/v1/vote/" + vote.getId().toString();
 
         if (receiver.getDeviceToken() != null && !Objects.equals(receiver.getDeviceToken(), "")) {
             final Message message =
-                fcmManager.createMessage(receiver.getDeviceToken(), notificationMessage, path);
+                    fcmManager.createMessage(receiver.getDeviceToken(), notificationMessage, path);
             fcmManager.send(message);
         }
     }
@@ -60,11 +61,11 @@ public class NotificationFcmService implements NotificationService {
         final User sender = friend.getUser();
 
         NotificationMessage notificationMessage =
-            NotificationMessage.toFriendNotificationContent(sender);
+                NotificationMessage.toFriendNotificationContent(sender);
 
         if (receiver.getDeviceToken() != null && !Objects.equals(receiver.getDeviceToken(), "")) {
             final Message message =
-                fcmManager.createMessage(receiver.getDeviceToken(), notificationMessage);
+                    fcmManager.createMessage(receiver.getDeviceToken(), notificationMessage);
             fcmManager.send(message);
         }
     }
@@ -74,12 +75,12 @@ public class NotificationFcmService implements NotificationService {
         final User receiveUser = userRepository.getById(receiverId);
 
         NotificationMessage notificationMessage =
-            NotificationMessage.toVoteAvailableNotificationContent();
+                NotificationMessage.toVoteAvailableNotificationContent();
 
         if (receiveUser.getDeviceToken() != null && !Objects.equals(receiveUser.getDeviceToken(),
-            "")) {
+                "")) {
             final Message message =
-                fcmManager.createMessage(receiveUser.getDeviceToken(), notificationMessage);
+                    fcmManager.createMessage(receiveUser.getDeviceToken(), notificationMessage);
             fcmManager.send(message);
             log.info("[rabbitmq] successfully send notification!");
         }
@@ -89,19 +90,19 @@ public class NotificationFcmService implements NotificationService {
     public void sendCustomNotification(NotificationCustomMessage request) {
 
         request.userIdList().stream()
-            .forEach(userId -> {
-                final User receiver = userRepository.getById(userId);
+                .forEach(userId -> {
+                    final User receiver = userRepository.getById(userId);
 
-                NotificationMessage notificationMessage =
-                    NotificationMessage.toYelloNotificationCustomContent(request);
+                    NotificationMessage notificationMessage =
+                            NotificationMessage.toYelloNotificationCustomContent(request);
 
-                if (receiver.getDeviceToken() != null && !Objects.equals(receiver.getDeviceToken(),
-                    "")) {
-                    final Message message =
-                        fcmManager.createMessage(receiver.getDeviceToken(), notificationMessage);
-                    fcmManager.send(message);
-                }
-            });
+                    if (receiver.getDeviceToken() != null && !Objects.equals(receiver.getDeviceToken(),
+                            "")) {
+                        final Message message =
+                                fcmManager.createMessage(receiver.getDeviceToken(), notificationMessage);
+                        fcmManager.send(message);
+                    }
+                });
 
     }
 
@@ -115,5 +116,45 @@ public class NotificationFcmService implements NotificationService {
         this.sendCustomNotification(request);
 
         return EmptyObject.builder().build();
+    }
+
+    @Override
+    public void sendLunchEventNotification(User user) {
+        final User receiver = userRepository.getById(user.getId());
+
+        NotificationMessage notificationMessage =
+                NotificationMessage.toAllUserLunchEventNotificationContent();
+
+        if (receiver.getDeviceToken() != null && !Objects.equals(receiver.getDeviceToken(),
+                "")) {
+            final Message message =
+                    fcmManager.createMessage(receiver.getDeviceToken(), notificationMessage);
+            fcmManager.send(message);
+
+        }
+    }
+
+    @Override
+    public void sendOpenVoteNotification(User target, User user) {
+        NotificationMessage notificationMessage =
+                NotificationMessage.toUserOpenVoteNotificationContent(user);
+
+        if (target.getDeviceToken() != null && !Objects.equals(target.getDeviceToken(), "")) {
+            final Message message =
+                    fcmManager.createMessage(target.getDeviceToken(), notificationMessage);
+            fcmManager.send(message);
+        }
+    }
+
+    @Override
+    public void sendRecommendSignupAndGetTicketNotification(User recommendUser, User user) {
+        NotificationMessage notificationMessage =
+                NotificationMessage.toUserAndFriendRecommendSignupAndGetTicketNotificationContent(user);
+
+        if (recommendUser.getDeviceToken() != null && !Objects.equals(recommendUser.getDeviceToken(), "")) {
+            final Message message =
+                    fcmManager.createMessage(recommendUser.getDeviceToken(), notificationMessage);
+            fcmManager.send(message);
+        }
     }
 }
