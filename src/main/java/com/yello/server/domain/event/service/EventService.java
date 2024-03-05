@@ -68,8 +68,8 @@ public class EventService {
 
     private final EventRepository eventRepository;
     private final ObjectMapper objectMapper;
-    private final UserRepository userRepository;
     private final UserDataRepository userDataRepository;
+    private final UserRepository userRepository;
 
     public List<EventResponse> getEvents(Long userId) throws JsonProcessingException {
         // exception
@@ -99,7 +99,7 @@ public class EventService {
             if (!eventTimeList.isEmpty()) {
                 final EventTime eventTime = eventTimeList.get(0);
 
-                // 현재 시각이 이벤트 시간에 유효하고, 남은 보상 카운트가 0인 이력
+                // 현재 시각이 이벤트 시간에 유효하고, 날짜별 기준, 남은 보상 카운트가 0인 이력
                 eventInstanceList.addAll(
                     eventRepository.findInstanceAllByEventTimeAndUser(
                             eventTime, user)
@@ -107,9 +107,10 @@ public class EventService {
                         .filter(eventInstance ->
                             eventInstance.getInstanceDate().isAfter(event.getStartDate())
                                 && eventInstance.getInstanceDate().isBefore(event.getEndDate())
+                                && eventInstance.getInstanceDate().toLocalDate().isEqual(now.toLocalDate())
                                 && nowTime.isAfter(eventInstance.getEventTime().getStartTime())
                                 && nowTime.isBefore(eventInstance.getEventTime().getEndTime())
-                                && eventInstance.getRemainEventCount()==0
+                                && eventInstance.getRemainEventCount() == 0
                         )
                         .toList()
                 );
@@ -278,7 +279,7 @@ public class EventService {
         }
 
         // history 있으면 userId로 세팅
-        if (eventHistory.get().getUser()!=null) {
+        if (eventHistory.get().getUser() != null) {
             throw new EventForbiddenException(DUPLICATE_ADMOB_REWARD_EXCEPTION);
         }
         eventHistory.get().update(user);
