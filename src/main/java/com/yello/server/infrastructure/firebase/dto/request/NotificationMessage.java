@@ -52,6 +52,30 @@ public record NotificationMessage(
             .build();
     }
 
+    public static NotificationMessage toUserOpenVoteNotificationContent(User user) {
+        return NotificationMessage.builder()
+                .title(MessageFormat.format("{0}님이 내가 보낸 쪽지를 확인했어요!", user.getName()))
+                .message("\uD83D\uDEA8\uD83D\uDC9A 그린라이트입니다.")
+                .type(NotificationType.OPEN_VOTE)
+                .build();
+    }
+
+    public static NotificationMessage toUserAndFriendRecommendSignupAndGetTicketNotificationContent(User user) {
+        return NotificationMessage.builder()
+                .title(MessageFormat.format("{0}님이 나를 추천인으로 가입해 열람권이 지급됐어요!", user.getName()))
+                .message("지금이다! 날 짝사랑 하는 사람 보러가기")
+                .type(NotificationType.FIRST_RECOMMEND)
+                .build();
+    }
+
+    public static NotificationMessage toAllUserLunchEventNotificationContent() {
+        return NotificationMessage.builder()
+                .title("우리 학교 선착순 30명 열람권 뿌린다!")
+                .message("지금부터 14시까지\uD83D\uDD25 사라지기 전에 바로 확인해보세요!")
+                .type(NotificationType.LUNCH_EVENT)
+                .build();
+    }
+
     public static NotificationMessage toYelloNotificationCustomContent(
         NotificationCustomMessage message) {
 

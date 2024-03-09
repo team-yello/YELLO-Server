@@ -110,30 +110,34 @@ public class AuthService {
 
     @Transactional
     public void recommendUser(String recommendYelloId, String userYelloId) {
-        if (recommendYelloId != null && !recommendYelloId.isEmpty()) {
+        if (recommendYelloId!=null && !recommendYelloId.isEmpty()) {
             User recommendedUser = userRepository.getByYelloId(recommendYelloId);
             User user = userRepository.getByYelloId(userYelloId);
-            final Optional<UserData> recommended = userDataRepository.findByUserIdAndTag(recommendedUser.getId(),
-                UserDataType.RECOMMENDED);
+            final Optional<UserData> recommended =
+                userDataRepository.findByUserIdAndTag(recommendedUser.getId(),
+                    UserDataType.RECOMMENDED);
 
             recommendedUser.addRecommendCount(1L);
             recommendedUser.addPointBySubscribe(RECOMMEND_POINT);
             user.addPointBySubscribe(RECOMMEND_POINT);
+
+            final Optional<Cooldown> cooldown =
+                cooldownRepository.findByUserId(recommendedUser.getId());
+            cooldown.ifPresent(cooldownRepository::delete);
+
             if (recommended.isEmpty()) {
                 recommendedUser.addTicketCount(1);
+                notificationService.sendRecommendSignupAndGetTicketNotification(recommendedUser,
+                    user);
 
                 userDataRepository.save(UserData.of(
                     UserDataType.RECOMMENDED,
                     ZonedDateTime.now(GlobalZoneId).format(ISO_OFFSET_DATE_TIME),
                     recommendedUser
                 ));
+                return;
             }
-
             notificationService.sendRecommendNotification(user, recommendedUser);
-
-            final Optional<Cooldown> cooldown =
-                cooldownRepository.findByUserId(recommendedUser.getId());
-            cooldown.ifPresent(cooldownRepository::delete);
         }
     }
 
@@ -165,22 +169,28 @@ public class AuthService {
         return OnBoardingFriendResponse.of(kakaoFriends.size(), pageList);
     }
 
-    public GroupNameSearchResponse findGroupNameContaining(String keyword, UserGroupType userGroupType,
+    public GroupNameSearchResponse findGroupNameContaining(String keyword,
+        UserGroupType userGroupType,
         Pageable pageable) {
-        int totalCount = userGroupRepository.countDistinctGroupNameContaining(keyword, userGroupType);
-        final List<String> nameList = userGroupRepository.findDistinctGroupNameContaining(keyword, userGroupType,
-                pageable)
-            .stream()
-            .toList();
+        int totalCount =
+            userGroupRepository.countDistinctGroupNameContaining(keyword, userGroupType);
+        final List<String> nameList =
+            userGroupRepository.findDistinctGroupNameContaining(keyword, userGroupType,
+                    pageable)
+                .stream()
+                .toList();
 
         return GroupNameSearchResponse.of(totalCount, nameList);
     }
 
-    public DepartmentSearchResponse findGroupDepartmentBySchoolNameContaining(String schoolName, String keyword,
+    public DepartmentSearchResponse findGroupDepartmentBySchoolNameContaining(String schoolName,
+        String keyword,
         UserGroupType userGroupType, Pageable pageable) {
-        int totalCount = userGroupRepository.countAllByGroupNameContaining(schoolName, keyword, userGroupType);
-        final List<UserGroup> userGroupResult = userGroupRepository.findAllByGroupNameContaining(schoolName, keyword,
-            userGroupType, pageable);
+        int totalCount =
+            userGroupRepository.countAllByGroupNameContaining(schoolName, keyword, userGroupType);
+        final List<UserGroup> userGroupResult =
+            userGroupRepository.findAllByGroupNameContaining(schoolName, keyword,
+                userGroupType, pageable);
 
         return DepartmentSearchResponse.of(totalCount, userGroupResult);
     }
@@ -205,7 +215,8 @@ public class AuthService {
 
     public ClassNameSearchResponse getHighSchoolClassName(String schoolName, String className) {
         UserGroup userGroup =
-            userGroupRepository.getByGroupNameAndSubGroupName(schoolName, className, UserGroupType.HIGH_SCHOOL);
+            userGroupRepository.getByGroupNameAndSubGroupName(schoolName, className,
+                UserGroupType.HIGH_SCHOOL);
         return ClassNameSearchResponse.of(userGroup);
     }
 }
