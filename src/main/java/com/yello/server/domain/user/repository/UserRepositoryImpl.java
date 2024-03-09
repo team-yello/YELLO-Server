@@ -1,10 +1,15 @@
 package com.yello.server.domain.user.repository;
 
+import static com.yello.server.domain.user.entity.QUser.user;
 import static com.yello.server.global.common.ErrorCode.AUTH_UUID_NOT_FOUND_USER_EXCEPTION;
 import static com.yello.server.global.common.ErrorCode.DEVICE_TOKEN_NOT_FOUND_USER_EXCEPTION;
 import static com.yello.server.global.common.ErrorCode.USERID_NOT_FOUND_USER_EXCEPTION;
 import static com.yello.server.global.common.ErrorCode.YELLOID_NOT_FOUND_USER_EXCEPTION;
 
+import com.querydsl.core.BooleanBuilder;
+import com.querydsl.core.QueryMetadata;
+import com.querydsl.core.types.Predicate;
+import com.querydsl.jpa.impl.JPAQueryFactory;
 import com.yello.server.domain.user.entity.User;
 import com.yello.server.domain.user.exception.UserNotFoundException;
 import java.util.List;
@@ -21,6 +26,7 @@ import org.springframework.transaction.annotation.Transactional;
 public class UserRepositoryImpl implements UserRepository {
 
     private final UserJpaRepository userJpaRepository;
+    private final JPAQueryFactory jpaQueryFactory;
 
     @Override
     public User save(User user) {
@@ -155,7 +161,20 @@ public class UserRepositoryImpl implements UserRepository {
 
     @Override
     public List<User> findAllByGroupNameContainingAndFriendListNotContaining(String keyword, List<String> uuidList, List<User> friendList) {
-        return userJpaRepository.findAllByGroupContaining(keyword, uuidList, friendList);
+        BooleanBuilder whereClause = new BooleanBuilder();
+
+        whereClause.and(user.group.groupName.like("%" + keyword + "%"));
+        whereClause.and(user.uuid.notIn(uuidList));
+        whereClause.and(user.deletedAt.isNull());
+        if(!friendList.isEmpty()) {
+            whereClause.and(user.notIn(friendList));
+        }
+
+        return jpaQueryFactory.selectFrom(user)
+            .where(whereClause)
+            .orderBy(user.name.asc())
+            .fetch();
+
     }
 
     @Override

@@ -120,6 +120,7 @@ public class FriendService {
         final User user = userRepository.getById(userId);
         final String groupName = user.getGroup().getGroupName();
         List<String> uuidList = Arrays.asList(YELLO_FEMALE, YELLO_MALE);
+        List<User> friends = new ArrayList<>();
 
         List<User> friendList = new ArrayList<>();
 
