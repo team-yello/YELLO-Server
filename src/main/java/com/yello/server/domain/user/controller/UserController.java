@@ -1,6 +1,8 @@
 package com.yello.server.domain.user.controller;
 
 import static com.yello.server.global.common.SuccessCode.DELETE_USER_SUCCESS;
+import static com.yello.server.global.common.SuccessCode.GET_USER_POST_COMMENT_SUCCESS;
+import static com.yello.server.global.common.SuccessCode.POST_USER_POST_COMMENT_SUCCESS;
 import static com.yello.server.global.common.SuccessCode.READ_USER_DATA_SUCCESS;
 import static com.yello.server.global.common.SuccessCode.READ_USER_SUBSCRIBE_SUCCESS;
 import static com.yello.server.global.common.SuccessCode.READ_USER_SUCCESS;
@@ -11,10 +13,12 @@ import static com.yello.server.global.common.SuccessCode.UPDATE_USER_DETAIL_SUCC
 import com.yello.server.domain.user.dto.request.UserDataUpdateRequest;
 import com.yello.server.domain.user.dto.request.UserDeleteReasonRequest;
 import com.yello.server.domain.user.dto.request.UserDeviceTokenRequest;
+import com.yello.server.domain.user.dto.request.UserPostCommentUpdateRequest;
 import com.yello.server.domain.user.dto.request.UserUpdateRequest;
 import com.yello.server.domain.user.dto.response.UserDataResponse;
 import com.yello.server.domain.user.dto.response.UserDetailResponse;
 import com.yello.server.domain.user.dto.response.UserDetailV2Response;
+import com.yello.server.domain.user.dto.response.UserPostCommentResponse;
 import com.yello.server.domain.user.dto.response.UserResponse;
 import com.yello.server.domain.user.dto.response.UserSubscribeDetailResponse;
 import com.yello.server.domain.user.entity.User;
@@ -23,8 +27,10 @@ import com.yello.server.domain.user.service.UserService;
 import com.yello.server.global.common.annotation.AccessTokenUser;
 import com.yello.server.global.common.dto.BaseResponse;
 import com.yello.server.global.common.dto.EmptyObject;
+import jakarta.annotation.Nullable;
 import lombok.RequiredArgsConstructor;
 import lombok.val;
+import org.springframework.data.domain.Pageable;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -32,6 +38,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
@@ -104,5 +111,20 @@ public class UserController {
         @RequestBody UserDataUpdateRequest request) {
         userService.updateUserData(user.getId(), UserDataType.fromCode(tag), request);
         return BaseResponse.success(UPDATE_USER_DATA_SUCCESS);
+    }
+
+    @GetMapping("/v1/user/post/comment")
+    public BaseResponse<UserPostCommentResponse> getUserPostComment(@Nullable @AccessTokenUser User user,
+        @RequestParam(value = "postId") Long postId, Pageable pageable) {
+        System.out.println("user = " + user);
+        val data = userService.getUserPostComment(user == null ? null : user.getId(), postId, pageable);
+        return BaseResponse.success(GET_USER_POST_COMMENT_SUCCESS, data);
+    }
+
+    @PostMapping("/v1/user/post/comment")
+    public BaseResponse postUserPostComment(@Nullable @AccessTokenUser User user,
+        @RequestBody UserPostCommentUpdateRequest request) {
+        userService.updatePostComment(user == null ? null : user.getId(), request);
+        return BaseResponse.success(POST_USER_POST_COMMENT_SUCCESS);
     }
 }
