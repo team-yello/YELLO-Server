@@ -41,6 +41,7 @@ import com.yello.server.domain.user.exception.UserBadRequestException;
 import com.yello.server.domain.user.exception.UserConflictException;
 import com.yello.server.domain.user.exception.UserException;
 import com.yello.server.domain.user.exception.UserNotFoundException;
+import com.yello.server.domain.user.exception.UserPostNotFoundException;
 import com.yello.server.domain.vote.exception.VoteForbiddenException;
 import com.yello.server.domain.vote.exception.VoteNotFoundException;
 import com.yello.server.global.common.dto.BaseResponse;
@@ -198,7 +199,8 @@ public class ControllerExceptionAdvice {
         AdminConfigurationNotFoundException.class,
         EventNotFoundException.class,
         EventBadRequestException.class,
-        StatisticsNotFoundException.class
+        StatisticsNotFoundException.class,
+        UserPostNotFoundException.class
     })
     public ResponseEntity<BaseResponse> NotFoundException(CustomException exception) {
         return ResponseEntity.status(NOT_FOUND)
