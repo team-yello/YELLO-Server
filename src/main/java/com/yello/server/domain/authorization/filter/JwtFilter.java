@@ -1,5 +1,7 @@
 package com.yello.server.domain.authorization.filter;
 
+import static org.springframework.http.HttpHeaders.AUTHORIZATION;
+
 import com.yello.server.domain.user.entity.User;
 import com.yello.server.domain.user.repository.UserRepository;
 import jakarta.servlet.FilterChain;
@@ -44,6 +46,11 @@ public class JwtFilter extends OncePerRequestFilter {
             || requestPath.startsWith("/v2/google/notifications")
             || requestPath.startsWith("/api/v1/admob/verify")
             || requestPath.startsWith("/api/v1/statistics")) {
+            filterChain.doFilter(request, response);
+            return;
+        }
+
+        if (requestPath.equals("/api/v1/user/post/comment") && request.getHeader(AUTHORIZATION) == null) {
             filterChain.doFilter(request, response);
             return;
         }

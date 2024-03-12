@@ -99,11 +99,6 @@
 
 * link:purchase-check.html[구독 상태 및 열람권 개수 조회하기]
 
-=== Pay API
-
-- @Deprecated at 2024.03
-* link:pay.html[결제 전환율 체크]
-
 === Notice API
 
 * 🆕 link:find-notice.html[공지 조회, 2024-01-29]

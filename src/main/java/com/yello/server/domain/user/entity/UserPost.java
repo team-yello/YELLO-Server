@@ -1,6 +1,8 @@
-package com.yello.server.domain.pay.entity;
+package com.yello.server.domain.user.entity;
 
-import com.yello.server.domain.user.entity.User;
+import com.yello.server.global.common.dto.AuditingTimeEntity;
+import jakarta.persistence.Column;
+import jakarta.persistence.Convert;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
@@ -16,32 +18,39 @@ import lombok.NoArgsConstructor;
 import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
 
-@Entity
 @Getter
+@Entity
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class Pay {
+public class UserPost extends AuditingTimeEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    private Integer optionIndex;
-
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "userId")
-    @OnDelete(action = OnDeleteAction.CASCADE)
+    @OnDelete(action = OnDeleteAction.SET_NULL)
+    @JoinColumn(name = "userId", nullable = true)
     private User user;
 
-    public static Pay of(Integer optionIndex, User user) {
-        return Pay.builder()
-            .optionIndex(optionIndex)
-            .user(user)
-            .build();
-    }
+    @Column(nullable = false)
+    @Convert(converter = UserPostStatusConverter.class)
+    private UserPostStatus status;
 
-    public static Pay createPay(Integer optionIndex, User user) {
-        return Pay.of(optionIndex, user);
-    }
+    @Column
+    private String userName;
+
+    @Column
+    private String yelloId;
+
+    @Column
+    private String title;
+
+    @Column
+    private String subtitle;
+
+    @Column(columnDefinition = "MEDIUMTEXT")
+    private String content;
+
 }
