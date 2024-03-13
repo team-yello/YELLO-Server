@@ -50,8 +50,7 @@ public class JwtExceptionFilter extends OncePerRequestFilter {
             || requestPath.startsWith("/v2/google/notifications")
             || requestPath.startsWith("/api/v1/admob/verify")
             || requestPath.startsWith("/api/v1/statistics")
-            || (requestPath.startsWith("/api/v1/auth")
-            && !requestPath.startsWith("/api/v1/auth/token/issue"))) {
+            || (requestPath.startsWith("/api/v1/auth") && !requestPath.startsWith("/api/v1/auth/token/issue"))) {
             filterChain.doFilter(request, response);
             return;
         }
@@ -65,6 +64,22 @@ public class JwtExceptionFilter extends OncePerRequestFilter {
 
                 if (accessHeader == null || !accessHeader.startsWith(BEARER)
                     || refreshHeader == null || !refreshHeader.startsWith(BEARER)) {
+                    throw new CustomAuthenticationException(AUTHENTICATION_ERROR);
+                }
+
+                val token = accessHeader.substring(BEARER.length());
+                Long userId = tokenProvider.getUserId(token);
+                request.setAttribute("userId", userId);
+            } else if (requestPath.equals("/api/v1/user/post/comment")) {
+                val accessHeader = request.getHeader(AUTHORIZATION);
+                log.info("Authorization : {}", accessHeader);
+
+                if (accessHeader == null) {
+                    filterChain.doFilter(request, response);
+                    return;
+                }
+
+                if (!accessHeader.startsWith(BEARER)) {
                     throw new CustomAuthenticationException(AUTHENTICATION_ERROR);
                 }
 

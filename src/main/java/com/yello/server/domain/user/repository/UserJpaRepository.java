@@ -86,15 +86,6 @@ public interface UserJpaRepository extends JpaRepository<User, Long> {
     List<User> findAllByOtherGroupContainingName(@Param("groupName") String groupName,
                                                  @Param("keyword") String keyword, @Param("uuidList") List<String> uuidList);
 
-    @Query("select u from User u " +
-            "where u.group.groupName like CONCAT('%', :keyword, '%') " +
-            "and u.uuid not in :uuidList " +
-            "and u not in :friendList " +
-            "and u.deletedAt is null " +
-            "order by u.name ASC ")
-    List<User> findAllByGroupContaining(@Param("keyword") String keyword, @Param("uuidList") List<String> uuidList, @Param("friendList") List<User> friendList);
-
-
     @Query("select u from User u "
             + "where u.group.groupName = :groupName "
             + "and u.uuid not in :uuidList "
