@@ -1,12 +1,12 @@
 package com.yello.server.domain.purchase.repository;
 
+import static com.yello.server.global.common.ErrorCode.NOT_EQUAL_TRANSACTION_EXCEPTION;
 import static com.yello.server.global.common.ErrorCode.NOT_FOUND_USER_SUBSCRIBE_EXCEPTION;
 
 import com.yello.server.domain.purchase.entity.ProductType;
 import com.yello.server.domain.purchase.entity.Purchase;
 import com.yello.server.domain.purchase.exception.PurchaseNotFoundException;
 import com.yello.server.domain.user.entity.User;
-import com.yello.server.global.common.ErrorCode;
 import java.util.List;
 import java.util.Optional;
 import lombok.RequiredArgsConstructor;
@@ -31,6 +31,12 @@ public class PurchaseRepositoryImpl implements PurchaseRepository {
     @Override
     public Optional<Purchase> findByTransactionId(String transactionId) {
         return purchaseJpaRepository.findByTransactionId(transactionId);
+    }
+
+    @Override
+    public Purchase getByTransactionId(String transactionId) {
+        return purchaseJpaRepository.findByTransactionId(transactionId)
+            .orElseThrow(() -> new PurchaseNotFoundException(NOT_EQUAL_TRANSACTION_EXCEPTION));
     }
 
     @Override

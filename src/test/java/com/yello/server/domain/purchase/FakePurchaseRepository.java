@@ -1,5 +1,6 @@
 package com.yello.server.domain.purchase;
 
+import static com.yello.server.global.common.ErrorCode.NOT_EQUAL_TRANSACTION_EXCEPTION;
 import static com.yello.server.global.common.ErrorCode.NOT_FOUND_USER_SUBSCRIBE_EXCEPTION;
 
 import com.yello.server.domain.purchase.entity.ProductType;
@@ -76,6 +77,14 @@ public class FakePurchaseRepository implements PurchaseRepository {
         return data.stream()
             .filter(purchase -> purchase.getTransactionId().equals(transactionId))
             .findFirst();
+    }
+
+    @Override
+    public Purchase getByTransactionId(String transactionId) {
+        return data.stream()
+            .filter(purchase -> purchase.getTransactionId().equals(transactionId))
+            .findFirst()
+            .orElseThrow(() -> new PurchaseNotFoundException(NOT_EQUAL_TRANSACTION_EXCEPTION));
     }
 
     @Override

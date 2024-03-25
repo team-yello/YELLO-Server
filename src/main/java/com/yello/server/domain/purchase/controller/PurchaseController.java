@@ -14,11 +14,14 @@ import com.yello.server.domain.purchase.dto.response.GoogleSubscriptionGetRespon
 import com.yello.server.domain.purchase.dto.response.GoogleTicketGetResponse;
 import com.yello.server.domain.purchase.dto.response.UserPurchaseInfoResponse;
 import com.yello.server.domain.purchase.dto.response.UserSubscribeNeededResponse;
+import com.yello.server.domain.purchase.entity.Purchase;
 import com.yello.server.domain.purchase.service.PurchaseService;
 import com.yello.server.domain.user.entity.User;
 import com.yello.server.global.common.annotation.AccessTokenUser;
 import com.yello.server.global.common.dto.BaseResponse;
-import com.yello.server.infrastructure.slack.annotation.SlackPurchaseNotification;
+import com.yello.server.infrastructure.slack.dto.response.SlackChannel;
+import com.yello.server.infrastructure.slack.service.SlackService;
+import jakarta.servlet.http.HttpServletRequest;
 import java.io.IOException;
 import java.time.LocalDateTime;
 import lombok.RequiredArgsConstructor;
@@ -36,44 +39,57 @@ import org.springframework.web.bind.annotation.RestController;
 public class PurchaseController {
 
     private final PurchaseService purchaseService;
+    private final SlackService slackService;
 
     @PostMapping("/apple/verify/subscribe")
-    @SlackPurchaseNotification
     public BaseResponse verifyAppleSubscriptionTransaction(
         @RequestBody AppleTransaction appleTransaction,
-        @AccessTokenUser User user
-    ) {
+        @AccessTokenUser User user,
+        HttpServletRequest servletRequest
+    ) throws IOException {
         purchaseService.verifyAppleSubscriptionTransaction(user.getId(), appleTransaction);
+        final Purchase purchase = purchaseService.getByTransactionId(appleTransaction.transactionId());
+
+        slackService.sendPurchaseMessage(SlackChannel.PURCHASE, servletRequest, purchase);
         return BaseResponse.success(VERIFY_RECEIPT_SUCCESS);
     }
 
     @PostMapping("/apple/verify/ticket")
-    @SlackPurchaseNotification
     public BaseResponse verifyAppleTicketTransaction(
         @RequestBody AppleTransaction appleTransaction,
-        @AccessTokenUser User user
-    ) {
+        @AccessTokenUser User user,
+        HttpServletRequest servletRequest
+    ) throws IOException {
         purchaseService.verifyAppleTicketTransaction(user.getId(), appleTransaction);
+        final Purchase purchase = purchaseService.getByTransactionId(appleTransaction.transactionId());
+
+        slackService.sendPurchaseMessage(SlackChannel.PURCHASE, servletRequest, purchase);
         return BaseResponse.success(VERIFY_RECEIPT_SUCCESS);
     }
 
     @PostMapping("/google/verify/subscribe")
-    @SlackPurchaseNotification
     public BaseResponse<GoogleSubscriptionGetResponse> verifyGoogleSubscriptionTransaction(
         @AccessTokenUser User user,
-        @RequestBody GoogleSubscriptionGetRequest request
+        @RequestBody GoogleSubscriptionGetRequest request,
+        HttpServletRequest servletRequest
     ) throws IOException {
         val data = purchaseService.verifyGoogleSubscriptionTransaction(user.getId(), request);
+        final Purchase purchase = purchaseService.getByTransactionId(request.orderId());
+
+        slackService.sendPurchaseMessage(SlackChannel.PURCHASE, servletRequest, purchase);
         return BaseResponse.success(GOOGLE_PURCHASE_SUBSCRIPTION_VERIFY_SUCCESS, data);
     }
 
     @PostMapping("/google/verify/ticket")
-    @SlackPurchaseNotification
     public BaseResponse<GoogleTicketGetResponse> verifyGoogleTicketTransaction(
         @AccessTokenUser User user,
-        @RequestBody GoogleTicketGetRequest request
+        @RequestBody GoogleTicketGetRequest request,
+        HttpServletRequest servletRequest
     ) throws IOException {
         val data = purchaseService.verifyGoogleTicketTransaction(user.getId(), request);
+        final Purchase purchase = purchaseService.getByTransactionId(request.orderId());
+
+        slackService.sendPurchaseMessage(SlackChannel.PURCHASE, servletRequest, purchase);
         return BaseResponse.success(GOOGLE_PURCHASE_INAPP_VERIFY_SUCCESS, data);
     }
 

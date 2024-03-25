@@ -7,9 +7,8 @@ import static com.yello.server.global.common.ErrorCode.USERID_NOT_FOUND_USER_EXC
 import static com.yello.server.global.common.ErrorCode.YELLOID_NOT_FOUND_USER_EXCEPTION;
 
 import com.querydsl.core.BooleanBuilder;
-import com.querydsl.core.QueryMetadata;
-import com.querydsl.core.types.Predicate;
 import com.querydsl.jpa.impl.JPAQueryFactory;
+import com.yello.server.domain.user.entity.Gender;
 import com.yello.server.domain.user.entity.User;
 import com.yello.server.domain.user.exception.UserNotFoundException;
 import java.util.List;
@@ -25,8 +24,8 @@ import org.springframework.transaction.annotation.Transactional;
 @Transactional(readOnly = true)
 public class UserRepositoryImpl implements UserRepository {
 
-    private final UserJpaRepository userJpaRepository;
     private final JPAQueryFactory jpaQueryFactory;
+    private final UserJpaRepository userJpaRepository;
 
     @Override
     public User save(User user) {
@@ -160,13 +159,15 @@ public class UserRepositoryImpl implements UserRepository {
     }
 
     @Override
-    public List<User> findAllByGroupNameContainingAndFriendListNotContaining(String keyword, List<String> uuidList, List<User> friendList) {
+    public List<User> findAllByGroupNameContainingAndFriendListNotContaining(String keyword, List<String> uuidList,
+        List<User> friendList) {
         BooleanBuilder whereClause = new BooleanBuilder();
 
         whereClause.and(user.group.groupName.like("%" + keyword + "%"));
         whereClause.and(user.uuid.notIn(uuidList));
         whereClause.and(user.deletedAt.isNull());
-        if(!friendList.isEmpty()) {
+
+        if (!friendList.isEmpty()) {
             whereClause.and(user.notIn(friendList));
         }
 
@@ -190,6 +191,11 @@ public class UserRepositoryImpl implements UserRepository {
     @Override
     public Long countAllByNameContaining(String name) {
         return userJpaRepository.countAllByNameContaining(name);
+    }
+
+    @Override
+    public Long countAllByGender(Gender gender) {
+        return userJpaRepository.countAllByGender(gender);
     }
 
     @Override
