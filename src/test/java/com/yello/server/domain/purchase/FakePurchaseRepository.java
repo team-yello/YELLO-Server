@@ -3,12 +3,14 @@ package com.yello.server.domain.purchase;
 import static com.yello.server.global.common.ErrorCode.NOT_EQUAL_TRANSACTION_EXCEPTION;
 import static com.yello.server.global.common.ErrorCode.NOT_FOUND_USER_SUBSCRIBE_EXCEPTION;
 
+import com.yello.server.domain.purchase.entity.Gateway;
 import com.yello.server.domain.purchase.entity.ProductType;
 import com.yello.server.domain.purchase.entity.Purchase;
 import com.yello.server.domain.purchase.entity.PurchaseState;
 import com.yello.server.domain.purchase.exception.PurchaseNotFoundException;
 import com.yello.server.domain.purchase.repository.PurchaseRepository;
 import com.yello.server.domain.user.entity.User;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
@@ -110,5 +112,26 @@ public class FakePurchaseRepository implements PurchaseRepository {
             .sorted(Comparator.comparing(Purchase::getUpdatedAt).reversed())
             .findFirst()
             .orElseThrow(() -> new PurchaseNotFoundException(NOT_FOUND_USER_SUBSCRIBE_EXCEPTION));
+    }
+
+    @Override
+    public Long countByStartAt(Gateway gateway, ProductType productType, LocalDateTime start, LocalDateTime end) {
+        return (long) data.stream()
+            .filter(vote -> vote.getGateway() == gateway)
+            .filter(vote -> vote.getProductType() == productType)
+            .filter(vote -> vote.getCreatedAt().isAfter(start) && vote.getCreatedAt().isBefore(end))
+            .toList()
+            .size();
+    }
+
+    @Override
+    public Long countPriceByStartAt(Gateway gateway, ProductType productType, LocalDateTime start, LocalDateTime end) {
+        return Long.valueOf(data.stream()
+            .filter(vote -> vote.getGateway() == gateway)
+            .filter(vote -> vote.getProductType() == productType)
+            .filter(vote -> vote.getCreatedAt().isAfter(start) && vote.getCreatedAt().isBefore(end))
+            .map(Purchase::getPrice)
+            .reduce(0, Integer::sum)
+        );
     }
 }

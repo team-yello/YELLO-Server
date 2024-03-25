@@ -10,6 +10,7 @@ import com.yello.server.domain.user.entity.Gender;
 import com.yello.server.domain.user.entity.User;
 import com.yello.server.domain.user.exception.UserNotFoundException;
 import com.yello.server.domain.user.repository.UserRepository;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -275,6 +276,22 @@ public class FakeUserRepository implements UserRepository {
     }
 
     @Override
+    public Long count(LocalDateTime startCreatedAt, LocalDateTime endCreatedAt) {
+        return (long) data.stream()
+            .filter(user -> user.getCreatedAt().isAfter(startCreatedAt) && user.getCreatedAt().isBefore(endCreatedAt))
+            .toList()
+            .size();
+    }
+
+    @Override
+    public Long countDeletedAt(LocalDateTime startDeletedAt, LocalDateTime endDeletedAt) {
+        return (long) data.stream()
+            .filter(user -> user.getDeletedAt().isAfter(startDeletedAt) && user.getDeletedAt().isBefore(endDeletedAt))
+            .toList()
+            .size();
+    }
+
+    @Override
     public Long countAllByYelloIdContaining(String yelloId) {
         return (long) data.stream()
             .filter(user -> user.getYelloId().contains(yelloId))
@@ -294,6 +311,15 @@ public class FakeUserRepository implements UserRepository {
     public Long countAllByGender(Gender gender) {
         return (long) data.stream()
             .filter(user -> user.getGender().equals(gender))
+            .toList()
+            .size();
+    }
+
+    @Override
+    public Long countAllByGender(Gender gender, LocalDateTime startCreatedAt, LocalDateTime endCreatedAt) {
+        return (long) data.stream()
+            .filter(user -> user.getGender() == gender)
+            .filter(user -> user.getCreatedAt().isAfter(startCreatedAt) && user.getCreatedAt().isBefore(endCreatedAt))
             .toList()
             .size();
     }

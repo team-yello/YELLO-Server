@@ -2,9 +2,11 @@ package com.yello.server.domain.vote;
 
 import static com.yello.server.global.common.ErrorCode.NOT_FOUND_VOTE_EXCEPTION;
 
+import com.yello.server.domain.statistics.dto.VoteItem;
 import com.yello.server.domain.vote.entity.Vote;
 import com.yello.server.domain.vote.exception.VoteNotFoundException;
 import com.yello.server.domain.vote.repository.VoteRepository;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -18,7 +20,7 @@ public class FakeVoteRepository implements VoteRepository {
     @Override
     public Vote save(Vote vote) {
         Vote newVote = Vote.builder()
-            .id(vote.getId()==null ? id++ : vote.getId())
+            .id(vote.getId() == null ? id++ : vote.getId())
             .answer(vote.getAnswer())
             .nameHint(vote.getNameHint())
             .isAnswerRevealed(vote.getIsAnswerRevealed())
@@ -155,5 +157,13 @@ public class FakeVoteRepository implements VoteRepository {
             .filter(vote -> vote.getSender().getId().equals(userId))
             .toList()
             .size();
+    }
+
+    /**
+     * TODO
+     */
+    @Override
+    public List<VoteItem> countDailyVoteData(LocalDateTime startCreatedAt, LocalDateTime endCreatedAt) {
+        return null;
     }
 }

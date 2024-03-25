@@ -1,6 +1,8 @@
 package com.yello.server.domain.vote.repository;
 
+import com.yello.server.domain.statistics.dto.VoteItem;
 import com.yello.server.domain.vote.entity.Vote;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 import org.springframework.data.domain.Pageable;
@@ -36,4 +38,6 @@ public interface VoteRepository {
     List<Vote> findUserSendReceivedByFriends(Long userId, Pageable pageable);
 
     Long countUserSendReceivedByFriends(Long userId);
+
+    List<VoteItem> countDailyVoteData(LocalDateTime startCreatedAt, LocalDateTime endCreatedAt);
 }

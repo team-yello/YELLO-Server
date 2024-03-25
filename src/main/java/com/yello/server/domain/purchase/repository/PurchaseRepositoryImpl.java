@@ -3,10 +3,12 @@ package com.yello.server.domain.purchase.repository;
 import static com.yello.server.global.common.ErrorCode.NOT_EQUAL_TRANSACTION_EXCEPTION;
 import static com.yello.server.global.common.ErrorCode.NOT_FOUND_USER_SUBSCRIBE_EXCEPTION;
 
+import com.yello.server.domain.purchase.entity.Gateway;
 import com.yello.server.domain.purchase.entity.ProductType;
 import com.yello.server.domain.purchase.entity.Purchase;
 import com.yello.server.domain.purchase.exception.PurchaseNotFoundException;
 import com.yello.server.domain.user.entity.User;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 import lombok.RequiredArgsConstructor;
@@ -65,5 +67,15 @@ public class PurchaseRepositoryImpl implements PurchaseRepository {
     public Purchase getTopByStateAndUserId(User user) {
         return purchaseJpaRepository.findTopByStateAndUser(user)
             .orElseThrow(() -> new PurchaseNotFoundException(NOT_FOUND_USER_SUBSCRIBE_EXCEPTION));
+    }
+
+    @Override
+    public Long countByStartAt(Gateway gateway, ProductType productType, LocalDateTime start, LocalDateTime end) {
+        return purchaseJpaRepository.countByStartAt(gateway, productType, start, end);
+    }
+
+    @Override
+    public Long countPriceByStartAt(Gateway gateway, ProductType productType, LocalDateTime start, LocalDateTime end) {
+        return purchaseJpaRepository.countPriceByStartAt(gateway, productType, start, end);
     }
 }

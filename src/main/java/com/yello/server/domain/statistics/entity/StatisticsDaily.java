@@ -1,6 +1,8 @@
 package com.yello.server.domain.statistics.entity;
 
+import com.yello.server.domain.statistics.dto.RevenueVO;
 import com.yello.server.domain.statistics.dto.SignUpVO;
+import com.yello.server.domain.statistics.dto.VoteVO;
 import com.yello.server.global.common.entity.JsonConverter;
 import com.yello.server.global.common.entity.ZonedDateTimeConverter;
 import jakarta.persistence.Column;
@@ -37,22 +39,15 @@ public class StatisticsDaily {
     @Convert(converter = ZonedDateTimeConverter.class)
     private ZonedDateTime endAt;
 
-    /**
-     * json
-     */
-    @Column
+    @Column(length = 2047)
     @Convert(converter = JsonConverter.class)
     private SignUpVO signUp;
 
-    /**
-     * json
-     */
-    @Column
-    private String revenue;
+    @Column(length = 2047)
+    @Convert(converter = JsonConverter.class)
+    private RevenueVO revenue;
 
-    /**
-     * json
-     */
-    @Column
-    private String vote;
+    @Column(length = 2047)
+    @Convert(converter = JsonConverter.class)
+    private VoteVO vote;
 }

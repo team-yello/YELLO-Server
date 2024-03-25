@@ -1,8 +1,10 @@
 package com.yello.server.domain.purchase.repository;
 
+import com.yello.server.domain.purchase.entity.Gateway;
 import com.yello.server.domain.purchase.entity.ProductType;
 import com.yello.server.domain.purchase.entity.Purchase;
 import com.yello.server.domain.user.entity.User;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
@@ -26,4 +28,8 @@ public interface PurchaseRepository {
     void delete(Purchase purchase);
 
     Purchase getTopByStateAndUserId(User user);
+
+    Long countByStartAt(Gateway gateway, ProductType productType, LocalDateTime start, LocalDateTime end);
+
+    Long countPriceByStartAt(Gateway gateway, ProductType productType, LocalDateTime start, LocalDateTime end);
 }
