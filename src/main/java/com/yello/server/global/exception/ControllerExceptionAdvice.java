@@ -45,12 +45,10 @@ import com.yello.server.domain.user.exception.UserPostNotFoundException;
 import com.yello.server.domain.vote.exception.VoteForbiddenException;
 import com.yello.server.domain.vote.exception.VoteNotFoundException;
 import com.yello.server.global.common.dto.BaseResponse;
-import com.yello.server.infrastructure.slack.factory.SlackWebhookMessageFactory;
+import com.yello.server.infrastructure.slack.dto.response.SlackChannel;
+import com.yello.server.infrastructure.slack.service.SlackService;
 import jakarta.servlet.http.HttpServletRequest;
-import net.gpedro.integrations.slack.SlackApi;
-import net.gpedro.integrations.slack.SlackMessage;
-import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.core.task.TaskExecutor;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.HttpMessageConversionException;
 import org.springframework.http.converter.HttpMessageNotReadableException;
@@ -62,30 +60,14 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
 
 @RestControllerAdvice
+@RequiredArgsConstructor
 public class ControllerExceptionAdvice {
 
-    private final SlackApi slackErrorApi;
-    private final SlackWebhookMessageFactory slackWebhookMessageFactory;
-    private final TaskExecutor taskExecutor;
-
-    public ControllerExceptionAdvice(
-        @Qualifier("slackErrorApi") SlackApi slackErrorApi,
-        SlackWebhookMessageFactory slackWebhookMessageFactory,
-        @Qualifier("threadPoolTaskExecutor") TaskExecutor taskExecutor
-    ) {
-        this.slackWebhookMessageFactory = slackWebhookMessageFactory;
-        this.taskExecutor = taskExecutor;
-        this.slackErrorApi = slackErrorApi;
-    }
+    private final SlackService slackService;
 
     @ExceptionHandler(Exception.class)
     void handleException(HttpServletRequest request, Exception exception) throws Exception {
-        SlackMessage slackMessage = slackWebhookMessageFactory.generateSlackErrorMessage(
-            request,
-            exception
-        );
-        Runnable runnable = () -> slackErrorApi.call(slackMessage);
-        taskExecutor.execute(runnable);
+        slackService.sendErrorMessage(SlackChannel.ERROR, request, exception);
         throw exception;
     }
 

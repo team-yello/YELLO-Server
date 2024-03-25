@@ -24,7 +24,9 @@ import com.yello.server.domain.authorization.service.AuthService;
 import com.yello.server.domain.group.entity.UserGroupType;
 import com.yello.server.global.common.annotation.ServiceToken;
 import com.yello.server.global.common.dto.BaseResponse;
-import com.yello.server.infrastructure.slack.annotation.SlackSignUpNotification;
+import com.yello.server.infrastructure.slack.dto.response.SlackChannel;
+import com.yello.server.infrastructure.slack.service.SlackService;
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotNull;
 import lombok.RequiredArgsConstructor;
@@ -42,6 +44,7 @@ import org.springframework.web.bind.annotation.RestController;
 public class AuthController {
 
     private final AuthService authService;
+    private final SlackService slackService;
 
     @PostMapping("/oauth")
     public BaseResponse<OAuthResponse> oauthLogin(@RequestBody OAuthRequest oAuthRequest) {
@@ -56,10 +59,10 @@ public class AuthController {
     }
 
     @PostMapping("/signup")
-    @SlackSignUpNotification
     public BaseResponse<SignUpResponse> postSignUp(
-        @Valid @RequestBody SignUpRequest signUpRequest) {
+        @Valid @RequestBody SignUpRequest signUpRequest, HttpServletRequest servletRequest) throws Exception {
         val data = authService.signUp(signUpRequest);
+        slackService.sendSignUpMessage(SlackChannel.SIGN_UP, servletRequest);
         return BaseResponse.success(SIGN_UP_SUCCESS, data);
     }
 
