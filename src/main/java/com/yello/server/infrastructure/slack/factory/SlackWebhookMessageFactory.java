@@ -9,8 +9,6 @@ import com.slack.api.model.block.ActionsBlock;
 import com.slack.api.model.block.DividerBlock;
 import com.slack.api.model.block.HeaderBlock;
 import com.slack.api.model.block.SectionBlock;
-import com.slack.api.model.block.UnknownBlock;
-import com.slack.api.model.block.UnknownBlockElement;
 import com.slack.api.model.block.composition.MarkdownTextObject;
 import com.slack.api.model.block.composition.PlainTextObject;
 import com.slack.api.model.block.element.ButtonElement;
@@ -389,7 +387,7 @@ public class SlackWebhookMessageFactory {
                     .build(),
                 (
                     productType == ProductType.TEST ?
-                        UnknownBlock.builder().build() :
+                        DividerBlock.builder().build() :
                         SectionBlock.builder()
                             .text(MarkdownTextObject.builder()
                                 .text(String.format(GOOGLE_STATE_SECTION_0_TEXT,
@@ -405,11 +403,7 @@ public class SlackWebhookMessageFactory {
                                 .build())
                             .build()
                 ),
-                (
-                    productType == ProductType.TEST ?
-                        UnknownBlock.builder().build() :
-                        DividerBlock.builder().build()
-                ),
+                DividerBlock.builder().build(),
                 SectionBlock.builder()
                     .text(MarkdownTextObject.builder()
                         .text(String.format(GOOGLE_STATE_SECTION_1_TEXT,
@@ -425,7 +419,9 @@ public class SlackWebhookMessageFactory {
                     .elements(List.of(
                         (
                             productType == ProductType.TEST ?
-                                UnknownBlockElement.builder().build() :
+                                ButtonElement.builder()
+                                    .text(PlainTextObject.builder().text(".").build())
+                                    .build() :
                                 ButtonElement.builder()
                                     .text(PlainTextObject.builder()
                                         .text(GOOGLE_STATE_BUTTON_0_TITLE)
