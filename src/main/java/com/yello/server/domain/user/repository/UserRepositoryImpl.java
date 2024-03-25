@@ -7,8 +7,11 @@ import static com.yello.server.global.common.ErrorCode.USERID_NOT_FOUND_USER_EXC
 import static com.yello.server.global.common.ErrorCode.YELLOID_NOT_FOUND_USER_EXCEPTION;
 
 import com.querydsl.core.BooleanBuilder;
-import com.querydsl.jpa.impl.JPAQueryFactory;
+
 import com.yello.server.domain.user.entity.Gender;
+import com.querydsl.core.QueryMetadata;
+import com.querydsl.core.types.Predicate;
+import com.querydsl.jpa.impl.JPAQueryFactory;
 import com.yello.server.domain.user.entity.User;
 import com.yello.server.domain.user.exception.UserNotFoundException;
 import java.util.List;
@@ -26,6 +29,7 @@ public class UserRepositoryImpl implements UserRepository {
 
     private final JPAQueryFactory jpaQueryFactory;
     private final UserJpaRepository userJpaRepository;
+    private final JPAQueryFactory jpaQueryFactory;
 
     @Override
     public User save(User user) {
@@ -166,6 +170,7 @@ public class UserRepositoryImpl implements UserRepository {
         whereClause.and(user.group.groupName.like("%" + keyword + "%"));
         whereClause.and(user.uuid.notIn(uuidList));
         whereClause.and(user.deletedAt.isNull());
+
         if (!friendList.isEmpty()) {
             whereClause.and(user.notIn(friendList));
         }
