@@ -1,6 +1,8 @@
 package com.yello.server.domain.vote.repository;
 
+import com.yello.server.domain.statistics.dto.VoteItem;
 import com.yello.server.domain.vote.entity.Vote;
+import java.time.LocalDateTime;
 import java.util.List;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -82,6 +84,33 @@ public interface VoteJpaRepository extends JpaRepository<Vote, Long> {
         + "and v.sender.deletedAt is null")
     Integer countOpenFullNameByReceiverUserId(@Param("userId") Long userId);
 
-
+    @Query("SELECT "
+        + "    new com.yello.server.domain.statistics.dto.VoteItem( "
+        + "    ug.userGroupType, "
+        + "    u.groupAdmissionYear, "
+        + "    COUNT(DISTINCT v.id)) "
+        + "FROM "
+        + "    User u "
+        + "JOIN "
+        + "    UserGroup ug ON u.group.id = ug.id "
+        + "LEFT JOIN "
+        + "    Vote v ON u.id = v.sender.id "
+        + "    AND v.createdAt >= ?1 "
+        + "    AND v.createdAt < ?2 "
+        + "WHERE "
+        + "    (ug.userGroupType = 'UNIVERSITY' "
+        + "    OR ug.userGroupType = 'HIGH_SCHOOL' "
+        + "    OR ug.userGroupType = 'MIDDLE_SCHOOL') "
+        + "GROUP BY "
+        + "    ug.userGroupType, "
+        + "    u.groupAdmissionYear "
+        + "ORDER BY "
+        + "    CASE "
+        + "        WHEN ug.userGroupType = 'MIDDLE_SCHOOL' THEN 1 "
+        + "        WHEN ug.userGroupType = 'HIGH_SCHOOL' THEN 2 "
+        + "        WHEN ug.userGroupType = 'UNIVERSITY' THEN 3 "
+        + "        ELSE 4 "
+        + "    END, "
+        + "    u.groupAdmissionYear")
+    List<VoteItem> countDailyVoteData(LocalDateTime startCreatedAt, LocalDateTime endCreatedAt);
 }
- 

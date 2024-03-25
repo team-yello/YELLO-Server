@@ -2,6 +2,7 @@ package com.yello.server.domain.user.repository;
 
 import com.yello.server.domain.user.entity.Gender;
 import com.yello.server.domain.user.entity.User;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 import org.springframework.data.domain.Page;
@@ -113,11 +114,20 @@ public interface UserJpaRepository extends JpaRepository<User, Long> {
         "where u.deviceToken = :deviceToken")
     Optional<User> findByDeviceTokenNotFiltered(@Param("deviceToken") String deviceToken);
 
+    @Query("SELECT count(u) FROM User u WHERE ?1 <= u.createdAt AND u.createdAt < ?2")
+    Long count(LocalDateTime startCreatedAt, LocalDateTime endCreatedAt);
+
+    @Query("SELECT count(u) FROM User u WHERE ?1 <= u.deletedAt AND u.deletedAt < ?2")
+    Long countDeletedAt(LocalDateTime startDeletedAt, LocalDateTime endDeletedAt);
+
     Long countAllByYelloIdContaining(String yelloId);
 
     Long countAllByNameContaining(String name);
 
     Long countAllByGender(Gender gender);
+
+    @Query("SELECT count(u) FROM User u WHERE u.gender = ?1 AND ?2 <= u.createdAt AND u.createdAt < ?3")
+    Long countAllByGender(Gender gender, LocalDateTime startCreatedAt, LocalDateTime endCreatedAt);
 
     @Query("select u from User u "
         + "where LOWER(u.yelloId) like LOWER(CONCAT('%', :yelloId, '%'))")

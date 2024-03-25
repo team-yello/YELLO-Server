@@ -1,17 +1,26 @@
 package com.yello.server.domain.statistics.service;
 
+import com.yello.server.domain.purchase.entity.Gateway;
+import com.yello.server.domain.purchase.entity.ProductType;
+import com.yello.server.domain.purchase.repository.PurchaseRepository;
 import com.yello.server.domain.statistics.dto.NewStatisticsUserGroupVO;
+import com.yello.server.domain.statistics.dto.RevenueVO;
+import com.yello.server.domain.statistics.dto.RevenueVO.RevenueItem;
 import com.yello.server.domain.statistics.dto.SchoolAttackStatisticsVO;
 import com.yello.server.domain.statistics.dto.SignUpVO;
+import com.yello.server.domain.statistics.dto.VoteItem;
+import com.yello.server.domain.statistics.dto.VoteVO;
 import com.yello.server.domain.statistics.dto.response.StatisticsUserGroupSchoolAttackResponse;
 import com.yello.server.domain.statistics.entity.StatisticsDaily;
 import com.yello.server.domain.statistics.entity.StatisticsUserGroup;
 import com.yello.server.domain.statistics.repository.StatisticsRepository;
 import com.yello.server.domain.user.entity.Gender;
 import com.yello.server.domain.user.repository.UserRepository;
+import com.yello.server.domain.vote.repository.VoteRepository;
 import com.yello.server.global.common.util.ConstantUtil;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.time.ZonedDateTime;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import lombok.RequiredArgsConstructor;
@@ -24,8 +33,10 @@ import org.springframework.transaction.annotation.Transactional;
 @Transactional(readOnly = true)
 public class StatisticsService {
 
+    private final PurchaseRepository purchaseRepository;
     private final StatisticsRepository statisticsRepository;
     private final UserRepository userRepository;
+    private final VoteRepository voteRepository;
 
     @Transactional
     public void writeUserGroupStatistics() {
@@ -102,22 +113,53 @@ public class StatisticsService {
     }
 
     @Transactional
-    public StatisticsDaily writeDailyServiceStatistics() {
-        final ZonedDateTime now = ZonedDateTime.now(ConstantUtil.GlobalZoneId);
-        final Long count = userRepository.count();
-        final Long countFemale = userRepository.countAllByGender(Gender.FEMALE);
-        final Long countMale = userRepository.countAllByGender(Gender.MALE);
+    public StatisticsDaily writeDailyServiceStatistics(LocalDate startAt, LocalDate endAt) {
+        final LocalDateTime startTime = startAt.atStartOfDay();
+        final LocalDateTime endTime = endAt.atStartOfDay();
+
+        final Long count = userRepository.count(startTime, endTime);
+        final Long countFemale = userRepository.countAllByGender(Gender.FEMALE, startTime, endTime);
+        final Long countMale = userRepository.countAllByGender(Gender.MALE, startTime, endTime);
+        final Long countDeletedAt = userRepository.countDeletedAt(startTime, endTime);
         final SignUpVO signUpVO = SignUpVO.builder()
             .count(count)
             .femaleCount(countFemale)
             .maleCount(countMale)
+            .deleteAtCount(countDeletedAt)
             .build();
+
+        List<RevenueItem> revenueItemList = new ArrayList<>();
+        for (Gateway gateway : Gateway.values()) {
+            for (ProductType productType : ProductType.values()) {
+                final Long purchaseCount = purchaseRepository.countByStartAt(gateway, productType, startTime, endTime);
+                final Long totalPrice = purchaseRepository.countPriceByStartAt(gateway, productType, startTime,
+                    endTime);
+
+                revenueItemList.add(RevenueItem.builder()
+                    .gateway(gateway)
+                    .productType(productType)
+                    .purchaseCount(purchaseCount)
+                    .totalPrice(totalPrice)
+                    .build());
+            }
+        }
+        final RevenueVO revenueVO = RevenueVO.builder()
+            .revenueItemList(revenueItemList)
+            .build();
+
+        List<VoteItem> voteItemList = voteRepository.countDailyVoteData(startTime, endTime);
+        final VoteVO voteVO = VoteVO.builder()
+            .voteItemList(voteItemList)
+            .build();
+
         final StatisticsDaily saved = statisticsRepository.save(StatisticsDaily.builder()
-            .startAt(now.minusDays(1))
-            .endAt(now)
+            .startAt(startAt.atStartOfDay(ConstantUtil.GlobalZoneId))
+            .endAt(endAt.atStartOfDay(ConstantUtil.GlobalZoneId))
             .signUp(signUpVO)
+            .revenue(revenueVO)
+            .vote(voteVO)
             .build());
-        
+
         return statisticsRepository.getById(saved.getId());
     }
 }

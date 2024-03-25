@@ -6,8 +6,10 @@ import static com.yello.server.global.common.ErrorCode.NOT_FOUND_VOTE_EXCEPTION;
 
 import com.querydsl.jpa.JPAExpressions;
 import com.querydsl.jpa.impl.JPAQueryFactory;
+import com.yello.server.domain.statistics.dto.VoteItem;
 import com.yello.server.domain.vote.entity.Vote;
 import com.yello.server.domain.vote.exception.VoteNotFoundException;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 import lombok.RequiredArgsConstructor;
@@ -20,8 +22,8 @@ import org.springframework.transaction.annotation.Transactional;
 @Transactional(readOnly = true)
 public class VoteRepositoryImpl implements VoteRepository {
 
-    private final VoteJpaRepository voteJpaRepository;
     private final JPAQueryFactory jpaQueryFactory;
+    private final VoteJpaRepository voteJpaRepository;
 
     @Override
     public Vote save(Vote vote) {
@@ -125,5 +127,10 @@ public class VoteRepositoryImpl implements VoteRepository {
                 .and(vote.sender.deletedAt.isNull())
                 .and(vote.receiver.deletedAt.isNull()))
             .fetchOne();
+    }
+
+    @Override
+    public List<VoteItem> countDailyVoteData(LocalDateTime startCreatedAt, LocalDateTime endCreatedAt) {
+        return voteJpaRepository.countDailyVoteData(startCreatedAt, endCreatedAt);
     }
 }

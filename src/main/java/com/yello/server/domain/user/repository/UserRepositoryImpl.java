@@ -11,6 +11,7 @@ import com.querydsl.jpa.impl.JPAQueryFactory;
 import com.yello.server.domain.user.entity.Gender;
 import com.yello.server.domain.user.entity.User;
 import com.yello.server.domain.user.exception.UserNotFoundException;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 import lombok.RequiredArgsConstructor;
@@ -184,6 +185,16 @@ public class UserRepositoryImpl implements UserRepository {
     }
 
     @Override
+    public Long count(LocalDateTime startCreatedAt, LocalDateTime endCreatedAt) {
+        return userJpaRepository.count(startCreatedAt, endCreatedAt);
+    }
+
+    @Override
+    public Long countDeletedAt(LocalDateTime startDeletedAt, LocalDateTime endDeletedAt) {
+        return userJpaRepository.countDeletedAt(startDeletedAt, endDeletedAt);
+    }
+
+    @Override
     public Long countAllByYelloIdContaining(String yelloId) {
         return userJpaRepository.countAllByYelloIdContaining(yelloId);
     }
@@ -196,6 +207,11 @@ public class UserRepositoryImpl implements UserRepository {
     @Override
     public Long countAllByGender(Gender gender) {
         return userJpaRepository.countAllByGender(gender);
+    }
+
+    @Override
+    public Long countAllByGender(Gender gender, LocalDateTime startCreatedAt, LocalDateTime endCreatedAt) {
+        return userJpaRepository.countAllByGender(gender, startCreatedAt, endCreatedAt);
     }
 
     @Override
