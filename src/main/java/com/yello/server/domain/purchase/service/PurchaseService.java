@@ -20,7 +20,16 @@ import static com.yello.server.global.common.ErrorCode.NOT_FOUND_NOTIFICATION_TY
 import static com.yello.server.global.common.ErrorCode.NOT_FOUND_TRANSACTION_EXCEPTION;
 import static com.yello.server.global.common.ErrorCode.PURCHASE_TOKEN_NOT_FOUND_PURCHASE_EXCEPTION;
 import static com.yello.server.global.common.ErrorCode.SUBSCRIBE_ACTIVE_EXCEPTION;
-import static com.yello.server.global.common.util.ConstantUtil.*;
+import static com.yello.server.global.common.util.ConstantUtil.APPLE_NOTIFICATION_DID_RENEW;
+import static com.yello.server.global.common.util.ConstantUtil.APPLE_NOTIFICATION_EXPIRED;
+import static com.yello.server.global.common.util.ConstantUtil.APPLE_NOTIFICATION_REFUND;
+import static com.yello.server.global.common.util.ConstantUtil.APPLE_NOTIFICATION_SUBSCRIBED;
+import static com.yello.server.global.common.util.ConstantUtil.APPLE_NOTIFICATION_SUBSCRIPTION_STATUS_CHANGE;
+import static com.yello.server.global.common.util.ConstantUtil.APPLE_NOTIFICATION_TEST;
+import static com.yello.server.global.common.util.ConstantUtil.FIVE_TICKET_ID;
+import static com.yello.server.global.common.util.ConstantUtil.ONE_TICKET_ID;
+import static com.yello.server.global.common.util.ConstantUtil.TWO_TICKET_ID;
+import static com.yello.server.global.common.util.ConstantUtil.YELLO_PLUS_ID;
 
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
@@ -64,6 +73,7 @@ import java.io.IOException;
 import java.time.Duration;
 import java.time.LocalDateTime;
 import java.util.Base64;
+import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
 import lombok.Builder;
@@ -330,7 +340,7 @@ public class PurchaseService {
             case APPLE_NOTIFICATION_SUBSCRIPTION_STATUS_CHANGE -> {
                 purchaseManager.changeSubscriptionStatus(payloadVO);
             }
-            case APPLE_NOTIFICATION_EXPIRED ->{
+            case APPLE_NOTIFICATION_EXPIRED -> {
                 purchaseManager.expiredSubscribe(payloadVO);
             }
             case APPLE_NOTIFICATION_REFUND -> {
@@ -349,7 +359,8 @@ public class PurchaseService {
     }
 
     @Transactional
-    public void googleNotification(GooglePubSubNotificationRequest request) {
+    public Map.Entry<DeveloperNotification, Optional<Purchase>> googleNotification(
+        GooglePubSubNotificationRequest request) {
         if (!Objects.equals(request.subscription(), googlePubSubName)) {
             log.info("BAD REQUEST by wrong pub-sub name");
             throw new GoogleBadRequestException(GOOGLE_NOTIFICATION_BAD_REQUEST_EXCEPTION);
@@ -363,6 +374,7 @@ public class PurchaseService {
         );
 
         final DeveloperNotification developerNotification = gson.fromJson(data, DeveloperNotification.class);
+        Optional<Purchase> purchase = Optional.empty();
 
         if (ObjectUtils.isEmpty(developerNotification.getProductType())) {
             log.info("BAD REQUEST by wrong pub-sub name");
@@ -374,10 +386,9 @@ public class PurchaseService {
 
             case TEST -> {
                 log.info("TEST notification is sent by Google Play Console");
-                return;
             }
             case YELLO_PLUS -> {
-                final Optional<Purchase> purchase = purchaseRepository.findByPurchaseToken(
+                purchase = purchaseRepository.findByPurchaseToken(
                     developerNotification.subscriptionNotification().purchaseToken());
 
                 if (purchase.isEmpty()) {
@@ -414,12 +425,11 @@ public class PurchaseService {
                     }
                     case SUBSCRIPTION_PRICE_CHANGE_CONFIRMED -> {
                         // NOTHING
-                        return;
                     }
                 }
             }
             case ONE_TICKET, TWO_TICKET, FIVE_TICKET -> {
-                final Optional<Purchase> purchase = purchaseRepository.findByPurchaseToken(
+                purchase = purchaseRepository.findByPurchaseToken(
                     developerNotification.oneTimeProductNotification().purchaseToken());
 
                 if (purchase.isEmpty()) {
@@ -445,5 +455,10 @@ public class PurchaseService {
                 }
             }
         }
+        return Map.entry(developerNotification, purchase);
+    }
+
+    public Purchase getByTransactionId(String transactionId) {
+        return purchaseRepository.getByTransactionId(transactionId);
     }
 }

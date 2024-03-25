@@ -6,6 +6,7 @@ import static com.yello.server.global.common.ErrorCode.USERID_NOT_FOUND_USER_EXC
 import static com.yello.server.global.common.ErrorCode.YELLOID_NOT_FOUND_USER_EXCEPTION;
 
 import com.yello.server.domain.friend.repository.FriendRepository;
+import com.yello.server.domain.user.entity.Gender;
 import com.yello.server.domain.user.entity.User;
 import com.yello.server.domain.user.exception.UserNotFoundException;
 import com.yello.server.domain.user.repository.UserRepository;
@@ -259,12 +260,13 @@ public class FakeUserRepository implements UserRepository {
     }
 
     @Override
-    public List<User> findAllByGroupNameContainingAndFriendListNotContaining(String keyword, List<String> uuidList, List<User> friendList) {
+    public List<User> findAllByGroupNameContainingAndFriendListNotContaining(String keyword, List<String> uuidList,
+        List<User> friendList) {
         return data.stream()
-                .filter(user -> user.getGroup().getGroupName().contains(keyword))
-                .filter(user -> !user.getId().equals(1L))
-                .filter(user -> !uuidList.contains(user.getUuid()))
-                .toList();
+            .filter(user -> user.getGroup().getGroupName().contains(keyword))
+            .filter(user -> !user.getId().equals(1L))
+            .filter(user -> !uuidList.contains(user.getUuid()))
+            .toList();
     }
 
     @Override
@@ -284,6 +286,14 @@ public class FakeUserRepository implements UserRepository {
     public Long countAllByNameContaining(String name) {
         return (long) data.stream()
             .filter(user -> user.getName().contains(name))
+            .toList()
+            .size();
+    }
+
+    @Override
+    public Long countAllByGender(Gender gender) {
+        return (long) data.stream()
+            .filter(user -> user.getGender().equals(gender))
             .toList()
             .size();
     }

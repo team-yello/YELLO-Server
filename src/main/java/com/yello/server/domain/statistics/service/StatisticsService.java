@@ -2,10 +2,16 @@ package com.yello.server.domain.statistics.service;
 
 import com.yello.server.domain.statistics.dto.NewStatisticsUserGroupVO;
 import com.yello.server.domain.statistics.dto.SchoolAttackStatisticsVO;
+import com.yello.server.domain.statistics.dto.SignUpVO;
 import com.yello.server.domain.statistics.dto.response.StatisticsUserGroupSchoolAttackResponse;
+import com.yello.server.domain.statistics.entity.StatisticsDaily;
 import com.yello.server.domain.statistics.entity.StatisticsUserGroup;
 import com.yello.server.domain.statistics.repository.StatisticsRepository;
+import com.yello.server.domain.user.entity.Gender;
+import com.yello.server.domain.user.repository.UserRepository;
+import com.yello.server.global.common.util.ConstantUtil;
 import java.time.LocalDateTime;
+import java.time.ZonedDateTime;
 import java.util.List;
 import java.util.Optional;
 import lombok.RequiredArgsConstructor;
@@ -19,6 +25,7 @@ import org.springframework.transaction.annotation.Transactional;
 public class StatisticsService {
 
     private final StatisticsRepository statisticsRepository;
+    private final UserRepository userRepository;
 
     @Transactional
     public void writeUserGroupStatistics() {
@@ -92,5 +99,25 @@ public class StatisticsService {
             .updatedAt(lastUpdatedAt)
             .statisticsList(statistics.stream().map(SchoolAttackStatisticsVO::of).toList())
             .build();
+    }
+
+    @Transactional
+    public StatisticsDaily writeDailyServiceStatistics() {
+        final ZonedDateTime now = ZonedDateTime.now(ConstantUtil.GlobalZoneId);
+        final Long count = userRepository.count();
+        final Long countFemale = userRepository.countAllByGender(Gender.FEMALE);
+        final Long countMale = userRepository.countAllByGender(Gender.MALE);
+        final SignUpVO signUpVO = SignUpVO.builder()
+            .count(count)
+            .femaleCount(countFemale)
+            .maleCount(countMale)
+            .build();
+        final StatisticsDaily saved = statisticsRepository.save(StatisticsDaily.builder()
+            .startAt(now.minusDays(1))
+            .endAt(now)
+            .signUp(signUpVO)
+            .build());
+        
+        return statisticsRepository.getById(saved.getId());
     }
 }
