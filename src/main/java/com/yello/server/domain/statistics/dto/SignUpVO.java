@@ -6,7 +6,8 @@ import lombok.Builder;
 public record SignUpVO(
     Long count,
     Long maleCount,
-    Long femaleCount
+    Long femaleCount,
+    Long deleteAtCount
 ) {
 
 }

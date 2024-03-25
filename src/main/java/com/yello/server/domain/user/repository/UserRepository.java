@@ -2,6 +2,7 @@ package com.yello.server.domain.user.repository;
 
 import com.yello.server.domain.user.entity.Gender;
 import com.yello.server.domain.user.entity.User;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 import org.springframework.data.domain.Page;
@@ -66,11 +67,17 @@ public interface UserRepository {
 
     Long count();
 
+    Long count(LocalDateTime startCreatedAt, LocalDateTime endCreatedAt);
+
+    Long countDeletedAt(LocalDateTime startDeletedAt, LocalDateTime endDeletedAt);
+
     Long countAllByYelloIdContaining(String yelloId);
 
     Long countAllByNameContaining(String name);
 
     Long countAllByGender(Gender gender);
+
+    Long countAllByGender(Gender gender, LocalDateTime startCreatedAt, LocalDateTime endCreatedAt);
 
     Page<User> findAll(Pageable pageable);
 

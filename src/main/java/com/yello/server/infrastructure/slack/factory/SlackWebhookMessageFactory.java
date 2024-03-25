@@ -8,9 +8,11 @@ import com.slack.api.model.Attachment;
 import com.slack.api.model.block.ActionsBlock;
 import com.slack.api.model.block.DividerBlock;
 import com.slack.api.model.block.HeaderBlock;
+import com.slack.api.model.block.LayoutBlock;
 import com.slack.api.model.block.SectionBlock;
 import com.slack.api.model.block.composition.MarkdownTextObject;
 import com.slack.api.model.block.composition.PlainTextObject;
+import com.slack.api.model.block.composition.TextObject;
 import com.slack.api.model.block.element.ButtonElement;
 import com.slack.api.model.block.element.ImageElement;
 import com.slack.api.webhook.Payload;
@@ -21,6 +23,7 @@ import com.yello.server.domain.purchase.dto.request.google.DeveloperNotification
 import com.yello.server.domain.purchase.entity.ProductType;
 import com.yello.server.domain.purchase.entity.Purchase;
 import com.yello.server.domain.purchase.service.PurchaseManager;
+import com.yello.server.domain.statistics.entity.StatisticsDaily;
 import com.yello.server.domain.user.entity.User;
 import com.yello.server.domain.user.repository.UserRepository;
 import com.yello.server.global.common.factory.TimeFactory;
@@ -31,6 +34,7 @@ import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.time.ZonedDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
@@ -44,6 +48,14 @@ import org.springframework.stereotype.Component;
 @Component
 @RequiredArgsConstructor
 public class SlackWebhookMessageFactory {
+
+    /**
+     * Daily
+     */
+    private static final String DAILY_TITLE = "%s 데이터 리포트";
+    private static final String DAILY_SECTION_0_TEXT = "• *회원가입 수*: %s\n• *남자 수*: %s\n• *여자 수*: %s\n• *탈퇴 수*: %s";
+    private static final String DAILY_SECTION_1_TEXT = "• *결제 플랫폼*: %s\n• *상품 종류*: %s\n• *결제 수*: %s\n• *총 금액*: %s\n";
+    private static final String DAILY_SECTION_2_TEXT = "• *그룹 종류*: %s\n• *학년 또는 학번 정보*: %s\n• *투표 수*: %s\n";
 
     /**
      * Error
@@ -114,6 +126,111 @@ public class SlackWebhookMessageFactory {
 
     @Value("${web.url.yelloworld}")
     private String yelloworldUrl;
+
+    public com.slack.api.webhook.Payload generateDataDailyPayload(StatisticsDaily statisticsDaily) {
+        final List<LayoutBlock> blocks = new java.util.ArrayList<>(List.of(
+            HeaderBlock.builder()
+                .text(PlainTextObject.builder()
+                    .text(String.format(DAILY_TITLE,
+                        statisticsDaily.getEndAt().format(DateTimeFormatter.ISO_DATE)
+                    ))
+                    .build())
+                .build(),
+            SectionBlock.builder()
+                .text(PlainTextObject.builder()
+                    .text(statisticsDaily.getStartAt().format(DateTimeFormatter.ISO_DATE) + " ~ "
+                        + statisticsDaily.getEndAt().format(DateTimeFormatter.ISO_DATE))
+                    .build())
+                .build(),
+            DividerBlock.builder().build(),
+            HeaderBlock.builder()
+                .text(PlainTextObject.builder()
+                    .text("회원가입 / 탈퇴")
+                    .build())
+                .build(),
+            SectionBlock.builder()
+                .text(MarkdownTextObject.builder()
+                    .text(String.format(DAILY_SECTION_0_TEXT,
+                        statisticsDaily.getSignUp().count(),
+                        statisticsDaily.getSignUp().maleCount(),
+                        statisticsDaily.getSignUp().femaleCount(),
+                        statisticsDaily.getSignUp().deleteAtCount()
+                    ))
+                    .build())
+                .build(),
+            DividerBlock.builder().build(),
+            HeaderBlock.builder()
+                .text(PlainTextObject.builder()
+                    .text("매출 / 수입원")
+                    .build())
+                .build()
+        ));
+
+        blocks.add(SectionBlock.builder()
+            .fields(statisticsDaily.getRevenue().revenueItemList().stream()
+                .map(revenueItem ->
+                    (TextObject) MarkdownTextObject.builder()
+                        .text(String.format(DAILY_SECTION_1_TEXT,
+                            revenueItem.gateway().name(),
+                            revenueItem.productType().name(),
+                            revenueItem.purchaseCount(),
+                            revenueItem.totalPrice()
+                        ))
+                        .build()
+                ).toList()
+            )
+            .build()
+        );
+
+        blocks.addAll(List.of(
+            DividerBlock.builder().build(),
+            HeaderBlock.builder()
+                .text(PlainTextObject.builder()
+                    .text("투표 정보")
+                    .build())
+                .build()
+        ));
+
+        blocks.add(SectionBlock.builder()
+            .fields(statisticsDaily.getVote().voteItemList()
+                .subList(0, Math.min(statisticsDaily.getVote().voteItemList().size(), 8)).stream()
+                .map(voteItem ->
+                    (TextObject) MarkdownTextObject.builder()
+                        .text(String.format(DAILY_SECTION_2_TEXT,
+                            voteItem.getGroupType().name(),
+                            voteItem.getYearInfo(),
+                            voteItem.getTotalCount()
+                        ))
+                        .build()
+                )
+                .toList()
+            )
+            .build()
+        );
+
+        if (statisticsDaily.getVote().voteItemList().size() >= 8) {
+            blocks.add(SectionBlock.builder()
+                .fields(statisticsDaily.getVote().voteItemList()
+                    .subList(8, statisticsDaily.getVote().voteItemList().size()).stream()
+                    .map(voteItem ->
+                        (TextObject) MarkdownTextObject.builder()
+                            .text(String.format(DAILY_SECTION_2_TEXT,
+                                voteItem.getGroupType().name(),
+                                voteItem.getYearInfo(),
+                                voteItem.getTotalCount()
+                            ))
+                            .build()
+                    )
+                    .toList()
+                )
+                .build()
+            );
+        }
+
+        return Payload.builder()
+            .blocks(blocks)
+            .build();
+    }
 
     public com.slack.api.webhook.Payload generateErrorPayload(HttpServletRequest request, Exception exception)
         throws IOException {
