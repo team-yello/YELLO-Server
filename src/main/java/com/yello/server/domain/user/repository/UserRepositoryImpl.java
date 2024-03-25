@@ -166,6 +166,7 @@ public class UserRepositoryImpl implements UserRepository {
         whereClause.and(user.group.groupName.like("%" + keyword + "%"));
         whereClause.and(user.uuid.notIn(uuidList));
         whereClause.and(user.deletedAt.isNull());
+
         if (!friendList.isEmpty()) {
             whereClause.and(user.notIn(friendList));
         }
