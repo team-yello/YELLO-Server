@@ -8,12 +8,16 @@ import com.google.gson.JsonObject;
 import com.yello.server.domain.authorization.dto.kakao.KakaoTokenInfo;
 import com.yello.server.global.common.dto.response.GoogleInAppGetResponse;
 import com.yello.server.global.common.dto.response.GoogleTokenIssueResponse;
+import jakarta.servlet.http.HttpServletRequest;
+import java.io.BufferedReader;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.InputStreamReader;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.web.servletapi.SecurityContextHolderAwareRequestWrapper;
 import org.springframework.stereotype.Component;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
@@ -104,6 +108,41 @@ public class RestUtil {
         return webClient.get()
             .exchangeToMono(clientResponse -> clientResponse.toEntity(GoogleInAppGetResponse.class))
             .block();
+    }
+
+    public static String getRequestBody(HttpServletRequest request) throws IOException {
+        if (!(request instanceof SecurityContextHolderAwareRequestWrapper)) {
+            throw new IllegalArgumentException("MultiReadHttpServletRequest 설정을 확인하세요");
+        }
+
+        String body = null;
+        StringBuilder stringBuilder = new StringBuilder();
+        BufferedReader bufferedReader = null;
+
+        try {
+            InputStream inputStream = request.getInputStream();
+            if (inputStream != null) {
+                bufferedReader = new BufferedReader(new InputStreamReader(inputStream));
+                char[] charBuffer = new char[128];
+                int bytesRead = -1;
+                while ((bytesRead = bufferedReader.read(charBuffer)) > 0) {
+                    stringBuilder.append(charBuffer, 0, bytesRead);
+                }
+            }
+        } catch (IOException ex) {
+            throw ex;
+        } finally {
+            if (bufferedReader != null) {
+                try {
+                    bufferedReader.close();
+                } catch (IOException ex) {
+                    throw ex;
+                }
+            }
+        }
+
+        body = stringBuilder.toString();
+        return body;
     }
 
     @Value("${google.developer.key}")

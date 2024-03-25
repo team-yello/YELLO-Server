@@ -3,6 +3,7 @@ package com.yello.server.domain.statistics.repository;
 import static com.yello.server.global.common.ErrorCode.STATISTICS_NOT_FOUND_EXCEPTION;
 
 import com.yello.server.domain.statistics.dto.NewStatisticsUserGroupVO;
+import com.yello.server.domain.statistics.entity.StatisticsDaily;
 import com.yello.server.domain.statistics.entity.StatisticsUserGroup;
 import com.yello.server.domain.statistics.exception.StatisticsNotFoundException;
 import java.time.LocalDateTime;
@@ -16,6 +17,7 @@ import org.springframework.stereotype.Repository;
 @RequiredArgsConstructor
 public class StatisticsRepositoryImpl implements StatisticsRepository {
 
+    private final StatisticsDailyJpaRepository statisticsDailyJpaRepository;
     private final StatisticsUserGroupJpaRepository userGroupJpaRepository;
 
     @Override
@@ -62,5 +64,16 @@ public class StatisticsRepositoryImpl implements StatisticsRepository {
     @Override
     public List<StatisticsUserGroup> getSchoolAttackStatisticsContaining(String groupName, Pageable pageable) {
         return userGroupJpaRepository.getSchoolAttackStatisticsContaining(groupName, pageable);
+    }
+
+    @Override
+    public StatisticsDaily save(StatisticsDaily newStatisticsDaily) {
+        return statisticsDailyJpaRepository.save(newStatisticsDaily);
+    }
+
+    @Override
+    public StatisticsDaily getById(Long id) {
+        return statisticsDailyJpaRepository.findById(id)
+            .orElseThrow(() -> new StatisticsNotFoundException(STATISTICS_NOT_FOUND_EXCEPTION));
     }
 }

@@ -1,5 +1,6 @@
 package com.yello.server.domain.user.repository;
 
+import com.yello.server.domain.user.entity.Gender;
 import com.yello.server.domain.user.entity.User;
 import java.util.List;
 import java.util.Optional;
@@ -60,13 +61,16 @@ public interface UserRepository {
     List<User> findAllByOtherGroupContainingYelloId(String groupName, String keyword,
         List<String> uuidList);
 
-    List<User> findAllByGroupNameContainingAndFriendListNotContaining(String keyword, List<String> uuidList, List<User> friendList);
+    List<User> findAllByGroupNameContainingAndFriendListNotContaining(String keyword, List<String> uuidList,
+        List<User> friendList);
 
     Long count();
 
     Long countAllByYelloIdContaining(String yelloId);
 
     Long countAllByNameContaining(String name);
+
+    Long countAllByGender(Gender gender);
 
     Page<User> findAll(Pageable pageable);
 

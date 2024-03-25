@@ -32,6 +32,7 @@ import com.yello.server.domain.user.entity.Gender;
 import com.yello.server.domain.user.entity.Social;
 import com.yello.server.domain.user.entity.User;
 import com.yello.server.global.exception.ControllerExceptionAdvice;
+import com.yello.server.infrastructure.slack.service.SlackService;
 import com.yello.server.util.TestDataEntityUtil;
 import com.yello.server.util.TestDataUtil;
 import com.yello.server.util.WithAccessTokenUser;
@@ -95,6 +96,9 @@ class AuthControllerTest {
 
     @MockBean
     private AuthService authService;
+
+    @MockBean
+    private SlackService slackService;
 
     private TestDataUtil testDataUtil = new TestDataEntityUtil();
     private User user;

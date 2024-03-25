@@ -28,6 +28,7 @@ import com.yello.server.domain.purchase.dto.response.UserSubscribeNeededResponse
 import com.yello.server.domain.purchase.service.PurchaseService;
 import com.yello.server.domain.user.entity.User;
 import com.yello.server.global.exception.ControllerExceptionAdvice;
+import com.yello.server.infrastructure.slack.service.SlackService;
 import com.yello.server.util.TestDataEntityUtil;
 import com.yello.server.util.TestDataUtil;
 import com.yello.server.util.WithAccessTokenUser;
@@ -90,6 +91,9 @@ class PurchaseControllerTest {
 
     @MockBean
     private PurchaseService purchaseService;
+    
+    @MockBean
+    private SlackService slackService;
 
     private TestDataUtil testDataUtil = new TestDataEntityUtil();
     private User user;

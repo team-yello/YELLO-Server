@@ -1,6 +1,7 @@
 package com.yello.server.domain.statistics.repository;
 
 import com.yello.server.domain.statistics.dto.NewStatisticsUserGroupVO;
+import com.yello.server.domain.statistics.entity.StatisticsDaily;
 import com.yello.server.domain.statistics.entity.StatisticsUserGroup;
 import java.time.LocalDateTime;
 import java.util.List;
@@ -26,4 +27,8 @@ public interface StatisticsRepository {
     List<StatisticsUserGroup> getSchoolAttackStatistics(Pageable pageable);
 
     List<StatisticsUserGroup> getSchoolAttackStatisticsContaining(String groupName, Pageable pageable);
+
+    StatisticsDaily save(StatisticsDaily newStatisticsDaily);
+
+    StatisticsDaily getById(Long id);
 }
