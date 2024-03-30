@@ -21,12 +21,7 @@ public class StatisticsTask {
     private final SlackWebhookMessageFactory messageFactory;
     private final SlackService slackService;
     private final StatisticsService statisticsService;
-
-    @Scheduled(cron = "0 */30 * * * *", zone = ConstantUtil.GlobalZoneIdLabel)
-    public void writeUserGroupStatistics() {
-        statisticsService.writeUserGroupStatistics();
-    }
-
+    
     @Scheduled(cron = "1 0 0 * * *", zone = ConstantUtil.GlobalZoneIdLabel)
     public void calculateDailyStatistics() throws IOException {
         final ZonedDateTime now = ZonedDateTime.now(ConstantUtil.GlobalZoneId);
