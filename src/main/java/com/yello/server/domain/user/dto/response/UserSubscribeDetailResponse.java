@@ -18,7 +18,7 @@ public record UserSubscribeDetailResponse(
             .id(purchase.getUser().getId())
             .subscribe(purchase.getUser().getSubscribe().getInitial())
             .expiredDate(
-                toYearAndMonthFormattedString(purchase.getUpdatedAt().plusDays(SUBSCRIBE_DAYS)))
+                toYearAndMonthFormattedString(purchase.getUpdatedAt() !=null ? purchase.getUpdatedAt().plusDays(SUBSCRIBE_DAYS):null))
             .build();
     }
 }
