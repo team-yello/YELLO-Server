@@ -12,7 +12,10 @@ import com.yello.server.domain.friend.entity.Friend;
 import com.yello.server.domain.friend.repository.FriendRepository;
 import com.yello.server.domain.group.entity.UserGroup;
 import com.yello.server.domain.group.repository.UserGroupRepository;
+import com.yello.server.domain.purchase.entity.Gateway;
+import com.yello.server.domain.purchase.entity.ProductType;
 import com.yello.server.domain.purchase.entity.Purchase;
+import com.yello.server.domain.purchase.entity.PurchaseState;
 import com.yello.server.domain.purchase.repository.PurchaseRepository;
 import com.yello.server.domain.user.dto.request.UserDataUpdateRequest;
 import com.yello.server.domain.user.dto.request.UserDeleteReasonRequest;
@@ -123,9 +126,13 @@ public class UserService {
 
     public UserSubscribeDetailResponse getUserSubscribe(Long userId) {
         final User user = userRepository.getById(userId);
-        final Purchase purchase = purchaseRepository.getTopByStateAndUserId(user);
+        Optional<Purchase> purchase = purchaseRepository.getTopByStateAndUserId(user);
+        Purchase userSubscribe = purchase.orElseGet(() ->
+            Purchase.builder()
+                .user(user)
+                .build());
 
-        return UserSubscribeDetailResponse.of(purchase);
+        return UserSubscribeDetailResponse.of(userSubscribe);
     }
 
     @Transactional
