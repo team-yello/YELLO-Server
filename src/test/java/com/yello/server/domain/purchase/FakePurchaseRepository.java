@@ -102,7 +102,7 @@ public class FakePurchaseRepository implements PurchaseRepository {
     }
 
     @Override
-    public Purchase getTopByStateAndUserId(User user) {
+    public Optional<Purchase> getTopByStateAndUserId(User user) {
         return data.stream()
             .filter(purchase -> {
                 return purchase.getUser().equals(user) &&
@@ -110,8 +110,7 @@ public class FakePurchaseRepository implements PurchaseRepository {
                     purchase.getState().equals(PurchaseState.ACTIVE);
             })
             .sorted(Comparator.comparing(Purchase::getUpdatedAt).reversed())
-            .findFirst()
-            .orElseThrow(() -> new PurchaseNotFoundException(NOT_FOUND_USER_SUBSCRIBE_EXCEPTION));
+            .findFirst();
     }
 
     @Override

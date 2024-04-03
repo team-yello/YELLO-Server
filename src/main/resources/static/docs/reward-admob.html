@@ -450,6 +450,7 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <pre class="highlight nowrap"><code class="language-http" data-lang="http">POST /api/v1/admob/reward HTTP/1.1
 Content-Type: application/json;charset=UTF-8
 Authorization: Bearer your-access-token
+IdempotencyKey: 87552f7c-9b62-4b12-b567-1bd062b09288
 Content-Length: 134
 
 {
@@ -473,7 +474,7 @@ Content-Length: 134
 <p>ADMOB_POINT : 광고 보고 10 포인트</p>
 </li>
 <li>
-<p>ADMOB_MULTIPLE_POINT : 투표 후, 광고 보고 포인트 2배 이벤트</p>
+<p>ADMOB_MULTIPLE_POINT : 광고 보고 포인트 2배 이벤트</p>
 </li>
 </ul>
 </div>
@@ -528,6 +529,16 @@ Content-Type: application/json
 <div class="ulist">
 <ul>
 <li>
+<p>Header에 무작위한 UUID4 값을 넣어주세요</p>
+<div class="ulist">
+<ul>
+<li>
+<p>예시) IdempotencyKey: 0397b5f3-ecdc-47d6-b5d7-2b1afcf00e87</p>
+</li>
+</ul>
+</div>
+</li>
+<li>
 <p>주의사항</p>
 <div class="ulist">
 <ul>
@@ -554,9 +565,6 @@ Content-Type: application/json
 <h3 id="_changelog">CHANGELOG</h3>
 <div class="ulist">
 <ul>
-<li>
-<p>2024.02.19 API ENUM, 명세서 수정</p>
-</li>
 <li>
 <p>2024.02.11 릴리즈</p>
 </li>
