@@ -27,7 +27,7 @@ public interface PurchaseRepository {
 
     void delete(Purchase purchase);
 
-    Purchase getTopByStateAndUserId(User user);
+    Optional<Purchase> getTopByStateAndUserId(User user);
 
     Long countByStartAt(Gateway gateway, ProductType productType, LocalDateTime start, LocalDateTime end);
 
