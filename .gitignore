@@ -45,6 +45,8 @@ application-local.yml
 firebase*.json
 *client_secret*.json
 
+docker/docker-compose.mq.yml
+
 ### monitoring ###
 monitoring/prometheus/volume
 monitoring/grafana
