@@ -1,6 +1,6 @@
 #!/bin/bash
 
-cd /home/ec2-user/app
+cd ~/app
 DOCKER_APP_NAME=yello
 
 # BLUE 서버 체크
