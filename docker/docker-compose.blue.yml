@@ -1,10 +1,6 @@
 #blue
 version: '3'
 services:
-  redis:
-    image: redis
-    ports:
-      - "6379:6379"
   backend:
     build: .
     ports:
@@ -12,5 +8,3 @@ services:
     container_name: yello-blue
     environment:
       - TZ=Asia/Seoul
-    depends_on:
-      - redis
