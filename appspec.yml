@@ -5,9 +5,8 @@ os: linux
 ## 코드 파일 전송
 files:
   - source: /
-    destination: ~/app
+    destination: /home/ubuntu/app
     overwrite: yes # overwrite 허용 여부
-file_exists_behavior: OVERWRITE
 
 ## 권한 설정
 permissions:
