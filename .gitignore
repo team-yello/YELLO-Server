@@ -45,6 +45,8 @@ application-local.yml
 firebase*.json
 *client_secret*.json
 
+docker/rabbitmq/**
+
 ### monitoring ###
 monitoring/prometheus/volume
 monitoring/grafana
